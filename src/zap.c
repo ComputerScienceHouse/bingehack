@@ -1587,7 +1587,7 @@ register struct obj *obj;
 			You_feel("self-knowledgeable...");
 			display_nhwindow(WIN_MESSAGE, FALSE);
 			enlightenment(FALSE);
-			pline("The feeling subsides.");
+			pline_The("feeling subsides.");
 			exercise(A_WIS, TRUE);
 			break;
 	}
@@ -2087,7 +2087,7 @@ struct obj *obj;	/* wand or spell */
 			/* can't use the stairs down to quest level 2 until
 			   leader "unlocks" them; give feedback if you try */
 			on_level(&u.uz, &qstart_level) && !ok_to_quest()) {
-		pline("The stairs seem to ripple momentarily.");
+		pline_The("stairs seem to ripple momentarily.");
 		disclose = TRUE;
 	    }
 	    break;

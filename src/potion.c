@@ -531,7 +531,7 @@ peffects(otmp)
 		if(Sleep_resistance || Free_action)
 		    You("yawn.");
 		else {
-		    pline("You suddenly fall asleep!");
+		    You("suddenly fall asleep!");
 		    fall_asleep(-rn1(10, 25 - 12*bcsign(otmp)), TRUE);
 		}
 		break;
@@ -1519,7 +1519,7 @@ dodip()
 		if (!Blind) {
 		    if (!See_invisible) pline("Where did %s go?",
 		    		the(xname(obj)));
-		    else pline("You notice a little haziness around %s.",
+		    else You("notice a little haziness around %s.",
 		    		the(xname(obj)));
 		}
 		goto poof;
@@ -1528,7 +1528,7 @@ dodip()
 		if (!Blind) {
 		    if (!See_invisible) pline("So that's where %s went!",
 		    		the(xname(obj)));
-		    else pline("The haziness around %s disappears.",
+		    else pline_The("haziness around %s disappears.",
 		    		the(xname(obj)));
 		}
 		goto poof;

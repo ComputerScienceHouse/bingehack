@@ -284,7 +284,7 @@ giveback:
 			(obj->spe<0) ? "weak" : "strong");
 		break;
 	    case RIN_GAIN_CONSTITUTION:
-		pline("The water flow seems %ser now.",
+		pline_The("water flow seems %ser now.",
 			(obj->spe<0) ? "less" : "great");
 		break;
 	    case RIN_INCREASE_ACCURACY:	/* KMH */
@@ -417,7 +417,7 @@ register const char *word;
 	}
 	if (obj->otyp == LEASH && obj->leashmon != 0) {
 		if (*word)
-			pline ("The leash is tied around your %s.",
+			pline_The("leash is tied around your %s.",
 					body_part(HAND));
 		return(FALSE);
 	}

@@ -251,7 +251,7 @@ int force;
 			goto do_pit;
 		  case GRAVE :
 			if (cansee(x,y))
-				pline("The headstone topples into a chasm.");
+				pline_The("headstone topples into a chasm.");
 			goto do_pit;
 		  case THRONE :
 			if (cansee(x,y))

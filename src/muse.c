@@ -499,7 +499,7 @@ struct monst *mtmp;
 		    if (otmp)
 			pline("%s uses a unicorn horn!", Monnam(mtmp));
 		    else
-			pline("The tip of %s's horn glows!", mon_nam(mtmp));
+			pline_The("tip of %s's horn glows!", mon_nam(mtmp));
 		}
 		if (!mtmp->mcansee) {
 		    mtmp->mcansee = 1;
@@ -1743,7 +1743,7 @@ skipmsg:
 			where_to = 0;
 		    }
 		    if (!where_to) {
-			pline("The whip slips free.");  /* not `The_whip' */
+			pline_The("whip slips free.");  /* not `The_whip' */
 			return 1;
 		    }
 		    freeinv(obj);

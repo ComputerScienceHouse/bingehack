@@ -983,7 +983,7 @@ opentin()		/* called during each move whilst opening a tin */
 	    if (is_meaty(&mons[tin.tin->corpsenm])) {
 	    	u.uconduct.meat++;
 	    	if (Role_if(PM_MONK)) {
-	    	    pline("You feel guilty.");
+	    	    You_feel("guilty.");
 	    	    adjalign(-1);
 	    	}
 	    }
@@ -1211,7 +1211,7 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 			"is delicious" : "tastes terrible");
 	}
 	if (Role_if(PM_MONK) && is_meaty(&mons[mnum])) {
-	    pline("You feel guilty.");
+	    You_feel("guilty.");
 	    adjalign(-1);
 	}
 
@@ -1622,7 +1622,7 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 		/* The regurgitated object's rustproofing is gone now */
 		otmp->oerodeproof = 0;
 		make_stunned(HStun + rn2(10), TRUE);
-		pline("You spit %s out onto the %s.", the(xname(otmp)),
+		You("spit %s out onto the %s.", the(xname(otmp)),
 			surface(u.ux, u.uy));
 		if (carried(otmp)) {
 			freeinv(otmp);

@@ -222,7 +222,7 @@ found:
 	/* success */
 	if (new_obj->oclass == SPBOOK_CLASS) {
 		/* acknowledge the change in the object's description... */
-		pline("The spellbook warps strangely, then turns %s.",
+		pline_The("spellbook warps strangely, then turns %s.",
 		      OBJ_DESCR(objects[new_obj->otyp]));
 	}
 	new_obj->blessed = (curseval > 0);

@@ -343,10 +343,10 @@ dowieldquiver()
 	if (newquiver == &zeroobj) {
 		/* Explicitly nothing */
 		if (uquiver) {
-			pline("You now have no ammunition readied.");
+			You("now have no ammunition readied.");
 			setuqwep(newquiver = (struct obj *) 0);
 		} else {
-			pline("You already have no ammunition readied!");
+			You("already have no ammunition readied!");
 			return(0);
 		}
 	} else if (newquiver == uquiver) {

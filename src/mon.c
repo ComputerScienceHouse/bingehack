@@ -1630,8 +1630,8 @@ cleanup:
 	} else if (mtmp->mtame) {
 		adjalign(-15);	/* bad!! */
 		/* your god is mighty displeased... */
-		if (!Hallucination) pline("You hear the rumble of distant thunder...");
-		else pline("You hear the studio audience applaud!");
+		if (!Hallucination) You("hear the rumble of distant thunder...");
+		else You("hear the studio audience applaud!");
 	} else if (mtmp->mpeaceful)
 		adjalign(-5);
 

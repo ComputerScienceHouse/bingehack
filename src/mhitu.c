@@ -2279,7 +2279,7 @@ register struct attack *mattk;
 	if (rn2(3)) switch(youmonst.data->mattk[i].adtyp) {
 	    case AD_PHYS:
 	    	if (youmonst.data->mattk[i].aatyp == AT_BOOM) {
-	    	    pline("You explode!");
+	    	    You("explode!");
 	    	    /* KMH, balance patch -- this is okay with unchanging */
 	    	    rehumanize();
 	    	    goto assess_dmg;

@@ -833,7 +833,7 @@ boolean atme;
 	case SPE_CURE_SICKNESS:
 		if (Sick) You("are no longer ill.");
 		if (Slimed) {
-		    pline("The slime disappears!");
+		    pline_The("slime disappears!");
 		    Slimed = 0;
 		}
 		healup(0, 0, TRUE, FALSE);
@@ -889,10 +889,10 @@ throwspell()
 	    return 0;	/* user pressed ESC */
 	/* The number of moves from hero to where the spell drops.*/
 	if (distmin(u.ux, u.uy, cc.x, cc.y) > 10) {
-	    pline("The spell dissipates over the distance!");
+	    pline_The("spell dissipates over the distance!");
 	    return 0;
 	} else if (u.uswallow) {
-	    pline("The spell is cut short!");
+	    pline_The("spell is cut short!");
 	    exercise(A_WIS, FALSE); /* What were you THINKING! */
 	    u.dx = 0;
 	    u.dy = 0;
