@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)trap.c	3.3	2000/04/29	*/
+/*	SCCS Id: @(#)trap.c	3.3	2000/06/30	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -737,8 +737,14 @@ glovecheck:		(void) rust_dmg(uarmg, "gauntlets", 1, TRUE, &youmonst);
 		    break;
 		}
 		if (!In_sokoban(&u.uz))
-			You("fall into %s pit!", a_your[trap->madeby_u]);
-		if (u.umonnum == PM_PIT_VIPER || u.umonnum == PM_PIT_FIEND)
+		    You("fall into %s pit!", a_your[trap->madeby_u]);
+		/* wumpus reference */
+		if (Role_if(PM_RANGER) && !trap->madeby_u && !trap->once &&
+			In_quest(&u.uz) && Is_qlocate(&u.uz)) {
+		    pline("Fortunately it has a bottom after all...");
+		    trap->once = 1;
+		} else if (u.umonnum == PM_PIT_VIPER ||
+			u.umonnum == PM_PIT_FIEND)
 		    pline("How pitiful.  Isn't that the pits?");
 		if (ttype == SPIKED_PIT)
 		    You("land on a set of sharp iron spikes!");
