@@ -273,7 +273,8 @@ E struct c_common_strings {
     const char	*const c_nothing_happens, *const c_thats_enough_tries,
 		*const c_silly_thing_to, *const c_shudder_for_moment,
 		*const c_something, *const c_Something,
-		*const c_You_can_move_again;
+		*const c_You_can_move_again,
+		*const c_Never_mind;
 } c_common_strings;
 #define nothing_happens    c_common_strings.c_nothing_happens
 #define thats_enough_tries c_common_strings.c_thats_enough_tries
@@ -282,6 +283,7 @@ E struct c_common_strings {
 #define something	   c_common_strings.c_something
 #define Something	   c_common_strings.c_Something
 #define You_can_move_again c_common_strings.c_You_can_move_again
+#define Never_mind	   c_common_strings.c_Never_mind
 
 /* material strings */
 E const char *materialnm[];
