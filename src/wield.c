@@ -406,7 +406,7 @@ can_twoweapon()
 			bimanual(uswapwep) ? "one-handed": "",
 			NOT_WEAPON(uswapwep) ? "weapon": "");
 	else if (uarms)
-		You("can't use two weapons while wearing a shield.");
+		You_cant("use two weapons while wearing a shield.");
 	else if (uswapwep->oartifact)
 		pline("%s resists being held second to another weapon!",
 			Yname2(uswapwep));

@@ -1863,8 +1863,8 @@ boolean ordinary;
 		case SPE_EXTRA_HEALING:
 		    healup(d(6, obj->otyp == SPE_EXTRA_HEALING ? 8 : 4),
 			   0, FALSE, (obj->otyp == SPE_EXTRA_HEALING));
-		    You("feel%s better.",
-			obj->otyp == SPE_EXTRA_HEALING ? " much" : "");
+		    You_feel("%sbetter.",
+			obj->otyp == SPE_EXTRA_HEALING ? "much " : "");
 		    break;
 		case WAN_LIGHT:	/* (broken wand) */
 		 /* assert( !ordinary ); */

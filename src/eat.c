@@ -1192,7 +1192,7 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 	} else if ((rotted > 5L || (rotted > 3L && rn2(5)))
 					&& !Sick_resistance) {
 		tp++;
-		You("feel%s sick.", (Sick) ? " very" : "");
+		You_feel("%ssick.", (Sick) ? "very " : "");
 		losehp(rnd(8), "cadaver", KILLED_BY_AN);
 	}
 	if (!tp && mnum != PM_LIZARD && mnum != PM_LICHEN &&
