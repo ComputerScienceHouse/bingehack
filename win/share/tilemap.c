@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)tilemap.c	3.3	1999/03/28	*/
+/*	SCCS Id: @(#)tilemap.c	3.3	2000/06/04	*/
 /* NetHack may be freely redistributed.  See license for details. */
 
 /*
@@ -87,6 +87,14 @@ struct conditionals {
 	 */
 #ifndef MAIL
 	{ OBJ_GLYPH, SCR_STINKING_CLOUD+4, "stamped / mail" },
+#endif
+#ifndef NEW_WARNING
+	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 8), "warning 0" },
+	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 8), "warning 1" },
+	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 8), "warning 2" },
+	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 8), "warning 3" },
+	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 8), "warning 4" },
+	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 8), "warning 5" },
 #endif
 	{ 0, 0, 0}
 };
@@ -209,7 +217,7 @@ int set, entry;
 			tilenum++;
 		}
 	}
-
+	
 	i = entry - tilenum;
 	if (i < (NUM_ZAP << 2)) {
 		if (set == OTH_GLYPH) {
@@ -218,6 +226,15 @@ int set, entry;
 		}
 	}
 	tilenum += (NUM_ZAP << 2);
+
+	i = entry - tilenum;
+	if (i < WARNCOUNT) {
+		if (set == OTH_GLYPH) {
+			Sprintf(buf, "warning %d", i);
+			return buf;
+	        }
+	}
+	tilenum += WARNCOUNT;
 
 	for (i = 0; i < SIZE(substitutes); i++) {
 	    j = entry - tilenum;
@@ -262,7 +279,8 @@ int lastmontile, lastobjtile, lastothtile;
  * with entries for all supported compilation options
  *
  * "other" contains cmap and zaps (the swallow sets are a repeated portion
- * of cmap)
+ * of cmap), as well as the "flash" glyphs for the optional NEW_WARNING system
+ * introduced in 3.3.1.
  */
 void
 init_tilemap()
@@ -347,6 +365,13 @@ init_tilemap()
 		tilemap[GLYPH_ZAP_OFF+i] = tilenum;
 		tilenum++;
 	}
+
+#ifdef NEW_WARNING
+	for (i = 0; i < WARNCOUNT; i++) {
+		tilemap[GLYPH_WARNING_OFF+i] = tilenum;
+		tilenum++;
+	}
+#endif
 	lastothtile = tilenum - 1;
 }
 

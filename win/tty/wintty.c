@@ -2352,6 +2352,9 @@ tty_print_glyph(window, x, y, glyph)
 				/* should be nh_HI			   */ \
 				((iflags.hilite_pet && has_color(CLR_BLACK)) ?     \
 							CLR_BLACK : NO_COLOR)
+# ifdef NEW_WARNING
+#define warn_color(n) color = iflags.use_color ? def_warnsyms[n].color : NO_COLOR
+# endif
 # if defined(REINCARNATION) && defined(ASCIIGRAPH)
 #  define ROGUE_COLOR
 # endif
@@ -2364,6 +2367,9 @@ tty_print_glyph(window, x, y, glyph)
 #define mon_color(n)
 #define invis_color(n)
 #define pet_color(c)
+# ifdef NEW_WARNING
+#define warn_color(n)
+# endif
 #endif
 
 #ifdef ROGUE_COLOR
@@ -2387,6 +2393,17 @@ tty_print_glyph(window, x, y, glyph)
      *  Warning:  For speed, this makes an assumption on the order of
      *		  offsets.  The order is set in display.h.
      */
+#ifdef NEW_WARNING
+    if ((offset = (glyph - GLYPH_WARNING_OFF)) >= 0) {	/* a warning flash */
+    	ch = warnsyms[offset];
+# ifdef ROGUE_COLOR
+	if (HAS_ROGUE_IBM_GRAPHICS)
+	    color = NO_COLOR;
+	else
+# endif
+	    warn_color(offset);
+    } else
+#endif
     if ((offset = (glyph - GLYPH_SWALLOW_OFF)) >= 0) {		/* swallow */
 	/* see swallow_to_glyph() in display.c */
 	ch = (uchar) showsyms[S_sw_tl + (offset & 0x7)];
