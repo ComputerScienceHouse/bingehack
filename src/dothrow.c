@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)dothrow.c	3.3	1999/12/02	*/
+/*	SCCS Id: @(#)dothrow.c	3.3	1999/12/13	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -68,11 +68,9 @@ int shotlimit;
 	u_wipe_engr(2);
 
 	/* Multishot calculations
-	 * Avoid sling ammunition, to avoid throwing all of the hero's
-	 * gemstones at unicorns, all luckstones, etc.
 	 */
 	skill = objects[obj->otyp].oc_skill;
-	if (((ammo_and_launcher(obj, uwep) && skill != -P_SLING) ||
+	if ((ammo_and_launcher(obj, uwep) ||
 			skill == P_DAGGER || skill == P_DART ||
 			skill == P_SHURIKEN) && !Confusion) {
 	    /* Bonus if the player is proficient in this weapon... */
@@ -100,6 +98,10 @@ int shotlimit;
 	    case PM_ELF:
 		if (obj->otyp == ELVEN_ARROW && uwep &&
 				uwep->otyp == ELVEN_BOW) multishot++;
+		break;
+	    case PM_ORC:
+		if (obj->otyp == ORCISH_ARROW && uwep &&
+				uwep->otyp == ORCISH_BOW) multishot++;
 		break;
 	    default:
 		break;	/* No bonus */
@@ -181,31 +183,43 @@ dothrow()
 /* KMH -- Automatically fill quiver */
 /* Suggested by Jeffrey Bay <jbay@convex.hp.com> */
 static void
-autoquiver ()
+autoquiver()
 {
 	register struct obj *otmp, *oammo = 0, *omissile = 0, *omisc = 0;
-
 
 	if (uquiver)
 		return;
 
 	/* Scan through the inventory */
 	for (otmp = invent; otmp; otmp = otmp->nobj) {
-		if (otmp->owornmask)
-			/* Skip it */;
-		else if (is_ammo(otmp)) {
+		if (otmp->owornmask || otmp->oartifact || !otmp->dknown) {
+			;	/* Skip it */
+		} else if (otmp->otyp == ROCK ||
+			    /* seen rocks or known flint or known glass */
+			    (objects[otmp->otyp].oc_name_known &&
+				(otmp->otyp == FLINT ||
+				 objects[otmp->otyp].oc_material == GLASS))) {
+			if (uwep && objects[uwep->otyp].oc_skill == P_SLING)
+			    oammo = otmp;
+			else if (!omisc)
+			    omisc = otmp;
+		} else if (otmp->oclass == GEM_CLASS) {
+			;	/* skip non-rock gems--they're ammo but
+				   player has to select them explicitly */
+		} else if (is_ammo(otmp)) {
 			if (ammo_and_launcher(otmp, uwep))
 				/* Ammo matched with launcher (bow and arrow, crossbow and bolt) */
 				oammo = otmp;
 			else
 				/* Mismatched ammo (no better than an ordinary weapon) */
 				omisc = otmp;
-		} else if (is_missile(otmp))
+		} else if (is_missile(otmp)) {
 			/* Missile (dart, shuriken, etc.) */
 			omissile = otmp;
-		else if (otmp->oclass == WEAPON_CLASS)
+		} else if (otmp->oclass == WEAPON_CLASS) {
 			/* Ordinary weapon */
 			omisc = otmp;
+		}
 	}
 
 	/* Pick the best choice */
