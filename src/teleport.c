@@ -604,13 +604,19 @@ level_tele()
 	}
 
 	if (killer) {	/* the chosen destination was not survivable */
+	    d_level lsav;
+
 	    /* set specific death location; this also suppresses bones */
+	    lsav.dnum = u.uz.dnum;	/* save current level, see below */
+	    lsav.dlevel = u.uz.dlevel;
 	    u.uz.dnum = 0;	/* main dungeon */
 	    u.uz.dlevel = (newlev <= -10) ? -1 : 0;	/* heaven or surface */
 	    done(DIED);
 	    /* can only get here via life-saving (or declining to die in
 	       explore|debug mode); the hero has now left the dungeon... */
 	    escape_by_flying = "find yourself back on the surface";
+	    u.uz.dnum = lsav.dnum;	/* restore u.uz so escape code works */
+	    u.uz.dlevel = lsav.dlevel; 
 	}
 
 	/* calls done(ESCAPED) if newlevel==0 */
