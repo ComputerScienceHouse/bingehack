@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)obj.h	3.3	1999/03/13	*/
+/*	SCCS Id: @(#)obj.h	3.3	1999/12/13	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -160,6 +160,7 @@ struct obj {
 #define is_poisonable(otmp)	(otmp->oclass == WEAPON_CLASS && \
 			 objects[otmp->otyp].oc_skill >= -P_SHURIKEN && \
 			 objects[otmp->otyp].oc_skill <= -P_BOW)
+#define uslinging()	(uwep && objects[uwep->otyp].oc_skill == P_SLING)
 
 /* Armor */
 #define is_shield(otmp) (otmp->oclass == ARMOR_CLASS && \

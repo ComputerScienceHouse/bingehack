@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)wield.c	3.3	1999/08/16	*/
+/*	SCCS Id: @(#)wield.c	3.3	1999/12/13	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -221,6 +221,8 @@ register struct obj *obj;
 
 static NEARDATA const char wield_objs[] =
 	{ ALL_CLASSES, ALLOW_NONE, WEAPON_CLASS, TOOL_CLASS, 0 };
+static NEARDATA const char bullets[] =	/* (note: different from dothrow.c) */
+	{ ALL_CLASSES, ALLOW_NONE, GEM_CLASS, WEAPON_CLASS, 0 };
 
 int
 dowield()
@@ -332,7 +334,7 @@ dowieldquiver()
 		pline("Note: Please use #quit if you wish to exit the game.");
 
 	/* Prompt for a new quiver */
-	if (!(newquiver = getobj(wield_objs, "ready")))
+	if (!(newquiver = getobj(uslinging() ? bullets : wield_objs, "ready")))
 		/* Cancelled */
 		return (0);
 

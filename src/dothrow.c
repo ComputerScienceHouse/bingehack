@@ -171,7 +171,7 @@ dothrow()
 	multi = 0;		/* reset; it's been used up */
 
 	if(check_capacity((char *)0)) return(0);
-	obj = getobj(uwep && uwep->otyp==SLING ? bullets : toss_objs, "throw");
+	obj = getobj(uslinging() ? bullets : toss_objs, "throw");
 	/* it is also possible to throw food */
 	/* (or jewels, or iron balls... ) */
 
@@ -199,7 +199,7 @@ autoquiver()
 			    (objects[otmp->otyp].oc_name_known &&
 				(otmp->otyp == FLINT ||
 				 objects[otmp->otyp].oc_material == GLASS))) {
-			if (uwep && objects[uwep->otyp].oc_skill == P_SLING)
+			if (uslinging())
 			    oammo = otmp;
 			else if (!omisc)
 			    omisc = otmp;
