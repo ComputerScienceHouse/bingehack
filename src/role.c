@@ -1029,6 +1029,94 @@ rigid_role_checks()
     }
 }
 
+char *
+build_plselection_prompt(buf, buflen, rolenum, racenum, gendnum, alignnum)
+char *buf;
+int buflen, rolenum, racenum, gendnum, alignnum;
+{
+	const char *defprompt = "Shall I pick a character for you? [ynq] ";
+	int num_post_attribs, post_attribs = 0;
+	const char *conj = "and ";
+
+	if (buflen < QBUFSZ)
+		return (char *)defprompt;
+	Strcpy(buf, "Shall I pick ");
+	if (racenum != ROLE_NONE || rolenum != ROLE_NONE)
+		Strcat(buf, "your");
+	else
+		Strcat(buf, "a");
+	/* <your> */
+
+	if (alignnum != ROLE_NONE) {
+		Strcat(buf, " ");
+		Strcat(buf, (char *)aligns[alignnum].adj[0]);
+	} else post_attribs++;
+	/* <your lawful> */
+
+
+	if (rolenum != ROLE_NONE &&
+		(roles[rolenum].allow & ROLE_GENDMASK) == (ROLE_MALE|ROLE_FEMALE)) {
+		if (gendnum != ROLE_NONE) {
+			Strcat(buf, " ");
+			Strcat(buf, genders[gendnum].adj);
+		} else post_attribs++;
+	}
+	/* <your lawful female> */
+
+	if (racenum != ROLE_NONE) {
+		Strcat(buf, " "); 
+		Strcat(buf, (rolenum == ROLE_NONE) ?
+			s_suffix(races[racenum].noun) :
+			races[racenum].adj);
+	} else post_attribs++;
+	/* <your lawful female gnomish> || <your lawful female gnome's> */
+
+	if (rolenum != ROLE_NONE) {
+		Strcat(buf, " ");
+		Strcat(buf, ((gendnum != ROLE_NONE) && roles[rolenum].name.f) ?
+			s_suffix(roles[rolenum].name.f) :
+			s_suffix(roles[rolenum].name.m));
+	} else post_attribs++;
+	if (racenum == ROLE_NONE && rolenum == ROLE_NONE) {
+		Strcat(buf, " character's");
+	}
+	/* <your lawful female gnomish cavewoman's> || <your lawful female gnome's>
+	 *    || <your lawful female character's>
+	 */
+
+	/* Now the post attributes */
+	num_post_attribs = post_attribs;
+	if (post_attribs) {
+		if (racenum == ROLE_NONE) {
+			Strcat(buf, (post_attribs == num_post_attribs) ?  " " : ", ");
+			--post_attribs;
+			if (!post_attribs) Strcat(buf, conj);
+			Strcat(buf, "race");
+		}
+		if (rolenum == ROLE_NONE) {
+			Strcat(buf, (post_attribs == num_post_attribs) ? " " : ", ");
+			--post_attribs;
+			if (!post_attribs) Strcat(buf, conj);
+			Strcat(buf, "role");
+		}
+		if (alignnum == ROLE_NONE) {
+			Strcat(buf, (post_attribs == num_post_attribs) ? " " : ", ");
+			--post_attribs;
+			if (!post_attribs) Strcat(buf, conj);
+			Strcat(buf, "alignment");
+		}
+		if (gendnum == ROLE_NONE && (rolenum != ROLE_NONE &&
+		    (roles[rolenum].allow & ROLE_GENDMASK) == (ROLE_MALE|ROLE_FEMALE))) {
+			Strcat(buf, (post_attribs == num_post_attribs) ? " " : ", ");
+			--post_attribs;
+			if (!post_attribs) Strcat(buf, conj);
+			Strcat(buf, "gender");
+		}
+	}
+	Strcat(buf, " for you? [ynq] ");
+	return buf;
+}
+
 void
 plnamesuffix()
 {

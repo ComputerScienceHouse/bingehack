@@ -319,8 +319,9 @@ tty_player_selection()
 	/* Should we randomly pick for the player? */
 	if (flags.initrole == ROLE_NONE || flags.initrace == ROLE_NONE ||
 		flags.initgend == ROLE_NONE || flags.initalign == ROLE_NONE) {
-	    const char *prompt = "Shall I pick a character for you? [ynq] ";
 	    int echoline;
+	    char *prompt = build_plselection_prompt(pbuf, QBUFSZ, flags.initrole,
+				flags.initrace, flags.initgend, flags.initalign);
 
 	    tty_putstr(BASE_WINDOW, 0, "");
 	    echoline = wins[BASE_WINDOW]->cury;
