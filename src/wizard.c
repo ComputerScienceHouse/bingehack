@@ -575,7 +575,7 @@ register struct monst	*mtmp;
 		else if (u.uhp < 5 && !rn2(2))	/* Panic */
 		    verbalize(rn2(2) ?
 			  "Even now thy life force ebbs, %s!" :
-			  "Savor thy breath, %s, it be thine last!",
+			  "Savor thy breath, %s, it be thy last!",
 			  random_insult[rn2(SIZE(random_insult))]);
 		else if (mtmp->mhp < 5 && !rn2(2))	/* Parthian shot */
 		    verbalize(rn2(2) ?

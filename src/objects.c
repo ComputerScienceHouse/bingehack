@@ -312,6 +312,7 @@ HELM("dunce cap", "conical hat",
 		0, 1,  0,	3, 1,  4,   1,10, 0, CLOTH, CLR_BLUE),
 HELM("dented pot", (char *)0,
 		1, 0,  0,	2, 0, 10,   8, 9, 0, IRON, CLR_BLACK),
+/* With shuffled appearances... */
 HELM("helmet", "plumed helmet",
 		0, 0,  0,      10, 1, 30,  10, 9, 0, IRON, HI_METAL),
 HELM("helm of brilliance", "etched helmet",
@@ -466,9 +467,9 @@ BOOTS("iron shoes", "hard shoes",
 		0, 0,  0,	   7, 2, 50, 16,  8, 0, IRON, HI_METAL),
 BOOTS("high boots", "jackboots",
 		0, 0,  0,	  15, 2, 20, 12,  8, 0, LEATHER, HI_LEATHER),
+/* With shuffled appearances... */
 BOOTS("speed boots", "combat boots",
 		0, 1,  FAST,	  12, 2, 20, 50,  9, 0, LEATHER, HI_LEATHER),
-/* With shuffled appearances... */
 BOOTS("water walking boots", "jungle boots",
 		0, 1,  WWALKING,  12, 2, 20, 50,  9, 0, LEATHER, HI_LEATHER),
 BOOTS("jumping boots", "hiking boots",
