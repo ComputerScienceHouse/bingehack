@@ -249,7 +249,7 @@ do_mname()
 	}
 	mtmp = m_at(cx, cy);
 	if (!mtmp || (!sensemon(mtmp) &&
-			(!cansee(cx,cy) || mtmp->mundetected
+			(!(cansee(cx,cy) || see_with_infrared(mtmp)) || mtmp->mundetected
 			|| mtmp->m_ap_type == M_AP_FURNITURE
 			|| mtmp->m_ap_type == M_AP_OBJECT
 			|| (mtmp->minvis && !See_invisible)))) {
