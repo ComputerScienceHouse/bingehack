@@ -578,7 +578,9 @@ plus:
 				" (being worn)");
 		goto plus;
 	case TOOL_CLASS:
-		add_erosion_words(obj, prefix);
+		/* weptools already get this done when we go to the +n code */
+		if (!is_weptool(obj))
+		    add_erosion_words(obj, prefix);
 		if(obj->owornmask & (W_TOOL /* blindfold */
 #ifdef STEED
 				| W_SADDLE
