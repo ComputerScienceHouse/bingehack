@@ -1040,6 +1040,8 @@ fox
 	taken care not to take off my hat or veil, and so have
 	escaped their suspicions.
 		[ Dracula, by Bram Stoker ]
+gas spore
+	Floating bubble of explosive gas.
 geryon
 	Geryon is an arch-devil sometimes called the Wild Beast,
 	attacking with his claws and poison sting.  His ranking in
@@ -1284,6 +1286,17 @@ hom*nculus
 	and mine to you, across the leagues between at the speed of
 	thought.'"
 		[ Conan the Rebel, by Poul Anderson]
+# also gets 'pruning hook' aka guisarme
+*hook
+	But as for Queequeg -- why, Queequeg sat there among them --
+	at the head of the table, too, it so chanced; as cool as an
+	icicle.  To be sure I cannot say much for his breeding.  His
+	greatest admirer could not have cordially justified his
+	bringing his harpoon into breakfast with him, and using it
+	there without ceremony; reaching over the table with it, to
+	the imminent jeopardy of many heads, and grappling the
+	beefsteaks towards him.
+		[ Moby Dick, by Herman Melville ]
 ~unicorn horn
 *horn
 	Roland hath set the Olifant to his mouth,
@@ -1473,7 +1486,7 @@ izchak
 	of the code synchronized and arbitrated disputes between members of
 	the development teams.  Izchak Miller passed away at the age of 58,
 	in the early morning hours of April 1, 1994 from complications due
-	to cancer.  We dedicate NetHack 3.2 in his memory.
+	to cancer.  We then dedicated NetHack 3.2 in his memory.
 			[ Mike Stephenson, for the NetHack DevTeam ]
 jabberwock
 vorpal*
@@ -1527,6 +1540,12 @@ jaguar
 	South America.  This feline predator (_Panthera onca_) is
 	sometimes incorrectly called a panther.
 	 [ Van Dale's Groot Woordenboek der Nederlandse Taal ]
+jellyfish
+	I do not care to share the seas
+	With jellyfishes such as these;
+	Particularly Portuguese.
+		[ Lines on Meeting a Portuguese Man-o'-war while
+			Bathing, by Michael Flanders ]
 juiblex
 jubilex
 	Little is known about the Faceless Lord, even the correct
@@ -1951,6 +1970,14 @@ marilith
 	and can freely attack with all of them.  Since it is
 	intelligent enough to use weapons, this means it can cause
 	great damage.
+mars
+	The god of war, and one of the most prominent and worshipped
+	gods.  In early Roman history he was a god of spring, growth in
+	nature, and fertility, and the protector of cattle.  Mars is
+	also mentioned as a chthonic god (earth-god) and this could
+	explain why he became a god of death and finally a god of war.
+	He is the son of Jupiter and Juno.
+		[ Encyclopedia Mythica, ed. M.F. Lindemans ]
 master assassin
 	He strolled down the stairs, followed by a number of assassins.
 	When he was directly in front of Ymor he said: "I've come for
@@ -2023,6 +2050,10 @@ melon
 	I think we ate about six each before we had done, and, poor
 	fruit as they were, I doubt if I ever thought anything nicer.
 		[ King Solomon's Mines, by H. Rider Haggard ]
+mercury
+	Roman god of commerce, trade and travellers.  He is commonly
+	depicted carrying a caduceus (a staff with two snakes
+	intertwining around it) and a purse.
 *mimic
 	The ancestors of the modern day chameleon, these creatures can
 	assume the form of anything in their surroundings.  They may
@@ -2482,6 +2513,21 @@ platinum yendorian express card
 	the carrier by half.  It also protects from magic missile
 	attacks.  Finally, its power is such that when invoked, it
 	can charge other objects.
+pony
+		Hey! now! Come hoy now! Whither do you wander?
+		Up, down, near or far, here, there or yonder?
+		Sharp-ears, Wise-nose, Swish-tail and Bumpkin,
+		White-socks my little lad, and old Fatty Lumpkin!
+	
+	[...]
+	Tom called them one by one and they climbed over the brow and
+	stood in a line.  Then Tom bowed to the hobbits.
+
+	"Here are your ponies, now!" he said.  "They've more sense (in some
+	ways) than you wandering hobbits have -- more sense in their noses.
+	For they sniff danger ahead which you walk right into; and if they
+	run to save themselves, then they run the right way."
+		[ The Fellowship of the Ring, by J.R.R. Tolkien ]
 poseido*n
 	Poseido(o)n, lord of the seas and father of rivers and
 	fountains, was the son of Chronos and Rhea, brother of Zeus,
@@ -3261,6 +3307,18 @@ vampire lord
 	the original and usual form of the belief, a reanimated
 	corpse), supposed to seek nourishment, or do harm, by sucking
 	the blood of sleeping persons. ..."
+venus
+	Venus, the goddess of love and beauty, was the daughter of
+	Jupiter and Dione.  Others say that Venus sprang from the
+	foam of the sea.  The zephyr wafted her along the waves to
+	the Isle of Cyprus, where she was received and attired by
+	the Seasons, and then led to the assembly of the gods.  All
+	were charmed with her beauty, and each one demanded her
+	for his wife.  Jupiter gave her to Vulcan, in gratitude for
+	the service he had rendered in forging thunderbolts.  So
+	the most beautiful of the goddesses became the wife of the
+	most ill-favoured of gods.
+		[ Bulfinch's Mythology, by Thomas Bulfinch ]
 vlad*
 	Vlad Dracula the Impaler was a 15th-Century monarch of the
 	Birgau region of the Carpathian Mountains, in what is now
