@@ -846,7 +846,8 @@ mineralize()
 	if (In_endgame(&u.uz)) return;
 	for (x = 2; x < (COLNO - 2); x++)
 	    for (y = 1; y < (ROWNO - 1); y++)
-	    	if ((levl[x][y].typ == POOL || levl[x][y].typ == MOAT) && !rn2(3))
+		if ((levl[x][y].typ == POOL && !rn2(10)) ||
+			(levl[x][y].typ == MOAT && !rn2(30)))
 	    	    (void)mksobj_at(KELP_FROND, x, y, TRUE);
 
 	/* determine if it is even allowed;
