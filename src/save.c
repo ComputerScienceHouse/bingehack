@@ -156,9 +156,6 @@ dosave0()
 		return(0);
 	}
 
-	/* purge any dead monsters (necessary if we're in the midst of
-	   a panic save rather than a normal one) */
-	dmonsfree();
 	/* undo date-dependent luck adjustments made at startup time */
 	if(flags.moonphase == FULL_MOON)	/* ut-sally!fletcher */
 		change_luck(-1);		/* and unido!ab */
@@ -424,6 +421,13 @@ int mode;
 	   (which happens upon entrance to the endgame or after an aborted
 	   restore attempt) then we don't want to do any actual I/O */
 	if (mode == FREE_SAVE) goto skip_lots;
+	if (iflags.purge_monsters) {
+		/* purge any dead monsters (necessary if we're starting
+		 * a panic save rather than a normal one, or sometimes
+		 * when changing levels without taking time -- e.g.
+		 * create statue trap then immediately level teleport) */
+		dmonsfree();
+	}
 
 	if(fd < 0) panic("Save on bad file!");	/* impossible */
 #ifdef MFLOPPY
