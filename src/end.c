@@ -32,6 +32,8 @@ STATIC_PTR void FDECL(done_intr, (int));
 STATIC_DCL void FDECL(disclose,(int,BOOLEAN_P));
 STATIC_DCL void FDECL(get_valuables, (struct obj *));
 STATIC_DCL void FDECL(sort_valuables, (struct valuable_data *,int));
+STATIC_DCL void FDECL(add_artifact_score, (struct obj *));
+STATIC_DCL void FDECL(display_artifact_score, (struct obj *,winid));
 STATIC_DCL void FDECL(savelife, (int));
 STATIC_DCL void NDECL(list_vanquished);
 STATIC_DCL void NDECL(list_genocided);
@@ -408,6 +410,48 @@ int size;		/* max value is less than 20 */
     return;
 }
 
+STATIC_OVL void
+add_artifact_score(list)
+struct obj *list;
+{
+    struct obj *otmp;
+
+    for (otmp = list; otmp; otmp = otmp->nobj)
+	if (otmp->oartifact) {
+	    /* shopkeepers charge 100x; 250x is arbitrary */
+	    u.urexp += 250L * (long)objects[otmp->otyp].oc_cost;
+	if (Has_contents(otmp))
+	    add_artifact_score(otmp->cobj);
+    }
+}
+
+STATIC_OVL void
+display_artifact_score(list,endwin)
+struct obj *list;
+winid endwin;
+{
+    char pbuf[BUFSZ];
+    struct obj *otmp;
+
+    for (otmp = list; otmp; otmp = otmp->nobj) {
+	if (otmp->oartifact) {
+	    short dummy;
+
+	    makeknown(otmp->otyp);
+	    otmp->known = otmp->bknown = otmp->dknown =
+		otmp->rknown = 1;
+	    /* assumes artifacts don't have quan>1 */
+	    Sprintf(pbuf, "%s (worth %ld zorkmids and %ld points)",
+		artifact_name(xname(otmp), &dummy),
+		100L * (long)objects[otmp->otyp].oc_cost,
+		250L * (long)objects[otmp->otyp].oc_cost);
+	    putstr(endwin, 0, pbuf);
+	}
+	if (Has_contents(otmp))
+	    display_artifact_score(otmp->cobj,endwin);
+    }
+}
+
 /* Be careful not to call panic from here! */
 void
 done(how)
@@ -630,12 +674,7 @@ die:
 			u.urexp += val->list[i].count
 				  * (long)objects[val->list[i].typ].oc_cost;
 
-	    /* add points for artifacts */
-	    for (otmp = invent; otmp; otmp = otmp->nobj)
-		if (otmp->oartifact) {
-		    /* shopkeepers charge 100x; 250x is arbitrary */
-		    u.urexp += 250L * (long)objects[otmp->otyp].oc_cost;
-		}
+	    add_artifact_score(invent);
 
 	    keepdogs(TRUE);
 	    viz_array[0][0] |= IN_SIGHT; /* need visibility for naming */
@@ -662,21 +701,8 @@ die:
 		putstr(endwin, 0, pbuf);
 	    }
 
-	    for (otmp = invent; otmp; otmp = otmp->nobj) {
-		if (otmp->oartifact) {
-		    short dummy;
-
-		    makeknown(otmp->otyp);
-		    otmp->known = otmp->bknown = otmp->dknown =
-			otmp->rknown = 1;
-		    /* assumes artifacts don't have quan>1 */
-		    Sprintf(pbuf, "%s (worth %ld zorkmids and %ld points)",
-			artifact_name(xname(otmp), &dummy),
-			100L * (long)objects[otmp->otyp].oc_cost,
-			250L * (long)objects[otmp->otyp].oc_cost);
-		    putstr(endwin, 0, pbuf);
-		}
-	    }
+	    if (!done_stopprint)
+		display_artifact_score(invent,endwin);
 
 	    /* list valuables here */
 	    for (val = valuables; val->list; val++) {
