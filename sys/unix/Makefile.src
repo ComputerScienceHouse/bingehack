@@ -397,10 +397,10 @@ objects.o:
 
 # Qt windowport meta-object-compiler output
 qt_kde0.moc: ../include/qt_kde0.h
-	moc $< >$@
+	$(QTDIR)/bin/moc ../include/qt_kde0.h > qt_kde0.moc
 
 qt_win.moc: ../include/qt_win.h
-	moc $< >$@
+	$(QTDIR)/bin/moc ../include/qt_win.h > qt_win.moc
 
 $(MAKEDEFS): ../util/makedefs.c  $(CONFIG_H) ../include/permonst.h \
 		../include/objclass.h ../include/monsym.h \
