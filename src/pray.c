@@ -866,7 +866,7 @@ water_prayer(bless_water)
 	      ((other && changed > 1L) ? "Some of the" :
 					(other ? "One of the" : "The")),
 	      ((other || changed > 1L) ? "s" : ""), (changed > 1L ? "" : "s"),
-	      (bless_water ? hcolor(amber) : hcolor(Black)));
+	      (bless_water ? hcolor(light_blue) : hcolor(Black)));
     }
     return((boolean)(changed > 0L));
 }
