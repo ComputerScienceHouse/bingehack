@@ -313,7 +313,7 @@ void gnome_display_nhwindow(winid wid, BOOLEAN_P block)
       gtk_signal_emit( GTK_OBJECT (gnome_windowlist[wid].win),
 		       ghack_signals[GHSIG_DISPLAY],
 		       block);
-      if (block)
+      if (block && (gnome_windowlist[wid].type == NHW_MAP))
 	(void) gnome_nhgetch();
     }
 }
