@@ -407,8 +407,27 @@ dismount_steed(reason)
 	    	}
 	    }
 
+	    /* Steed dismounting consists of two steps: being moved to another
+	     * square, and descending to the floor.  We have functions to do
+	     * each of these activities, but they're normally called
+	     * individually and include an attempt to look at or pick up the
+	     * objects on the floor:
+	     * teleds() --> spoteffects() --> pickup()
+	     * float_down() --> pickup()
+	     * We use this kludge to make sure there is only one such attempt.
+	     *
+	     * Clearly this is not the best way to do it.  A full fix would
+	     * involve having these functions not call pickup() at all, instead
+	     * calling them first and calling pickup() afterwards.  But it
+	     * would take a lot of work to keep this change from having any
+	     * unforseen side effects (for instance, you would no longer be
+	     * able to walk onto a square with a hole, and autopickup before
+	     * falling into the hole).
+	     */
 	    /* Keep steed here, move the player to cc; teleds() clears u.utrap */
+	    in_steed_dismounting = TRUE;
 	    teleds(cc.x, cc.y);
+	    in_steed_dismounting = FALSE;
 	    if (reason != DISMOUNT_ENGULFED) /* being swallowed anyway in that case */
 		vision_full_recalc = 1;
 

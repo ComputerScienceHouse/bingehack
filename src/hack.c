@@ -1097,7 +1097,8 @@ stillinwater:;
 	if(IS_SINK(levl[u.ux][u.uy].typ) && Levitation)
 		dosinkfall();
 #endif
-	pickup(1);
+	if (!in_steed_dismounting)
+		pickup(1);
 	if ((trap = t_at(u.ux,u.uy)) != 0)
 		dotrap(trap);	/* fall into pit, arrow trap, etc. */
 	if((mtmp = m_at(u.ux, u.uy)) && !u.uswallow) {

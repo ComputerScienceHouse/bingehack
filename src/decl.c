@@ -113,6 +113,8 @@ NEARDATA boolean mrg_to_wielded = FALSE;
 			 /* weapon picked is merged with wielded one */
 NEARDATA struct obj *current_wand = 0;	/* wand currently zapped/applied */
 
+NEARDATA boolean in_steed_dismounting = FALSE;
+
 NEARDATA coord bhitpos = DUMMY;
 NEARDATA coord doors[DOORMAX] = {DUMMY};
 

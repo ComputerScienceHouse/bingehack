@@ -196,6 +196,8 @@ E NEARDATA boolean unweapon;
 E NEARDATA boolean mrg_to_wielded;
 E NEARDATA struct obj *current_wand;
 
+E NEARDATA boolean in_steed_dismounting;
+
 E const int shield_static[];
 
 #include "spell.h"
