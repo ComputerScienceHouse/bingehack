@@ -368,8 +368,11 @@ moveloop()
 #endif
 		    rhack(NULL);
 		}
+		if (u.utotype)		/* change dungeon level */
+		    deferred_goto();	/* after rhack() */
 		/* !flags.move here: multiple movement command stopped */
-		if (flags.time && (!flags.move || !flags.mv)) flags.botl=1;
+		else if (flags.time && (!flags.move || !flags.mv))
+		    flags.botl = 1;
 
 		if (vision_full_recalc) vision_recalc(0);	/* vision! */
 		if (multi && multi%7 == 0)
