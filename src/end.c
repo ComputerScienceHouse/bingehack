@@ -465,6 +465,7 @@ int how;
 	char kilbuf[BUFSZ], pbuf[BUFSZ];
 	winid endwin = WIN_ERR;
 	boolean bones_ok, have_windows = iflags.window_inited;
+	struct obj *corpse = (struct obj *)0;
 
 	/* kilbuf: used to copy killer in case it comes from something like
 	 *	xname(), which would otherwise get overwritten when we call
@@ -562,7 +563,7 @@ die:
 	    else if (how == STONING)
 		u.ugrave_arise = (NON_PM - 1);	/* statue instead of corpse */
 	    else if (u.ugrave_arise == NON_PM) {
-		(void) mk_named_object(CORPSE, &mons[u.umonnum],
+		corpse = mk_named_object(CORPSE, &mons[u.umonnum],
 				       u.ux, u.uy, plname);
 		Sprintf(pbuf, "%s, %s%s", plname,
 			killer_format == NO_KILLER_PREFIX ? "" :
@@ -624,7 +625,10 @@ die:
 #ifdef WIZARD
 	    if (!wizard || yn("Save bones?") == 'y')
 #endif
-		savebones();
+		savebones(corpse);
+	    /* corpse may be invalid pointer now so
+		ensure that it isn't used again */
+	    corpse = (struct obj *)0;
 	}
 
 	/* clean up unneeded windows */

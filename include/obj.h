@@ -80,7 +80,7 @@ struct obj {
 	Bitfield(oattached,2);	/* obj struct has special attachment */
 #define OATTACHED_NOTHING 0
 #define OATTACHED_MONST   1	/* monst struct in oextra */
-#define OATTACHED_UNUSED2 2
+#define OATTACHED_M_ID    2	/* monst id in oextra */
 #define OATTACHED_UNUSED3 3
 
 	Bitfield(in_use,1);	/* for magic items before useup items */

@@ -180,7 +180,8 @@ can_make_bones()
 
 /* save bones and possessions of a deceased adventurer */
 void
-savebones()
+savebones(corpse)
+struct obj *corpse;
 {
 	register int fd, x, y;
 	register struct trap *ttmp;
@@ -259,6 +260,8 @@ savebones()
 		in_mklev = FALSE;
 		if (!mtmp) return;
 		mtmp = christen_monst(mtmp, plname);
+		if (corpse)
+			(void) obj_attach_mid(corpse, mtmp->m_id); 
 	} else {
 		/* give your possessions to the monster you become */
 		in_mklev = TRUE;

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)zap.c	3.3	2000/01/09	*/
+/*	SCCS Id: @(#)zap.c	3.3	2000/02/04	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -469,6 +469,8 @@ revive(obj)
 register struct obj *obj;
 {
 	register struct monst *mtmp = (struct monst *)0;
+	schar savetame = 0;
+	boolean recorporealization = FALSE;
 
 	if(obj->otyp == CORPSE) {
 		int montype = obj->corpsenm;
@@ -494,8 +496,7 @@ register struct obj *obj;
 				mon_adjust_speed(mtmp, 2);	/* MFAST */
 			}
 		} else {
-		    if (obj->oxlth &&
-			(obj->oattached == OATTACHED_MONST)) {
+		    if (obj->oxlth && (obj->oattached == OATTACHED_MONST)) {
 			    coord xy;
 			    xy.x = x; xy.y = y;
 		    	    mtmp = montraits(obj, &xy);
@@ -505,6 +506,26 @@ register struct obj *obj;
  		            mtmp = makemon(&mons[montype], x, y,
 				       NO_MINVENT|MM_NOWAIT);
 		    if (mtmp) {
+			if (obj->oxlth && (obj->oattached == OATTACHED_M_ID)) {
+			    unsigned m_id;
+			    struct monst *ghost;
+			    (void) memcpy(&m_id, (genericptr_t)obj->oextra, sizeof(m_id));
+			    ghost = find_mid(m_id, FM_FMON);
+		    	    if (ghost && ghost->data == &mons[PM_GHOST]) {
+		    		    int x,y;
+		    		    x = ghost->mx; y = ghost->my;
+		    		    if (ghost->mtame)
+		    		    	savetame = ghost->mtame;
+		    		    if (canseemon(ghost))
+		    		  	pline("%s is suddenly drawn into its former body!",
+						Monnam(ghost));
+				    mongone(ghost);
+				    recorporealization = TRUE;
+				    newsym(x,y);
+			    }
+			    /* don't mess with obj->oxlth here */
+			    obj->oattached = OATTACHED_NOTHING;
+			}
 			/* Monster retains its name */
 			if (obj->onamelth)
 			    mtmp = christen_monst(mtmp, ONAME(obj));
@@ -515,6 +536,19 @@ register struct obj *obj;
 				mtmp->mhp = eaten_stat(mtmp->mhp, obj);
 			/* track that this monster was revived at least once */
 			mtmp->mrevived = 1;
+
+			if (recorporealization) {
+				/* If mtmp is revivification of former tame ghost*/
+				if (savetame) {
+				    struct monst *mtmp2 = tamedog(mtmp, (struct obj *)0);
+				    if (mtmp2) {
+					mtmp2->mtame = savetame;
+					mtmp = mtmp2;
+				    }
+				}
+				/* was ghost, now alive, it's all very confusing */
+				mtmp->mconf = 1;
+			}
 
 			switch (obj->where) {
 			    case OBJ_INVENT:

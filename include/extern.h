@@ -110,7 +110,7 @@ E void NDECL(drag_down);
 /* ### bones.c ### */
 
 E boolean NDECL(can_make_bones);
-E void NDECL(savebones);
+E void FDECL(savebones, (struct obj *));
 E int NDECL(getbones);
 
 /* ### botl.c ### */
@@ -972,6 +972,7 @@ E int FDECL(weight, (struct obj *));
 E struct obj *FDECL(mkgold, (long,int,int));
 E struct obj *FDECL(mkcorpstat,
 		(int,struct monst *,struct permonst *,int,int,BOOLEAN_P));
+E struct obj *FDECL(obj_attach_mid, (struct obj *, unsigned));
 E struct monst *FDECL(get_mtraits, (struct obj *, BOOLEAN_P));
 E struct obj *FDECL(mk_tt_object, (int,int,int));
 E struct obj *FDECL(mk_named_object,

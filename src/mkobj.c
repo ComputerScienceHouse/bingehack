@@ -851,6 +851,32 @@ boolean init;
 	return(otmp);
 }
 
+/*
+ * Attach a monster id to an object, to provide
+ * a lasting association between the two.
+ */
+struct obj *
+obj_attach_mid(obj, mid)
+struct obj *obj;
+unsigned mid;
+{
+	struct obj *otmp;
+	int lth, namelth;
+
+	if (!mid || !obj) return (struct obj *)0;
+	lth = sizeof(mid);
+	namelth = obj->onamelth ? strlen(ONAME(obj)) + 1 : 0;
+	if (namelth) 
+		otmp = realloc_obj(obj, lth, (genericptr_t) &mid, namelth, ONAME(obj));
+	else {
+		otmp = obj;
+		otmp->oxlth = sizeof(mid);
+		(void) memcpy((genericptr_t)otmp->oextra, &mid, sizeof(mid));
+	}
+	if (otmp && otmp->oxlth) otmp->oattached = OATTACHED_M_ID;	/* mark it */
+	return otmp;
+}
+
 static struct obj *
 save_mtraits(obj, mtmp)
 struct obj *obj;
