@@ -470,7 +470,7 @@ of the game, so your version might not have it.)
 E- - write in the dust with your fingers.  
 .ei
 .ed
-.Ip f
+.lp f
 Fire one of the objects placed in your quiver.  You may select
 ammunition with a previous `Q' command, or let the computer pick
 something appropriate if
@@ -623,7 +623,7 @@ Name an item or type of object.
 Offer a sacrifice to the gods.
 .lp M-p
 Pray to the gods for help.
-.Ip M-q
+.lp M-q
 Quit the program without saving your game.
 .lp M-r
 Rub a lamp.
@@ -637,7 +637,7 @@ Untrap something (trap, door, or chest).
 Print compile time options for this version of NetHack.
 .lp M-w
 Wipe off your face.
-.Ip #twoweapon
+.lp #twoweapon
 Toggle two-weapon combat on or off.  Note that you must
 use suitable weapons for this type of combat, or it will
 be automatically turned off.
@@ -1202,14 +1202,14 @@ Customization options
 Here are explanations of what the various options do.
 Character strings that are too long may be truncated.
 Some of the options listed may be inactive in your dungeon.
-.Ip align
+.lp align
 Your starting alignment (align:lawful, align:neutral,
 or align:chaotic).  You may specify just the first letter.
 The default is to randomly pick an appropriate alignment.
 Cannot be set with the `O' command.
 .lp "autopickup  "
 Pick up things you move onto by default (default on).
-.Ip autoquiver
+.lp autoquiver
 This option controls what happens when you attempt the `f' (fire)
 command with an empty quiver.  When true, the computer will fill
 your quiver with some suitable weapon.  Note that it will not take
@@ -1327,7 +1327,7 @@ Name a fruit after something you enjoy eating (ex. ``fruit:mango'')
 from time to time.  You should set this to something you find more
 appetizing than slime mold.  Apples, oranges, pears, bananas, and melons
 already exist in NetHack, so don't use those.
-.Ip gender
+.lp gender
 Your starting gender (gender:male or gender:female).
 You may specify just the first letter.  Although you can
 still denote your gender using the ``male'' and ``female''
@@ -1494,7 +1494,7 @@ makes sense for windowing system interfaces that implement this feature.
 Specify the type of your initial pet, if you are playing a character class
 that uses both types of pets.  Possible values are ``cat'' and ``dog''.
 Cannot be set with the `O' command.
-.Ip pickup_burden
+.lp pickup_burden
 When you pick up an item that would exceeds this encumberance
 level (Unburdened, Burdened, streSsed, straiNed, overTaxed,
 or overLoaded), you will be asked if you want to continue.
@@ -1511,7 +1511,7 @@ Cannot be set with the `O' command.
 .lp pushweapon
 When you use the `w' (wield) command and you had been wielding
 something, place the old item in your secondary weapon slot (default off).
-.Ip race
+.lp race
 Selects your race (for example, ``race:human'').  Default is random.
 Cannot be set with the `O' command.
 .lp "rawio   "
