@@ -1063,7 +1063,7 @@ show_glyph(x,y,glyph)
     /*
      * Check for bad positions and glyphs.
      */
-    if (x <= 0 || x >= COLNO || y < 0 || y >= ROWNO) {
+    if (!isok(x, y)) {
 	const char *text;
 	int  offset;
 

@@ -1629,7 +1629,7 @@ register int x, y;
     }
 }
 
-/* assumes is_ok() at one space away, but not necessarily at two */
+/* assumes isok() at one space away, but not necessarily at two */
 STATIC_OVL boolean
 blocked_boulder(dx,dy)
 int dx,dy;

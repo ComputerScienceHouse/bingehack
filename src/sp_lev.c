@@ -199,7 +199,7 @@ int humidity;
 	}
 found_it:;
 
-	if (*x <= 0 || *x >= COLNO || *y < 0 || *y >= ROWNO) {
+	if (!isok(*x,*y)) {
 	    impossible("get_location:  (%d,%d) out of bounds", *x, *y);
 	    *x = x_maze_max; *y = y_maze_max;
 	}
