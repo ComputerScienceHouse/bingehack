@@ -2371,7 +2371,7 @@ int obj_type;
  *	when an object is kicked (KICKED_WEAPON)
  *	when an IMMEDIATE wand is zapped (ZAPPED_WAND)
  *	when a light beam is flashed (FLASHED_LIGHT)
- *	for some invisible effect on a monster (INVIS_BEAM)
+ *	when a mirror is applied (INVIS_BEAM)
  *  A thrown/kicked object falls down at the end of its range or when a monster
  *  is hit.  The variable 'bhitpos' is set to the final position of the weapon
  *  thrown/zapped.  The ray of a wand may affect (by calling a provided
@@ -2471,12 +2471,18 @@ struct obj *obj;			/* object tossed/used */
 		       should pass through instead of stop... */
 		if(weapon != ZAPPED_WAND) {
 		    if(weapon != INVIS_BEAM) tmp_at(DISP_END, 0);
-		    if (cansee(bhitpos.x,bhitpos.y) && !canspotmon(mtmp))
-			map_invisible(bhitpos.x, bhitpos.y);
-		    return(mtmp);
+		    if (cansee(bhitpos.x,bhitpos.y) && !canspotmon(mtmp)) {
+			if (weapon != INVIS_BEAM) {
+			    map_invisible(bhitpos.x, bhitpos.y);
+			    return(mtmp);
+			}
+		    } else
+			return(mtmp);
 		}
-		(*fhitm)(mtmp, obj);
-		range -= 3;
+		if (weapon != INVIS_BEAM) {
+		    (*fhitm)(mtmp, obj);
+		    range -= 3;
+		}
 	    } else {
 		if (weapon == ZAPPED_WAND && obj->otyp == WAN_PROBING &&
 		   glyph_is_invisible(levl[bhitpos.x][bhitpos.y].glyph)) {
