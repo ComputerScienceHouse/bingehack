@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)minion.c	3.3	1999/02/08	*/
+/*	SCCS Id: @(#)minion.c	3.3	2000/06/05	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -10,7 +10,7 @@ void
 msummon(ptr)		/* ptr summons a monster */
 register struct permonst *ptr;
 {
-	register int dtype = 0, cnt = 0;
+	register int dtype = NON_PM, cnt = 0;
 	aligntyp atyp = sgn(ptr->maligntyp);
 
 	if (is_dprince(ptr) || (ptr == &mons[PM_WIZARD_OF_YENDOR])) {
@@ -31,7 +31,7 @@ register struct permonst *ptr;
 	    cnt = (!rn2(4) && !is_lord(&mons[dtype])) ? 2 : 1;
 	}
 
-	if (!dtype) return;
+	if (dtype == NON_PM) return;
 
 	/* sanity checks */
 	if (cnt > 1 && (mons[dtype].geno & G_UNIQ)) cnt = 1;
@@ -41,7 +41,7 @@ register struct permonst *ptr;
 	 */
 	if (mvitals[dtype].mvflags & G_GONE) {
 	    dtype = ndemon(atyp);
-	    if (!dtype) return;
+	    if (dtype == NON_PM) return;
 	}
 
 	while (cnt > 0) {
@@ -250,7 +250,7 @@ aligntyp atyp;
 
 	for (tryct = 0; tryct < 20; tryct++) {
 	    ptr = mkclass(S_DEMON, 0);
-	    if (is_ndemon(ptr) &&
+	    if (ptr && is_ndemon(ptr) &&
 		    (atyp == A_NONE || sgn(ptr->maligntyp) == sgn(atyp)))
 		return(monsndx(ptr));
 	}
