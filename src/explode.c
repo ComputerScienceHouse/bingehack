@@ -165,11 +165,11 @@ char olet;
 				break;
 		    }
 		}
-		if (mtmp && cansee(i,j) && !canspotmon(mtmp))
-		    map_invisible(i, j);
-		else if (!mtmp && glyph_is_invisible(levl[i][j].glyph)) {
-		    unmap_object(i, j);
-		    newsym(i, j);
+		if (mtmp && cansee(i+x-1,j+y-1) && !canspotmon(mtmp))
+		    map_invisible(i+x-1, j+y-1);
+		else if (!mtmp && glyph_is_invisible(levl[i+x-1][j+y-1].glyph)) {
+		    unmap_object(i+x-1, j+y-1);
+		    newsym(i+x-1, j+y-1);
 		}
 
 		if (cansee(i+x-1, j+y-1)) visible = TRUE;
@@ -214,6 +214,7 @@ char olet;
 		    delay_output();
 		}
 
+		tmp_at(DISP_END, 0); /* clear the explosion */
 	} else {
 		if (flags.soundok) You_hear("a blast.");
 	}
@@ -296,8 +297,6 @@ char olet;
 			else monkilled(mtmp, "", (int)adtyp);
 		}
 	}
-
-	if (visible) tmp_at(DISP_END, 0); /* clear the explosion */
 
 	/* Do your injury last */
 	if (uhurt) {
