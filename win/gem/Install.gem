@@ -1,0 +1,30 @@
+Hi
+
+This is nethack3.3.0 for Atari Gem and tty
+Windowing System.
+
+It is by far not complete or perfect.
+(My english too :-))
+
+You need at least 2Meg free RAM, 16 colors and
+3 Meg free Disk space.
+It is written only for my own system and may need 
+reworking to fit yours.
+
+I know about the redraw problem if a window
+gets closed while the map scrolls, press Crtl-L
+or Ctrl-R for a redraw.
+
+Feel free to contact me about Issues and Errors.
+e-mail: gaston@cs.tu-berlin.de
+
+You use this program at your own risk, I can't 
+guarantee it will work or do you no harm.
+
+Look at the nethack licence too.
+
+As you may have noticed the look and feel is from
+Warwick Allisons nethack3.1.3d Gem Version
+and I have used E_Gem2.2.0 from Christian Grunenberg.
+
+Marvin
