@@ -658,21 +658,26 @@ meatobj(mtmp)		/* for gelatinous cubes */
 	    } else if (otmp->oclass != ROCK_CLASS &&
 				    otmp != uball && otmp != uchain) {
 		++ecount;
-		if (cansee(mtmp->mx, mtmp->my) && flags.verbose) {
-		    if (ecount == 1) {
+		if (ecount == 1) {
 			Sprintf(buf, "%s engulfs %s.", Monnam(mtmp),
 			    distant_name(otmp,doname));
-		    } else if (ecount == 2)
+		} else if (ecount == 2)
 			Sprintf(buf, "%s engulfs several objects.", Monnam(mtmp));
-		}
 		obj_extract_self(otmp);
 		mpickobj(mtmp, otmp);	/* slurp */
 	    }
 	    /* Engulf & devour is instant, so don't set meating */
 	    if (mtmp->minvis) newsym(mtmp->mx, mtmp->my);
 	}
-	if (buf[0]) pline(buf);
-	return (count > 0) ? 1 : 0;
+	if (ecount > 0) {
+	    if (cansee(mtmp->mx, mtmp->my) && flags.verbose && buf[0])
+		pline("%s", buf);
+	    else if (flags.soundok && flags.verbose)
+	    	You_hear("%s slurping sound%s.",
+			ecount == 1 ? "a" : "several",
+			ecount == 1 ? "" : "s");
+	}
+	return ((count > 0) || (ecount > 0)) ? 1 : 0;
 }
 
 void
