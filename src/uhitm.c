@@ -524,7 +524,7 @@ int thrown;
 		    tmp = dmgval(obj, mon);
 		    /* a minimal hit doesn't exercise proficiency */
 		    valid_weapon_attack = (tmp > 1);
-		    if (!valid_weapon_attack || mon == u.ustuck) {
+		    if (!valid_weapon_attack || mon == u.ustuck || u.twoweap) {
 			;	/* no special bonuses */
 		    } else if (mon->mflee && Role_if(PM_ROGUE) && !Upolyd) {
 			You("strike %s from behind!", mon_nam(mon));

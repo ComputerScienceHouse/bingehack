@@ -140,7 +140,7 @@ struct monst *mon;
 
 	if (is_spear(otmp) &&
 	   index(kebabable, ptr->mlet)) tmp += 2;
-  
+
 	/* trident is highly effective against swimmers */
 	if (otmp->otyp == TRIDENT && is_swimmer(ptr)) {
 	   if (is_pool(mon->mx, mon->my)) tmp += 4;
@@ -980,10 +980,10 @@ int
 weapon_hit_bonus(weapon)
 struct obj *weapon;
 {
-    int type, bonus = 0;
+    int type, skill, bonus = 0;
     static const char bad_skill[] = "weapon_hit_bonus: bad skill %d";
 
-    type = weapon_type(weapon);
+    type = u.twoweap ? P_TWO_WEAPON_COMBAT : weapon_type(weapon);
     if (type == P_NONE) {
 	bonus = 0;
     } else if (type <= P_LAST_WEAPON) {
@@ -996,7 +996,9 @@ struct obj *weapon;
 	    case P_EXPERT:      bonus =  3; break;
 	}
     } else if (type == P_TWO_WEAPON_COMBAT) {
-	switch (P_SKILL(type)) {
+	skill = P_SKILL(P_TWO_WEAPON_COMBAT);
+	if (P_SKILL(weapon->otyp) < skill) skill = P_SKILL(weapon->otyp);
+	switch (skill) {
 	    default: impossible(bad_skill, P_SKILL(type)); /* fall through */
 	    case P_ISRESTRICTED:
 	    case P_UNSKILLED:   bonus = -9; break;
@@ -1011,7 +1013,7 @@ struct obj *weapon;
 
 #ifdef STEED
 	/* KMH -- It's harder to hit while you are riding */
-	if (u.usteed)
+	if (u.usteed) {
 		switch (P_SKILL(P_RIDING)) {
 		    case P_ISRESTRICTED:
 		    case P_UNSKILLED:   bonus -= 2; break;
@@ -1019,6 +1021,8 @@ struct obj *weapon;
 		    case P_SKILLED:     break;
 		    case P_EXPERT:      break;
 		}
+		if (u.twoweap) bonus -= 2;
+	}
 #endif
 
     return bonus;
@@ -1032,9 +1036,9 @@ int
 weapon_dam_bonus(weapon)
 struct obj *weapon;
 {
-    int type, bonus = 0;
+    int type, skill, bonus = 0;
 
-    type = weapon_type(weapon);
+    type = u.twoweap ? P_TWO_WEAPON_COMBAT : weapon_type(weapon);
     if (type == P_NONE) {
 	bonus = 0;
     } else if (P_RESTRICTED(type) || type <= P_LAST_WEAPON) {
@@ -1047,13 +1051,24 @@ struct obj *weapon;
 	    case P_SKILLED:	bonus =  1; break;
 	    case P_EXPERT:	bonus =  2; break;
 	}
+    } else if (type == P_TWO_WEAPON_COMBAT) {
+	skill = P_SKILL(P_TWO_WEAPON_COMBAT);
+	if (P_SKILL(weapon->otyp) < skill) skill = P_SKILL(weapon->otyp);
+	switch (skill) {
+	    default:
+	    case P_ISRESTRICTED:
+	    case P_UNSKILLED:	bonus = -3; break;
+	    case P_BASIC:	bonus = -1; break;
+	    case P_SKILLED:	bonus = 0; break;
+	    case P_EXPERT:	bonus = 1; break;
+	}
     } else if (type == P_BARE_HANDED_COMBAT && P_SKILL(type)) {
 	bonus = (P_SKILL(type) * (martial_bonus() ? 2 : 1)) / 2;
     }
 
 #ifdef STEED
 	/* KMH -- Riding gives some thrusting damage */
-	if (u.usteed) {
+	if (u.usteed && type != P_TWO_WEAPON_COMBAT) {
 		switch (P_SKILL(P_RIDING)) {
 		    case P_ISRESTRICTED:
 		    case P_UNSKILLED:   break;

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)worn.c	3.3	1999/12/15	*/
+/*	SCCS Id: @(#)worn.c	3.3	2000/01/01	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -110,6 +110,7 @@ register struct obj *obj;
 	register int p;
 
 	if (!obj) return;
+	if (obj == uwep || obj == uswapwep) u.twoweap = 0;
 	for(wp = worn; wp->w_mask; wp++)
 		if(obj == *(wp->w_obj)) {
 			*(wp->w_obj) = 0;
