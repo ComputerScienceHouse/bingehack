@@ -326,7 +326,7 @@ moveloop()
 		if(u.utrap && u.utraptype == TT_LAVA) {
 		    if(!is_lava(u.ux,u.uy))
 			u.utrap = 0;
-		    else {
+		    else if (!u.uinvulnerable) {
 			u.utrap -= 1<<8;
 			if(u.utrap < 1<<8) {
 			    killer_format = KILLED_BY;
