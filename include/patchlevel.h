@@ -49,9 +49,9 @@
  *  Introduction of Dwarves, Elves, Gnomes and Orcs as distinct races in
  *  addition to the Human "norm".
  *  Addition of the Monk and Ranger classes.
- *  Integrate features of several branch versions of the game, notably,
- *  NetHack++, NetHack--, SLASH, and Slash'em.
- *  Improved spellcasting system.
+ *  Integrate some of the features of several branch versions of the game,
+ *  notably NetHack--, NHplus, SLASH, and Slash'em.
+ *  Adopt "the wizard patch" spellcasting system.
  *  Support for the Qt widget set.
  *  Y2K fix: use 4 digit year values for the dates in the score file
  *  updated COPYRIGHT_BANNER_A to reflect year of release.
