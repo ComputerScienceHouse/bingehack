@@ -461,7 +461,7 @@ Redo the previous command.
 Close a door.
 .lp C
 Call (name) an individual monster.
-.lp ^C
+.lp "^C or #quit
 Panic button.  Quit the game.
 .lp d
 Drop something.  Ex. ``d7a'' means drop seven items of object \fIa\fP.
@@ -531,7 +531,8 @@ Repeat previous message (subsequent ^P's repeat earlier messages).
 Quaff (drink) a potion.
 .lp Q
 Select an object for your quiver.  You can then throw this using
-the `f' command.
+the `f' command.  (In versions 3.2 and eariler, this was the command to quit
+the game, which has now been moved to `#quit'.)
 .lp r
 Read a scroll or spell book.
 .lp R
@@ -1269,7 +1270,7 @@ command with an empty quiver.  When true, the computer will fill
 your quiver with some suitable weapon.  Note that it will not take
 into account the blessed/cursed status, enchantment, damage, or
 quality of the weapon; you are free to manually fill your quiver with
-the `q' command instead.  If no weapon is found or the option is
+the `Q' command instead.  If no weapon is found or the option is
 false, the `t' (throw) command is executed instead.  (default false)
 .lp "BIOS    "
 Use BIOS calls to update the screen

@@ -120,7 +120,7 @@ lookat(x, y, buf, monbuf)
 		int ways_seen = 0, normal = 0, xraydist;
 		boolean useemon = (boolean) canseemon(mtmp);
 
-		xraydist = u.xray_range * u.xray_range;
+		xraydist = (u.xray_range<0) ? -1 : u.xray_range * u.xray_range;
 		/* normal vision */
 		if ((mtmp->wormno ? worm_known(mtmp) : cansee(mtmp->mx, mtmp->my)) &&
 			mon_visible(mtmp) && !mtmp->minvis) {
