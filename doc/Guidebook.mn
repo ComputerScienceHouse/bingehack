@@ -691,6 +691,8 @@ letter of the command.
 .\" on the Amiga set the {\it altmeta\/} option to get this behavior.
 In NT, OS/2, and PC NetHack, the `Alt' key
 can be used in this fashion.
+.lp M-2
+#twoweapon
 .lp M-a
 #adjust
 .lp M-c

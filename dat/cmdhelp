@@ -97,6 +97,7 @@ Z       Zap (cast) a spell
 $       Count your gold
 +       List known spells
 #       Perform an extended command
+M-2     Toggle two-weapon combat
 M-a     Adjust inventory letters
 M-c     Talk to someone
 M-d     Dip an object into something
