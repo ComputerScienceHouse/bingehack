@@ -1333,7 +1333,7 @@ struct monst *mtmp;
 		    /* Okay, _you_ write this without repeating the code */
 		    otmp2 = mksobj(confused ? ROCK : BOULDER,
 				FALSE, FALSE);
-		    if (!otmp2) break;
+		    if (!otmp2) goto xxx_noobj;  /* Shouldn't happen */
 		    otmp2->quan = confused ? rn1(5,2) : 1;
 		    otmp2->owt = weight(otmp2);
 		    if (!amorphous(youmonst.data) &&
@@ -1360,9 +1360,10 @@ struct monst *mtmp;
 		    }
 		    if (dmg) losehp(dmg, "scroll of earth", KILLED_BY_AN);
 		}
+	    xxx_noobj:
 
+		return (mtmp->mhp <= 0) ? 1 : 2;
 	    }
-	    break;
 #if 0
 	case MUSE_SCR_FIRE:
 	      {
