@@ -3,24 +3,40 @@ Buglist: actual bugs that may get fixed someday
 -----------------------------------------------------------------------------
 
 =============================================================================
-An additional "[horsename] is caught in bear trap!" message is displayed,
-if caught in beartrap while riding and you unmount 
-[eino.keskitalo@purkki.mbnet.fi]
- 
-Releasing your pet from a bear trap by displacing is silly.
-[eino.keskitalo@purkki.mbnet.fi]
+Bars (and prisoners?) for the Dark One's dungeon? 
+[psmith@spod-central.org]
 
-Potion of paralyzation's "Your feet are frozen to the floor" seems
-redundant while riding. Also, the steed might want to wander about
-when (of course the knight's well-trained pony wouldn't)
+Yanked towards water with grappling hook but don't fall in?
+[psmith@spod-central.org]
+
+Spellbook gifts from pleased gods should check restrictions.
+[psmith@spod-central.org]
+
+Crysknives in containers not reverting. [psmith@spod-central.org]
+
+Drain life requires you to reach floor to wipe an engraving.
+[psmith@spod-central.org]
+
+Orc monsters should be given poison res? [psmith@spod-central.org]
+
+Ice vortices and freezing spheres should be infravisible. 
+[psmith@spod-central.org]
+
+Ninja monsters should get multishot bonuses with yumi-ya? 
+[psmith@spod-central.org]
+
+Chromatic Dragon should have reflection? [psmith@spod-central.org]
+
+stone-to-flesh monsters' inventory? [psmith@spod-central.org]
+
+A-removing armour under cursed stuff fails silently. [psmith@spod-central.org]
+
+Releasing your pet from a bear trap by displacing is silly.
 [eino.keskitalo@purkki.mbnet.fi]
 
 A monkey can steal a banded mail you are wearing, whereas a nymph
 has to get you to remove it first.  The monkey should not be able
 to do so. [eino.keskitalo@purkki.mbnet.fi]
-
-A cloud of sleeping gas (trap) etc could treat the rider and the steed
-separately. [eino.keskitalo@purkki.mbnet.fi]
 
 A camera flash stops at an invisible monster, yet it is not clear just what
 this looks like (a beam stopping in mid-air?  A camera flash wouldn't really
@@ -205,11 +221,21 @@ Riding bugs:
    -Wounded legs are considered an unfixable unicorn horn trouble.
    -Pick-axing while fumbling can cause wounded legs.
    -Quaffing a noncursed potion of speed heals the steed's wounded legs.
+   -Falling/being thrown from steed doesn't incur usual wounded-legs DEX hit.
 -- Because wounded leg damage is unconditionally cleared when dismounting,
    it is possible to abuse that and heal leg damage by going on and off
    your steed.
 -- Fumbling when riding causes *you* to trip and fall.
--- Nymphs can steal your saddle, but leave you riding.
+-- An additional "[horsename] is caught in bear trap!" message is displayed,
+   if caught in beartrap while riding and you unmount 
+   [eino.keskitalo@purkki.mbnet.fi]
+-- Potion of paralyzation's "Your feet are frozen to the floor" seems
+   redundant while riding. Also, the steed might want to wander about
+   when (of course the knight's well-trained pony wouldn't)
+   [eino.keskitalo@purkki.mbnet.fi]
+-- A cloud of sleeping gas (trap) etc could treat the rider and the steed
+   separately. [eino.keskitalo@purkki.mbnet.fi]
+
 
 Platform specific bugs:
 -----------------------
