@@ -97,8 +97,6 @@ static boolean FDECL(write_maze, (int,specialmaze *));
 static boolean FDECL(write_rooms, (int,splev *));
 static void NDECL(init_obj_classes);
 
-int bases[MAXOCLASSES];
-
 static struct {
 	const char *name;
 	int type;
