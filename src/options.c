@@ -1777,7 +1777,6 @@ doset()
 	menu_item *pick_list;
 	int indexoffset, startpass, endpass;
 	boolean setinitial = FALSE, fromfile = FALSE;
-	int npasses = 2;
 	int biggest_name = 0;
 
 	tmpwin = create_nhwindow(NHW_MENU);
@@ -1808,8 +1807,8 @@ doset()
 		}
 
 	boolcount = i;
+	indexoffset = boolcount;
 	any.a_void = 0;
-	indexoffset = 0;
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, "", MENU_UNSELECTED);
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE,
 		 "Compounds (selecting will prompt for new value):",
@@ -1822,23 +1821,21 @@ doset()
            and adjust the format string accordingly if needed */
 	biggest_name = 0;
 	for (i = 0; compopt[i].name; i++)
-		if (compopt[i].optflags >= startpass &&
+		if (compopt[i].optflags >= startpass && compopt[i].optflags <= endpass &&
 		    strlen(compopt[i].name) > (unsigned) biggest_name)
 			biggest_name = (int) strlen(compopt[i].name);
 	if (biggest_name > 30) biggest_name = 30;
 	Sprintf(fmtstr_doset_add_menu, "%%s%%-%ds [%%s]", biggest_name);
 
 	/* deliberately put `name', `role', `race', `gender' first */
-	doset_add_menu(tmpwin, "name", indexoffset);
-	doset_add_menu(tmpwin, "role", indexoffset);
-	doset_add_menu(tmpwin, "race", indexoffset);
-	doset_add_menu(tmpwin, "gender", indexoffset);
+	doset_add_menu(tmpwin, "name", 0);
+	doset_add_menu(tmpwin, "role", 0);
+	doset_add_menu(tmpwin, "race", 0);
+	doset_add_menu(tmpwin, "gender", 0);
 
-	npasses = (endpass + 1) - startpass;
 	for (pass = startpass; pass <= endpass; pass++) 
 	    for (i = 0; compopt[i].name; i++)
-		if (compopt[i].optflags >= startpass
-		    && (compopt[i].optflags == pass || npasses == 1)) {
+		if (compopt[i].optflags == pass) {
  		    	if (!strcmp(compopt[i].name, "name") ||
 		    	    !strcmp(compopt[i].name, "role") ||
 		    	    !strcmp(compopt[i].name, "race") ||
@@ -1846,8 +1843,7 @@ doset()
 		    	    	continue;
 		    	else
 				doset_add_menu(tmpwin, compopt[i].name,
-					(pass == DISP_IN_GAME) ?
-					indexoffset : boolcount);
+					(pass == DISP_IN_GAME) ? 0 : indexoffset);
 		}
 	end_menu(tmpwin, "Set what options?");
 	need_redraw = FALSE;
@@ -1869,8 +1865,8 @@ doset()
 		    /* compound option */
 		    opt_indx -= boolcount;
 
-		    if (!special_handling(compopt[opt_indx].name, setinitial,
-								fromfile)) {
+		    if (!special_handling(compopt[opt_indx].name,
+							setinitial, fromfile)) {
 			Sprintf(buf, "Set %s to what?", compopt[opt_indx].name);
 			getlin(buf, buf2);
 			Sprintf(buf, "%s:%s", compopt[opt_indx].name, buf2);
