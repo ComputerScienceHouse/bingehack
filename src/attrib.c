@@ -624,8 +624,8 @@ newhp()
 	    }
 	}
 
-	if (ACURR(A_CON) <= 5) conplus = -2;
-	else if (ACURR(A_CON) == 6) conplus = -1;
+	if (ACURR(A_CON) <= 3) conplus = -2;
+	else if (ACURR(A_CON) <= 6) conplus = -1;
 	else if (ACURR(A_CON) <= 14) conplus = 0;
 	else if (ACURR(A_CON) <= 16) conplus = 1;
 	else if (ACURR(A_CON) == 17) conplus = 2;
