@@ -320,10 +320,12 @@ char roomno;
 {
 	register struct monst *mtmp;
 
-	for(mtmp = fmon; mtmp; mtmp = mtmp->nmon)
+	for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+	    if (DEADMONSTER(mtmp)) continue;
 	    if(mtmp->ispriest && (EPRI(mtmp)->shroom == roomno) &&
 	       histemple_at(mtmp,mtmp->mx,mtmp->my))
 		return(mtmp);
+	}
 	return (struct monst *)0;
 }
 
@@ -674,7 +676,7 @@ clearpriests()
 
     for(mtmp = fmon; mtmp; mtmp = mtmp2) {
 	mtmp2 = mtmp->nmon;
-	if (mtmp->ispriest && !on_level(&(EPRI(mtmp)->shrlevel), &u.uz))
+	if (!DEADMONSTER(mtmp) && mtmp->ispriest && !on_level(&(EPRI(mtmp)->shrlevel), &u.uz))
 	    mongone(mtmp);
     }
 }

@@ -166,7 +166,7 @@ update_mlstmv()
 	/* monst->mlstmv used to be updated every time `monst' actually moved,
 	   but that is no longer the case so we just do a blanket assignment */
 	for (mon = fmon; mon; mon = mon->nmon)
-	    mon->mlstmv = monstermoves;
+	    if (!DEADMONSTER(mon)) mon->mlstmv = monstermoves;
 }
 
 void
@@ -429,6 +429,7 @@ boolean pets_only;	/* true for ascension or final escape */
 
 	for (mtmp = fmon; mtmp; mtmp = mtmp2) {
 	    mtmp2 = mtmp->nmon;
+	    if (DEADMONSTER(mtmp)) continue;
 	    if (pets_only && !mtmp->mtame) continue;
 	    if (((monnear(mtmp, u.ux, u.uy) && levl_follower(mtmp)) ||
 #ifdef STEED

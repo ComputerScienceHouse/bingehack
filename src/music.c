@@ -65,6 +65,7 @@ int distance;
 	register int distm;
 
 	while(mtmp) {
+	    if (!DEADMONSTER(mtmp)) {
 		distm = distu(mtmp->mx, mtmp->my);
 		if (distm < distance) {
 		    mtmp->msleeping = 0;
@@ -75,7 +76,8 @@ int distance;
 			    !resist(mtmp, SCROLL_CLASS, 0, NOTELL))
 			mtmp->mflee = 1;
 		}
-		mtmp = mtmp->nmon;
+	    }
+	    mtmp = mtmp->nmon;
 	}
 }
 
@@ -90,7 +92,7 @@ int distance;
 	register struct monst *mtmp = fmon;
 
 	while(mtmp) {
-		if (distu(mtmp->mx, mtmp->my) < distance &&
+		if (!DEADMONSTER(mtmp) && distu(mtmp->mx, mtmp->my) < distance &&
 			sleep_monst(mtmp, d(10,10), WAND_CLASS)) {
 		    mtmp->msleeping = 1; /* 10d10 turns + wake_nearby to rouse */
 		    slept_monst(mtmp);
@@ -111,7 +113,7 @@ int distance;
 	int could_see_mon, was_peaceful;
 
 	while (mtmp) {
-	    if (mtmp->data->mlet == S_SNAKE && mtmp->mcanmove &&
+	    if (!DEADMONSTER(mtmp) && mtmp->data->mlet == S_SNAKE && mtmp->mcanmove &&
 		    distu(mtmp->mx, mtmp->my) < distance) {
 		was_peaceful = mtmp->mpeaceful;
 		mtmp->mpeaceful = 1;
@@ -143,7 +145,7 @@ int distance;
 	register struct monst *mtmp = fmon;
 
 	while (mtmp) {
-	    if (mtmp->data->mlet == S_NYMPH && mtmp->mcanmove &&
+	    if (!DEADMONSTER(mtmp) && mtmp->data->mlet == S_NYMPH && mtmp->mcanmove &&
 		    distu(mtmp->mx, mtmp->my) < distance) {
 		mtmp->msleeping = 0;
 		mtmp->mpeaceful = 1;
@@ -164,7 +166,8 @@ awaken_soldiers()
 	register struct monst *mtmp = fmon;
 
 	while(mtmp) {
-	    if (is_mercenary(mtmp->data) && mtmp->data != &mons[PM_GUARD]) {
+	    if (!DEADMONSTER(mtmp) &&
+			is_mercenary(mtmp->data) && mtmp->data != &mons[PM_GUARD]) {
 		mtmp->mpeaceful = mtmp->msleeping = mtmp->mfrozen = 0;
 		mtmp->mcanmove = 1;
 		if (canseemon(mtmp))
@@ -186,9 +189,11 @@ int distance;
 
 	while(mtmp) {
 		mtmp2 = mtmp->nmon;
-		if (distu(mtmp->mx, mtmp->my) <= distance)
-		    if(!resist(mtmp, SCROLL_CLASS, 0, NOTELL))
-			(void) tamedog(mtmp, (struct obj *) 0);
+		if (!DEADMONSTER(mtmp)) {
+			if (distu(mtmp->mx, mtmp->my) <= distance)
+			    if(!resist(mtmp, SCROLL_CLASS, 0, NOTELL))
+				(void) tamedog(mtmp, (struct obj *) 0);
+		}
 		mtmp = mtmp2;
 	}
 

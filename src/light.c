@@ -225,7 +225,7 @@ unsigned fmflags;
 	    return &youmonst;
 	if (fmflags & FM_FMON)
 		for (mtmp = fmon; mtmp; mtmp = mtmp->nmon)
-		    if (mtmp->m_id == nid) return mtmp;
+		    if (!DEADMONSTER(mtmp) && mtmp->m_id == nid) return mtmp;
 	if (fmflags & FM_MIGRATE)
 		for (mtmp = migrating_mons; mtmp; mtmp = mtmp->nmon)
 	    	    if (mtmp->m_id == nid) return mtmp;

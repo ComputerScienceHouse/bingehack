@@ -79,7 +79,7 @@ amulet()
 		return;
 	/* find Wizard, and wake him if necessary */
 	for(mtmp = fmon; mtmp; mtmp = mtmp->nmon)
-	    if (mtmp->iswiz && mtmp->msleeping && !rn2(40)) {
+	    if (!DEADMONSTER(mtmp) && mtmp->iswiz && mtmp->msleeping && !rn2(40)) {
 		mtmp->msleeping = 0;
 		if (distu(mtmp->mx,mtmp->my) > 2)
 		    You(
@@ -174,6 +174,7 @@ other_mon_has_arti(mtmp, otyp)
 	register struct monst *mtmp2;
 
 	for(mtmp2 = fmon; mtmp2; mtmp2 = mtmp2->nmon)
+	    /* no need for !DEADMONSTER check here since they have no inventory */
 	    if(mtmp2 != mtmp)
 		if(mon_has_arti(mtmp2, otyp)) return(mtmp2);
 
@@ -365,13 +366,14 @@ aggravate()
 {
 	register struct monst *mtmp;
 
-	for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+	for(mtmp = fmon; mtmp; mtmp = mtmp->nmon)
+	    if (!DEADMONSTER(mtmp)) {
 		mtmp->msleeping = 0;
 		if(!mtmp->mcanmove && !rn2(5)) {
 			mtmp->mfrozen = 0;
 			mtmp->mcanmove = 1;
 		}
-	}
+	    }
 }
 
 void

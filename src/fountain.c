@@ -156,7 +156,8 @@ xchar x, y;
 			levl[x][y].looted |= F_WARNED;
 			/* Warn about future fountain use. */
 			for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
-			    if((mtmp->data == &mons[PM_WATCHMAN] ||
+			    if (DEADMONSTER(mtmp)) continue;
+			    if ((mtmp->data == &mons[PM_WATCHMAN] ||
 				mtmp->data == &mons[PM_WATCH_CAPTAIN]) &&
 			       couldsee(mtmp->mx, mtmp->my) &&
 			       mtmp->mpeaceful) {
@@ -314,6 +315,7 @@ drinkfountain()
 
 			pline("This water gives you bad breath!");
 			for(mtmp = fmon; mtmp; mtmp = mtmp->nmon)
+			    if(!DEADMONSTER(mtmp))
 				mtmp->mflee = 1;
 			}
 			break;

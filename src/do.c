@@ -1173,7 +1173,7 @@ boolean at_stairs, falling, portal;
 		You("penetrated a high security area!");
 		pline("An alarm sounds!");
 		for(mtmp = fmon; mtmp; mtmp = mtmp->nmon)
-		    if (mtmp->msleeping) mtmp->msleeping = 0;
+		    if (!DEADMONSTER(mtmp) && mtmp->msleeping) mtmp->msleeping = 0;
 	}
 
 	if (on_level(&u.uz, &astral_level))
@@ -1199,7 +1199,7 @@ final_level()
 
 	/* reset monster hostility relative to player */
 	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon)
-	    reset_hostility(mtmp);
+	    if (!DEADMONSTER(mtmp)) reset_hostility(mtmp);
 
 	/* create some player-monsters */
 	create_mplayers(rn1(4, 3), TRUE);

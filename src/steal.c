@@ -76,6 +76,7 @@ stealarm()
 	    if(otmp->o_id == stealoid) {
 		for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
 		    if(mtmp->m_id == stealmid) {
+			if(DEADMONSTER(mtmp)) impossible("stealarm(): dead monster stealing"); 
 			if(!dmgtype(mtmp->data, AD_SITM)) /* polymorphed */
 			    goto botm;
 			if(otmp->unpaid)

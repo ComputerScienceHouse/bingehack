@@ -310,6 +310,7 @@ struct obj *obj;
 		You(whistle_str, Hallucination ? "normal" : "strange");
 		for(mtmp = fmon; mtmp; mtmp = nextmon) {
 		    nextmon = mtmp->nmon; /* trap might kill mon */
+		    if (DEADMONSTER(mtmp)) continue;
 		    if (mtmp->mtame) {
 			if (mtmp->mtrapped) {
 			    /* no longer in previous trap (affects mintrap) */
@@ -475,7 +476,8 @@ next_to_u()
 	register struct monst *mtmp;
 	register struct obj *otmp;
 
-	for(mtmp = fmon; mtmp; mtmp = mtmp->nmon)
+	for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+		if (DEADMONSTER(mtmp)) continue;
 		if(mtmp->mleashed) {
 			if (distu(mtmp->mx,mtmp->my) > 2) mnexto(mtmp);
 			if (distu(mtmp->mx,mtmp->my) > 2) {
@@ -490,6 +492,7 @@ next_to_u()
 				}
 			}
 		}
+	}
 	return(TRUE);
 }
 
@@ -506,9 +509,9 @@ register xchar x, y;
 	for(otmp = invent; otmp; otmp = otmp->nobj)
 	    if(otmp->otyp == LEASH && otmp->leashmon != 0) {
 		while(mtmp) {
-		    if((int)mtmp->m_id == otmp->leashmon &&
+		    if(!DEADMONSTER(mtmp) && ((int)mtmp->m_id == otmp->leashmon &&
 			    (dist2(u.ux,u.uy,mtmp->mx,mtmp->my) >
-				dist2(x,y,mtmp->mx,mtmp->my))
+				dist2(x,y,mtmp->mx,mtmp->my)))
 			) {
 			if(otmp->cursed && !breathless(mtmp->data)) {
 			    if(um_dist(mtmp->mx, mtmp->my, 5)) {

@@ -128,7 +128,7 @@ fightm(mtmp)		/* have monsters fight each other */
 	     * happen if the monster attacked a cockatrice bare-handedly, for
 	     * instance.
 	     */
-	    if(mon != mtmp && mon->mhp > 0) {
+	    if(mon != mtmp && !DEADMONSTER(mon)) {
 		if(monnear(mtmp,mon->mx,mon->my)) {
 		    if(!u.uswallow && (mtmp == u.ustuck)) {
 			if(!rn2(4)) {

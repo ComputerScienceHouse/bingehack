@@ -238,7 +238,7 @@ raise_dead:
     } else if(book2->blessed) {
 	for(mtmp = fmon; mtmp; mtmp = mtmp2) {
 	    mtmp2 = mtmp->nmon;		/* tamedog() changes chain */
-	    if(is_undead(mtmp->data) && cansee(mtmp->mx, mtmp->my)) {
+	    if(!DEADMONSTER(mtmp) && is_undead(mtmp->data) && cansee(mtmp->mx, mtmp->my)) {
 		mtmp->mpeaceful = TRUE;
 		if(sgn(mtmp->data->maligntyp) == sgn(u.ualign.type)
 		   && distu(mtmp->mx, mtmp->my) < 4)

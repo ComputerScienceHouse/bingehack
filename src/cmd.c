@@ -1331,6 +1331,7 @@ contained(win, src, total_count, total_size)
 	count_obj(fobj, &count, &size, FALSE, TRUE);
 	count_obj(level.buriedobjlist, &count, &size, FALSE, TRUE);
 	count_obj(migrating_objs, &count, &size, FALSE, TRUE);
+	/* DEADMONSTER check not required in this loop since they have no inventory */
 	for (mon = fmon; mon; mon = mon->nmon)
 	    count_obj(mon->minvent, &count, &size, FALSE, TRUE);
 	for (mon = migrating_mons; mon; mon = mon->nmon)

@@ -101,7 +101,7 @@ findgd()
 	register struct monst *mtmp;
 
 	for(mtmp = fmon; mtmp; mtmp = mtmp->nmon)
-	    if(mtmp->isgd && on_level(&(EGD(mtmp)->gdlevel), &u.uz))
+	    if(mtmp->isgd && !DEADMONSTER(mtmp) && on_level(&(EGD(mtmp)->gdlevel), &u.uz))
 		return(mtmp);
 	return((struct monst *)0);
 }

@@ -798,7 +798,8 @@ register struct obj	*sobj;
 	    {	register int ct = 0;
 		register struct monst *mtmp;
 
-		for(mtmp = fmon; mtmp; mtmp = mtmp->nmon)
+		for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+		    if (DEADMONSTER(mtmp)) continue;
 		    if(cansee(mtmp->mx,mtmp->my)) {
 			if(confused || sobj->cursed) {
 			    mtmp->mflee = mtmp->mfrozen = mtmp->msleeping = 0;
@@ -808,6 +809,7 @@ register struct obj	*sobj;
 				mtmp->mflee = 1;
 			if(!mtmp->mtame) ct++;	/* pets don't laugh at you */
 		    }
+		}
 		if(!ct)
 		      You_hear("%s in the distance.",
 			       (confused || sobj->cursed) ? "sad wailing" :
@@ -1381,6 +1383,7 @@ do_class_genocide()
 			    gonecnt = 0;
 			    for (mtmp = fmon; mtmp; mtmp = mtmp2) {
 				mtmp2 = mtmp->nmon;
+			    	if (DEADMONSTER(mtmp)) continue;
 				mongone(mtmp);
 				gonecnt++;
 			    }

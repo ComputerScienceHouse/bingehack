@@ -1389,6 +1389,7 @@ struct monst *mtmp;
 			if (Half_spell_damage) num = (num+1) / 2;
 			else losehp(num, "scroll of fire", KILLED_BY_AN);
 			for(mtmp2 = fmon; mtmp2; mtmp2 = mtmp2->nmon) {
+			   if(DEADMONSTER(mtmp2)) continue;
 			   if(mtmp == mtmp2) continue;
 			   if(dist2(mtmp2->mx,mtmp2->my,mtmp->mx,mtmp->my) < 3){
 				if (resists_fire(mtmp2)) continue;

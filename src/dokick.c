@@ -970,6 +970,7 @@ dumb:
 		}
 		if ((slev = Is_special(&u.uz)) && slev->flags.town)
 		  for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+		    if (DEADMONSTER(mtmp)) continue;
 		    if((mtmp->data == &mons[PM_WATCHMAN] ||
 			mtmp->data == &mons[PM_WATCH_CAPTAIN]) &&
 			couldsee(mtmp->mx, mtmp->my) &&
@@ -986,6 +987,7 @@ dumb:
 	    pline("WHAMMM!!!");
 	    if ((slev = Is_special(&u.uz)) && slev->flags.town)
 		for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+		    if (DEADMONSTER(mtmp)) continue;
 		    if ((mtmp->data == &mons[PM_WATCHMAN] ||
 				mtmp->data == &mons[PM_WATCH_CAPTAIN]) &&
 			    mtmp->mpeaceful && couldsee(mtmp->mx, mtmp->my)) {

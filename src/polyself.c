@@ -843,6 +843,7 @@ doconfuse()
 	flags.botl = 1;
 
 	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+	    if (DEADMONSTER(mtmp)) continue;
 	    if (canseemon(mtmp)) {
 		looked++;
 		if (Invis && !perceives(mtmp->data))
@@ -944,6 +945,8 @@ domindblast()
 		int u_sen;
 
 		nmon = mtmp->nmon;
+		if (DEADMONSTER(mtmp))
+			continue;
 		if (distu(mtmp->mx, mtmp->my) > BOLT_LIM * BOLT_LIM)
 			continue;
 		if(mtmp->mpeaceful)

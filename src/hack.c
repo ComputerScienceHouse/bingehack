@@ -1157,7 +1157,7 @@ int roomno;
 	register struct monst *mtmp;
 
 	for(mtmp = fmon; mtmp; mtmp = mtmp->nmon)
-		if(mtmp->data == mdat &&
+		if(!DEADMONSTER(mtmp) && mtmp->data == mdat &&
 		   index(in_rooms(mtmp->mx, mtmp->my, 0), roomno + ROOMOFFSET))
 			return(TRUE);
 	return(FALSE);
@@ -1380,7 +1380,7 @@ register boolean newlev;
 		}
 		if (rt == COURT || rt == SWAMP || rt == MORGUE || rt == ZOO)
 		    for(mtmp = fmon; mtmp; mtmp = mtmp->nmon)
-			if (!Stealth && !rn2(3)) mtmp->msleeping = 0;
+			if (!DEADMONSTER(mtmp) && !Stealth && !rn2(3)) mtmp->msleeping = 0;
 	    }
 	}
 

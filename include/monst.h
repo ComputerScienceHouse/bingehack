@@ -172,4 +172,6 @@ struct monst {
 #define MON_WEP(mon)	((mon)->mw)
 #define MON_NOWEP(mon)	((mon)->mw = (struct obj *)0)
 
+#define DEADMONSTER(mon)	((mon)->mhp < 1)
+
 #endif /* MONST_H */

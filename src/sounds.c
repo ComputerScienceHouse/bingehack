@@ -67,7 +67,8 @@ dosounds()
 		"Someone shouts \"Off with %s head!\"",
 		"Queen Beruthiel's cats!",
 	};
-	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon)
+	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+	    if (DEADMONSTER(mtmp)) continue;
 	    if ((mtmp->msleeping ||
 			is_lord(mtmp->data) || is_prince(mtmp->data)) &&
 		!is_animal(mtmp->data) &&
@@ -79,6 +80,7 @@ dosounds()
 		else		pline(throne_msg[2], his[flags.female]);
 		return;
 	    }
+	}
     }
     if (level.flags.has_swamp && !rn2(200)) {
 	static const char *swamp_msg[3] = {
@@ -133,7 +135,8 @@ dosounds()
 	return;
     }
     if (level.flags.has_beehive && !rn2(200)) {
-	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon)
+	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+	    if (DEADMONSTER(mtmp)) continue;
 	    if ((mtmp->data->mlet == S_ANT && is_flyer(mtmp->data)) &&
 		mon_in_room(mtmp, BEEHIVE)) {
 		switch (rn2(2)+hallu) {
@@ -150,9 +153,11 @@ dosounds()
 		}
 		return;
 	    }
+	}
     }
     if (level.flags.has_morgue && !rn2(200)) {
-	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon)
+	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+	    if (DEADMONSTER(mtmp)) continue;
 	    if (is_undead(mtmp->data) &&
 		mon_in_room(mtmp, MORGUE)) {
 		switch (rn2(2)+hallu) {
@@ -170,6 +175,7 @@ dosounds()
 		}
 		return;
 	    }
+	}
     }
     if (level.flags.has_barracks && !rn2(200)) {
 	static const char *barracks_msg[4] = {
@@ -180,7 +186,8 @@ dosounds()
 	};
 	int count = 0;
 
-	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon)
+	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+	    if (DEADMONSTER(mtmp)) continue;
 	    if (is_mercenary(mtmp->data) &&
 #if 0		/* don't bother excluding these */
 		!strstri(mtmp->data->mname, "watch") &&
@@ -192,6 +199,7 @@ dosounds()
 		You_hear(barracks_msg[rn2(3)+hallu]);
 		return;
 	    }
+	}
     }
     if (level.flags.has_zoo && !rn2(200)) {
 	static const char *zoo_msg[3] = {
@@ -199,12 +207,14 @@ dosounds()
 		"a sound reminiscent of a seal barking.",
 		"Doctor Doolittle!",
 	};
-	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon)
+	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+	    if (DEADMONSTER(mtmp)) continue;
 	    if ((mtmp->msleeping || is_animal(mtmp->data)) &&
 		    mon_in_room(mtmp, ZOO)) {
 		You_hear(zoo_msg[rn2(2)+hallu]);
 		return;
 	    }
+	}
     }
     if (level.flags.has_shop && !rn2(200)) {
 	if (!(sroom = search_special(ANY_SHOP))) {
@@ -226,7 +236,7 @@ dosounds()
     if (Is_oracle_level(&u.uz) && !rn2(400)) {
 	/* make sure the Oracle is still here */
 	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon)
-	    if (mtmp->data == &mons[PM_ORACLE])
+	    if (!DEADMONSTER(mtmp) && mtmp->data == &mons[PM_ORACLE])
 		break;
 	/* and don't produce silly effects when she's clearly visible */
 	if (mtmp && (hallu || !canseemon(mtmp))) {

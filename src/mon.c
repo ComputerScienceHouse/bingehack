@@ -392,6 +392,7 @@ mcalcdistress()
     struct monst *mtmp;
 
     for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+	if (DEADMONSTER(mtmp)) continue;
 	if (mtmp->mblinded && !--mtmp->mblinded)
 	    mtmp->mcansee = 1;
 	if (mtmp->mfrozen && !--mtmp->mfrozen)
@@ -431,7 +432,7 @@ movemon()
     for(mtmp = fmon; mtmp; mtmp = nmtmp) {
 	nmtmp = mtmp->nmon;
 	/* Find a monster that we have not treated yet.	 */
-	if(mtmp->movement < NORMAL_SPEED || mtmp->mhp <= 0)
+	if(mtmp->movement < NORMAL_SPEED || DEADMONSTER(mtmp))
 	    continue;
 
 	mtmp->movement -= NORMAL_SPEED;
@@ -1852,7 +1853,7 @@ register struct monst *mtmp;
 
 	    /* guardians will sense this attack even if they can't see it */
 	    for (mon = fmon; mon; mon = mon->nmon)
-		if (mon->data == q_guardian && mon->mpeaceful) {
+		if (!DEADMONSTER(mon) && mon->data == q_guardian && mon->mpeaceful) {
 		    mon->mpeaceful = 0;
 		    if (canseemon(mon)) ++got_mad;
 		}
@@ -1881,7 +1882,7 @@ wake_nearby()
 	register struct monst *mtmp;
 
 	for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
-	    if (distu(mtmp->mx,mtmp->my) < u.ulevel*20) {
+	    if (!DEADMONSTER(mtmp) && distu(mtmp->mx,mtmp->my) < u.ulevel*20) {
 		mtmp->msleeping = 0;
 		if (mtmp->mtame) EDOG(mtmp)->whistletime = moves;
 	    }
@@ -1896,7 +1897,7 @@ register int x, y, distance;
 	register struct monst *mtmp;
 
 	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
-	    if (mtmp->msleeping && (distance == 0 ||
+	    if (!DEADMONSTER(mtmp) && mtmp->msleeping && (distance == 0 ||
 				 dist2(mtmp->mx, mtmp->my, x, y) < distance))
 		mtmp->msleeping = 0;
 	}
@@ -1928,6 +1929,7 @@ rescham()
 	int mcham;
 
 	for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+		if (DEADMONSTER(mtmp)) continue;
 		mcham = (int) mtmp->cham;
 		if (mcham) {
 			mtmp->cham = CHAM_ORDINARY;
@@ -1951,6 +1953,7 @@ restartcham()
 	register struct monst *mtmp;
 
 	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+		if (DEADMONSTER(mtmp)) continue;
 		mtmp->cham = pm_to_cham(monsndx(mtmp->data));
 		if (mtmp->data->mlet == S_MIMIC && mtmp->msleeping &&
 				cansee(mtmp->mx, mtmp->my)) {
@@ -2342,6 +2345,7 @@ kill_genocided_monsters()
 	 */
 	for (mtmp = fmon; mtmp; mtmp = mtmp2) {
 	    mtmp2 = mtmp->nmon;
+	    if (DEADMONSTER(mtmp)) continue;
 	    mndx = monsndx(mtmp->data);
 	    if ((mvitals[mndx].mvflags & G_GENOD) || kill_cham[mtmp->cham]) {
 		if (mtmp->cham && !kill_cham[mtmp->cham])
@@ -2403,6 +2407,7 @@ register boolean silent;
 	register int ct = 0, nct = 0, sct = 0, slct = 0;
 
 	for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+		if (DEADMONSTER(mtmp)) continue;
 		if((mtmp->data == &mons[PM_WATCHMAN] ||
 			       mtmp->data == &mons[PM_WATCH_CAPTAIN])
 					&& mtmp->mpeaceful) {
@@ -2442,6 +2447,7 @@ pacify_guards()
 	register struct monst *mtmp;
 
 	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+	    if (DEADMONSTER(mtmp)) continue;
 	    if (mtmp->data == &mons[PM_WATCHMAN] ||
 		mtmp->data == &mons[PM_WATCH_CAPTAIN])
 	    mtmp->mpeaceful = 1;

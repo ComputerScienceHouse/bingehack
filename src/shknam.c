@@ -309,10 +309,9 @@ const char *nlp[];
 		    shname = shk->female ? "Lucrezia" : "Dirk";
 		}
 
-		/* is name already is use on this level? */
+		/* is name already in use on this level? */
 		for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
-		    if (mtmp == shk) continue;
-		    if (!mtmp->isshk) continue;
+		    if (DEADMONSTER(mtmp) || (mtmp == shk) || !mtmp->isshk) continue;
 		    if (strcmp(ESHK(mtmp)->shknam, shname)) continue;
 		    break;
 		}
