@@ -1101,7 +1101,12 @@ has had to resort to magic and wizardry in order to forge the alliance.
 Once you do have the beast under your control however, you can
 easily climb in and out of the saddle with the `{\tt \#ride}' command. Lead
 the beast around the dungeon when riding, in the same manner as
-you would move yourself. It is the beast that you will see.
+you would move yourself. It is the beast that you will see displayed
+on the map.
+
+%.pg
+Riding skill is managed by the `{\tt \#enhance}' command.  See the section
+on Weapon proficiency for more information about that.
 
 %.hn 2
 \subsection*{Bones levels}
@@ -1210,42 +1215,144 @@ bare hands than they do with weapons.
 %.pg
 There are wielded weapons, like maces and swords, and thrown weapons,
 like arrows and spears.  To hit monsters with a weapon, you must wield it and
-attack them, or throw it at them.  You can simply select to throw a spear.
+attack them, or throw it at them.  You can simply elect to throw a spear.
 To shoot an arrow, you should first wield a bow, then throw the arrow.
 Crossbows shoot crossbow bolts.  Slings hurl rocks and (other) stones
-(like gems).  You can wield only one weapon at a time, but you can change
-weapons unless you're wielding a cursed one.
-To switch to bare hands, wield `{\tt -}', or use the `{\tt A}' command which
+(like gems).
+
+%.pg
+Enchanted weapons have a ``plus'' (or ``to hit enhancement'' which can be
+either positive or negative) that adds to your chance to
+hit and the damage you do to a monster.  The only way to determine a weapon's
+enchantment is to have it magically identified somehow.
+Most weapons are subject to some type of damage like rust.  Such
+``erosion'' damage can be repaired.
+
+%.pg
+The chance that an attack will successfully hit a monster, and the amount
+of damage such a hit will do, depends upon many factors.  Among them are:
+type of weapon, quality of weapon (enchantment and/or erosion), experience
+level, strength, dexterity, encumbrance, and proficiency (see below).  The
+monster's armor class---a general defense rating, not necessarily due to
+wearing of armor---is a factor too; also, some monsters are particularly
+vulnerable to certain types of weapons.
+
+%.pg
+Many weapons can be wielded in one hand; some require both hands.
+When wielding a two-handed weapon, you can not wear a shield, and
+vice versa.  When wielding a one-handed weapon, you can have another
+weapon ready to use by setting things up with the `{\tt x}' command, which
+exchanges your primary (the one being wielded) and secondary weapons.
+And if you have proficiency in the ``two weapon combat'' skill, you
+may wield both primary and secondary weapons simultaneously; use the
+`{\tt \#twoweapon}' extended command to engage or disengage that.  Only
+some types of characters (barbarians, for instance), have the necessary
+skill available.  Even with that skill, using two weapons at once incurs
+a penalty in the chance to hit your target compared to using just one
+weapon at a time.
+
+%.pg
+There might be times when you'd rather not wield any weapon at all.
+To accomplish that, wield `{\tt -}', or else use the `{\tt A}' command which
 allows you to unwield the current weapon in addition to taking off
 other worn items.
 
 %.pg
-The ``{\tt \#enhance}'' command deals with your
-proficiency in various types of weapons (also spells).
-
-%.pg
-Enchanted weapons have a ``plus'' (or ``to hit enhancement'' which can be
-either positive or negative) that adds or subtracts to/from your chance to
-hit and the damage you do to a monster.  The only way to determine a weapon's
-enchantment is to have it magically identified somehow.
-
-%.pg
-Most weapons are subject to some type of damage like rust.  Such
-damage can be repaired.
-
-%.pg
 Those of you in the audience who are AD\&D players, be aware that each
-weapon which exists in AD\&D does the same damage to monsters in
+weapon which exists in AD\&D does roughly the same damage to monsters in
 {\it NetHack}.  Some of the more obscure weapons (such as the %
 {\it aklys}, {\it lucern hammer}, and {\it bec-de-corbin\/}) are defined
 in an appendix to {\it Unearthed Arcana}, an AD\&D supplement.
 
 %.pg
-The commands to use weapons are `{\tt w}' (wield), `{\tt t}' (throw), and
-the ``{\tt \#enhance}'' extended command.    The `{\tt Q}' (quiver) and
-`{\tt f}' (fire) commands are convenient for throwing a stack of objects
-(such as arrows).  You may use two-weapon combat with the `{\tt x}'
-(exchange) and ``{\tt \#twoweapon}'' commands.
+The commands to use weapons are `{\tt w}' (wield), `{\tt t}' (throw),
+`{\tt f}' (fire, an alternative way of throwing), `{\tt Q}' (quiver),
+`{\tt x}' (exchange), `{\tt \#twoweapon}', and `{\tt \#enhance}' (see below).
+
+%.hn 3
+\subsection*{Throwing and shooting}
+
+%.pg
+You can throw just about anything via the `{\tt t}' command.  It will prompt
+for the item to throw; picking `{\tt ?}' will list things in your inventory
+which are considered likely to be thrown, or picking `{\tt *}' will list
+your entire inventory.  After you've chosen what to throw, you will
+be prompted for a direction rather than for a specific target.  The
+distance something can be thrown depends mainly on the type of object
+and your strength.  Arrows can be thrown by hand, but can be thrown
+much farther and will be more likely to hit when thrown while you are
+wielding a bow.
+
+%.pg
+You can simplify the throwing operation by using the `{\tt Q}' command to
+select your preferred ``missile'', then using the `{\tt f}' command to
+throw it.  You'll be prompted for a direction as above, but you don't
+have to specify which item to throw each time you use `{\tt f}'.  There is
+also an option,
+{\it autoquiver},
+which has {\it NetHack\/} choose another item to automatically fill your
+quiver when the inventory slot used for `{\tt Q}' runs out.
+
+%.pg
+Some characters will throw multiple items in a single action.  Rangers,
+for instance, or anyone who achieves a high level of proficiency in
+the relevant weapon skill (in bow skill if you're wielding one to
+shoot arrows, or in sling skill if you're wielding one to shoot stones).
+There is little you can do
+to control this; if {\it NetHack\/} decides that you'll be shooting 3 arrows
+on the current shot, then three arrows will travel in the direction
+you've indicated, even if the first or second succeeds in killing the
+target.  You can explicitly limit the number of shots by using a numeric
+prefix before the `{\tt t}' or `{\tt f}' command.
+For example, ``{\tt 2f}'' (or ``{\tt n2f}'' if using
+{\it number\_pad\/}
+mode) would ensure that at most 2 arrows are shot
+even if {\it NetHack\/} decides that your skill warrants 3.  If you specify
+a larger number than would have been shot (``{\tt 4f}'' in this example),
+you'll just end up shooting the same number (3, here) as if no limit
+had been specified.
+
+%.hn 3
+\subsection*{Weapon proficiency}
+
+%.pg
+You will have varying degrees of skill in the weapons available.
+Weapon proficiency, or weapon skills, affect how well you can use
+particular types of weapons, and you'll be able to improve your skills
+as you progress through a game, depending on your role, your experience
+level, and use of the weapons.
+
+%.pg
+For the purposes of proficiency, weapons have
+been divided up into various groups such as daggers, broadswords, and
+polearms.  Each role has a limit on what level of proficiency a character
+can achieve for each group.  For instance, wizards can become highly
+skilled in daggers or staves but not in swords or bows.
+
+%.pg
+The `{\tt \#enhance}' extended command is used to review current weapons proficiency
+(also spell proficiency) and to choose which skill(s) to improve when
+you've used one or more skills enough to become eligible to do so.  The
+skill rankings are ``none'' (sometimes also referred to as ``restricted'',
+because you won't be able to advance), ``unskilled'', ``basic'', ``skilled'',
+and ``expert''.  Restricted skills simply will not appear in the list
+shown by `{\tt \#enhance}'.  (Divine intervention might unrestrict a particular
+skill, in which case it will start at unskilled and be limited to basic.)
+
+%.pg
+Use of a weapon in which you're restricted or unskilled
+will incur a modest penalty in the chance to hit a monster and also in
+the amount of damage done when you do hit; at basic level, there is no
+penalty or bonus; at skilled level, you receive a modest bonus in the
+chance to hit and amount of damage done; at expert level, the bonus is
+higher.  A successful hit has a chance to boost your training towards
+the next skill level (unless you've already reached the limit for this
+skill).  Once such training reaches the threshold for that next level,
+you'll be told that you feel more confident in your skills.  At that
+point can use `{\tt \#enhance}' to increase one or more skills.  Such skills
+are not increased automatically because there is a limit to your total
+overall skills, so you need to actively choose which skills to enhance
+and which to ignore.
 
 %.hn 2
 \subsection*{Armor (`{\tt [}')}
