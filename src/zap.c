@@ -1147,10 +1147,6 @@ poly_obj(obj, id)
 	if (is_damageable(otmp))
 	    otmp->oerodeproof = obj->oerodeproof;
 
-	/* reduce spellbook abuse */
-	if (obj->oclass == SPBOOK_CLASS)
-	    otmp->spestudied = obj->spestudied + 1;
-
 	/* Keep chest/box traps and poisoned ammo if we may */
 	if (obj->otrapped && Is_box(otmp)) otmp->otrapped = TRUE;
 
@@ -1178,7 +1174,9 @@ poly_obj(obj, id)
 				(can_merge && otmp->quan > (long)rn2(1000))))
 	    otmp->quan = 1L;
 
-	if (otmp->oclass == TOOL_CLASS) {
+	switch (otmp->oclass) {
+
+	case TOOL_CLASS:
 	    if (otmp->otyp == MAGIC_LAMP) {
 		otmp->otyp = OIL_LAMP;
 		otmp->age = 1500L;	/* "best" oil lamp possible */
@@ -1186,24 +1184,37 @@ poly_obj(obj, id)
 		otmp->recharged = 1;	/* degraded quality */
 	    }
 	    /* don't care about the recharge count of other tools */
-	}
+	    break;
 
-	if (otmp->oclass == WAND_CLASS) {
+	case WAND_CLASS:
 	    while (otmp->otyp == WAN_WISHING || otmp->otyp == WAN_POLYMORPH)
 		otmp->otyp = rnd_class(WAN_LIGHT, WAN_LIGHTNING);
 	    /* altering the object tends to degrade its quality
 	       (analogous to spellbook `read count' handling) */
 	    if ((int)otmp->recharged < rn2(7))	/* recharge_limit */
 		otmp->recharged++;
-	}
+	    break;
 
-	if (otmp->oclass == GEM_CLASS) {
+	case POTION_CLASS:
+	    while (otmp->otyp == POT_POLYMORPH)
+		otmp->otyp = rnd_class(POT_GAIN_ABILITY, POT_WATER);
+	    break;
+
+	case SPBOOK_CLASS:
+	    while (otmp->otyp == SPE_POLYMORPH)
+		otmp->otyp = rnd_class(SPE_DIG, SPE_BLANK_PAPER);
+	    /* reduce spellbook abuse */
+	    otmp->spestudied += 1;
+	    break;
+
+	case GEM_CLASS:
 	    if (otmp->quan > (long) rnd(4) &&
 		    objects[obj->otyp].oc_material == MINERAL &&
 		    objects[otmp->otyp].oc_material != MINERAL) {
 		otmp->otyp = ROCK;	/* transmutation backfired */
 		otmp->quan /= 2L;	/* some material has been lost */
 	    }
+	    break;
 	}
 
 	/* update the weight */
@@ -1317,7 +1328,10 @@ struct obj *obj, *otmp;
 	switch(otmp->otyp) {
 	case WAN_POLYMORPH:
 	case SPE_POLYMORPH:
-		if (obj_resists(obj, 5, 95)) {
+		if (obj->otyp == WAN_POLYMORPH ||
+			obj->otyp == SPE_POLYMORPH ||
+			obj->otyp == POT_POLYMORPH ||
+			obj_resists(obj, 5, 95)) {
 		    res = 0;
 		    break;
 		}

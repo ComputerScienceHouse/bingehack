@@ -1453,20 +1453,23 @@ dodip()
 		} else
 			if (get_wet(obj))
 			    goto poof;
-	} else if ((obj->otyp == POT_POLYMORPH || potion->otyp == POT_POLYMORPH)
-			&& obj->otyp != potion->otyp) {
-	    if (obj->oclass != POTION_CLASS ||
-	    	(obj->otyp == POT_POLYMORPH &&
-		 objects[potion->otyp].oc_name_known) ||
-	    	(potion->otyp == POT_POLYMORPH &&
-		 objects[obj->otyp].oc_name_known))
-	    	makeknown(POT_POLYMORPH);
- 
-	    /* KMH, conduct */
-	    u.uconduct.polypiles++;
- 
-	    poly_obj(obj, STRANGE_OBJECT);                
-	    useup(potion);
+	} else if (obj->otyp == POT_POLYMORPH ||
+		potion->otyp == POT_POLYMORPH) {
+	    /* some objects can't be polymorphed */
+	    if (obj->otyp == potion->otyp ||	/* both POT_POLY */
+		    obj->otyp == WAN_POLYMORPH ||
+		    obj->otyp == SPE_POLYMORPH ||
+		    obj_resists(obj->otyp == POT_POLYMORPH ?
+				potion : obj, 5, 95)) {
+		pline(nothing_happens);
+	    } else {
+		/* KMH, conduct */
+		u.uconduct.polypiles++;
+
+		poly_obj(obj, STRANGE_OBJECT);
+		makeknown(POT_POLYMORPH);
+		useup(potion);
+	    }
 	    return(1);
 	} else if(obj->oclass == POTION_CLASS && obj->otyp != potion->otyp) {
 		/* Mixing potions is dangerous... */
