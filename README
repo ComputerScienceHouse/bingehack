@@ -53,13 +53,13 @@ Please read items (1), (2) and (3) BEFORE doing anything with your new code.
     t.  A 'sys/winnt' subdirectory, which contains files specific to Windows NT.
     u.  A 'win' directory, which contains subdirectories for files that
         are windowing-system specific (but not operating-system specific).
-    v.  A 'win/Qt' subdirectory, which contains files specific to Qt.
-    w.  A 'win/share' subdirectory, which contains files shared by some
+    v.  A 'win/share' subdirectory, which contains files shared by some
         windowing systems.
-    x.  A 'win/tty' subdirectory, which contains files specific to ttys.
-    y.  A 'win/win32' subdirectory, which contains files specific to the
+    w.  A 'win/Qt' subdirectory, which contains files specific to Qt.
+    x.  A 'win/X11' subdirectory, which contains files specific to X11.
+    y.  A 'win/tty' subdirectory, which contains files specific to ttys.
+    z.  A 'win/win32' subdirectory, which contains files specific to the
         Windows NT Win32 API.
-    z.  A 'win/X11' subdirectory, which contains files specific to X11.
 
     The names of these directories should not be changed unless you are
     ready to go through the makefiles and the makedefs program and change
@@ -91,7 +91,6 @@ Please read items (1), (2) and (3) BEFORE doing anything with your new code.
     At the time of this release, NetHack 3.3 is known to run/compile on:
 
         Apple Macintosh running MacOS 7.5 or higher, LinuxPPC, BeOS 4.0
-        AT&T 3B1 running System V (3.51)
         DEC Alpha/VMS (aka OpenVMS AXP), running V1.x through V7.0
         DEC VAX/VMS, running V4.6 through V7.0
         HP 9000s700 running HP-UX 10.x, 11.x
@@ -109,6 +108,7 @@ Please read items (1), (2) and (3) BEFORE doing anything with your new code.
     and we expect that NetHack 3.3 will work on them as well:
 
         Atari ST/TT/Falcon running TOS (or MultiTOS) with GCC
+        AT&T 3B1 running System V (3.51)
         AT&T 3B2/600 & 3B2/622 running System V R3.2.1
         AT&T 3B2/1000 Model 80 running System V R3.2.2
         AT&T 3B4000 running System V
