@@ -45,7 +45,7 @@
  *  
  *  Implement the differentiation of character class or role from the
  *  character race.
- *  Removal of the Elf class, in perference to the Elf as a race.
+ *  Removal of the Elf class, in preference to the Elf as a race.
  *  Introduction of Dwarves, Elves, Gnomes and Orcs as distinct races in
  *  addition to the Human "norm".
  *  Addition of the Monk and Ranger classes.
