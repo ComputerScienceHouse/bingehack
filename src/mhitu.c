@@ -1734,7 +1734,7 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 			pline("%s doesn't look all that ugly.", Monnam(mtmp));
 		    break;
 		}
-		if(Reflecting && m_canseeu(mtmp) &&
+		if(Reflecting && mtmp->mcansee &&
 		   !mtmp->mcan && mtmp->data == &mons[PM_MEDUSA]) {
 		    if(!Blind) {
 		    	(void) ureflects("%s gaze is reflected by your %s.",
@@ -1742,6 +1742,12 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 		    	if (mon_reflects(mtmp,
 		    			"The gaze is reflected away by %s %s!"))
 		    	    break;
+			if (!m_canseeu(mtmp)) { /* probably you're invisible */
+			    pline("%s doesn't seem to notice that %s gaze was reflected.",
+				Monnam(mtmp),
+				his[pronoun_gender(mtmp)]);
+			    break;
+			}
 			pline("%s is turned to stone!", Monnam(mtmp));
 		    }
 		    stoned = TRUE;
@@ -1751,13 +1757,13 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 		    return 2;
 		}
 		if (canseemon(mtmp) && !Stone_resistance) {
-			You("look upon %s.", mon_nam(mtmp));
-			if(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))
-			    break;
-			You("turn to stone...");
-			killer_format = KILLED_BY;
-			killer = mons[PM_MEDUSA].mname;
-			done(STONING);
+		    You("meet %s gaze.", s_suffix(mon_nam(mtmp)));
+		    if(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))
+			break;
+		    You("turn to stone...");
+		    killer_format = KILLED_BY;
+		    killer = mons[PM_MEDUSA].mname;
+		    done(STONING);
 		}
 		break;
 	    case AD_CONF:

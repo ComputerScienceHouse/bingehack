@@ -1556,7 +1556,8 @@ struct monst *mtmp;
 		nomore(MUSE_POT_INVISIBILITY);
 		if(obj->otyp == POT_INVISIBILITY &&
 		    !mtmp->minvis && !mtmp->invis_blkd &&
-		    (!mtmp->mpeaceful || See_invisible)) {
+		    (!mtmp->mpeaceful || See_invisible) &&
+		    (mdat != &mons[PM_MEDUSA] || mtmp->mcan)) {
 			m.misc = obj;
 			m.has_misc = MUSE_POT_INVISIBILITY;
 		}
