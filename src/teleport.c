@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)teleport.c	3.3	1999/11/27	*/
+/*	SCCS Id: @(#)teleport.c	3.3	2000/02/19	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -607,16 +607,14 @@ level_tele()
 	    d_level lsav;
 
 	    /* set specific death location; this also suppresses bones */
-	    lsav.dnum = u.uz.dnum;	/* save current level, see below */
-	    lsav.dlevel = u.uz.dlevel;
+	    lsav = u.uz;	/* save current level, see below */
 	    u.uz.dnum = 0;	/* main dungeon */
-	    u.uz.dlevel = (newlev <= -10) ? -1 : 0;	/* heaven or surface */
+	    u.uz.dlevel = (newlev <= -10) ? -10 : 0;	/* heaven or surface */
 	    done(DIED);
 	    /* can only get here via life-saving (or declining to die in
 	       explore|debug mode); the hero has now left the dungeon... */
 	    escape_by_flying = "find yourself back on the surface";
-	    u.uz.dnum = lsav.dnum;	/* restore u.uz so escape code works */
-	    u.uz.dlevel = lsav.dlevel; 
+	    u.uz = lsav;	/* restore u.uz so escape code works */
 	}
 
 	/* calls done(ESCAPED) if newlevel==0 */
