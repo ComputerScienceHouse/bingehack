@@ -465,8 +465,10 @@ register struct monst *mtmp;
 		    pline_msg = "whines.";
 		else if (mtmp->mtame && EDOG(mtmp)->hungrytime > moves + 1000)
 		    pline_msg = "yips.";
-		else
-		    pline_msg = "barks.";
+		else {
+		    if (mtmp->data != &mons[PM_DINGO]);	/* dingos do not actually bark */
+			    pline_msg = "barks.";
+		}
 	    } else {
 		pline_msg = "growls.";
 	    }
