@@ -114,6 +114,7 @@ moverock()
 		else {
 		    if (Blind) feel_location(sx, sy);
 		    You_hear("a monster behind %s.", the(xname(otmp)));
+		    map_invisible(rx, ry);
 		}
 		if (flags.verbose)
 		    pline("Perhaps that's why %s cannot move it.",
@@ -232,6 +233,8 @@ moverock()
 	    }
 
 	    /* Move the boulder *after* the message. */
+	    if (glyph_is_invisible(levl[rx][ry].glyph))
+		unmap_object(rx, ry);
 	    movobj(otmp, rx, ry);	/* does newsym(rx,ry) */
 	    if (Blind) {
 		feel_location(rx,ry);
