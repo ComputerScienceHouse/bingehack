@@ -5,6 +5,8 @@
 #include "hack.h"
 #include "lev.h"	/* save & restore info */
 
+extern int n_dgns;		/* from dungeon.c */
+
 STATIC_DCL void NDECL(setgemprobs);
 STATIC_DCL void FDECL(shuffle,(int,int,BOOLEAN_P));
 STATIC_DCL void NDECL(shuffle_all);
@@ -45,8 +47,9 @@ STATIC_OVL void
 setgemprobs()
 {
 	register int j, first;
-	int lev = (ledger_no(&u.uz) > maxledgerno())
-				? maxledgerno() : ledger_no(&u.uz);
+	int lev = (n_dgns ? ((ledger_no(&u.uz) > maxledgerno())
+				? maxledgerno() : ledger_no(&u.uz))
+			  : 0);
 
 	first = bases[GEM_CLASS];
 
