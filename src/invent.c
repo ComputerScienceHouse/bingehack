@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)invent.c	3.3	1999/11/30	*/
+/*	SCCS Id: @(#)invent.c	3.3	1999/12/15	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -757,8 +757,9 @@ register const char *let,*word;
 		    )
 			foo--;
 		/* ugly check for unworn armor that can't be worn */
-		else if (!strcmp(word, "wear") && *let==ARMOR_CLASS &&
-		    !canwearobj(otmp,&dummymask,FALSE)) {
+		else if (!strcmp(word, "wear") && *let == ARMOR_CLASS &&
+			 otmp->oclass == ARMOR_CLASS &&
+			 !canwearobj(otmp, &dummymask, FALSE)) {
 			foo--;
 			allowall = TRUE;
 		}
@@ -905,7 +906,7 @@ register const char *let,*word;
 			    obj->otyp == LOADSTONE && obj->cursed)
 				otmp->corpsenm = obj->invlet;
 			if(otmp == uwep) setuwep(obj);
-			else if (otmp == uquiver) setuqwep(obj);                
+			else if (otmp == uquiver) setuqwep(obj);
 			if (otmp == uswapwep) setuswapwep(obj);
 		}
 	}
@@ -1885,7 +1886,7 @@ boolean force_touch;
 	    else
 			pline("Touching the %s corpse is a fatal mistake...",
 				mons[otmp->corpsenm].mname);
-		Sprintf(kbuf, "%s corpse", an(mons[otmp->corpsenm].mname));            
+		Sprintf(kbuf, "%s corpse", an(mons[otmp->corpsenm].mname));
 		instapetrify(kbuf);
 	}
 }

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)do_wear.c	3.3	1999/08/16	*/
+/*	SCCS Id: @(#)do_wear.c	3.3	1999/12/15	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1214,7 +1214,7 @@ boolean noisy;
 	    err++;
 	} else
 	    *mask = W_ARMC;
-    } else {
+    } else if (is_suit(otmp)) {
 	if (uarmc) {
 	    if (noisy) You("cannot wear armor over a cloak.");
 	    err++;
@@ -1223,6 +1223,12 @@ boolean noisy;
 	    err++;
 	} else
 	    *mask = W_ARM;
+    } else {
+	/* getobj can't do this after setting its allow_all flag; that
+	   happens if you have armor for slots that are covered up or
+	   extra armor for slots that are filled */
+	if (noisy) pline(silly_thing_to, "wear");
+	err++;
     }
 /* Unnecessary since now only weapons and special items like pick-axes get
  * welded to your hand, not armor
