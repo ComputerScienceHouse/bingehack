@@ -212,6 +212,8 @@ register int humidity;
 {
 	register int typ;
 
+	if (Is_waterlevel(&u.uz)) return TRUE;	/* accept any spot */
+
 	if (humidity & DRY) {
 	    typ = levl[x][y].typ;
 	    if (typ == ROOM || typ == AIR ||
