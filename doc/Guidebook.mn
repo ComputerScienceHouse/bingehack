@@ -1443,7 +1443,7 @@ OS/2, PC, and ST NetHack only).
 Name your starting cat (ex. ``catname:Morris'').
 Cannot be set with the `O' command.
 .lp character
-Pick your type of character (ex. ``character:Elf'');
+Pick your type of character (ex. ``character:Monk'');
 synonym for ``role''.  See ``name'' for an alternate method
 of specifying your role.  Normally only the first letter of
 the value is examined; the string ``random'' is an exception.
