@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mon.c	3.3	2000/07/14	*/
+/*	SCCS Id: @(#)mon.c	3.3	2000/07/24	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -404,6 +404,9 @@ struct monst *mon;
     return mmove;
 }
 
+/* actions that happen once per ``turn'', regardless of each
+   individual monster's metabolism; some of these might need to
+   be reclassified to occur more in proportion with movement rate */
 void
 mcalcdistress()
 {
@@ -411,12 +414,24 @@ mcalcdistress()
 
     for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
 	if (DEADMONSTER(mtmp)) continue;
+
+	/* regenerate hit points */
+	mon_regen(mtmp, FALSE);
+
+	/* possibly polymorph shapechangers and lycanthropes */
+	if (mtmp->cham && !rn2(6))
+	    (void) newcham(mtmp, (struct permonst *)0);
+	were_change(mtmp);
+
+	/* gradually time out temporary problems */
 	if (mtmp->mblinded && !--mtmp->mblinded)
 	    mtmp->mcansee = 1;
 	if (mtmp->mfrozen && !--mtmp->mfrozen)
 	    mtmp->mcanmove = 1;
 	if (mtmp->mfleetim && !--mtmp->mfleetim)
 	    mtmp->mflee = 0;
+
+	/* FIXME: mtmp->mlstmv ought to be updated here */
     }
 }
 
@@ -455,10 +470,6 @@ movemon()
 	/* Find a monster that we have not treated yet.	 */
 	if(DEADMONSTER(mtmp))
 	    continue;
-	/* Must polymorph chameleons here--otherwise they'd get stuck when
-	   they change into a form that doesn't have any movement */
-	if(mtmp->cham && !rn2(6))
-	    (void) newcham(mtmp, (struct permonst *)0);
 	if(mtmp->movement < NORMAL_SPEED)
 	    continue;
 

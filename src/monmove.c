@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)monmove.c	3.3	1999/12/03	*/
+/*	SCCS Id: @(#)monmove.c	3.3	2000/07/24	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -268,13 +268,7 @@ register struct monst *mtmp;
 
 /*	Pre-movement adjustments	*/
 
-	/* regenerate monsters */
-	mon_regen(mtmp, FALSE);
-
-	/* polymorph lycanthropes */
-	were_change(mtmp);
-
-	mdat = mtmp->data; /* after newcham and were_change */
+	mdat = mtmp->data;
 
 	if (mtmp->mstrategy & STRAT_ARRIVE) {
 	    int res = m_arrival(mtmp);
