@@ -1030,8 +1030,16 @@ const char *filename;
 		} else
 #endif
 		if ((fp = fopenp(filename, "r")) != (FILE *)0) {
-			configfile = filename;
-			return(fp);
+		    configfile = filename;
+		    return(fp);
+#if defined(UNIX) || defined(VMS)
+		} else {
+		    /* access() above probably caught most problems for UNIX */
+		    raw_printf("Couldn't open requested config file %s (%d).",
+					filename, errno);
+		    wait_synch();
+		    /* fall through to standard names */
+#endif
 		}
 	}
 
@@ -1059,6 +1067,13 @@ const char *filename;
 	Sprintf(tmp_config, "%s/%s", getenv("HOME"), ".nethackrc");
 	if ((fp = fopenp(tmp_config, "r")) != (FILE *)0)
 		return(fp);
+	else if (errno != ENOENT) {
+		/* e.g., problems when setuid NetHack can't search home
+		 * directory restricted to user */
+		raw_printf("Couldn't open default config file %s (%d).",
+					tmp_config, errno);
+		wait_synch();
+	}
 # endif
 #endif
 	return (FILE *)0;
