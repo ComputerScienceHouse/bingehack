@@ -86,14 +86,14 @@ play.
 
 Late in 1999, the dev team released NetHack 3.3.  Along with the usual set
 of bug fixes and minor tweaks (including Y2K proofing), a merge of features
-was added to the game from varients that split off from the 3.2 base code.
+was added to the game from variants that split off from the 3.2 base code.
 
-During the lifespen of NetHack 3.2, Several enthusiasts of the game added
+During the lifespan of NetHack 3.2, Several enthusiasts of the game added
 their own modifications to the game and made these "variants" publically
 available:
 
 Tom Proudfoot and Yuval Oren created NetHack++, which was later renamed
-NetHack--.  Working independantly, Stephen White wrote NetHack Plus.
+NetHack--.  Working independently, Stephen White wrote NetHack Plus.
 Tom Proudfoot later merged NetHack Plus and his own NetHack-- to produce
 SLASH.  Larry Stewart-Zerba and Warwick Allison improved the spellcasting
 system with the Wizard Patch.
