@@ -304,7 +304,7 @@ install.tag :  dat.tag $(GAMEFILE)
 !ENDIF
 	copy $(SSHR)\termcap	  $(GAMEDIR)
 	copy *.tib                $(GAMEDIR)
-	copy $(SSHR)\NetHack.cnf  $(GAMEDIR)
+	copy $(SSHR)\NetHack.cnf  $(GAMEDIR)\defaults.nh
 	copy $(UTIL)\recover.exe  $(GAMEDIR)
 	copy $(DOC)\guideb*.txt   $(GAMEDIR)
 	echo install done > install.tag
@@ -892,6 +892,7 @@ priest.o :     $(HACK_H) $(INCL)\mfndpos.h $(ESHK_H) $(EPRI_H) $(EMIN_H)
 quest.o :      $(HACK_H) $(INCL)\quest.h $(INCL)\qtext.h
 questpgr.o :   $(HACK_H) $(INCL)\qtext.h
 read.o : 	     $(HACK_H)
+region.o :     $(HACK_H)
 rect.o : 	     $(HACK_H)
 restore.o :    $(HACK_H) $(INCL)\lev.h $(INCL)\tcap.h $(INCL)\quest.h
 rip.o : 	     $(HACK_H)

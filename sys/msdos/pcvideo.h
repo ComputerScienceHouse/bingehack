@@ -131,7 +131,7 @@ struct overview_planar_cell_struct {
  * Do not change the values below.
  * These are the color mappings defined by the particular video 
  * hardware/mode.  You can rearrange the NetHack color mappings at
- * run-time via the NetHack.cnf "videocolors" and "videoshades"
+ * run-time via the defaults.nh "videocolors" and "videoshades"
  * settings.
  *
  */

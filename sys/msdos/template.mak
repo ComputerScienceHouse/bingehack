@@ -228,7 +228,7 @@ SCHEMA	= 1
 #	VGA.
 #
 #	Note:  You can build NetHack with tile support and then choose
-#	whether to use it or not at runtime via the NetHack.cnf file option
+#	whether to use it or not at runtime via the defaults.nh file option
 #	"video".
 #
 
@@ -1098,7 +1098,7 @@ install.tag: 	$(DAT)\data	$(DAT)\rumors	$(DAT)\dungeon \
 	if exist $(DOC)\guideb*.txt copy $(DOC)\guideb*.txt  $(GAMEDIR)
 	if exist $(DOC)\nethack.txt copy $(DOC)\nethack.txt  $(GAMEDIR)\NetHack.txt
 	if exist $(DOC)\recover.txt copy $(DOC)\recover.txt  $(GAMEDIR)
-	copy $(SYS)\NetHack.cnf   $(GAMEDIR)
+	copy $(SYS)\nethack.cnf   $(GAMEDIR)\defaults.nh
 	copy $(U)recover.exe  $(GAMEDIR)
 	if exist *.tib copy *.tib $(GAMEDIR)
 	echo install done > $@

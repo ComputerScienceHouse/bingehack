@@ -1,5 +1,9 @@
-# NetHack.cnf file for Windows NT
+# Default.NetHack-settings file for Windows NT
 # A '#' at the beginning of a line means the rest of the line is a comment.
+#
+# NetHack 3.3.0 uses Default.NetHack-settings instead of NetHack.cnf
+# because the latter file extension conflicted with the Windows 
+# speed-dial application.
 #
 # To change the configuration, comment out the unwanted lines, and
 # uncomment the configuration you want.
