@@ -250,6 +250,8 @@ MONSTER:'F',random,random
 MONSTER:'F',random,random
 MONSTER:'m',random,random
 MONSTER:'m',random,random
+MONSTER:';',"jellyfish",random
+MONSTER:';',"jellyfish",random
 # Some random objects
 OBJECT:'!',random,random
 OBJECT:'!',random,random

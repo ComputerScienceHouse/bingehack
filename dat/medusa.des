@@ -88,6 +88,9 @@ MONSTER:'@',"Medusa",(36,10),asleep
 MONSTER:';',"giant eel",(11,06)
 MONSTER:';',"giant eel",(23,13)
 MONSTER:';',"giant eel",(29,02)
+MONSTER:';',"jellyfish",(02,02)
+MONSTER:';',"jellyfish",(00,08)
+MONSTER:';',"jellyfish",(04,18)
 MONSTER:'T',"water troll",(51,03)
 MONSTER:'T',"water troll",(64,11)
 MONSTER:'S',random,(38,07)
@@ -186,6 +189,9 @@ MONSTER:';',"electric eel",(10,14)
 MONSTER:';',"electric eel",(11,14)
 MONSTER:';',"electric eel",(10,15)
 MONSTER:';',"electric eel",(11,15)
+MONSTER:';',"jellyfish",(01,01)
+MONSTER:';',"jellyfish",(00,08)
+MONSTER:';',"jellyfish",(04,19)
 MONSTER:''',"stone golem",(64,08),asleep
 MONSTER:''',"stone golem",(65,08),asleep
 MONSTER:''',"stone golem",(64,09),asleep
