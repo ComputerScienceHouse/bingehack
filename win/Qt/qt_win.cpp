@@ -348,7 +348,7 @@ const QFont& NetHackQtSettings::normalFont()
 
 const QFont& NetHackQtSettings::normalFixedFont()
 {
-    static int size[]={ 20, 14, 13, 10 };
+    static int size[]={ 18, 14, 13, 10 };
     normalfixed.setPointSize(size[fontsize.currentItem()]);
     return normalfixed;
 }
@@ -636,9 +636,9 @@ NetHackQtPlayerSelector::NetHackQtPlayerSelector(NetHackQtKeyBuffer& ks) :
     int i;
     int nrole;
 
-    for (nrole=0; roles[nrole].name.m; nrole++) // XXX QListView unsorted goes in rev.
+    for (nrole=0; roles[nrole].name.m; nrole++)
 	;
-    for (i=nrole-1; i>=0; i--) {
+    for (i=nrole-1; i>=0; i--) { // XXX QListView unsorted goes in rev.
 	new NhPSListViewRole( role, i );
     }
     connect( role, SIGNAL(selectionChanged()), this, SLOT(selectRole()) );
@@ -1003,6 +1003,7 @@ NetHackQtMapWindow::NetHackQtMapWindow(NetHackQtClickBuffer& click_sink) :
     connect(qt_settings,SIGNAL(tilesChanged()),this,SLOT(updateTiles()));
 
     updateTiles();
+    //setFocusPolicy(StrongFocus);
 }
 
 void NetHackQtMapWindow::updateTiles()
@@ -2037,12 +2038,17 @@ void NetHackQtStatusWindow::updateStats()
     }
     name.setLabel(buf,NetHackQtLabelledIcon::NoNum,u.ulevel);
 
-    if (In_endgame(&u.uz)) {
+    if (Is_knox(&u.uz)) {
+	Sprintf(buf, "%s", dungeons[u.uz.dnum].dname);
+	dlevel.setLabel(buf,TRUE);
+    } else if (In_quest(&u.uz)) {
+	Sprintf(buf, "Home, level ");
+	dlevel.setLabel(buf,(long)dunlev(&u.uz));
+    } else if (In_endgame(&u.uz)) {
 	Strcpy(buf, (Is_astralevel(&u.uz) ? "Astral Plane":"End Game"));
 	dlevel.setLabel(buf,TRUE);
     } else {
-	Strcpy(buf, dungeons[u.uz.dnum].dname);
-	Sprintf(eos(buf), ", level ");
+	Sprintf(buf, "%s, level ", dungeons[u.uz.dnum].dname);
 	dlevel.setLabel(buf,(long)depth(&u.uz));
     }
 
@@ -2653,6 +2659,7 @@ NetHackQtRIP::NetHackQtRIP(QWidget* parent) :
 	pixmap=new QPixmap;
 	tryload(*pixmap, "rip.xpm");
     }
+    riplines=0;
     resize(pixmap->width(),pixmap->height());
     setFont(QFont("times",12)); // XXX may need to be configurable
 }
@@ -2665,22 +2672,24 @@ void NetHackQtRIP::setLines(char** l, int n)
 
 void NetHackQtRIP::paintEvent(QPaintEvent* event)
 {
-    int pix_x=(width()-pixmap->width())/2;
-    int pix_y=(height()-pixmap->height())/2;
+    if ( riplines ) {
+	int pix_x=(width()-pixmap->width())/2;
+	int pix_y=(height()-pixmap->height())/2;
 
-    // XXX positions based on RIP image
-    int rip_text_x=pix_x+156;
-    int rip_text_y=pix_y+67;
-    int rip_text_h=94/riplines;
+	// XXX positions based on RIP image
+	int rip_text_x=pix_x+156;
+	int rip_text_y=pix_y+67;
+	int rip_text_h=94/riplines;
 
-    QPainter painter;
-    painter.begin(this);
-    painter.drawPixmap(pix_x,pix_y,*pixmap);
-    for (int i=0; i<riplines; i++) {
-	painter.drawText(rip_text_x-i/2,rip_text_y+i*rip_text_h,
-	    1,1,DontClip|AlignHCenter,line[i]);
+	QPainter painter;
+	painter.begin(this);
+	painter.drawPixmap(pix_x,pix_y,*pixmap);
+	for (int i=0; i<riplines; i++) {
+	    painter.drawText(rip_text_x-i/2,rip_text_y+i*rip_text_h,
+		1,1,DontClip|AlignHCenter,line[i]);
+	}
+	painter.end();
     }
-    painter.end();
 }
 
 NetHackQtTextWindow::NetHackQtTextWindow(NetHackQtKeyBuffer& ks) :
@@ -4235,7 +4244,8 @@ struct window_procs Qt_procs = {
 extern "C" void play_usersound(const char* filename, int volume)
 {
 #ifdef USER_SOUNDS
-    QAudio::play(filename,volume);
+    // Qt 2.2 has sound
+    //QSound::play(filename,volume);
 #endif
 }
 
