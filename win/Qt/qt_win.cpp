@@ -1170,6 +1170,9 @@ void NetHackQtMapWindow::paintEvent(QPaintEvent* event)
 #define obj_color(n)  color = iflags.use_color ? objects[n].oc_color : NO_COLOR
 #define mon_color(n)  color = iflags.use_color ? mons[n].mcolor : NO_COLOR
 #define pet_color(n)  color = iflags.use_color ? mons[n].mcolor : NO_COLOR
+# ifdef NEW_WARNING
+#define warn_color(n) color = iflags.use_color ? def_warnsyms[n].color : NO_COLOR
+# endif
 
 # else /* no text color */
 
@@ -1178,7 +1181,17 @@ void NetHackQtMapWindow::paintEvent(QPaintEvent* event)
 #define obj_color(n)
 #define mon_color(n)
 #define pet_color(c)
+# ifdef NEW_WARNING
+#define warn_color(c)
+# endif
 		painter.setPen( green );
+#endif
+
+#ifdef NEW_WARNING
+		if ((offset = (g - GLYPH_WARNING_OFF)) >= 0) { 	  /* a warning flash */
+		    ch = warnsyms[offset];
+		    warn_color(offset);
+		} else
 #endif
 		if ((offset = (g - GLYPH_SWALLOW_OFF)) >= 0) {		/* swallow */
 		    /* see swallow_to_glyph() in display.c */
