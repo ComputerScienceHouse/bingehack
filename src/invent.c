@@ -646,7 +646,7 @@ register const char *let,*word;
 	register struct obj *otmp;
 	register char ilet;
 	char buf[BUFSZ], qbuf[QBUFSZ];
-	char lets[BUFSZ];
+	char lets[BUFSZ], altlets[BUFSZ], *ap;
 	register int foo = 0;
 	register char *bp = buf;
 	xchar allowcnt = 0;	/* 0, 1 or 2 */
@@ -682,6 +682,7 @@ register const char *let,*word;
 	if(allownone) *bp++ = '-';
 	if(allowgold) *bp++ = def_oc_syms[GOLD_CLASS];
 	if(bp > buf && bp[-1] == '-') *bp++ = ' ';
+	ap = altlets;
 
 	ilet = 'a';
 	for (otmp = invent; otmp; otmp = otmp->nobj) {
@@ -758,10 +759,10 @@ register const char *let,*word;
 			foo--;
 		/* ugly check for unworn armor that can't be worn */
 		else if (!strcmp(word, "wear") && *let == ARMOR_CLASS &&
-			 otmp->oclass == ARMOR_CLASS &&
 			 !canwearobj(otmp, &dummymask, FALSE)) {
 			foo--;
 			allowall = TRUE;
+			*ap++ = otmp->invlet;
 		}
 	    } else {
 
@@ -782,6 +783,7 @@ register const char *let,*word;
 	Strcpy(lets, bp);	/* necessary since we destroy buf */
 	if(foo > 5)			/* compactify string */
 		compactify(bp);
+	*ap = '\0';
 
 	if(!foo && !allowall && !allowgold && !allownone) {
 		You("don't have anything %sto %s.",
@@ -860,7 +862,11 @@ register const char *let,*word;
 			}
 		}
 		if(ilet == '?' || ilet == '*') {
-		    ilet = display_inventory(ilet=='?' ? lets:(char *)0, TRUE);
+		    char *allowed_choices = (ilet == '?') ? lets : (char *)0;
+
+		    if (ilet == '?' && !*lets && *altlets)
+			allowed_choices = altlets;
+		    ilet = display_inventory(allowed_choices, TRUE);
 		    if(!ilet) continue;
 		    if(ilet == '\033') {
 			if(flags.verbose)
