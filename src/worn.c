@@ -61,6 +61,8 @@ long mask;
 		if(oobj && !(oobj->owornmask & wp->w_mask))
 			impossible("Setworn: mask = %ld.", wp->w_mask);
 		if(oobj) {
+		    if (u.twoweap && (oobj->owornmask & (W_WEP|W_SWAPWEP)))
+			u.twoweap = 0;
 		    oobj->owornmask &= ~wp->w_mask;
 		    if (wp->w_mask & ~(W_SWAPWEP|W_QUIVER)) {
 			/* leave as "x = x <op> y", here and below, for broken
