@@ -1373,7 +1373,9 @@ struct obj *otmp;
 	    atemeat();
 
 	  default:
-	    if ( otmp->otyp == PANCAKE || otmp->otyp == FORTUNE_COOKIE ) {
+	    if ( otmp->otyp == PANCAKE || otmp->otyp == FORTUNE_COOKIE ||
+			otmp->otyp == CREAM_PIE ||
+			otmp->otyp == LUMP_OF_ROYAL_JELLY) {
 		/* non-vegan */
 		u.uconduct.eatanimbp++;
 	    }
@@ -1714,6 +1716,8 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 		pline("This %s is delicious!",
 		      otmp->oclass == GOLD_CLASS ? foodword(otmp) :
 		      singular(otmp, xname));
+
+	    u.uconduct.food++;
 	    eatspecial();
 	    return 1;
 	}
