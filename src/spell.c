@@ -515,19 +515,19 @@ int skill;
 {
 	switch (skill) {
 	    case P_ATTACK_SPELL:
-		return "atta";
+		return "attack";
 	    case P_HEALING_SPELL:
-		return "heal";
+		return "healing";
 	    case P_DIVINATION_SPELL:
-		return "divi";
+		return "divination";
 	    case P_ENCHANTMENT_SPELL:
-		return "ench";
+		return "enchantment";
 	    case P_CLERIC_SPELL:
-		return "cler";
+		return "clerical";
 	    case P_ESCAPE_SPELL:
-		return "esca";
+		return "escape";
 	    case P_MATTER_SPELL:
-		return "matt";
+		return "matter";
 	    default:
 		impossible("Unknown spell skill, %d;", skill);
 		return "";
@@ -814,7 +814,7 @@ boolean atme;
 		break;
 	case SPE_CURE_SICKNESS:
 		if (Sick) You("are no longer ill.");
-		if (Slimed) {                    
+		if (Slimed) {
 		    pline("The slime disappears!");
 		    Slimed = 0;
 		}
@@ -944,10 +944,10 @@ dospellmenu(how, spell_no)
 	 * To do it right would require that we implement columns
 	 * in the window-ports (say via a tab character).
 	 */
-	Sprintf(buf, "%-20s     Level  Class  Fail", "Name");
+	Sprintf(buf, "%-20s     Level  %-12s Fail", "    Name", "Category");
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, MENU_UNSELECTED);
 	for (i = 0; i < MAXSPELL && spellid(i) != NO_SPELL; i++) {
-	        Sprintf(buf, "%-20s  %2d%s   %-6s %3d%%",
+	        Sprintf(buf, "%-20s  %2d%s   %-12s %3d%%",
 			spellname(i), spellev(i),
 			spellknow(i) ? " " : "*",
 			spelltypemnemonic(spell_skilltype(spellid(i))),
@@ -1004,7 +1004,7 @@ int spell;
 
 	if (uarm && is_metallic(uarm))
 	    splcaster += (uarmc && uarmc->otyp == ROBE) ?
-                urole.spelarmr/2 : urole.spelarmr;
+		urole.spelarmr/2 : urole.spelarmr;
 	else if (uarmc && uarmc->otyp == ROBE)
 	    splcaster -= urole.spelarmr;
 	if (uarms) splcaster += urole.spelshld;

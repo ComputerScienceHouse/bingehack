@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)weapon.c	3.3	1999/10/27	*/
+/*	SCCS Id: @(#)weapon.c	3.3	1999/11/29	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -64,7 +64,7 @@ STATIC_VAR NEARDATA const char *odd_skill_names[] = {
     "healing spells",
     "divination spells",
     "enchantment spells",
-    "cleric spells",
+    "clerical spells",
     "escape spells",
     "matter spells",
 };
