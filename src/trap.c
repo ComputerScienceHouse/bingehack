@@ -737,6 +737,8 @@ glovecheck:		(void) rust_dmg(uarmg, "gauntlets", 1, TRUE, &youmonst);
 		}
 		if (!In_sokoban(&u.uz))
 			You("fall into %s pit!", a_your[trap->madeby_u]);
+		if (u.umonnum == PM_PIT_VIPER || u.umonnum == PM_PIT_FIEND)
+		    pline("How pitiful.  Isn't that the pits?");
 		if (ttype == SPIKED_PIT)
 		    You("land on a set of sharp iron spikes!");
 		if (!Passes_walls)
@@ -1427,6 +1429,8 @@ glovecheck:		    target = which_armor(mtmp, W_ARMG);
 				  a_your[trap->madeby_u]);
 			    seetrap(trap);
 			}
+			if (mptr == &mons[PM_PIT_VIPER] || mptr == &mons[PM_PIT_FIEND])
+			    pline("How pitiful.  Isn't that the pits?");
 			mselftouch(mtmp, "Falling, ", FALSE);
 			if (mtmp->mhp <= 0 ||
 				thitm(0, mtmp, (struct obj *)0,

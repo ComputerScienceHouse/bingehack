@@ -631,6 +631,7 @@ register struct obj	*sobj;
 	    {
 		register schar s;
 		boolean special_armor;
+		boolean same_color;
 
 		otmp = some_armor(&youmonst);
 		if(!otmp) {
@@ -665,13 +666,25 @@ register struct obj	*sobj;
 		}
 		special_armor = is_elven_armor(otmp) ||
 				(Role_if(PM_WIZARD) && otmp->otyp == CORNUTHAUM);
+		if (sobj->cursed)
+		    same_color =
+			(otmp->otyp == BLACK_DRAGON_SCALE_MAIL ||
+			 otmp->otyp == BLACK_DRAGON_SCALES);
+		else
+		    same_color =
+			(otmp->otyp == SILVER_DRAGON_SCALE_MAIL ||
+			 otmp->otyp == SILVER_DRAGON_SCALES ||
+			 otmp->otyp == SHIELD_OF_REFLECTION);
+		if (Blind) same_color = FALSE;
+
 		/* KMH -- catch underflow */
 		s = sobj->cursed ? -otmp->spe : otmp->spe;
 		if (s > (special_armor ? 5 : 3) && rn2(s)) {
-		Your("%s violently %s%s for a while, then evaporates.",
+		Your("%s violently %s%s%s for a while, then evaporates.",
 			    xname(otmp),
-			    Blind ? "vibrates" : "glows ",
-			    Blind ? nul : hcolor(sobj->cursed ? Black : silver));
+			    Blind ? "vibrates" : "glows",
+			    (!Blind && !same_color) ? " " : nul,
+			    (Blind || same_color) ? nul : hcolor(sobj->cursed ? Black : silver));
 			if(is_cloak(otmp)) (void) Cloak_off();
 			if(is_boots(otmp)) (void) Boots_off();
 			if(is_helmet(otmp)) (void) Helmet_off();
@@ -701,11 +714,12 @@ register struct obj	*sobj;
 			setworn(otmp, W_ARM);
 			break;
 		}
-		Your("%s %s%s%s for a %s.",
+		Your("%s %s%s%s%s for a %s.",
 			xname(otmp),
 		        s == 0 ? "violently " : nul,
-			Blind ? "vibrates" : "glows ",
-			Blind ? nul : hcolor(sobj->cursed ? Black : silver),
+			Blind ? "vibrates" : "glows",
+			(!Blind && !same_color) ? " " : nul,
+			(Blind || same_color) ? nul : hcolor(sobj->cursed ? Black : silver),
 			  (s*s>1) ? "while" : "moment");
 		otmp->cursed = sobj->cursed;
 		if (!otmp->blessed || sobj->cursed)
