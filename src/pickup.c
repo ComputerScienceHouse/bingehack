@@ -1269,14 +1269,15 @@ doloot()	/* loot a container on the floor. */
 			You("can't loot anything %swith %s in the way%s",
 				saddled_there ? "else " : "", mon_nam(mtmp),
 				got_saddle ? "." : "!");
-			return (0);	/* no time passage */
+			return timepassed;
 #ifndef LOOT_CONTAINERS_FROM_ONE_SQUARE_AWAY
 		} else {
 			if (container_count) {
 				You("have to be at a container to loot it.");
 			} else
-				You("%s there to loot.", dont_find_anything);
-			return (0);	/* no time passage */
+				You("%s %sthere to loot.", dont_find_anything,
+					got_saddle ? "else " : "");
+			return timepassed;
 		}
 #endif
 	}
