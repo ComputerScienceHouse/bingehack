@@ -61,6 +61,8 @@ register boolean clumsy;
 	    return;
 	}
 
+	if(mon->m_ap_type) seemimic(mon);
+
 	/* it is unchivalrous to attack the defenseless or from behind */
 	if (Role_if(PM_KNIGHT) &&
 		u.ualign.type == A_LAWFUL && u.ualign.record > -10 &&

@@ -81,6 +81,7 @@ boolean exclude_cookie;
 
 	if (rumors) {
 	    int count = 0;
+	    int adjtruth;
 
 	    do {
 		rumor_buf[0] = '\0';
@@ -97,7 +98,7 @@ boolean exclude_cookie;
 		 *	 rn2 \ +1  2=T  1=T  0=F
 		 *	 adj./ +0  1=T  0=F -1=F
 		 */
-		switch (truth += rn2(2)) {
+		switch (adjtruth = truth + rn2(2)) {
 		  case  2:	/*(might let a bogus input arg sneak thru)*/
 		  case  1:  beginning = true_rumor_start;
 			    tidbit = Rand() % true_rumor_size;
@@ -113,18 +114,19 @@ boolean exclude_cookie;
 		(void) dlb_fseek(rumors, beginning + tidbit, SEEK_SET);
 		(void) dlb_fgets(line, sizeof line, rumors);
 		if (!dlb_fgets(line, sizeof line, rumors) ||
-		    (truth > 0 && dlb_ftell(rumors) > true_rumor_end)) {
+		    (adjtruth > 0 && dlb_ftell(rumors) > true_rumor_end)) {
 			/* reached end of rumors -- go back to beginning */
 			(void) dlb_fseek(rumors, beginning, SEEK_SET);
 			(void) dlb_fgets(line, sizeof line, rumors);
 		}
 		if ((endp = index(line, '\n')) != 0) *endp = 0;
 		Strcat(rumor_buf, xcrypt(line, xbuf));
-		exercise(A_WIS, (truth > 0));
 	    } while(count++ < 50 && exclude_cookie && (strstri(rumor_buf, "fortune") || strstri(rumor_buf, "pity")));
 	    (void) dlb_fclose(rumors);
 	    if (count >= 50)
 		impossible("Can't find non-cookie rumor?");
+	    else
+		exercise(A_WIS, (adjtruth > 0));
 	} else {
 		pline("Can't open rumors file!");
 		true_rumor_size = -1;	/* don't try to open it again */
