@@ -10,6 +10,7 @@
  *
  */
 
+#ifdef __SASC_60
 #include <dos.h>
 
 /*
@@ -17,3 +18,4 @@
  */
 
 long __stack = 128*1024; 
+#endif
