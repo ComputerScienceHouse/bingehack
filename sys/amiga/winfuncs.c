@@ -532,7 +532,8 @@ amii_create_nhwindow(type)
     wd = (struct amii_WinDesc *)alloc(sizeof(struct amii_WinDesc));
     memset( wd, 0, sizeof( struct amii_WinDesc ) );
 
-    if( WINVERS_AMIV )
+    /* Both, since user may have changed the pen settings so respect those */
+    if( WINVERS_AMII || WINVERS_AMIV )
     {
 	/* Special backfill for these types of layers */
 	switch( type )

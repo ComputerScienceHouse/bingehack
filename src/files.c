@@ -1346,13 +1346,15 @@ char		*tmp_levels;
 				sscanf(t, "%d", &amii_otherBPen);
 		}
 	} else if (match_varname(buf, "PENS", 4)) {
+		extern unsigned short amii_init_map[ AMII_MAXCOLORS ];
 		int i;
 		char *t;
 
-		for (i = 0, t = strtok(bufp, ",/"); t != (char *)0;
-				    t = strtok((char *)0, ",/"), ++i)
+		for (i = 0, t = strtok(bufp, ",/");
+			i < AMII_MAXCOLORS && t != (char *)0;
+			t = strtok((char *)0, ",/"), ++i)
 		{
-			sscanf(t, "%hx", &flags.amii_curmap[i]);
+			sscanf(t, "%hx", &amii_init_map[i]);
 		}
 		amii_setpens( amii_numcolors = i );
 #endif
