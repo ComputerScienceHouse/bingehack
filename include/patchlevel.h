@@ -40,7 +40,7 @@
 /*****************************************************************************/
 /* Version 3.3.1 */
 
-/*  Patch 1, August ??, 2000
+/*  Patch 1, August 3, 2000
  *  Many, many general fixes, including a number for riding, twoweapon,
  *	and invisible monsters.
  *  Redo Ranger quest.
