@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)o_init.c	3.3	98/10/27	*/
+/*	SCCS Id: @(#)o_init.c	3.3	1999/12/09	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -139,7 +139,7 @@ register char oclass;
 		bases[(int)oclass] = first;
 
 		if (oclass == GEM_CLASS) {
-			setgemprobs(NULL);
+			setgemprobs((d_level *)0);
 
 			if (rn2(2)) { /* change turquoise from green to blue? */
 			    COPY_OBJ_DESCR(objects[TURQUOISE],objects[SAPPHIRE]);
