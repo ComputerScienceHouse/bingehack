@@ -831,7 +831,7 @@ make_menu(popup_name, popup_label, popup_translations,
 	if (!widget_names[i]) continue;
 	num_args = 0;
 	XtSetArg(args[num_args], XtNfromVert, above);	num_args++;
-	if (i == 0) {
+	if (above == left) {
 	    /* if first, we are farther apart */
 	    XtSetArg(args[num_args], XtNvertDistance, skip);	num_args++;
 	}
