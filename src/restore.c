@@ -362,8 +362,6 @@ unsigned int *mid, *steedid;	/* STEED */
 #endif
 	mread(fd, (genericptr_t) &u, sizeof(struct you));
 	set_uasmon();
-	if (Race_if(PM_ELF))
-	    youmonst.data->mflags3 |= M3_INFRAVISION;
 #ifdef CLIPPING
 	cliparound(u.ux, u.uy);
 #endif

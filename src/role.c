@@ -21,8 +21,10 @@
  * has been reallocated for each race.  The values assigned
  * to the roles has been reduced by the amount allocated to
  * humans.  --KMH
+ *
+ * God names use a leading underscore to flag goddesses.
  */
-struct Role roles[] = {
+const struct Role roles[] = {
 {	{"Archeologist", 0}, {
 	{"Digger",      0},
 	{"Field Worker",0},
@@ -826,18 +828,6 @@ role_init()
 	    flags.initalign = randalign(flags.initrole, flags.initrace);
 	alignmnt = aligns[flags.initalign].value;
 
-	/* Fix up the god names (before initializing urole) */
-	if (flags.pantheon == -1) {		/* new game */
-	    flags.pantheon = flags.initrole;	/* use own gods */
-	    while (!roles[flags.pantheon].lgod)	/* unless they're missing */
-		flags.pantheon = randrole();
-	}
-	if (!roles[flags.initrole].lgod) {
-	    roles[flags.initrole].lgod = roles[flags.pantheon].lgod;
-	    roles[flags.initrole].ngod = roles[flags.pantheon].ngod;
-	    roles[flags.initrole].cgod = roles[flags.pantheon].cgod;
-	}
-
 	/* Initialize urole and urace */
 	urole = roles[flags.initrole];
 	urace = races[flags.initrace];
@@ -862,6 +852,18 @@ role_init()
 	    mons[urole.neminum].mflags2 &= ~(M2_PEACEFUL);
 	    mons[urole.neminum].mflags2 |= (M2_NASTY|M2_STALK|M2_HOSTILE);
 	    mons[urole.neminum].mflags3 = M3_WANTSARTI | M3_WAITFORU;
+	}
+
+	/* Fix up the god names */
+	if (flags.pantheon == -1) {		/* new game */
+	    flags.pantheon = flags.initrole;	/* use own gods */
+	    while (!roles[flags.pantheon].lgod)	/* unless they're missing */
+		flags.pantheon = randrole();
+	}
+	if (!urole.lgod) {
+	    urole.lgod = roles[flags.pantheon].lgod;
+	    urole.ngod = roles[flags.pantheon].ngod;
+	    urole.cgod = roles[flags.pantheon].cgod;
 	}
 
 	/* Fix up infravision */

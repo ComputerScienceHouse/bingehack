@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)you.h	3.3	1999/11/26	*/
+/*	SCCS Id: @(#)you.h	3.3	1999/11/01	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -137,7 +137,7 @@ struct Role {
 	/* dictionary entries (dat/data.bas) */
 };
 
-extern struct Role roles[];	/* table of available roles */
+extern const struct Role roles[];	/* table of available roles */
 extern struct Role urole;
 #define Role_if(X)	(urole.malenum == (X))
 #define Role_switch	(urole.malenum)
