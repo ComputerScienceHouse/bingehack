@@ -1164,7 +1164,7 @@ verbalize("In return for thy service, I grant thee the gift of Immortality!");
 	    /* Is this a conversion ? */
 	    /* An unaligned altar in Gehennom will always elicit rejection. */
 	    if (ugod_is_angry() || (altaralign == A_NONE && Inhell)) {
-		if(u.ualignbase[0] == u.ualignbase[1] &&
+		if(u.ualignbase[A_CURRENT] == u.ualignbase[A_ORIGINAL] &&
 		   altaralign != A_NONE) {
 		    You("have a strong feeling that %s is angry...", u_gname());
 		    consume_offering(otmp);
@@ -1172,9 +1172,9 @@ verbalize("In return for thy service, I grant thee the gift of Immortality!");
 
 		    /* The player wears a helm of opposite alignment? */
 		    if (uarmh && uarmh->otyp == HELM_OF_OPPOSITE_ALIGNMENT)
-			u.ualignbase[0] = altaralign;
+			u.ualignbase[A_CURRENT] = altaralign;
 		    else
-			u.ualign.type = u.ualignbase[0] = altaralign;
+			u.ualign.type = u.ualignbase[A_CURRENT] = altaralign;
 		    u.ublessed = 0;
 		    flags.botl = 1;
 
@@ -1182,7 +1182,7 @@ verbalize("In return for thy service, I grant thee the gift of Immortality!");
 		    /* Beware, Conversion is costly */
 		    change_luck(-3);
 		    u.ublesscnt += 300;
-		    adjalign((int)(u.ualignbase[1] * (ALIGNLIM / 2)));
+		    adjalign((int)(u.ualignbase[A_ORIGINAL] * (ALIGNLIM / 2)));
 		} else {
 		    u.ugangr += 3;
 		    adjalign(-5);

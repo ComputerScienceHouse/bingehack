@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)do_wear.c	3.3	1999/12/15	*/
+/*	SCCS Id: @(#)do_wear.c	3.3	2000/05/05	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -353,7 +353,7 @@ Helmet_off()
 		adj_abon(uarmh, -uarmh->spe);
 		break;
 	case HELM_OF_OPPOSITE_ALIGNMENT:
-		u.ualign.type = u.ualignbase[0];
+		u.ualign.type = u.ualignbase[A_CURRENT];
 		u.ublessed = 0; /* lose the other god's protection */
 		flags.botl = 1;
 		break;

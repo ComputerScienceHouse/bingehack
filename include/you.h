@@ -305,6 +305,8 @@ struct you {
 			atime;		/* used for loss/gain countdown */
 	align	ualign;			/* character alignment */
 #define CONVERT		2
+#define A_ORIGINAL	1
+#define A_CURRENT	0
 	aligntyp ualignbase[CONVERT];	/* for ualign conversion record */
 	schar uluck, moreluck;		/* luck and luck bonus */
 #define Luck	(u.uluck + u.moreluck)

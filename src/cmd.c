@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)cmd.c	3.3	2000/02/19	*/
+/*	SCCS Id: @(#)cmd.c	3.3	2000/05/05	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -972,7 +972,7 @@ void minimal_enlightenment()
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
 
 	/* Starting alignment */
-	Sprintf(buf, fmtstr, "alignment", align_str(u.ualignbase[0]));
+	Sprintf(buf, fmtstr, "alignment", align_str(u.ualignbase[A_ORIGINAL]));
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
 
 	/* Current name, race, role, gender */
@@ -998,22 +998,24 @@ void minimal_enlightenment()
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, "", FALSE);
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_BOLD, "Deities", FALSE);
 	Sprintf(buf2, "%-17s%s", align_gname(A_CHAOTIC),
-	    (u.ualignbase[0] == u.ualign.type && u.ualign.type == A_CHAOTIC) ? " (s,c)" :
-	    (u.ualignbase[0] == A_CHAOTIC)       ? " (s)" :
+	    (u.ualignbase[A_ORIGINAL] == u.ualign.type
+		&& u.ualign.type == A_CHAOTIC) ? " (s,c)" :
+	    (u.ualignbase[A_ORIGINAL] == A_CHAOTIC)       ? " (s)" :
 	    (u.ualign.type   == A_CHAOTIC)       ? " (c)" : "");
     	Sprintf(buf, fmtstr, "chaotic deity", buf2);
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
 
 	Sprintf(buf2, "%-17s%s", align_gname(A_NEUTRAL),
-	    (u.ualignbase[0] == u.ualign.type && u.ualign.type == A_NEUTRAL) ? " (s,c)" :
-	    (u.ualignbase[0] == A_NEUTRAL)       ? " (s)" :
+	    (u.ualignbase[A_ORIGINAL] == u.ualign.type
+		&& u.ualign.type == A_NEUTRAL) ? " (s,c)" :
+	    (u.ualignbase[A_ORIGINAL] == A_NEUTRAL)       ? " (s)" :
 	    (u.ualign.type   == A_NEUTRAL)       ? " (c)" : "");
     	Sprintf(buf, fmtstr, "neutral deity", buf2);
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
 
 	Sprintf(buf2, "%-17s%s", align_gname(A_LAWFUL),
-	    (u.ualignbase[0] == u.ualign.type && u.ualign.type == A_LAWFUL)  ? " (s,c)" :
-	    (u.ualignbase[0] == A_LAWFUL)        ? " (s)" :
+	    (u.ualignbase[A_ORIGINAL] == u.ualign.type && u.ualign.type == A_LAWFUL)  ? " (s,c)" :
+	    (u.ualignbase[A_ORIGINAL] == A_LAWFUL)        ? " (s)" :
 	    (u.ualign.type   == A_LAWFUL)        ? " (c)" : "");
     	Sprintf(buf, fmtstr, "lawful  deity", buf2);
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
