@@ -395,8 +395,8 @@ run_regions()
 	    for (j = 0; j < regions[i]->n_monst; j++) {
 		struct monst *mtmp = find_mid(regions[i]->monsters[j]);
 
-		if (!mtmp) continue;
-		if (mtmp->mhp <= 0 || (*callbacks[f_indx])(regions[i], mtmp)) {
+		if (!mtmp || mtmp->mhp <= 0 ||
+				(*callbacks[f_indx])(regions[i], mtmp)) {
 		    /* The monster died, remove it from list */
 		    k = (regions[i]->n_monst -= 1);
 		    regions[i]->monsters[j] = regions[i]->monsters[k];
@@ -888,13 +888,9 @@ genericptr_t p2;
 		return FALSE;
 	    mtmp->mhp -= rnd(dam) + 5;
 	    if (mtmp->mhp <= 0) {
-		int xx = mtmp->mx;
-		int yy = mtmp->my;
-
-		monkilled(mtmp, "gas", AD_PHYS);
-		if (mtmp->mhp <= 0) {
-		    newsym(xx, yy);
-		    return TRUE;	/* The monster died, signal it! */
+		killed(mtmp);
+		if (mtmp->mhp <= 0) {	/* not lifesaved */
+		    return TRUE;
 		}
 	    }
 	}

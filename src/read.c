@@ -1179,19 +1179,22 @@ register struct obj	*sobj;
 		break;
 	case SCR_STINKING_CLOUD: {
 	        coord cc;
-		pline("Where do you want to cast the spell?");
+
+		You("have found a scroll of stinking cloud!");
+		known = TRUE;
+		pline("Where do you want to center the cloud?");
 		cc.x = u.ux;
 		cc.y = u.uy;
-		if (getpos(&cc, TRUE, "the desired position") < 0) /* force valid */
-		    return 0;	/* abort */
-		if (distu(cc.x, cc.y) >= 32) {
+		if (getpos(&cc, TRUE, "the desired position") < 0) {
+		    pline("Never mind");
+		    return 0;
+		}
+		if (!cansee(cc.x, cc.y) || distu(cc.x, cc.y) >= 32) {
 		    You("smell rotten eggs.");
 		    return 0;
 		}
-		if (!cansee(cc.x, cc.y))
-		    return 0;
-		known = TRUE;
-		(void) create_gas_cloud(cc.x, cc.y, 3, 10);
+		(void) create_gas_cloud(cc.x, cc.y, 3+bcsign(sobj),
+						8+4*bcsign(sobj));
 		break;
 	}
 	default:
