@@ -957,6 +957,7 @@ void minimal_enlightenment()
 	any.a_void = 0;
 	buf[0] = buf2[0] = '\0';
 	tmpwin = create_nhwindow(NHW_MENU);
+	start_menu(tmpwin);
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_BOLD, "Starting", FALSE);
 
 	/* Starting name, race, role, gender */
