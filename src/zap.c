@@ -29,6 +29,7 @@ STATIC_DCL int FDECL(zhitm, (struct monst *,int,int,struct obj **));
 STATIC_DCL void FDECL(zhitu, (int,int,const char *,XCHAR_P,XCHAR_P));
 STATIC_DCL void FDECL(revive_egg, (struct obj *));
 STATIC_DCL struct monst *FDECL(montraits, (struct obj *, coord *));
+STATIC_DCL boolean FDECL(hits_bars, (int));
 #ifdef STEED
 STATIC_DCL boolean FDECL(zap_steed, (struct obj *));
 #endif
@@ -2359,6 +2360,20 @@ register struct monst *mtmp;
 #endif /*OVL0*/
 #ifdef OVL1
 
+/* return TRUE if obj_type can't pass through iron bars */
+static boolean
+hits_bars(obj_type)
+int obj_type;
+{
+    /*
+    There should be a _lot_ of things here..., but lets start
+    with what started this change...
+    */
+    if (obj_type == HEAVY_IRON_BALL)
+	return TRUE;
+    return FALSE;
+}
+
 /*
  *  Called for the following distance effects:
  *	when a weapon is thrown (weapon == THROWN_WEAPON)
@@ -2403,131 +2418,141 @@ struct obj *obj;			/* object tossed/used */
 	    tmp_at(DISP_BEAM, cmap_to_glyph(S_flashbeam));
 	} else if (weapon != ZAPPED_WAND && weapon != INVIS_BEAM)
 	    tmp_at(DISP_FLASH, obj_to_glyph(obj));
+
 	while(range-- > 0) {
-		int x,y;
+	    int x,y;
 
-		bhitpos.x += ddx;
-		bhitpos.y += ddy;
-		x = bhitpos.x; y = bhitpos.y;
+	    bhitpos.x += ddx;
+	    bhitpos.y += ddy;
+	    x = bhitpos.x; y = bhitpos.y;
 
-		if(!isok(x, y)) {
-		    bhitpos.x -= ddx;
-		    bhitpos.y -= ddy;
+	    if(!isok(x, y)) {
+		bhitpos.x -= ddx;
+		bhitpos.y -= ddy;
+		break;
+	    }
+
+	    if(is_pick(obj) && inside_shop(x, y) &&
+					   shkcatch(obj, x, y)) {
+		tmp_at(DISP_END, 0);
+		return(m_at(x, y));
+	    }
+
+	    typ = levl[bhitpos.x][bhitpos.y].typ;
+
+	    /* iron bars will block anything big enough */
+	    if ((weapon == THROWN_WEAPON || weapon == KICKED_WEAPON)
+	    		 && typ == IRONBARS && hits_bars(obj->otyp)) {
+		bhitpos.x -= ddx;
+		bhitpos.y -= ddy;
+		break;
+	    }
+
+	    if (weapon == ZAPPED_WAND && find_drawbridge(&x,&y))
+		switch (obj->otyp) {
+		    case WAN_OPENING:
+		    case SPE_KNOCK:
+			if (is_db_wall(bhitpos.x, bhitpos.y)) {
+			    if (cansee(x,y) || cansee(bhitpos.x,bhitpos.y))
+				makeknown(obj->otyp);
+			    open_drawbridge(x,y);
+			}
+			break;
+		    case WAN_LOCKING:
+		    case SPE_WIZARD_LOCK:
+			if ((cansee(x,y) || cansee(bhitpos.x, bhitpos.y))
+			    && levl[x][y].typ == DRAWBRIDGE_DOWN)
+			    makeknown(obj->otyp);
+			close_drawbridge(x,y);
+			break;
+		    case WAN_STRIKING:
+		    case SPE_FORCE_BOLT:
+			if (typ != DRAWBRIDGE_UP)
+			    destroy_drawbridge(x,y);
+			makeknown(obj->otyp);
+			break;
+		}
+
+	    if ((mtmp = m_at(bhitpos.x, bhitpos.y)) != 0) {
+		notonhead = (bhitpos.x != mtmp->mx ||
+			     bhitpos.y != mtmp->my);
+		    /* TODO: FLASHED_LIGHT hitting invisible monster
+		       should pass through instead of stop... */
+		if(weapon != ZAPPED_WAND) {
+		    if(weapon != INVIS_BEAM) tmp_at(DISP_END, 0);
+		    if (cansee(bhitpos.x,bhitpos.y) && !canspotmon(mtmp))
+			map_invisible(bhitpos.x, bhitpos.y);
+		    return(mtmp);
+		}
+		(*fhitm)(mtmp, obj);
+		range -= 3;
+	    } else {
+		if (weapon == ZAPPED_WAND && obj->otyp == WAN_PROBING &&
+		   glyph_is_invisible(levl[bhitpos.x][bhitpos.y].glyph)) {
+		    unmap_object(bhitpos.x, bhitpos.y);
+		    newsym(x, y);
+		}
+	    }
+	    if(fhito) {
+		if(bhitpile(obj,fhito,bhitpos.x,bhitpos.y))
+		    range--;
+	    } else {
+boolean costly = shop_keeper(*in_rooms(bhitpos.x, bhitpos.y, SHOPBASE)) &&
+				costly_spot(bhitpos.x, bhitpos.y);
+
+		if(weapon == KICKED_WEAPON &&
+		      ((obj->oclass == GOLD_CLASS &&
+			 OBJ_AT(bhitpos.x, bhitpos.y)) ||
+		    ship_object(obj, bhitpos.x, bhitpos.y, costly))) {
+			tmp_at(DISP_END, 0);
+			return (struct monst *)0;
+		}
+	    }
+	    if(weapon == ZAPPED_WAND && (IS_DOOR(typ) || typ == SDOOR)) {
+		switch (obj->otyp) {
+		case WAN_OPENING:
+		case WAN_LOCKING:
+		case WAN_STRIKING:
+		case SPE_KNOCK:
+		case SPE_WIZARD_LOCK:
+		case SPE_FORCE_BOLT:
+		    if (doorlock(obj, bhitpos.x, bhitpos.y)) {
+			if (cansee(bhitpos.x, bhitpos.y) ||
+			    (obj->otyp == WAN_STRIKING))
+			    makeknown(obj->otyp);
+			if (levl[bhitpos.x][bhitpos.y].doormask == D_BROKEN
+			    && *in_rooms(bhitpos.x, bhitpos.y, SHOPBASE)) {
+			    shopdoor = TRUE;
+			    add_damage(bhitpos.x, bhitpos.y, 400L);
+			}
+		    }
 		    break;
 		}
-		if(is_pick(obj) && inside_shop(x, y) &&
-					       shkcatch(obj, x, y)) {
-		    tmp_at(DISP_END, 0);
-		    return(m_at(x, y));
+	    }
+	    if(!ZAP_POS(typ) || closed_door(bhitpos.x, bhitpos.y)) {
+		bhitpos.x -= ddx;
+		bhitpos.y -= ddy;
+		break;
+	    }
+	    if(weapon != ZAPPED_WAND && weapon != INVIS_BEAM) {
+		/* 'I' present but no monster: erase */
+		/* do this before the tmp_at() */
+		if (glyph_is_invisible(levl[bhitpos.x][bhitpos.y].glyph)
+			&& cansee(x, y)) {
+		    unmap_object(bhitpos.x, bhitpos.y);
+		    newsym(x, y);
 		}
-
-		typ = levl[bhitpos.x][bhitpos.y].typ;
-
-		if (weapon == ZAPPED_WAND && find_drawbridge(&x,&y))
-		    switch (obj->otyp) {
-			case WAN_OPENING:
-			case SPE_KNOCK:
-			    if (is_db_wall(bhitpos.x, bhitpos.y)) {
-				if (cansee(x,y) || cansee(bhitpos.x,bhitpos.y))
-				    makeknown(obj->otyp);
-				open_drawbridge(x,y);
-			    }
-			    break;
-			case WAN_LOCKING:
-			case SPE_WIZARD_LOCK:
-			    if ((cansee(x,y) || cansee(bhitpos.x, bhitpos.y))
-				&& levl[x][y].typ == DRAWBRIDGE_DOWN)
-				makeknown(obj->otyp);
-			    close_drawbridge(x,y);
-			    break;
-			case WAN_STRIKING:
-			case SPE_FORCE_BOLT:
-			    if (typ != DRAWBRIDGE_UP)
-				destroy_drawbridge(x,y);
-			    makeknown(obj->otyp);
-			    break;
-		    }
-
-		if ((mtmp = m_at(bhitpos.x, bhitpos.y)) != 0) {
-		    notonhead = (bhitpos.x != mtmp->mx ||
-				 bhitpos.y != mtmp->my);
-			/* TODO: FLASHED_LIGHT hitting invisible monster
-			   should pass through instead of stop... */
-		    if(weapon != ZAPPED_WAND) {
-			if(weapon != INVIS_BEAM) tmp_at(DISP_END, 0);
-			if (cansee(bhitpos.x,bhitpos.y) && !canspotmon(mtmp))
-			    map_invisible(bhitpos.x, bhitpos.y);
-			return(mtmp);
-		    }
-		    (*fhitm)(mtmp, obj);
-		    range -= 3;
-		} else {
-		    if (weapon == ZAPPED_WAND && obj->otyp == WAN_PROBING &&
-		       glyph_is_invisible(levl[bhitpos.x][bhitpos.y].glyph)) {
-			unmap_object(bhitpos.x, bhitpos.y);
-			newsym(x, y);
-		    }
-		}
-		if(fhito) {
-		    if(bhitpile(obj,fhito,bhitpos.x,bhitpos.y))
-			range--;
-		} else {
-    boolean costly = shop_keeper(*in_rooms(bhitpos.x, bhitpos.y, SHOPBASE)) &&
-				    costly_spot(bhitpos.x, bhitpos.y);
-
-			if(weapon == KICKED_WEAPON &&
-			      ((obj->oclass == GOLD_CLASS &&
-			         OBJ_AT(bhitpos.x, bhitpos.y)) ||
-			    ship_object(obj, bhitpos.x, bhitpos.y, costly))) {
-				tmp_at(DISP_END, 0);
-				return (struct monst *)0;
-			}
-		}
-		if(weapon == ZAPPED_WAND && (IS_DOOR(typ) || typ == SDOOR)) {
-		    switch (obj->otyp) {
-		    case WAN_OPENING:
-		    case WAN_LOCKING:
-		    case WAN_STRIKING:
-		    case SPE_KNOCK:
-		    case SPE_WIZARD_LOCK:
-		    case SPE_FORCE_BOLT:
-			if (doorlock(obj, bhitpos.x, bhitpos.y)) {
-			    if (cansee(bhitpos.x, bhitpos.y) ||
-				(obj->otyp == WAN_STRIKING))
-				makeknown(obj->otyp);
-			    if (levl[bhitpos.x][bhitpos.y].doormask == D_BROKEN
-				&& *in_rooms(bhitpos.x, bhitpos.y, SHOPBASE)) {
-				shopdoor = TRUE;
-				add_damage(bhitpos.x, bhitpos.y, 400L);
-			    }
-			}
-			break;
-		    }
-		}
-		if(!ZAP_POS(typ) || closed_door(bhitpos.x, bhitpos.y)) {
-			bhitpos.x -= ddx;
-			bhitpos.y -= ddy;
-			break;
-		}
-		if(weapon != ZAPPED_WAND && weapon != INVIS_BEAM) {
-			/* 'I' present but no monster: erase */
-			/* do this before the tmp_at() */
-			if (glyph_is_invisible(levl[bhitpos.x][bhitpos.y].glyph)
-				&& cansee(x, y)) {
-			    unmap_object(bhitpos.x, bhitpos.y);
-			    newsym(x, y);
-			}
-			tmp_at(bhitpos.x, bhitpos.y);
-			delay_output();
-			/* kicked objects fall in pools */
-			if((weapon == KICKED_WEAPON) &&
-			   is_pool(bhitpos.x, bhitpos.y))
-			    break;
+		tmp_at(bhitpos.x, bhitpos.y);
+		delay_output();
+		/* kicked objects fall in pools */
+		if((weapon == KICKED_WEAPON) &&
+		   is_pool(bhitpos.x, bhitpos.y))
+		    break;
 #ifdef SINKS
-			if(IS_SINK(typ) && weapon != FLASHED_LIGHT)
-			    break;	/* physical objects fall onto sink */
+		if(IS_SINK(typ) && weapon != FLASHED_LIGHT)
+		    break;	/* physical objects fall onto sink */
 #endif
-		}
+	    }
 	}
 
 	if (weapon != ZAPPED_WAND && weapon != INVIS_BEAM) tmp_at(DISP_END, 0);
