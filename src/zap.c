@@ -110,6 +110,9 @@ struct obj *otmp;
 	boolean dbldam = Role_if(PM_KNIGHT) && u.uhave.questart;
 	int dmg, otyp = otmp->otyp;
 	const char *zap_type_text = "spell";
+#ifdef STEED
+	struct obj *obj;
+#endif
 
 	if (u.uswallow && mtmp == u.ustuck)
 	    reveal_invis = FALSE;
@@ -221,12 +224,22 @@ struct obj *otmp;
 	case WAN_OPENING:
 	case SPE_KNOCK:
 		wake = FALSE;	/* don't want immediate counterattack */
-		if(u.uswallow && mtmp == u.ustuck) {
+		if (u.uswallow && mtmp == u.ustuck) {
 			if (is_animal(mtmp->data)) {
 				if (Blind) You_feel("a sudden rush of air!");
 				else pline("%s opens its mouth!", Monnam(mtmp));
 			}
 			expels(mtmp, mtmp->data, TRUE);
+#ifdef STEED
+		} else if (!!(obj = which_armor(mtmp, W_SADDLE))) {
+			mtmp->misc_worn_check &= ~obj->owornmask;
+			obj->owornmask = 0L;
+			update_mon_intrinsics(mtmp, obj, FALSE);
+			obj_extract_self(obj);
+			place_object(obj, mtmp->mx, mtmp->my);
+			/* call stackobj() if we ever drop anything that can merge */
+			newsym(mtmp->mx, mtmp->my);
+#endif
 		}
 		break;
 	case SPE_HEALING:
@@ -1441,6 +1454,8 @@ struct obj *obj, *otmp;
 		    case ROCK_CLASS:	/* boulders and statues */
 			if (obj->otyp == BOULDER) {
 			    poly_obj(obj, HUGE_CHUNK_OF_MEAT);
+			    if (In_sokoban(&u.uz))
+				change_luck(-1);	/* Sokoban guilt */
 			    goto smell;
 			} else if (obj->otyp == STATUE) {
 			    xchar oox, ooy;
@@ -1988,9 +2003,18 @@ struct obj *obj;	/* wand or spell */
 		case WAN_MAKE_INVISIBLE:
 		case WAN_CANCELLATION:
 		case SPE_CANCELLATION:
+		case WAN_POLYMORPH:
+		case SPE_POLYMORPH:
 		case WAN_STRIKING:
+		case SPE_FORCE_BOLT:
 		case WAN_SLOW_MONSTER:
 		case SPE_SLOW_MONSTER:
+		case WAN_SPEED_MONSTER:
+		case SPE_HEALING:
+		case SPE_EXTRA_HEALING:
+		case SPE_DRAIN_LIFE:
+		case WAN_OPENING:
+		case SPE_KNOCK:
 		    (void) bhitm(u.usteed, obj);
 		    steedhit = TRUE;
 		    break;
@@ -3501,6 +3525,11 @@ register struct obj *obj;
 	    obj_extract_self(item);
 	    place_object(item, obj->ox, obj->oy);
 	}
+	if (Role_if(PM_ARCHEOLOGIST) && !flags.mon_moving && obj->spe) {
+	    You_feel("guilty about damaging such a historic statue.");
+	    adjalign(-1);
+	}
+	obj->spe = 0;
 	fracture_rock(obj);
 	return TRUE;
 }

@@ -336,7 +336,9 @@ register struct obj *obj;
 		break;
 	    case ROCK_CLASS:
 		if (typ == STATUE)
-		    Sprintf(buf, "%s of %s%s", actualn,
+		    Sprintf(buf, "%s%s of %s%s",
+			(Role_if(PM_ARCHEOLOGIST) && obj->spe) ? "historic " : "" ,
+			actualn,
 			type_is_pname(&mons[obj->corpsenm]) ? "" :
 			  (mons[obj->corpsenm].geno & G_UNIQ) ? "the " :
 			    (index(vowels,*(mons[obj->corpsenm].mname)) ?
@@ -1458,8 +1460,7 @@ register char *bp;
 	int isinvisible;
 #endif
 	int halfeaten, mntmp, contents;
-	int islit, unlabeled;
-	int isdiluted;
+	int islit, unlabeled, ishistoric, isdiluted;
 	struct fruit *f;
 	int ftype = current_fruit;
 	char fruitbuf[BUFSZ];
@@ -1488,7 +1489,7 @@ register char *bp;
 		isinvisible =
 #endif
 		ispoisoned = isgreased = eroded = eroded2 = erodeproof =
-		halfeaten = islit = unlabeled = isdiluted = 0;
+		halfeaten = islit = unlabeled = ishistoric = isdiluted = 0;
 	mntmp = NON_PM;
 #define UNDEFINED 0
 #define EMPTY 1
@@ -1571,6 +1572,8 @@ register char *bp;
 			very = 0;
 		} else if (!strncmpi(bp, "partly eaten ", l=13)) {
 			halfeaten = 1;
+		} else if (!strncmpi(bp, "historic ", l=9)) {
+			ishistoric = 1;
 		} else if (!strncmpi(bp, "diluted ", l=8)) {
 			isdiluted = 1;
 		} else break;
@@ -2255,6 +2258,7 @@ typfnd:
 		case STATUE: otmp->corpsenm = mntmp;
 			if (Has_contents(otmp) && verysmall(&mons[mntmp]))
 			    delete_contents(otmp);	/* no spellbook */
+			otmp->spe = ishistoric;
 			break;
 		case SCALE_MAIL:
 			/* Dragon mail - depends on the order of objects */

@@ -1906,6 +1906,10 @@ struct obj *obj;
 		   ) {
 			/* Have a shot at snaring something on the floor */
 			otmp = level.objects[u.ux][u.uy];
+			if (otmp && otmp->otyp == CORPSE && otmp->corpsenm == PM_HORSE) {
+				pline("Why beat a dead horse?");
+				return 1;
+			}
 			if (otmp && proficient) {
 				You("wrap your bullwhip around %s on the %s.",
 					an(singular(otmp,xname)),

@@ -162,13 +162,14 @@ doride()
 
 	if (u.usteed)
 	    dismount_steed(DISMOUNT_BYCHOICE);
-	else if(getdir((char *)0) && isok(u.ux+u.dx, u.uy+u.dy)) {
+	else if (getdir((char *)0) && isok(u.ux+u.dx, u.uy+u.dy)) {
 #ifdef WIZARD
 	if (wizard && yn("Force the mount to succeed?") == 'y')
 		forcemount = TRUE;
 #endif
-	    (void) mount_steed(m_at(u.ux+u.dx, u.uy+u.dy), forcemount);
-	}
+	    return (mount_steed(m_at(u.ux+u.dx, u.uy+u.dy), forcemount));
+	} else
+	    return 0;
 	return 1;
 }
 
@@ -192,6 +193,10 @@ mount_steed(mtmp, force)
 	}
 
 	/* Is the player in the right form? */
+	if (Hallucination && !force) {
+	    pline("Maybe you should find a designated driver.");
+	    return (FALSE);
+	}
 	if (Upolyd && (!humanoid(youmonst.data) || verysmall(youmonst.data) ||
 			bigmonst(youmonst.data))) {
 	    if (!force)

@@ -272,6 +272,11 @@ boolean on;
 	break;
     }
 
+#ifdef STEED
+	if (!on && mon == u.usteed && obj->otyp == SADDLE)
+	    dismount_steed(DISMOUNT_FELL);
+#endif
+
     /* if couldn't see it but now can, or vice versa, update display */
     if (unseen ^ !canseemon(mon))
 	newsym(mon->mx, mon->my);

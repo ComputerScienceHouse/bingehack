@@ -421,7 +421,10 @@ struct obj *list;
     struct obj *otmp;
 
     for (otmp = list; otmp; otmp = otmp->nobj)
-	if (otmp->oartifact) {
+	if (otmp->oartifact ||
+			otmp->otyp == BELL_OF_OPENING ||
+			otmp->otyp == SPE_BOOK_OF_THE_DEAD ||
+			otmp->otyp == CANDELABRUM_OF_INVOCATION) {
 	    /* shopkeepers charge 100x; 250x is arbitrary */
 	    u.urexp += 250L * (long)objects[otmp->otyp].oc_cost;
 	if (Has_contents(otmp))
@@ -438,7 +441,10 @@ winid endwin;
     struct obj *otmp;
 
     for (otmp = list; otmp; otmp = otmp->nobj) {
-	if (otmp->oartifact) {
+	if (otmp->oartifact ||
+			otmp->otyp == BELL_OF_OPENING ||
+			otmp->otyp == SPE_BOOK_OF_THE_DEAD ||
+			otmp->otyp == CANDELABRUM_OF_INVOCATION) {
 	    short dummy;
 
 	    makeknown(otmp->otyp);
@@ -446,7 +452,8 @@ winid endwin;
 		otmp->rknown = 1;
 	    /* assumes artifacts don't have quan>1 */
 	    Sprintf(pbuf, "%s (worth %ld zorkmids and %ld points)",
-		artifact_name(xname(otmp), &dummy),
+		otmp->oartifact ? artifact_name(xname(otmp), &dummy) :
+			OBJ_NAME(objects[otmp->otyp]),
 		100L * (long)objects[otmp->otyp].oc_cost,
 		250L * (long)objects[otmp->otyp].oc_cost);
 	    putstr(endwin, 0, pbuf);
