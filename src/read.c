@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)read.c	3.3	1999/11/29	*/
+/*	SCCS Id: @(#)read.c	3.3	2000/03/03	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -658,8 +658,8 @@ register struct obj	*sobj;
 			}
 			if (otmp->oerodeproof && (otmp->oeroded || otmp->oeroded2)) {
 			    otmp->oeroded = otmp->oeroded2 = 0;
-			    Your("%s %ss good as new!",
-				 xname(otmp), Blind ? "feel" : "look");
+			    Your("%s %s as good as new!",
+				 xname(otmp), Blind ? "feels" : "looks");
 			}
 			break;
 		}
@@ -881,7 +881,7 @@ register struct obj	*sobj;
 			}
 			if (uwep->oerodeproof && (uwep->oeroded || uwep->oeroded2)) {
 			    uwep->oeroded = uwep->oeroded2 = 0;
-			    Your("%s good as new!",
+			    Your("%s as good as new!",
 				 aobjnam(uwep, Blind ? "feel" : "look"));
 			}
 		} else return !chwepon(sobj,

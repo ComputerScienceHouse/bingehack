@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)objnam.c	3.3	2000/02/19	*/
+/*	SCCS Id: @(#)objnam.c	3.3	2000/03/03	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -2029,6 +2029,14 @@ srch:
 			pline("A pool.");
 			/* Must manually make kelp! */
 			water_damage(level.objects[u.ux][u.uy], FALSE, TRUE);
+			newsym(u.ux, u.uy);
+			return &zeroobj;
+		}
+		if (!BSTRCMP(bp, p-4, "lava")) {  /* also matches "molten lava" */
+			levl[u.ux][u.uy].typ = LAVAPOOL;
+			del_engr_at(u.ux, u.uy);
+			pline("A pool of molten lava.");
+			if (!(Levitation || Flying)) (void) lava_effects();
 			newsym(u.ux, u.uy);
 			return &zeroobj;
 		}

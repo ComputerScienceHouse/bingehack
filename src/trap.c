@@ -3076,9 +3076,9 @@ lava_effects()
 {
     register struct obj *obj, *obj2;
     int dmg;
+    boolean usurvive;
 
-
-	burn_away_slime();
+    burn_away_slime();
     if (likes_lava(youmonst.data)) return FALSE;
 
     if (!Fire_resistance) {
@@ -3092,10 +3092,17 @@ lava_effects()
 	} else
 	    You("fall into the lava!");
 
+	usurvive = Lifesaved || discover;
+#ifdef WIZARD
+	if (wizard) usurvive = TRUE;
+#endif
 	for(obj = invent; obj; obj = obj2) {
 	    obj2 = obj->nobj;
 	    if(is_organic(obj) && !obj->oerodeproof) {
 		if(obj->owornmask) {
+		    if (usurvive)
+			Your("%s into flame!", aobjnam(obj, "burst"));
+
 		    if(obj == uarm) (void) Armor_gone();
 		    else if(obj == uarmc) (void) Cloak_off();
 		    else if(obj == uarmh) (void) Helmet_off();
@@ -3108,17 +3115,12 @@ lava_effects()
 		    else if(obj == uleft) Ring_gone(obj);
 		    else if(obj == uright) Ring_gone(obj);
 		    else if(obj == ublindf) Blindf_off(obj);
+		    else if(obj == uamul) Amulet_off();
 		    else if(obj == uwep) uwepgone();
-			else if (obj == uquiver) uqwepgone();
-			else if (obj == uswapwep) uswapwepgone();
-
-		    if(Lifesaved
-#ifdef WIZARD
-		       || wizard
-#endif
-		       ) Your("%s into flame!", aobjnam(obj, "burst"));
+		    else if (obj == uquiver) uqwepgone();
+		    else if (obj == uswapwep) uswapwepgone();
 		}
-		useup(obj);
+		useupall(obj);
 	    }
 	}
 
@@ -3149,7 +3151,7 @@ burn_stuff:
     if(uarmf && !uarmf->oerodeproof && is_organic(uarmf)) {
 	/* save uarmf value because Boots_off() sets uarmf to null */
 	obj = uarmf;
-	Your("%s burst into flame!", xname(obj));
+	Your("%s bursts into flame!", xname(obj));
 	(void) Boots_off();
 	useup(obj);
     }
