@@ -577,7 +577,7 @@ boolean called;
 #endif
 	struct permonst *mdat = mtmp->data;
 	boolean do_hallu, do_invis, do_it, do_misc;
-	int name_at_start;
+	boolean name_at_start, has_adjectives;
 
 	if (article == ARTICLE_YOUR && !mtmp->mtame)
 	    article = ARTICLE_THE;
@@ -599,11 +599,14 @@ boolean called;
 	    char priestnambuf[BUFSZ];
 	    char *name;
 	    long save_prop = EHalluc_resistance;
+	    unsigned save_invis = mtmp->minvis;
 
 	    /* when true name is wanted, explicitly block Hallucination */
 	    if (!do_hallu) EHalluc_resistance = 1L;
+	    if (!do_invis) mtmp->minvis = 0;
 	    name = priestname(mtmp, priestnambuf);
 	    EHalluc_resistance = save_prop;
+	    mtmp->minvis = save_invis;
 	    if (article == ARTICLE_NONE && !strncmp(name, "the ", 4))
 		name += 4;
 	    return strcpy(buf, name);
@@ -630,8 +633,7 @@ boolean called;
 		return buf;
 	    }
 	    Strcat(buf, shkname(mtmp));
-	    if (mdat == &mons[PM_SHOPKEEPER] && !do_invis &&
-			!(do_misc && adjective))
+	    if (mdat == &mons[PM_SHOPKEEPER] && !do_invis)
 		return buf;
 	    Strcat(buf, " the ");
 	    if (do_invis)
@@ -640,7 +642,6 @@ boolean called;
 	    return buf;
 	}
 
-	name_at_start = -1; /* -1: unknown, 0: no, 1: yes */
 	/* Put the adjectives in the buffer */
 	if (do_misc && adjective)
 	    Strcat(strcat(buf, adjective), " ");
@@ -651,30 +652,28 @@ boolean called;
 			!Blind && mtmp != u.usteed)
 	    Strcat(buf, "saddled ");
 #endif
+	if (buf[0] != 0)
+	    has_adjectives = TRUE;
+	else
+	    has_adjectives = FALSE;
+
 	/* Put the actual monster name or type into the buffer now */
 	/* Be sure to remember whether the buffer starts with a name */
-
-	if (buf[0] != 0) /* adjectives at start? */
-	    name_at_start = 0;
-
 	if (do_hallu) {
-	    name_at_start = 0;
 	    Strcat(buf, rndmonnam());
+	    name_at_start = FALSE;
 	} else if (mtmp->mnamelth) {
 	    char *name = NAME(mtmp);
 	    
 	    if (mdat == &mons[PM_GHOST]) {
 		Sprintf(eos(buf), "%s ghost", s_suffix(name));
-		if (name_at_start == -1)
-		    name_at_start = 1;
+		name_at_start = TRUE;
 	    } else if (called) {
 		Sprintf(eos(buf), "%s called %s", mdat->mname, name);
-		if (name_at_start == -1)
-		    name_at_start = type_is_pname(mdat) ? 1 : 0;
+		name_at_start = (boolean)type_is_pname(mdat);
 	    } else {
 		Strcat(buf, name);
-		if (name_at_start == -1)
-		    name_at_start = 1;
+		name_at_start = TRUE;
 	    }
 	} else if (is_mplayer(mdat) && !In_endgame(&u.uz)) {
 	    char pbuf[BUFSZ];
@@ -682,14 +681,13 @@ boolean called;
 				 monsndx(mdat),
 				 (boolean)mtmp->female));
 	    Strcat(buf, lcase(pbuf));
-	    name_at_start = 0;
+	    name_at_start = FALSE;
 	} else {
 	    Strcat(buf, mdat->mname);
-	    if (name_at_start == -1)
-		name_at_start = type_is_pname(mdat) ? 1 : 0;
+	    name_at_start = (boolean)type_is_pname(mdat);
 	}
 
-	if (name_at_start == 1) {
+	if (name_at_start && !has_adjectives) {
 	    if (mdat == &mons[PM_WIZARD_OF_YENDOR])
 		article = ARTICLE_THE;
 	    else
@@ -775,13 +773,7 @@ char *
 m_monnam(mtmp)
 struct monst *mtmp;
 {
-	char *result;
-	unsigned save_invis = mtmp->minvis;
-
-	mtmp->minvis = 0;  /* affects priestname() as well as x_monnam() */
-	result = x_monnam(mtmp, ARTICLE_NONE, (char *)0, EXACT_NAME, FALSE);
-	mtmp->minvis = save_invis;
-	return result;
+	return x_monnam(mtmp, ARTICLE_NONE, (char *)0, EXACT_NAME, FALSE);
 }
 
 /* pet name: "your little dog" */
