@@ -83,6 +83,7 @@ boolean exclude_cookie;
 	    int count = 0;
 
 	    do {
+		rumor_buf[0] = '\0';
 		if (true_rumor_size == 0L) {	/* if this is 1st outrumor() */
 		    init_rumors(rumors);
 		    if (true_rumor_size < 0L) {	/* init failed */
@@ -119,9 +120,9 @@ boolean exclude_cookie;
 		}
 		if ((endp = index(line, '\n')) != 0) *endp = 0;
 		Strcat(rumor_buf, xcrypt(line, xbuf));
-		(void) dlb_fclose(rumors);
 		exercise(A_WIS, (truth > 0));
 	    } while(count++ < 50 && exclude_cookie && (strstri(rumor_buf, "fortune") || strstri(rumor_buf, "pity")));
+	    (void) dlb_fclose(rumors);
 	    if (count >= 50)
 		impossible("Can't find non-cookie rumor?");
 	} else {
