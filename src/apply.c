@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)apply.c	3.3	1999/10/10	*/
+/*	SCCS Id: @(#)apply.c	3.3	1999/12/15	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -578,7 +578,8 @@ struct obj *obj;
 	    setuwep(obj);
 	}
 	if (uwep != obj) return(FALSE); /* rewielded old object after dying */
-	if (!can_twoweapon())
+	/* applying weapon or tool that gets wielded ends two-weapon combat */
+	if (u.twoweap)
 		untwoweapon();
 	if (obj->oclass != WEAPON_CLASS)
 		unweapon = TRUE;
