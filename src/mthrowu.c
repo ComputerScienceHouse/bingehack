@@ -389,26 +389,29 @@ m_throw(mon, x, y, dx, dy, range, obj)
 			poisoned(onmbuf, A_STR, knmbuf, 10);
 			objects[otmp.otyp].oc_name_known = save_ocknown;
 		    }
-		    if(hitu && (singleobj->otyp == CREAM_PIE ||
-				 singleobj->otyp == BLINDING_VENOM)) {
+		    if(hitu &&
+		       can_blnd((struct monst*)0, &youmonst,
+				(uchar)(singleobj->otyp == BLINDING_VENOM ?
+					AT_SPIT : AT_WEAP), singleobj)) {
 			blindinc = rnd(25);
 			if(singleobj->otyp == CREAM_PIE) {
 			    if(!Blind) pline("Yecch!  You've been creamed.");
-			    else	pline("There's %s sticky all over your %s.",
-					    something,
-					    body_part(FACE));
-			} else {	/* venom in the eyes */
-			    if(ublindf) /* nothing */ ;
-			    else if(!Blind) pline_The("venom blinds you.");
+			    else pline("There's %s sticky all over your %s.",
+				       something,
+				       body_part(FACE));
+			} else if(singleobj->otyp == BLINDING_VENOM) {
+			    /* venom in the eyes */
+			    if(!Blind) pline_The("venom blinds you.");
 			    else Your("%s sting.", makeplural(body_part(EYE)));
 			}
 		    }
 		    if (hitu && singleobj->otyp == EGG) {
 			if (!Stone_resistance
-				&& !(poly_when_stoned(youmonst.data) &&
-				    polymon(PM_STONE_GOLEM)))
+			    && !(poly_when_stoned(youmonst.data) &&
+				 polymon(PM_STONE_GOLEM))) {
 			    Stoned = 5;
 			    killer = (char *) 0;
+			}
 		    }
 		    stop_occupation();
 		    if (hitu || !range) {
@@ -434,8 +437,8 @@ m_throw(mon, x, y, dx, dy, range, obj)
 	tmp_at(bhitpos.x, bhitpos.y);
 	delay_output();
 	tmp_at(DISP_END, 0);
-	/* blindfolds, towels, & lenses keep substances out of your eyes */
-	if (blindinc && !ublindf) {
+
+	if (blindinc) {
 		u.ucreamed += blindinc;
 		make_blinded(Blinded + blindinc,FALSE);
 	}
