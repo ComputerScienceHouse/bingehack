@@ -385,7 +385,10 @@ register struct obj *spellbook;
 				Sprintf(qbuf,
 		      "This spellbook is %sdifficult to comprehend. Continue?",
 					(read_ability < 12 ? "very " : ""));
-				if (ynq(qbuf) != 'y') return(1);
+				if (ynq(qbuf) != 'y') {
+				    spellbook->in_use = FALSE;
+				    return(1);
+				}
 			    }
 			    /* its up to random luck now */
 			    if (rnd(20) > read_ability) {
