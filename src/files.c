@@ -816,28 +816,30 @@ char *lockname;
 #if defined(applec) || defined(__MWERKS__)
 # pragma unused(filename,lockname)
 	return (char*)0;
-#elif defined(UNIX) || defined(VMS) || defined(AMIGA) || defined(WIN32) || defined(MSDOS)
-# ifdef NO_FILE_LINKS
+#else
+# if defined(UNIX) || defined(VMS) || defined(AMIGA) || defined(WIN32) || defined(MSDOS)
+#  ifdef NO_FILE_LINKS
 	Strcpy(lockname, LOCKDIR);
 	Strcat(lockname, "/");
 	Strcat(lockname, filename);
-# else
+#  else
 	Strcpy(lockname, filename);
-# endif
-# ifdef VMS
+#  endif
+#  ifdef VMS
       {
 	char *semi_colon = rindex(lockname, ';');
 	if (semi_colon) *semi_colon = '\0';
       }
 	Strcat(lockname, ".lock;1");
-# else
+#  else
 	Strcat(lockname, "_lock");
-# endif
+#  endif
 	return lockname;
-#else
+# else
 	lockname[0] = '\0';
 	return (char*)0;
-#endif  /* UNIX || VMS || AMIGA || WIN32 || MSDOS */
+# endif  /* UNIX || VMS || AMIGA || WIN32 || MSDOS */
+#endif
 }
 
 
