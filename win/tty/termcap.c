@@ -775,7 +775,16 @@ cl_eos()			/* free after Robert Viduya */
  * terminfo uses BGR or RGB for its indexes.
  *
  * If we don't get the definitions, then guess.  Original color terminfos
- * used BGR.  Linux using ncurses and SCO UNIX are known to have RGB terminfos.
+ * used BGR for the original Sf (setf, Standard foreground) codes, but
+ * there was a near-total lack of user documentation, so some subsequent
+ * terminfos, such as early Linux ncurses and SCO UNIX, used RGB.  Possibly
+ * as a result of the confusion, AF (setaf, ANSI Foreground) codes were
+ * introduced, but this caused yet more confusion.  Later Linux ncurses
+ * have BGR Sf, RGB AF, and RGB COLOR_FOO, which appears to be the SVR4
+ * standard.  We could switch the colors around when using Sf with ncurses,
+ * which would help things on later ncurses and hurt things on early ncurses.
+ * We'll try just preferring AF and hoping it always agrees with COLOR_FOO,
+ * and falling back to Sf if AF isn't defined.
  *
  * In any case, treat black specially so we don't try to display black
  * characters on the assumed black background.
