@@ -162,7 +162,7 @@ register xchar x, y;
 		} else if (tmp > rnd(20)) {
 		    You("kick %s.", mon_nam(mon));
 		    sum = damageum(mon, uattk);
-		    (void)passive(mon, (sum == 2) ? 1 : sum, 1, AT_KICK);
+		    (void)passive(mon, (boolean)(sum > 0), (sum != 2), AT_KICK);
 		} else {
 		    missum(mon, uattk);
 		    (void)passive(mon, 0, 1, AT_KICK);
