@@ -1314,6 +1314,9 @@ register struct attack *mattk;
 		}
 
 		You("eat %s brain!", s_suffix(mon_nam(mdef)));
+		u.uconduct.food++;
+		if (is_meat(mdef->data))
+		    atemeat();
 		if (mindless(mdef->data)) {
 		    pline("%s doesn't notice.", Monnam(mdef));
 		    break;
@@ -1531,7 +1534,8 @@ register struct attack *mattk;
 
 			/* KMH, conduct */
 			u.uconduct.food++;
-			if (is_meat(mdef->data)) u.uconduct.eatanim++;
+			if (is_meat(mdef->data))
+			    atemeat();
 
 			/* Use up amulet of life saving */
 			if (!!(otmp = mlifesaver(mdef))) m_useup(mdef, otmp);

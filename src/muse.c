@@ -89,9 +89,6 @@ struct obj *obj;
 			mon->mfrozen = 3;
 		    }
 		    return 2;
-		} else {
-		    /* It's made from some magic milk, but still milk. */
-		    u.uconduct.eatanimbp++;
 		}
 	    }
 	    if (potion_descr && !strcmp(potion_descr, "smoky") &&

@@ -1373,7 +1373,11 @@ struct obj *otmp;
 	    atemeat();
 
 	  default:
-	  /* vegan stuff */
+	    if ( otmp->otyp == PANCAKE || otmp->otyp == FORTUNE_COOKIE ) {
+		/* non-vegan */
+		u.uconduct.eatanimbp++;
+	    }
+	  /* else vegan stuff */
 	    ;
 	}
 }
