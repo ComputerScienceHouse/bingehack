@@ -863,6 +863,11 @@ polyuse(objhdr, mat, minwt)
     for(otmp = objhdr; minwt > 0 && otmp; otmp = otmp2) {
 	otmp2 = otmp->nexthere;
 	if (otmp == uball || otmp == uchain) continue;
+	if (obj_resists(otmp, 0, 0)) continue;	/* preserve unique objects */
+#ifdef MAIL
+	if (otmp->otyp == SCR_MAIL) continue;
+#endif
+
 	if (((int) objects[otmp->otyp].oc_material == mat) ==
 		(rn2(minwt + 1) != 0)) {
 	    /* appropriately add damage to bill */
@@ -974,6 +979,9 @@ struct obj *obj;
 {
 	long i;
 
+#ifdef MAIL
+	if (obj->otyp == SCR_MAIL) return;
+#endif
 	obj_zapped = TRUE;
 
 	if(poly_zapped < 0) {
