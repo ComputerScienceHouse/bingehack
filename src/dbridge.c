@@ -396,15 +396,20 @@ struct entity *etmp;
 int dest, how;
 {
 	if (is_u(etmp)) {
-		if (how == DROWNING)
+		if (how == DROWNING) {
+			killer = 0;	/* drown() sets its own killer */
 			(void) drown();
-		else if (how == BURNING)
+		} else if (how == BURNING) {
+			killer = 0;	/* lava_effects() sets its own killer */
 			(void) lava_effects();
-		else {
+		} else {
 			coord xy;
 
-			killer_format = KILLED_BY_AN;
-			killer = "falling drawbridge";
+			/* use more specific killer if specified */
+			if (!killer) {
+			    killer_format = KILLED_BY_AN;
+			    killer = "falling drawbridge";
+			}
 			done(how);
 			/* So, you didn't die */
 			if (!e_survives_at(etmp, etmp->ex, etmp->ey)) {
@@ -421,6 +426,7 @@ int dest, how;
 		/* we might have crawled out of the moat to survive */
 		etmp->ex = u.ux,  etmp->ey = u.uy;
 	} else {
+		killer = 0;
 		/* fake "digested to death" damage-type suppresses corpse */
 #define mk_message(dest) ((dest & 1) ? "" : (char *)0)
 #define mk_corpse(dest)  ((dest & 2) ? AD_DGST : AD_PHYS)

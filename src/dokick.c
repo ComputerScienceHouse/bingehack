@@ -337,10 +337,10 @@ xchar x, y;
 	    if (!(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))) {
 		You("turn to stone...");
 		killer_format = KILLED_BY;
-			/* KMH -- otmp should be kickobj */
-			Sprintf(kbuf, "kicking a %s corpse without boots",
-					mons[kickobj->corpsenm].mname);
-			killer = kbuf;
+		/* KMH -- otmp should be kickobj */
+		Sprintf(kbuf, "kicking a %s corpse without boots",
+			mons[kickobj->corpsenm].mname);
+		killer = kbuf;
 		done(STONING);
 	    }
 	}
@@ -830,9 +830,9 @@ dokick()
 		    	mm.x = x; mm.y = y;
 			pline("You've disturbed the occupants!");
 			while (cnt--)
-				if (enexto(&mm, mm.x, mm.y, &mons[PM_KILLER_BEE]))
-				    (void) makemon(&mons[PM_KILLER_BEE],
-						mm.x, mm.y, MM_ANGRY);
+			    if (enexto(&mm, mm.x, mm.y, &mons[PM_KILLER_BEE]))
+				(void) makemon(&mons[PM_KILLER_BEE],
+					       mm.x, mm.y, MM_ANGRY);
 			maploc->looted |= TREE_SWARM;
 			return(1);
 		    }

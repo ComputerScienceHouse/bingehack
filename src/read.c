@@ -1564,8 +1564,11 @@ int how;
 
 	/* Polymorphed characters will die as soon as they're rehumanized. */
 	/* KMH -- Unchanging prevents rehumanization */
-		if (Upolyd && ptr != youmonst.data) You_feel("dead inside.");
-		else
+		if (Upolyd && ptr != youmonst.data) {
+			delayed_killer = killer;
+			killer = 0;
+			You_feel("dead inside.");
+		} else
 			done(GENOCIDED);
 	    } else if (ptr == youmonst.data) {
 		rehumanize();

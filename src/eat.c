@@ -497,6 +497,7 @@ void
 fix_petrification()
 {
 	Stoned = 0;
+	delayed_killer = 0;
 	if (Hallucination)
 	    pline("What a pity - you just ruined a future piece of %sart!",
 		  ACURR(A_CHA) > 15 ? "fine " : "");
@@ -1568,7 +1569,7 @@ register struct obj *otmp;
 			if (!Stoned) Stoned = 5;
 			killer_format = KILLED_BY_AN;
 			Sprintf(kbuf, "%s egg", mons[otmp->corpsenm].mname);
-			killer = kbuf;
+			delayed_killer = kbuf;
 		    }
 		}
 		break;

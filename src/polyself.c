@@ -77,6 +77,7 @@ const char *fmt, *arg;
 			(urace.femalenum != NON_PM &&
 			(mvitals[urace.femalenum].mvflags & G_GENOD))) {
 	    /* intervening activity might have clobbered genocide info */
+	    killer = delayed_killer;
 	    if (!killer || !strstri(killer, "genocid")) {
 		killer_format = KILLED_BY;
 		killer = "self-genocide";
@@ -173,6 +174,7 @@ newman()
 	newuhs(FALSE);
 	if (Sick) make_sick(0L, (char *) 0, FALSE, SICK_ALL);
 	Stoned = 0;
+	delayed_killer = 0;
 	if (u.uhp <= 0 || u.uhpmax <= 0) {
 		if (Polymorph_control) {
 		    if (u.uhp <= 0) u.uhp = 1;
@@ -353,6 +355,7 @@ int	mntmp;
 		You("turn to stone!");
 		mntmp = PM_STONE_GOLEM;
 		Stoned = 0;
+		delayed_killer = 0;
 	}
 
 	u.mtimedone = rn1(500, 500);
@@ -366,6 +369,7 @@ int	mntmp;
 
 	if (Stone_resistance && Stoned) { /* parnes@eniac.seas.upenn.edu */
 		Stoned = 0;
+		delayed_killer = 0;
 		You("no longer seem to be petrifying.");
 	}
 	if (Sick_resistance && Sick) {

@@ -212,6 +212,10 @@ nh_timeout()
 	    if((upp->intrinsic & TIMEOUT) && !(--upp->intrinsic & TIMEOUT)) {
 		switch(upp - u.uprops){
 		case STONED:
+			if (delayed_killer && !killer) {
+				killer = delayed_killer;
+				delayed_killer = 0;
+			}
 			if (!killer) {
 				killer_format = KILLED_BY;
 				killer = "petrification";
@@ -219,6 +223,10 @@ nh_timeout()
 			done(STONING);
 			break;
 		case SLIMED:
+			if (delayed_killer && !killer) {
+				killer = delayed_killer;
+				delayed_killer = 0;
+			}
 			if (!killer) {
 				killer_format = KILLED_BY;
 				killer = "turning into green slime";

@@ -166,6 +166,7 @@ E NEARDATA char *save_cm;
 #define NO_KILLER_PREFIX 2
 E NEARDATA int killer_format;
 E const char *killer;
+E const char *delayed_killer;
 E const char *configfile;
 E NEARDATA char plname[PL_NSIZ];
 E NEARDATA char dogname[];

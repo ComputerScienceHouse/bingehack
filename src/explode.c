@@ -54,6 +54,7 @@ char olet;
 
 	if (olet == MON_EXPLODE) {
 	    str = killer;
+	    killer = 0;		/* set again later as needed */
 	    adtyp = AD_PHYS;
 	} else
 	switch (abs(type) % 10) {
