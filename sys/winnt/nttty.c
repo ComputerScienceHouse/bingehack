@@ -421,18 +421,10 @@ get_scr_size()
 	    	newcoord.Y = 25;
 	    	newcoord.X = 80;
 	    	SetConsoleScreenBufferSize(hConOut, newcoord);
-	    	LI = 25;
-	    	CO = 80;
-	    } else {
-	    	LI = tmpy;
-	   	CO = tmpx;
 	    }
 	}
-	else
-	{	
-		LI = 25;
-		CO = 80;
-	}
+	LI = 25;
+	CO = 80;
 }
 
 
