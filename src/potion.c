@@ -521,6 +521,10 @@ peffects(otmp)
 		else {
 		    if (Levitation||Is_airlevel(&u.uz)||Is_waterlevel(&u.uz))
 			You("are motionlessly suspended.");
+#ifdef STEED
+		    else if (u.usteed)
+			You("are frozen in place!");
+#endif
 		    else
 			Your("%s are frozen to the %s!",
 			     makeplural(body_part(FOOT)), surface(u.ux, u.uy));

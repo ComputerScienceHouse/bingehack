@@ -19,9 +19,6 @@ Drain life requires you to reach floor to wipe an engraving.
 
 Orc monsters should be given poison res? [psmith@spod-central.org]
 
-Ice vortices and freezing spheres should be infravisible. 
-[psmith@spod-central.org]
-
 Ninja monsters should get multishot bonuses with yumi-ya? 
 [psmith@spod-central.org]
 
@@ -229,9 +226,8 @@ Riding bugs:
 -- An additional "[horsename] is caught in bear trap!" message is displayed,
    if caught in beartrap while riding and you unmount 
    [eino.keskitalo@purkki.mbnet.fi]
--- Potion of paralyzation's "Your feet are frozen to the floor" seems
-   redundant while riding. Also, the steed might want to wander about
-   when (of course the knight's well-trained pony wouldn't)
+-- The steed might want to wander about when you are paralyzed (of course the
+   knight's well-trained pony wouldn't)
    [eino.keskitalo@purkki.mbnet.fi]
 -- A cloud of sleeping gas (trap) etc could treat the rider and the steed
    separately. [eino.keskitalo@purkki.mbnet.fi]
