@@ -429,9 +429,6 @@ DUMB.Setup:	../include/extern.h
 all:	$(GAME)
 
 
-../win/gnome/gn_rip.h: ../win/X11/rip.xpm
-	cp ../win/X11/rip.xpm ../win/gnome/gn_rip.h
-
 #	dependencies for makedefs and its outputs, which the util
 #	Makefile is responsible for keeping up to date
 #
@@ -472,6 +469,9 @@ vis_tab.c: $(MAKEDEFS)
 	@( cd ../util ; $(MAKE) ../src/vis_tab.c )
 tile.c: ../win/share/tilemap.c $(HACK_H)
 	@( cd ../util ; $(MAKE) ../src/tile.c )
+
+../win/gnome/gn_rip.h: ../win/X11/rip.xpm
+	cp ../win/X11/rip.xpm ../win/gnome/gn_rip.h
 
 #	date.h should be remade any time any of the source or include code
 #	is modified.  Unfortunately, this would make the contents of this
@@ -573,14 +573,6 @@ unixunix.o: ../sys/unix/unixunix.c $(HACK_H)
 	$(CC) $(CFLAGS) -c ../sys/unix/unixunix.c
 bemain.o: ../sys/be/bemain.c $(HACK_H) ../include/dlb.h
 	$(CC) $(CFLAGS) -c ../sys/be/bemain.c
-winbe.o: ../win/BeOS/winbe.cpp $(HACK_H)
-	$(CXX) $(CXXFLAGS) -c ../win/BeOS/winbe.cpp
-NHWindow.o: ../win/BeOS/NHWindow.cpp $(HACK_H)
-	$(CXX) $(CXXFLAGS) -c ../win/BeOS/NHWindow.cpp
-NHMenuWindow.o: ../win/BeOS/NHMenuWindow.cpp $(HACK_H)
-	$(CXX) $(CXXFLAGS) -c ../win/BeOS/NHMenuWindow.cpp
-NHMapWindow.o: ../win/BeOS/NHMapWindow.cpp $(HACK_H)
-	$(CXX) $(CXXFLAGS) -c ../win/BeOS/NHMapWindow.cpp
 getline.o: ../win/tty/getline.c $(HACK_H) ../include/func_tab.h
 	$(CC) $(CFLAGS) -c ../win/tty/getline.c
 termcap.o: ../win/tty/termcap.c $(HACK_H) ../include/tcap.h
@@ -616,6 +608,44 @@ wintext.o: ../win/X11/wintext.c $(HACK_H) ../include/winX.h ../include/xwindow.h
 winval.o: ../win/X11/winval.c $(HACK_H) ../include/winX.h
 	$(CC) $(CFLAGS) -c ../win/X11/winval.c
 tile.o: tile.c $(HACK_H)
+gnaskstr.o: ../win/gnome/gnaskstr.c ../win/gnome/gnaskstr.h \
+		../win/gnome/gnmain.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnaskstr.c
+gnbind.o: ../win/gnome/gnbind.c ../win/gnome/gnbind.h ../win/gnome/gnmain.h \
+		../win/gnome/gnaskstr.h ../win/gnome/gnyesno.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnbind.c
+gnglyph.o: ../win/gnome/gnglyph.c ../win/gnome/gnglyph.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnglyph.c
+gnmain.o: ../win/gnome/gnmain.c ../win/gnome/gnmain.h ../win/gnome/gnsignal.h \
+		../win/gnome/gnbind.h ../win/gnome/gnopts.h $(HACK_H) \
+		../include/date.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnmain.c
+gnmap.o: ../win/gnome/gnmap.c ../win/gnome/gnmap.h ../win/gnome/gnglyph.h \
+		../win/gnome/gnsignal.h $(HACK_H)
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnmap.c
+gnmenu.o: ../win/gnome/gnmenu.c ../win/gnome/gnmenu.h ../win/gnome/gnmain.h \
+		../win/gnome/gnbind.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnmenu.c
+gnmesg.o: ../win/gnome/gnmesg.c ../win/gnome/gnmesg.h ../win/gnome/gnsignal.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnmesg.c
+gnopts.o: ../win/gnome/gnopts.c ../win/gnome/gnopts.h ../win/gnome/gnmain.h \
+		$(HACK_H)
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnopts.c
+gnplayer.o: ../win/gnome/gnplayer.c ../win/gnome/gnplayer.h \
+		../win/gnome/gnmain.h $(HACK_H)
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnplayer.c
+gnsignal.o: ../win/gnome/gnsignal.c ../win/gnome/gnsignal.h \
+		../win/gnome/gnmain.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnsignal.c
+gnstatus.o: ../win/gnome/gnstatus.c ../win/gnome/gnstatus.h \
+		../win/gnome/gnsignal.h ../win/gnome/gn_xpms.h \
+		../win/gnome/gnomeprv.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnstatus.c
+gntext.o: ../win/gnome/gntext.c ../win/gnome/gntext.h ../win/gnome/gnmain.h \
+		../win/gnome/gn_rip.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gntext.c
+gnyesno.o: ../win/gnome/gnyesno.c ../win/gnome/gnbind.h ../win/gnome/gnyesno.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnyesno.c
 wingem.o: ../win/gem/wingem.c $(HACK_H) ../include/func_tab.h ../include/dlb.h \
 		../include/patchlevel.h ../include/wingem.h
 	$(CC) $(CFLAGS) -c ../win/gem/wingem.c
@@ -632,44 +662,6 @@ qt_win.o: ../win/Qt/qt_win.cpp $(HACK_H) ../include/func_tab.h \
 	$(CXX) $(CXXFLAGS) -c ../win/Qt/qt_win.cpp
 qt_clust.o: ../win/Qt/qt_clust.cpp ../include/qt_clust.h
 	$(CXX) $(CXXFLAGS) -c ../win/Qt/qt_clust.cpp
-gnaskstr.o: ../win/gnome/gnaskstr.c ../win/gnome/gnaskstr.h \
-		../win/gnome/gnmain.h
-	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnaskstr.c
-gnbind.o: ../win/gnome/gnbind.c ../win/gnome/gnbind.h ../win/gnome/gnmain.h \
-		../win/gnome/gnaskstr.h ../win/gnome/gnyesno.h
-	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnbind.c
-gnglyph.o: ../win/gnome/gnglyph.c ../win/gnome/gnglyph.h
-	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnglyph.c
-gnmain.o: ../win/gnome/gnmain.c ../win/gnome/gnbind.h ../win/gnome/gnmain.h \
-		../win/gnome/gnsignal.h ../win/gnome/gnopts.h \
-		../include/hack.h ../include/date.h
-	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnmain.c
-gnmap.o: ../win/gnome/gnmap.c ../win/gnome/gnmap.h ../win/gnome/gnglyph.h \
-		../win/gnome/gnsignal.h ../include/hack.h
-	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnmap.c
-gnmenu.o: ../win/gnome/gnmenu.c ../win/gnome/gnmenu.h ../win/gnome/gnmain.h \
-		../win/gnome/gnbind.h
-	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnmenu.c
-gnmesg.o: ../win/gnome/gnmesg.c ../win/gnome/gnmesg.h ../win/gnome/gnsignal.h
-	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnmesg.c
-gnopts.o: ../win/gnome/gnopts.c ../win/gnome/gnopts.h ../win/gnome/gnmain.h \
-		../include/hack.h
-	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnopts.c
-gnplayer.o: ../win/gnome/gnplayer.c ../win/gnome/gnplayer.h \
-		../win/gnome/gnmain.h ../include/hack.h
-	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnplayer.c
-gnsignal.o: ../win/gnome/gnsignal.c ../win/gnome/gnsignal.h \
-		../win/gnome/gnmain.h
-	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnsignal.c
-gnstatus.o: ../win/gnome/gnstatus.c ../win/gnome/gnstatus.h \
-		../win/gnome/gnsignal.h ../win/gnome/xpms.h ../include/hack.h \
-		../include/dlb.h ../include/patchlevel.h
-	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnstatus.c
-gntext.o: ../win/gnome/gntext.c ../win/gnome/gntext.h ../win/gnome/gnmain.h \
-		../win/gnome/gn_rip.h
-	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gntext.c
-gnyesno.o: ../win/gnome/gnyesno.c ../win/gnome/gnyesno.h ../win/gnome/gnbind.h
-	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnyesno.c
 allmain.o: allmain.c $(HACK_H)
 alloc.o: alloc.c $(CONFIG_H)
 apply.o: apply.c $(HACK_H) ../include/edog.h
@@ -785,4 +777,3 @@ zap.o: zap.c $(HACK_H)
 # DEPENDENCIES MUST END AT END OF FILE
 # IF YOU PUT STUFF HERE IT WILL GO AWAY
 # see make depend above
-
