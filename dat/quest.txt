@@ -1034,7 +1034,7 @@ Again, you stand before %H.  You vaguely sense that this
 may be the last time you stand before %l.
 %E
 %Cp Kni 00005
-"Hail, %p!  Verily, thou looks well."
+"Hail, %p!  Verily, thou lookest well."
 %E
 %Cp Kni 00006
 "There is word, %p, that %n hath been sighted in the fens
@@ -1050,7 +1050,7 @@ near %i."
 "Many brave %cP died when %n attacked."
 %E
 %Cc Kni 00010
-"Ah, %p.  We see thou hath received our summons.
+"Ah, %p.  We see thou hast received our summons.
 We are in dire need of thy prowess.  But first, We must needs
 decide if thou art ready for this great undertaking."
 %E
@@ -1058,11 +1058,11 @@ decide if thou art ready for this great undertaking."
 "Welcome again, %p.  We hope thou art ready now."
 %E
 %Cp Kni 00012
-"Once again, thou standeth before us, %p.  Art thou ready now?"
+"Once again, thou standest before us, %p.  Art thou ready now?"
 %E
 %Cc Kni 00013
-"Thou disgraceth this noble court with thine impure presence.  We have been
-lenient with thee, but no more.  Thy name shalt be spoken no more.  We
+"Thou disgracest this noble court with thine impure presence.  We have been
+lenient with thee, but no more.  Thy name shall be spoken no more.  We
 hereby strip thee of thy title, thy lands, and thy standing as %ca.
 Begone from our sight!"
 %E
@@ -1076,9 +1076,9 @@ pure, could never hope to defeat the foul %n.
 Our presence when thou hast attained the noble title of %R."
 %E
 %Cc Kni 00015
-"Thou dishonoureth us, %p!  Thou hast strayed from the path of
+"Thou dishonourest us, %p!  Thou hast strayed from the path of
 chivalry! Go from our presence and do penance.  Only when thou art again
-pure may thou return hence."
+pure mayest thou return hence."
 %E
 %Cc Kni 00016
 "Ah, %p.  Thou art truly ready, as no %c before thee hath
@@ -1092,7 +1092,7 @@ forces were pressed back, %n stole %o.
 
 "We eventually turned the tide, but lost many %cP in doing so.
 Merlin was taken off by his apprentice, but hast not recovered.  We hast
-been told that so long as %n possesses %o,
+been told that so long as %n possesseth %o,
 Merlin will not regain his health.
 
 "We hereby charge thee with this most important of duties:
@@ -1109,13 +1109,13 @@ We restore Merlin to health."
 "Though %n is verily a mighty foe, we have confidence in thy victory."
 %E
 %Cp Kni 00022
-"Beware, for %n hast surrounded himself with hordes of foul creatures."
+"Beware, for %n hath surrounded himself with hordes of foul creatures."
 %E
 %Cp Kni 00023
 "Great treasure, 'tis said, is hoarded in the lair of %n."
 %E
 %Cp Kni 00024
-"If thou possesseth %o, %p, %ns magic
+"If thou possessest %o, %p, %ns magic
 shalt therewith be thwarted."
 %E
 %Cp Kni 00025
@@ -1157,7 +1157,7 @@ Again, you stand at the entrance to %ns lair.
 then tomorrow, %H shall fall!"
 %E
 %Cp Kni 00051
-"Again, thou challengeth me, %r?  So be it.  Thou wilt die here."
+"Again, thou challengest me, %r?  So be it.  Thou wilt die here."
 %E
 %Cp Kni 00052
 "Thou art truly foolish, %r.  I shall dispatch thee anon."
@@ -1192,7 +1192,7 @@ puny %r.  Thou wilt die in agony!"
 that is the way I like my %c for dinner."
 %E
 %Cp Kni 00068
-"Thy strength wanes, %p.  The time of thy death draws near."
+"Thy strength waneth, %p.  The time of thy death draweth near."
 %E
 %Cp Kni 00069
 "Call upon thy precious %d, %p.  It shall not avail thee."
@@ -1220,10 +1220,10 @@ As you approach %l, he beams at you and says:
     have received word that Merlin is recovering, and shall soon
     rejoin us.
 
-    He has instructed us that thou art now to be the guardian of
-    %o.  He feels that thou may have need of
+    He hath instructed us that thou art now to be the guardian of
+    %o.  He feels that thou mayest have need of
     its powers in thine adventures.  It is our wish that thou keep
-    %o with thee as thou search for the fabled
+    %o with thee as thou searchest for the fabled
     Amulet of Yendor.
 %E
 # assumes Magic Mirror of Merlin (glass object)
@@ -1234,7 +1234,7 @@ to resume your search for the Amulet.  %Z await your
 return through the magic portal that brought you here."
 %E
 %Cp Kni 00090
-"Well met, %p.  How goest thy search for the Amulet of Yendor?"
+"Well met, %p.  How goeth thy search for the Amulet of Yendor?"
 %E
 %Cc Kni 00091
 "Thou hast succeeded, we see, %p!  Now thou art commanded to take
