@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)worn.c	3.3	1999/07/17	*/
+/*	SCCS Id: @(#)worn.c	3.3	1999/12/15	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -183,9 +183,9 @@ boolean on;
     struct obj *otmp;
     int which = (int) objects[obj->otyp].oc_oprop;
 
-    if (!which) return;
-
     unseen = !canseemon(mon);
+    if (!which) goto maybe_blocks;
+
     if (on) {
 	switch (which) {
 	 case INVIS:
@@ -255,6 +255,8 @@ boolean on;
 	    break;
 	}
     }
+
+ maybe_blocks:
     /* obj->owornmask has been cleared by this point, so we can't use it.
        However, since monsters don't wield armor, we don't have to guard
        against that and can get away with a blanket worn-mask value. */
