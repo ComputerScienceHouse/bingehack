@@ -668,7 +668,7 @@ int attk;
 	switch(attk) {
 	    /* 0 is burning, which we should never be called with */
 	    case AD_RUST: hurt = 1; break;
-	    case AD_CORRODE: hurt = 3; break;
+	    case AD_CORR: hurt = 3; break;
 	    default: hurt = 2; break;
 	}
 
@@ -1251,10 +1251,10 @@ do_stone:
 		}
 		hurtarmor(AD_RUST);
 		break;
-	    case AD_CORRODE:
+	    case AD_CORR:
 		hitmsg(mtmp, mattk);
 		if (mtmp->mcan) break;
-		hurtarmor(AD_CORRODE);
+		hurtarmor(AD_CORR);
 		break;
 	    case AD_DCAY:
 		hitmsg(mtmp, mattk);
@@ -1880,7 +1880,7 @@ register struct obj *obj;
 	boolean is_acid;
 
 	if (!mon || !obj) return; /* just in case */
-	if (dmgtype(youmonst.data, AD_CORRODE))
+	if (dmgtype(youmonst.data, AD_CORR))
 	    is_acid = TRUE;
 	else if (dmgtype(youmonst.data, AD_RUST))
 	    is_acid = FALSE;

@@ -1244,6 +1244,10 @@ doloot()	/* loot a container on the floor. */
 	/* "Can't do that while carrying so much stuff." */
 	return 0;
     }
+    if (nohands(youmonst.data)) {
+	You("have no hands!");	/* not `body_part(HAND)' */
+	return 0;
+    }
     x = u.ux; y = u.uy;
 
 lootcont:

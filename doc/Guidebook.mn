@@ -652,7 +652,8 @@ option is ``on'').
 .lp #chat
 Talk to someone.
 .lp #conduct
-List which challenges you have adhered to.
+List which challenges you have adhered to.  See the section below entitled
+``Conduct'' for details.
 .lp #dip
 Dip an object into something.
 .lp #enhance
@@ -1032,7 +1033,7 @@ exchanges your primary (the one being wielded) and secondary weapons.
 And if you have proficiency in the ``two weapon combat'' skill, you
 may wield both primary and secondary weapons simultaneously; use the
 `#twoweapon' extended command to engage or disengage that.  Only
-some types of characters (barbarians, for instance), have the necessary
+some types of characters (barbarians, for instance) have the necessary
 skill available.  Even with that skill, using two weapons at once incurs
 a penalty in the chance to hit your target compared to using just one
 weapon at a time.
@@ -1073,23 +1074,26 @@ also an option,
 which has NetHack choose another item to automatically fill your
 quiver when the inventory slot used for `Q' runs out.
 .pg
-Some characters will throw multiple items in a single action.  Rangers,
-for instance, or anyone who achieves a high level of proficiency in
-the relevant weapon skill (in bow skill if you're wielding one to
-shoot arrows, or in sling skill if you're wielding one to shoot stones).
-There is little you can do
-to control this; if NetHack decides that you'll be shooting 3 arrows
-on the current shot, then three arrows will travel in the direction
-you've indicated, even if the first or second succeeds in killing the
-target.  You can explicitly limit the number of shots by using a numeric
-prefix before the `t' or `f' command.
+Some characters have the ability fire a volley of multiple items in a
+single turn.  Knowing how to load several rounds of ammunition at
+once -- or hold several missiles in your hand -- and still hit a
+target is not an easy task.  Rangers are among those who are adept
+at this task, as are those with a high level of proficiency in the
+relevant weapon skill (in bow skill if you're wielding one to
+shoot arrows, in crossbow skill if you're wielding one to shoot bolts,
+or in sling skill if you're wielding one to shoot stones).
+The number of items that the character has a chance to fire varies from
+turn to turn.  You can explicitly limit the number of shots by using a
+numeric prefix before the `t' or `f' command.
 For example, ``2f'' (or ``n2f'' if using
 .op number_pad
 mode) would ensure that at most 2 arrows are shot
-even if NetHack decides that your skill warrants 3.  If you specify
+even if you could have fired 3.  If you specify
 a larger number than would have been shot (``4f'' in this example),
 you'll just end up shooting the same number (3, here) as if no limit
-had been specified.
+had been specified.  Once the volley is in motion, all of the items
+will travel in the same direction; if the first ones kill a monster,
+the others can still continue beyond that spot.
 .hn 3
 Weapon proficiency
 .pg

@@ -218,7 +218,7 @@ macopen (const char *name, int flags, long fileType)
 	C2P (name, s);
 	if (flags & O_CREAT) {
 		if (HCreate (theDirs.dataRefNum, theDirs.dataDirID, s ,
-			MAC_CREATOR, fileType) && (flags & O_EXCL)) {
+			TEXT_CREATOR, fileType) && (flags & O_EXCL)) {
 			return -1;
 		}
 

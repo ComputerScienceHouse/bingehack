@@ -104,6 +104,7 @@ extern void error(const char *,...);
 # define PREF_TYPE 'PREF'
 # define DATA_TYPE 'DATA'
 # define MAC_CREATOR 'nh31' /* Registered with DTS ! */
+# define TEXT_CREATOR 'ttxt' /* Something the user can actually edit */
 
 /*
  * Define PORT_HELP to be the name of the port-specfic help file.

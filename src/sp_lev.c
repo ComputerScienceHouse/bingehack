@@ -2187,7 +2187,8 @@ dlb *fd;
 			if (x != xstart && (IS_WALL(levl[x-1][y].typ) ||
 					    levl[x-1][y].horizontal))
 			    levl[x][y].horizontal = 1;
-		    } else if(levl[x][y].typ == HWALL)
+		    } else if(levl[x][y].typ == HWALL ||
+				levl[x][y].typ == IRONBARS)
 			levl[x][y].horizontal = 1;
 		    else if(levl[x][y].typ == LAVAPOOL)
 			levl[x][y].lit = 1;

@@ -303,7 +303,7 @@ ask_redraw (WindowPtr wind, DialogItemIndex item)
 	short type;
 	Handle handle;
 	Rect rect;
-	static char	*modechar = " XD";
+	static char	*modechar = "NED";
 
 
 	/* Which item shall we redraw? */
@@ -449,6 +449,25 @@ ask_filter (WindowPtr wind, EventRecord *event, DialogItemIndex *item)
 					*item = RSRC_ASK_PLAY;
 				} else
 					*item = 0;
+				return (TRUE);
+			}
+			/* Handle equivalents for Normal/Explore/Debug */
+			if ((event->modifiers & cmdKey) && (ch == 'n')) {
+				currmode = 0;
+				ask_redraw(wind, RSRC_ASK_MODE);
+				*item = RSRC_ASK_MODE;
+				return (TRUE);
+			}
+			if ((event->modifiers & cmdKey) && (ch == 'e')) {
+				currmode = 1;
+				ask_redraw(wind, RSRC_ASK_MODE);
+				*item = RSRC_ASK_MODE;
+				return (TRUE);
+			}
+			if ((event->modifiers & cmdKey) && (ch == 'd')) {
+				currmode = 2;
+				ask_redraw(wind, RSRC_ASK_MODE);
+				*item = RSRC_ASK_MODE;
 				return (TRUE);
 			}
 			/* Handle equivalents for Cancel and Quit */

@@ -37,7 +37,7 @@ int attk;
 	switch(attk) {
 	    /* 0 is burning, which we should never be called with */
 	    case AD_RUST: hurt = 1; break;
-	    case AD_CORRODE: hurt = 3; break;
+	    case AD_CORR: hurt = 3; break;
 	    default: hurt = 2; break;
 	}
 	/* What the following code does: it keeps looping until it
@@ -1277,8 +1277,8 @@ register struct attack *mattk;
 		hurtmarmor(mdef, AD_RUST);
 		tmp = 0;
 		break;
-	    case AD_CORRODE:
-		hurtmarmor(mdef, AD_CORRODE);
+	    case AD_CORR:
+		hurtmarmor(mdef, AD_CORR);
 		tmp = 0;
 		break;
 	    case AD_DCAY:
@@ -1926,7 +1926,7 @@ uchar aatyp;
 		erode_weapon(uwep, FALSE);
 	    }
 	    break;
-	  case AD_CORRODE:
+	  case AD_CORR:
 	    if(mhit && !mon->mcan) {
 	      if (aatyp == AT_KICK) {
 		if (uarmf)

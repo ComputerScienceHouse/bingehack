@@ -694,8 +694,8 @@ mdamagem(magr, mdef, mattk)
 		hurtmarmor(mdef, AD_RUST);
 		tmp = 0;
 		break;
-	    case AD_CORRODE:
-		hurtmarmor(mdef, AD_CORRODE);
+	    case AD_CORR:
+		hurtmarmor(mdef, AD_CORR);
 		tmp = 0;
 		break;
 	    case AD_DCAY:
@@ -1054,7 +1054,7 @@ register struct obj *obj;
 
 	if (!magr || !mdef || !obj) return; /* just in case */
 
-	if (dmgtype(mdef->data, AD_CORRODE))
+	if (dmgtype(mdef->data, AD_CORR))
 	    is_acid = TRUE;
 	else if (dmgtype(mdef->data, AD_RUST))
 	    is_acid = FALSE;
