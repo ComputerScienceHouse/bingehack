@@ -795,6 +795,7 @@ register const char *str;
 
 	if (strncmpi(str, "the ", 4) &&
 	    strcmp(str, "molten lava") &&
+	    strcmp(str, "iron bars") &&
 	    strcmp(str, "ice")) {
 		if (index(vowels, *str) &&
 		    strncmp(str, "useful", 6) &&

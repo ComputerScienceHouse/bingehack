@@ -278,23 +278,29 @@ const char *in_str;
 	 */
 	register int i;
 	register int mntmp = NON_PM;
-	register char *s, *str;
+	register char *s, *str, *term;
 	char buf[BUFSZ];
 	int len, slen;
 
 	str = strcpy(buf, in_str);
+
 	if (!strncmp(str, "a ", 2)) str += 2;
 	else if (!strncmp(str, "an ", 3)) str += 3;
+
+	slen = strlen(str);
+	term = str + slen;
 
 	if ((s = strstri(str, "vortices")) != 0)
 	    Strcpy(s+4, "ex");
 	/* be careful with "ies"; "priest", "zombies" */
-	else if ((s = strstri(str, "jellies")) != 0 ||
-		 (s = strstri(str, "mummies")) != 0)
-	    Strcpy(s+4, "y");
+	else if (slen > 3 && !strcmpi(term-3, "ies") &&
+		    (slen < 7 || strcmpi(term-7, "zombies")))
+	    Strcpy(term-3, "y");
 	/* luckily no monster names end in fe or ve with ves plurals */
-	else if ((s = strstri(str, "ves")) != 0)
-	    Strcpy(s, "f");
+	else if (slen > 3 && !strcmpi(term-3, "ves"))
+	    Strcpy(term-3, "f");
+
+	slen = strlen(str); /* length possibly needs recomputing */
 
     {
 	static const struct alt_spl { const char* name; short pm_val; }
@@ -318,6 +324,7 @@ const char *in_str;
 		{ "high elf",		PM_HIGH_ELF },
 #endif
 		{ "olog hai",		PM_OLOG_HAI },
+		{ "arch lich",		PM_ARCH_LICH },
 	    /* Some irregular plurals */
 		{ "incubi",		PM_INCUBUS },
 		{ "succubi",		PM_SUCCUBUS },
@@ -327,7 +334,6 @@ const char *in_str;
 		{ "lurkers above",	PM_LURKER_ABOVE },
 		{ "cavemen",		PM_CAVEMAN },
 		{ "cavewomen",		PM_CAVEWOMAN },
-		{ "zruties",		PM_ZRUTY },
 		{ "djinn",		PM_DJINNI },
 		{ "mumakil",		PM_MUMAK },
 		{ "erinyes",		PM_ERINYS },
@@ -343,7 +349,6 @@ const char *in_str;
 		return namep->pm_val;
     }
 
-	slen = strlen(str);
 	for (len = 0, i = LOW_PM; i < NUMMONS; i++) {
 	    register int m_i_len = strlen(mons[i].mname);
 	    if (m_i_len > len && !strncmpi(mons[i].mname, str, m_i_len)) {
