@@ -1635,7 +1635,9 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 	if (otmp->otyp == RIN_SLOW_DIGESTION) {
 		pline("This ring is undigestable!");
 		(void) rottenfood(otmp);
-		docall(otmp);
+		if (otmp->dknown && !objects[otmp->otyp].oc_name_known
+				&& !objects[otmp->otyp].oc_uname)
+			docall(otmp);
 		return (1);
 	}
 	if (otmp->oclass != FOOD_CLASS) {

@@ -1534,24 +1534,28 @@ register struct attack *mattk;
 			u.uconduct.flesh++;
 			if (is_meaty(mdef->data)) u.uconduct.meat++;
 
-			u.uhunger += mdef->data->cnutrit;
 			newuhs(FALSE);
 			xkilled(mdef,2);
-			Sprintf(msgbuf, "You totally digest %s.",
-					mon_nam(mdef));
-			if ((tmp = 3 + (mdef->data->cwt >> 6)) != 0) {
-			    /* setting afternmv = end_engulf is tempting,
-			     * but will cause problems if the player is
-			     * attacked (which uses his real location) or
-			     * if his See_invisible wears off
-			     */
-			    You("digest %s.", mon_nam(mdef));
-			    if (Slow_digestion) tmp *= 2;
-			    nomul(-tmp);
-			    nomovemsg = msgbuf;
-			} else pline(msgbuf);
+			if (mdef->mhp > 0) { /* monster lifesaved */
+			    You("hurriedly regurgitate the sizzling in your stomach.");
+			} else {
+			    u.uhunger += mdef->data->cnutrit;
+			    Sprintf(msgbuf, "You totally digest %s.",
+					    mon_nam(mdef));
+			    if ((tmp = 3 + (mdef->data->cwt >> 6)) != 0) {
+				/* setting afternmv = end_engulf is tempting,
+				 * but will cause problems if the player is
+				 * attacked (which uses his real location) or
+				 * if his See_invisible wears off
+				 */
+				You("digest %s.", mon_nam(mdef));
+				if (Slow_digestion) tmp *= 2;
+				nomul(-tmp);
+				nomovemsg = msgbuf;
+			    } else pline(msgbuf);
+			    exercise(A_CON, TRUE);
+			}
 			end_engulf();
-			exercise(A_CON, TRUE);
 			return(2);
 		    case AD_PHYS:
 			pline("%s is pummeled with your debris!",Monnam(mdef));
@@ -1608,7 +1612,8 @@ register struct attack *mattk;
 		end_engulf();
 		if ((mdef->mhp -= dam) <= 0) {
 		    killed(mdef);
-		    return(2);
+		    if (mdef->mhp <= 0)	/* not lifesaved */
+			return(2);
 		}
 		You("%s %s!", is_animal(youmonst.data) ? "regurgitate"
 			: "expel", mon_nam(mdef));
