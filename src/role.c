@@ -836,7 +836,7 @@ role_init()
 	if (urole.ldrnum != NON_PM) {
 	    mons[urole.ldrnum].msound = MS_LEADER;
 	    mons[urole.ldrnum].mflags2 |= (M2_PEACEFUL);
-	    mons[urole.ldrnum].mflags3 = M3_CLOSE;
+	    mons[urole.ldrnum].mflags3 |= M3_CLOSE;
 	    mons[urole.ldrnum].maligntyp = alignmnt * 3;
 	}
 
@@ -851,7 +851,7 @@ role_init()
 	    mons[urole.neminum].msound = MS_NEMESIS;
 	    mons[urole.neminum].mflags2 &= ~(M2_PEACEFUL);
 	    mons[urole.neminum].mflags2 |= (M2_NASTY|M2_STALK|M2_HOSTILE);
-	    mons[urole.neminum].mflags3 = M3_WANTSARTI | M3_WAITFORU;
+	    mons[urole.neminum].mflags3 |= M3_WANTSARTI | M3_WAITFORU;
 	}
 
 	/* Fix up the god names */

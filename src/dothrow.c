@@ -846,7 +846,10 @@ register struct obj   *obj;
 	else if (ACURR(A_DEX) < 8) tmp -= 1;
 	else if (ACURR(A_DEX) >= 14) tmp += (ACURR(A_DEX) - 14);
 
-	/* modify to-hit depending on distance; but keep it sane */
+	/* Modify to-hit depending on distance; but keep it sane.
+	 * Polearms get a distance penalty even when wielded; it's
+	 * hard to hit at a distance.
+	 */
 	disttmp = 3 - distmin(u.ux, u.uy, mon->mx, mon->my);
 	if(disttmp < -4) disttmp = -4;
 	tmp += disttmp;

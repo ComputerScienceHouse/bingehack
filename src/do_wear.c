@@ -522,6 +522,7 @@ Amulet_on()
 	case FAKE_AMULET_OF_YENDOR:
 		break;
 	case AMULET_OF_CHANGE:
+		if (Unchanging) break;
 		makeknown(AMULET_OF_CHANGE);
 		change_sex();
 		/* Don't use same message as polymorph */
@@ -556,6 +557,7 @@ Amulet_off()
 	case AMULET_OF_LIFE_SAVING:
 	case AMULET_VERSUS_POISON:
 	case AMULET_OF_REFLECTION:
+	case AMULET_OF_CHANGE:
 	case AMULET_OF_UNCHANGING:
 	case FAKE_AMULET_OF_YENDOR:
 		break;
@@ -570,9 +572,6 @@ Amulet_off()
 		    (void) drown();
 		    return;
 		}
-		break;
-	case AMULET_OF_CHANGE:
-		impossible("Wearing an amulet of change?");
 		break;
 	case AMULET_OF_STRANGULATION:
 		if (Strangled) {

@@ -627,10 +627,11 @@ register struct monst *mtmp;
 			(void) doseduce(mtmp);
 			break;
 	    }
-	    switch ((poly_gender() != (int) mtmp->female) ? rn2(3) : 0) {
+	    switch ((poly_gender() != (int) mtmp->female) ? rn2(3) : 0)
 #else
-	    switch ((poly_gender() == 0) ? rn2(3) : 0) {
+	    switch ((poly_gender() == 0) ? rn2(3) : 0)
 #endif
+	    {
 		case 2:
 			verbl_msg = "Hello, sailor.";
 			break;
@@ -768,6 +769,10 @@ dochat()
 
     (void) getdir("Talk to whom? [in what direction]");
 
+#ifdef STEED
+    if (u.usteed && u.dz > 0)
+	return (domonnoise(u.usteed));
+#endif
     if (u.dz) {
 	pline("They won't hear you %s there.", u.dz < 0 ? "up" : "down");
 	return(0);

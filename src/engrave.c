@@ -272,6 +272,9 @@ register int x,y;
 	register struct engr *ep = engr_at(x,y);
 	register int	sensed = 0;
 
+	/* Sensing an engraving does not require sight,
+	 * nor does it necessarily imply comprehension (literacy).
+	 */
 	if(ep && ep->engr_txt[0]) {
 	    switch(ep->engr_type) {
 	    case DUST:
@@ -446,6 +449,8 @@ doengrave()
 	ebuf[0] = (char)0;
 	post_engr_text[0] = (char)0;
 	maxelen = BUFSZ - 1;
+	if (is_demon(youmonst.data) || youmonst.data->mlet == S_VAMPIRE)
+	    type = BLOOD;
 
 	/* Can the adventurer engrave at all? */
 
@@ -939,6 +944,10 @@ doengrave()
 
 	len -= spct;
 
+	/* A single `x' is the traditional signature of an illiterate person */
+	if (len != 1 || !index(ebuf, 'x') && !index(ebuf, 'X'))
+	    u.uconduct.literate++;
+
 	/* Previous engraving is overwritten */
 	if (eow) {
 	    del_engr(oep);
@@ -1034,8 +1043,6 @@ doengrave()
 	    You("are blinded by the flash!");
 	    make_blinded((long)rnd(50),FALSE);
 	}
-
-	u.uconduct.literate++;
 
 	return(1);
 }

@@ -188,7 +188,7 @@
 	(u.usteed && mon_visible(u.usteed)) ?			\
 				ridden_mon_to_glyph(u.usteed) :		\
 	youmonst.m_ap_type == M_AP_NOTHING ?				\
-				monnum_to_glyph(u.umonnum) :	\
+				hero_glyph :					\
 	youmonst.m_ap_type == M_AP_FURNITURE ?				\
 				cmap_to_glyph(youmonst.mappearance) :	\
 	youmonst.m_ap_type == M_AP_OBJECT ?				\
@@ -198,12 +198,11 @@
 #define display_self()							\
     show_glyph(u.ux, u.uy,						\
 	youmonst.m_ap_type == M_AP_NOTHING ?				\
-				monnum_to_glyph(Upolyd ? u.umonnum : urace.malenum) :	\
+				hero_glyph :					\
 	youmonst.m_ap_type == M_AP_FURNITURE ?				\
 				cmap_to_glyph(youmonst.mappearance) :	\
 	youmonst.m_ap_type == M_AP_OBJECT ?				\
 				objnum_to_glyph(youmonst.mappearance) : \
-    !Upolyd ? monnum_to_glyph(urace.malenum) :		\
 	/* else M_AP_MONSTER */ monnum_to_glyph(youmonst.mappearance))
 #endif
 
@@ -293,6 +292,11 @@
 #define detected_monnum_to_glyph(mnum)	((int) (mnum) + GLYPH_DETECT_OFF)
 #define ridden_monnum_to_glyph(mnum)	((int) (mnum) + GLYPH_RIDDEN_OFF)
 #define petnum_to_glyph(mnum)	((int) (mnum) + GLYPH_PET_OFF)
+
+/* The hero's glyph when seen as a monster.  Could also be...
+ * mon_to_glyph(Upolyd || Race_if(PM_HUMAN) ? u.umonnum : urace.malenum)
+ */
+#define hero_glyph monnum_to_glyph(u.umonnum)
 
 
 /*

@@ -114,7 +114,7 @@ doread()
 	    }
 	}
 
-	/* KMH, conduct */
+	/* Actions required to win the game aren't counted towards conduct */
 	if (scroll->otyp != SPE_BOOK_OF_THE_DEAD)
 	    u.uconduct.literate++;
 
@@ -1464,6 +1464,9 @@ do_class_genocide()
 			char nam[BUFSZ];
 
 			Strcpy(nam, makeplural(mons[i].mname));
+			/* Although "genus" is Latin for race, the hero benefits
+			 * from both race and role; thus genocide affects either.
+			 */
 			if (Your_Own_Role(i) || Your_Own_Race(i) ||
 				((mons[i].geno & G_GENO)
 				&& !(mvitals[i].mvflags & G_GENOD))) {
@@ -1557,6 +1560,9 @@ int how;
 			continue;
 		}
 		ptr = &mons[mndx];
+		/* Although "genus" is Latin for race, the hero benefits
+		 * from both race and role; thus genocide affects either.
+		 */
 		if (Your_Own_Role(mndx) || Your_Own_Race(mndx)) {
 			killplayer++;
 			break;

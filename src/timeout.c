@@ -620,6 +620,9 @@ slip_or_trip()
 		You("stumble.");
 		break;
 	}
+#ifdef STEED
+	if (u.usteed) dismount_steed(DISMOUNT_FELL);
+#endif
 }
 
 /* Print a lamp flicker message with tailer. */
@@ -704,7 +707,7 @@ long timeout;
 
 	/* only interested in INVENT, FLOOR, and MINVENT */
 	if (get_obj_location(obj, &x, &y, 0)) {
-	    canseeit = cansee(x, y);
+	    canseeit = !Blind && cansee(x, y);
 	    /* set up `whose[]' to be "Your" or "Fred's" or "The goblin's" */
 	    (void) Shk_Your(whose, obj);
 	} else {

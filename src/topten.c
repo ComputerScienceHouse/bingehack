@@ -564,6 +564,10 @@ boolean so;
 	Sprintf(eos(linebuf), "-%s", t1->plrole);
 	if (t1->plrace[0] != '?')
 		Sprintf(eos(linebuf), "-%s", t1->plrace);
+	/* Printing of gender and alignment is intentional.  It has been
+	 * part of the NetHack Geek Code, and illustrates a proper way to
+	 * specify a character from the command line.
+	 */
 	Sprintf(eos(linebuf), "-%s", t1->plgend);
 	if (t1->plalign[0] != '?')
 		Sprintf(eos(linebuf), "-%s ", t1->plalign);

@@ -857,10 +857,11 @@ register struct obj *obj;
 		return;
 	}
 	if(u.uswallow || obj->cursed) {
-		pline_The("candle%s flicker%s for a moment, then die%s.",
-			obj->spe > 1 ? "s" : "",
-			obj->spe > 1 ? "" : "s",
-			obj->spe > 1 ? "" : "s");
+		if (!Blind)
+		    pline_The("candle%s flicker%s for a moment, then die%s.",
+		    	obj->spe > 1 ? "s" : "",
+		    	obj->spe > 1 ? "" : "s",
+		    	obj->spe > 1 ? "" : "s");
 		return;
 	}
 	if(obj->spe < 7) {
@@ -1219,6 +1220,9 @@ int magic; /* 0=Physical, otherwise skill level */
 		return 0;	/* user pressed ESC */
 	if (!magic && !(HJumping & ~INTRINSIC) && !EJumping &&
 			distu(cc.x, cc.y) != 5) {
+		/* The Knight jumping restriction still applies when riding a horse.
+		 * After all, what shape is the knight piece in chess?
+		 */
 		pline("Illegal move!");
 		return 0;
 	} else if (distu(cc.x, cc.y) > (magic ? 6+magic*3 : 9)) {
@@ -2552,6 +2556,7 @@ doapply()
 		nomul(0);
 		return 0;
 	}
+	if (res && obj->oartifact) arti_speak(obj);
 	nomul(0);
 	return res;
 }

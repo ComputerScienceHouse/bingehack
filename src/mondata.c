@@ -375,7 +375,8 @@ boolean
 webmaker(ptr)   /* creature can spin a web */
 	register struct permonst *ptr;
 {
-	return((boolean)(ptr->mlet == S_SPIDER && ptr != &mons[PM_SCORPION]));
+	return((boolean)(ptr->mlet == S_SPIDER &&
+		ptr != &mons[PM_SCORPION] && ptr != &mons[PM_SCORPIUS]));
 }
 
 #endif /* OVLB */

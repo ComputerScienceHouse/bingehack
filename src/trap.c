@@ -485,8 +485,13 @@ register struct trap *trap;
 	if (In_sokoban(&u.uz) &&
 			(ttype == PIT || ttype == SPIKED_PIT || ttype == HOLE ||
 			ttype == TRAPDOOR)) {
-	    if (Levitation || Flying)
-		pline("Air currents pull you down!");
+	    /* The "air currents" message is still appropriate -- even when
+	     * the hero isn't flying or levitating -- because it conveys the
+	     * reason why the player cannot escape the trap with a dexterity
+	     * check, clinging to the ceiling, etc.
+	     */
+	    pline("Air currents pull you down into the %s!",
+	    	defsyms[trap_to_defsym(ttype)].explanation);
 	    /* then proceed to normal trap effect */
 	} else if (already_seen) {
 	    if ((Levitation || Flying) &&

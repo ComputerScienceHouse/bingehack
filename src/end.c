@@ -346,6 +346,7 @@ int how;
 	if(u.utrap && u.utraptype == TT_LAVA) u.utrap = 0;
 	flags.botl = 1;
 	u.ugrave_arise = NON_PM;
+	HUnchanging = 0L;
 	curs_on_u();
 }
 

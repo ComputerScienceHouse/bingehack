@@ -180,6 +180,7 @@
 #define Invis			((HInvis || EInvis || \
 				 pm_invisible(youmonst.data)) && !BInvis)
 #define Invisible		(Invis && !See_invisible)
+		/* Note: invisibility also hides inventory and steed */
 
 #define EDisplaced		u.uprops[DISPLACED].extrinsic
 #define Displaced		EDisplaced

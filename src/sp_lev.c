@@ -772,6 +772,8 @@ struct mkroom	*croom;
 	    /* if we can't get a specific monster type (pm == 0) then the
 	       class has been genocided, so settle for a random monster */
 	}
+	if (In_mines(&u.uz) && pm && your_race(pm))
+	    pm = (struct permonst *) 0;
 
 	x = m->x;
 	y = m->y;
