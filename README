@@ -58,8 +58,9 @@ Please read items (1), (2) and (3) BEFORE doing anything with your new code.
     w.  A 'win/Qt' subdirectory, which contains files specific to Qt.
     x.  A 'win/X11' subdirectory, which contains files specific to X11.
     y.  A 'win/gem' subdirectory, which contains files specific to GEM.
-    z.  A 'win/tty' subdirectory, which contains files specific to ttys.
-    A.  A 'win/win32' subdirectory, which contains files specific to the
+    z.  A 'win/gnome' subdirectory, which contains files specific to GNOME.
+    A.  A 'win/tty' subdirectory, which contains files specific to ttys.
+    B.  A 'win/win32' subdirectory, which contains files specific to the
         Windows NT Win32 API.
 
     The names of these directories should not be changed unless you are

@@ -180,32 +180,16 @@ WINQTOBJ = qt_win.o qt_clust.o tile.o
 #
 # Files for a Gnome port
 #
-WINGNOMESRC= ../win/gnome/GnomeHackAskStringDialog.c \
-	../win/gnome/GnomeHackBind.c \
-	../win/gnome/GnomeHackGlyph.c \
-	../win/gnome/GnomeHackMainWindow.c \
-	../win/gnome/GnomeHackMapWindow.c \
-	../win/gnome/GnomeHackMenuWindow.c \
-	../win/gnome/GnomeHackMessageWindow.c \
-	../win/gnome/GnomeHackPlayerSelDialog.c \
-	../win/gnome/GnomeHackSettings.c \
-	../win/gnome/GnomeHackSignals.c \
-	../win/gnome/GnomeHackStatusWindow.c \
-	../win/gnome/GnomeHackTextWindow.c \
-	../win/gnome/GnomeHackYesNoDialog.c
-WINGNOMEOBJ= ../win/gnome/GnomeHackAskStringDialog.o \
-	../win/gnome/GnomeHackBind.o \
-	../win/gnome/GnomeHackGlyph.o \
-	../win/gnome/GnomeHackMainWindow.o \
-	../win/gnome/GnomeHackMapWindow.o \
-	../win/gnome/GnomeHackMenuWindow.o \
-	../win/gnome/GnomeHackMessageWindow.o \
-	../win/gnome/GnomeHackPlayerSelDialog.o \
-	../win/gnome/GnomeHackSettings.o \
-	../win/gnome/GnomeHackSignals.o \
-	../win/gnome/GnomeHackStatusWindow.o \
-	../win/gnome/GnomeHackTextWindow.o \
-	../win/gnome/GnomeHackYesNoDialog.o \
+WINGNOMESRC= ../win/gnome/gnaskstr.c ../win/gnome/gnbind.c \
+	../win/gnome/gnglyph.c ../win/gnome/gnmain.c ../win/gnome/gnmap.c \
+	../win/gnome/gnmenu.c ../win/gnome/gnmesg.c ../win/gnome/gnopts.c \
+	../win/gnome/gnplayer.c ../win/gnome/gnsignal.c \
+	../win/gnome/gnstatus.c ../win/gnome/gntext.c ../win/gnome/gnyesno.c
+WINGNOMEOBJ= ../win/gnome/gnaskstr.o ../win/gnome/gnbind.o \
+	../win/gnome/gnglyph.o ../win/gnome/gnmain.o ../win/gnome/gnmap.o \
+	../win/gnome/gnmenu.o ../win/gnome/gnmesg.o ../win/gnome/gnopts.o \
+	../win/gnome/gnplayer.o ../win/gnome/gnsignal.o \
+	../win/gnome/gnstatus.o ../win/gnome/gntext.o ../win/gnome/gnyesno.o \
 	tile.o
 #
 # Files for a Gem port
