@@ -1900,9 +1900,9 @@ on your speed.
 %Cc Ran 00081
 "%pC!  You have succeeded!  I feared it was not possible!
 
-"Your aura proclaims that you possess %o!
+"You have returned with %o!
 
-"I fear, now, that the Centaurs will select yet another %nt.
+"I fear, now, that the Centaurs will regroup and plot yet another raid.
 This will take some time, but if you can recover the Amulet of Yendor
 for %d before that happens, we will be eternally safe.
 
@@ -1923,7 +1923,7 @@ through the magic portal that brought you here."
 of Yendor?"
 %E
 %Cc Ran 00091
-"Utuelyes!  You have recovered the Amulet of Yendor!
+"You have it!  You have recovered the Amulet of Yendor!
 Now attend to me, %p, and I will tell you what must be done:
 
 "The Amulet has within it magic, the capability to transport you to
