@@ -139,7 +139,7 @@ SYSOBJ = ioctl.o unixmain.o unixtty.o unixunix.o
 # directories.  The ones given below is the usual spot for linux systems.
 # The paths are for glibconfig.h and gnomesupport.h respectively.
 #
-GNOMEINC=-I/usr/lib/glib/include -I/usr/lib/gnome-libs/include -I../win/gnome
+GNOMEINC=-I/usr/lib/glib/include -I/usr/lib/gnome-libs/include -I../win/gnome -I../win/X11
 
 # flags for debugging:
 # CFLAGS = -g -I../include
@@ -180,17 +180,14 @@ WINQTOBJ = qt_win.o qt_clust.o tile.o
 #
 # Files for a Gnome port
 #
-WINGNOMESRC= ../win/gnome/gnaskstr.c ../win/gnome/gnbind.c \
+WINGNOMESRC = ../win/gnome/gnaskstr.c ../win/gnome/gnbind.c \
 	../win/gnome/gnglyph.c ../win/gnome/gnmain.c ../win/gnome/gnmap.c \
 	../win/gnome/gnmenu.c ../win/gnome/gnmesg.c ../win/gnome/gnopts.c \
 	../win/gnome/gnplayer.c ../win/gnome/gnsignal.c \
 	../win/gnome/gnstatus.c ../win/gnome/gntext.c ../win/gnome/gnyesno.c
-WINGNOMEOBJ= ../win/gnome/gnaskstr.o ../win/gnome/gnbind.o \
-	../win/gnome/gnglyph.o ../win/gnome/gnmain.o ../win/gnome/gnmap.o \
-	../win/gnome/gnmenu.o ../win/gnome/gnmesg.o ../win/gnome/gnopts.o \
-	../win/gnome/gnplayer.o ../win/gnome/gnsignal.o \
-	../win/gnome/gnstatus.o ../win/gnome/gntext.o ../win/gnome/gnyesno.o \
-	tile.o
+WINGNOMEOBJ = gnaskstr.o gnbind.o gnglyph.o gnmain.o gnmap.o gnmenu.o \
+	gnmesg.o gnopts.o gnplayer.o gnsignal.o gnstatus.o gntext.o \
+	gnyesno.o tile.o
 #
 # Files for a Gem port
 WINGEMSRC = ../win/gem/wingem.c ../win/gem/wingem1.c ../win/gem/load_img.c \
@@ -627,6 +624,33 @@ qt_win.o: ../win/Qt/qt_win.cpp $(HACK_H) ../include/func_tab.h \
 	$(CXX) $(CXXFLAGS) -c ../win/Qt/qt_win.cpp
 qt_clust.o: ../win/Qt/qt_clust.cpp ../include/qt_clust.h
 	$(CXX) $(CXXFLAGS) -c ../win/Qt/qt_clust.cpp
+gnaskstr.o: ../win/gnome/gnaskstr.c ../win/gnome/gnaskstr.h ../win/gnome/gnmain.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnaskstr.c
+gnbind.o: ../win/gnome/gnbind.c ../win/gnome/gnbind.h ../win/gnome/gnmain.h ../win/gnome/gnaskstr.h ../win/gnome/gnyesno.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnbind.c
+gnglyph.o: ../win/gnome/gnglyph.c ../win/gnome/gnglyph.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnglyph.c
+gnmain.o: ../win/gnome/gnmain.c ../win/gnome/gnbind.h ../win/gnome/gnmain.h ../win/gnome/gnsignal.h ../win/gnome/gnopts.h ../include/hack.h ../include/date.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnmain.c
+gnmap.o: ../win/gnome/gnmap.c ../win/gnome/gnmap.h ../win/gnome/gnglyph.h ../win/gnome/gnsignal.h ../include/hack.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnmap.c
+gnmenu.o: ../win/gnome/gnmenu.c ../win/gnome/gnmenu.h ../win/gnome/gnmain.h ../win/gnome/gnbind.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnmenu.c
+gnmesg.o: ../win/gnome/gnmesg.c ../win/gnome/gnmesg.h ../win/gnome/gnsignal.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnmesg.c
+gnopts.o: ../win/gnome/gnopts.c ../win/gnome/gnopts.h ../win/gnome/gnmain.h ../include/hack.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnopts.c
+gnplayer.o: ../win/gnome/gnplayer.c ../win/gnome/gnplayer.h ../win/gnome/gnmain.h ../include/hack.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnplayer.c
+gnsignal.o: ../win/gnome/gnsignal.c ../win/gnome/gnsignal.h ../win/gnome/gnmain.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnsignal.c
+gnstatus.o: ../win/gnome/gnstatus.c ../win/gnome/gnstatus.h ../win/gnome/gnsignal.h ../win/gnome/xpms.h ../include/hack.h ../include/dlb.h ../include/patchlevel.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnstatus.c
+gntext.o: ../win/gnome/gntext.c ../win/gnome/gntext.h ../win/gnome/gnmain.h ../win/X11/rip.xpm
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gntext.c
+gnyesno.o: ../win/gnome/gnyesno.c ../win/gnome/gnyesno.h ../win/gnome/gnbind.h
+	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnyesno.c
+
 allmain.o: allmain.c $(HACK_H)
 alloc.o: alloc.c $(CONFIG_H)
 apply.o: apply.c $(HACK_H) ../include/edog.h

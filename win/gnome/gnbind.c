@@ -1,23 +1,6 @@
-/*
- * Gnome Interface for NetHack
- *
- * Copyright (C) 1998 by Erik Andersen <andersee@debian.org>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
-*/
+/*	SCCS Id: @(#)gnbind.c	3.3	2000/07/16	*/
+/* Copyright (C) 1998 by Erik Andersen <andersee@debian.org> */
+/* NetHack may be freely redistributed.  See license for details. */
 
 /*
  * This file implements the interface between the window port specific
@@ -330,6 +313,8 @@ void gnome_display_nhwindow(winid wid, BOOLEAN_P block)
       gtk_signal_emit( GTK_OBJECT (gnome_windowlist[wid].win),
 		       ghack_signals[GHSIG_DISPLAY],
 		       block);
+      if (block)
+	(void) gnome_nhgetch();
     }
 }
 

@@ -1,3 +1,6 @@
+/*	SCCS Id: @(#)gnxpms.h	3.3	2000/07/16	*/
+/* Copyright (C) 1998 by Erik Andersen <andersee@debian.org> */
+/* NetHack may be freely redistributed.  See license for details. */
 /* These XPMs are the artwork of Warwick Allison
  * <warwick@troll.no>.  They have been borrowed from 
  * the most excellent NetHackQt, until such time as
