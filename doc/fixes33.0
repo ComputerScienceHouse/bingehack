@@ -248,6 +248,7 @@ water prayer: treat already blessed potions as `other' rather than as `water'
 water prayer: potions being blessed glow light blue rather than amber;
 	hallucination affects the color seen when changed potions glow
 fix Death/Sandman #9 joke (should be 8) and make sure the message can be seen
+zapping Death with wand of death multiple times could cause hit points to wrap
 when pet attacks monster that attacks back, be sure it's in range (could be a
 	worm attacked on the tail)
 

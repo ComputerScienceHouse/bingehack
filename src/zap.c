@@ -2638,6 +2638,8 @@ struct obj **ootmp;	/* to return worn armor for caller to disintegrate */
 		if(abs(type) != ZT_BREATH(ZT_DEATH)) {	/* death */
 		    if(mon->data == &mons[PM_DEATH]) {
 			mon->mhpmax += mon->mhpmax/2;
+			if (mon->mhpmax >= MAGIC_COOKIE)
+			    mon->mhpmax = MAGIC_COOKIE - 1;
 			mon->mhp = mon->mhpmax;
 			tmp = 0;
 			break;
