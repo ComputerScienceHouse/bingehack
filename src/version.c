@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)version.c	3.3	99/05/19	*/
+/*	SCCS Id: @(#)version.c	3.3	1999/12/01	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -122,10 +122,11 @@ int fd;
 const char amiga_version_string[] = AMIGA_VERSION_STRING;
 #endif
 
-unsigned long get_feature_notice_ver(str)
+unsigned long
+get_feature_notice_ver(str)
 char *str;
 {
-	int maj, min, patch;
+	int major, minor, patch;
 	char *istr[3];
 	int j = 0;
 
@@ -143,13 +144,14 @@ char *str;
 			return 0L;
 	}
 	if (j != 2) return 0L;
-	maj = atoi(istr[0]);
-	min = atoi(istr[1]);
+	major = atoi(istr[0]);
+	minor = atoi(istr[1]);
 	patch = atoi(istr[2]);
-	return FEATURE_NOTICE_VER(maj,min,patch);	/* macro from include/hack.h */
+	return FEATURE_NOTICE_VER(major,minor,patch);	/* macro from hack.h */
 }
 
-unsigned long get_current_feature_ver()
+unsigned long
+get_current_feature_ver()
 {
 	return FEATURE_NOTICE_VER(VERSION_MAJOR,VERSION_MINOR,PATCHLEVEL);
 }
