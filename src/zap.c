@@ -1321,6 +1321,7 @@ struct obj *obj, *otmp;
 		    break;
 		}
 		poly_obj(obj, STRANGE_OBJECT);
+		newsym(obj->ox,obj->oy);
 		break;
 	case WAN_PROBING:
 		res = !obj->dknown;
