@@ -104,6 +104,12 @@ which would logically not "use up" the supply of wild monsters.  Monster
 cloning is explicitly such a case; there are some cases that have been
 missed for now.
 
+The "Scoreboard" mode (-s) invocation of the game uses a different
+role detection mechanism than the "Play" invocation.  It does not allow
+filtering for races, and since the Rogue and Ranger now share the same
+first letter, there is no way to get a high-score listing of just one
+of those two roles.
+
 Reported but unconfirmed bugs:
 -- Strange things happen to items in chests pets carry downstairs.
 -- Several reports of core dumps when monsters resist an effect.
@@ -198,12 +204,8 @@ Guidebook
       - for years, the introduction has needed reconciliation with the
         quest legacy text issued at game startup.
 
-      - the lists of player selectable roles and races are both incomplete.
-
       - various mentions of spellcasting are all based on the old system
         rather than the present wizard patch implementation.
-
-      - there is no description of riding monsters.
 
       - explanation for the 'I' characters that appear
         on the screen when unseen monsters are around.  I think of it as a
