@@ -86,6 +86,9 @@ int argc;
 char *argv[];
 {
      pcmain(argc,argv);
+#ifdef LAN_FEATURES
+     init_lan_features();
+#endif
      moveloop();
      nethack_exit(EXIT_SUCCESS);
      /*NOTREACHED*/
@@ -156,10 +159,6 @@ char *argv[];
 	ami_wininit_data();
 #endif
 	initoptions();
-#ifdef LAN_FEATURES
-	init_lan_features();
-#endif
-
 #ifdef AMIGA
 	ami_mkargline(&argc, &argv);
 #endif

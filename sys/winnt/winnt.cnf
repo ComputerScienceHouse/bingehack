@@ -1,7 +1,7 @@
-# Default.NetHack-settings file for Windows NT
+# Defaults.nh file for Windows NT
 # A '#' at the beginning of a line means the rest of the line is a comment.
 #
-# NetHack 3.3.0 uses Default.NetHack-settings instead of NetHack.cnf
+# NetHack 3.3.0 uses Defaults.nh instead of NetHack.cnf
 # because the latter file extension conflicted with the Windows 
 # speed-dial application.
 #
@@ -27,6 +27,8 @@ OPTIONS=IBMgraphics
 #
 OPTIONS=time,rest_on_space,noautopickup,number_pad
 
+# Uncomment this line to prevent the mail daemon from delivering mail to you
+#OPTIONS=!mail
 
 # *** HARD DISK CONFIGURATION ***
 #

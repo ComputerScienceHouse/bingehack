@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)pcsys.c	3.3	96/10/21
+/*	SCCS Id: @(#)pcsys.c	3.3	1999/12/10
 /* NetHack may be freely redistributed.  See license for details. */
 
 /*
@@ -28,7 +28,7 @@
 #endif
 
 
-#if defined(MTHREAD_VIEW) || defined(MICRO) || defined(WIN32) || defined(OS2)
+#if defined(MICRO) || defined(WIN32) || defined(OS2)
 void FDECL(nethack_exit,(int));
 #else
 #define nethack_exit exit
@@ -455,7 +455,7 @@ const char *name, *mode;
 	return (FILE *)0;
 }
 
-#if defined(MTHREAD_VIEW) || defined(MICRO) || defined(WIN32) || defined(OS2)
+#if defined(MICRO) || defined(WIN32) || defined(OS2)
 void nethack_exit(code)
 int code;
 {
@@ -511,4 +511,25 @@ static void msexit()
 #endif
 	return;
 }
+#ifdef WIN32
+/*
+ * This is a kludge.  Just before the release of 3.3.0 the latest
+ * version of a popular MAPI mail product was found to exhibit
+ * a strange result where the current directory was changed out
+ * from under NetHack resulting in a failure of all subsequent
+ * file operations in NetHack.  This routine is called prior
+ * to all file open/renames/deletes in file.c.
+ *
+ * A more elegant solution will be sought after 3.3.0 is released.
+ */
+void dircheck()
+{
+	char dirbuf[BUFSZ];
+	dirbuf[0] = '\0';
+	if (getcwd(dirbuf, sizeof dirbuf) != (char *)0)
+		/* pline("%s,%s",dirbuf,hackdir); */
+		if (strcmp(dirbuf,hackdir) != 0)
+			chdir(hackdir);		/* chdir, not chdirx */
+}
+#endif
 #endif /* MICRO || WIN32 || OS2 */

@@ -143,15 +143,15 @@ Compiling
 Running NetHack
 
 7.  Make sure all of the support files -- Guidebook.txt, license, logfile,
-    Defaults.NetHack-settings, NetHack.exe, nhdat, record, and recover.exe 
+    Defaults.nh, NetHack.exe, nhdat, record, and recover.exe 
     -- were copied to the game directory.  If not, move them there yourself.  
-    Defaults.NetHack-settings is distributed as sys/winnt/winnt.cnf, but
+    Defaults.nh is distributed as sys/winnt/winnt.cnf, but
     the Makefile should take care of moving it and renaming it correctly.
 
-    Edit Defaults.NetHack-settings to reflect your particular setup and personal 
+    Edit Defaults.nh to reflect your particular setup and personal 
     preferences, by following the comments.  With this release, HACKDIR
     defaults to the same directory as that where the NetHack.exe executable
-    resides.  You only need to set HACKDIR in Defaults.NetHack-settings if, 
+    resides.  You only need to set HACKDIR in Defaults.nh if, 
     for some reason, you wish to override that.
   
 8a. Running from the command prompt:
