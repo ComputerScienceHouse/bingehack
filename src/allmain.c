@@ -92,7 +92,7 @@ moveloop()
 
 		    /* reallocate movement rations to monsters */
 		    for (mtmp = fmon; mtmp; mtmp = mtmp->nmon)
-			mcalcmove(mtmp);
+			mtmp->movement += mcalcmove(mtmp);
 
 		    if(!rn2(u.uevent.udemigod ? 25 :
 			    (depth(&u.uz) > depth(&stronghold_level)) ? 50 : 70))
@@ -102,7 +102,7 @@ moveloop()
 #ifdef STEED
 		    if (u.usteed && flags.mv) {
 			/* your speed doesn't augment steed's speed */
-			moveamt = u.usteed->data->mmove;
+			moveamt = mcalcmove(u.usteed);
 		    } else
 #endif
 		    {

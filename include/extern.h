@@ -1036,7 +1036,7 @@ E boolean FDECL(can_carry, (struct monst *,struct obj *));
 E int FDECL(mfndpos, (struct monst *,coord *,long *,long));
 E boolean FDECL(monnear, (struct monst *,int,int));
 E void NDECL(dmonsfree);
-E void FDECL(mcalcmove, (struct monst*));
+E int FDECL(mcalcmove, (struct monst*));
 E void NDECL(mcalcdistress);
 E void FDECL(replmon, (struct monst *,struct monst *));
 E void FDECL(relmon, (struct monst *));

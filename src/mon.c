@@ -359,7 +359,7 @@ register struct monst *mtmp;
 }
 
 
-void
+int
 mcalcmove(mon)
 struct monst *mon;
 {
@@ -383,7 +383,7 @@ struct monst *mon;
     }
 #endif
 
-    mon->movement += mmove;
+    return mmove;
 }
 
 void
