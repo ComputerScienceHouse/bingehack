@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)save.c	3.3	99/03/29	*/
+/*	SCCS Id: @(#)save.c	3.3	2000/07/27	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -933,6 +933,7 @@ freedynamicdata()
 	unload_qtlist();
 	free_invbuf();	/* let_to_name (invent.c) */
 	free_youbuf();	/* You_buf,&c (pline.c) */
+	tmp_at(DISP_FREEMEM, 0);	/* temporary display effects */
 #ifdef FREE_ALL_MEMORY
 # define freeobjchn(X)	(saveobjchn(0, X, FREE_SAVE),  X = 0)
 # define freemonchn(X)	(savemonchn(0, X, FREE_SAVE),  X = 0)

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)display.c	3.3	00/01/12	*/
+/*	SCCS Id: @(#)display.c	3.3	2000/07/27	*/
 /* Copyright (c) Dean Luick, with acknowledgements to Kevin Darcy */
 /* and Dave Cohrs, 1990.					  */
 /* NetHack may be freely redistributed.  See license for details. */
@@ -775,10 +775,9 @@ shieldeff(x,y)
  */
 
 static struct tmp_glyph {
-    coord saved[COLNO];	/* prev positions, only for DISP_BEAM */
-    int sidx;		/* index of saved previous positions */
-    int sx,sy;		/* previous position, only for DISP_FLASH */
-    int status;		/* either DISP_BEAM or DISP_FLASH */
+    coord saved[COLNO];	/* previously updated positions */
+    int sidx;		/* index of next unused slot in saved[] */
+    int style;		/* either DISP_BEAM or DISP_FLASH or DISP_ALWAYS */
     int glyph;		/* glyph to use when printing */
     struct tmp_glyph *prev;
 } tgfirst;
@@ -788,81 +787,79 @@ tmp_at(x, y)
     int x, y;
 {
     static struct tmp_glyph *tglyph = (struct tmp_glyph *)0;
-    static int tgcnt = 0;
     struct tmp_glyph *tmp;
 
     switch (x) {
 	case DISP_BEAM:
 	case DISP_FLASH:
 	case DISP_ALWAYS:
-	    tgcnt++;
-	    if (tgcnt == 1) {
-	    	tmp = &tgfirst;
-		tmp->prev = (struct tmp_glyph *)0;
-	    } else if (tgcnt > 1) {
-	    	/* now we need dynamic memory */
-	    	tmp = (struct tmp_glyph *)alloc(sizeof(struct tmp_glyph));
-		tmp->prev = tglyph;
-	    } else
-	    	impossible("tgcnt is zero or negative? %d", tgcnt);
+	    if (!tglyph)
+		tmp = &tgfirst;
+	    else	/* nested effect; we need dynamic memory */
+		tmp = (struct tmp_glyph *)alloc(sizeof (struct tmp_glyph));
+	    tmp->prev = tglyph;
 	    tglyph = tmp;
 	    tglyph->sidx = 0;
-	    tglyph->sx = -1;
-	    tglyph->status = x;
-	    tglyph->glyph  = y;
+	    tglyph->style = x;
+	    tglyph->glyph = y;
 	    flush_screen(0);	/* flush buffered glyphs */
-	    break;
+	    return;
 
+	case DISP_FREEMEM:  /* in case game ends with tmp_at() in progress */
+	    while (tglyph) {
+		tmp = tglyph->prev;
+		if (tglyph != &tgfirst) free((genericptr_t)tglyph);
+		tglyph = tmp;
+	    }
+	    return;
+
+	default:
+	    break;
+    }
+
+    if (!tglyph) panic("tmp_at: tglyph not initialized");
+
+    switch (x) {
 	case DISP_CHANGE:
 	    tglyph->glyph = y;
 	    break;
 
 	case DISP_END:
-	    if (tglyph->status == DISP_BEAM) {
+	    if (tglyph->style == DISP_BEAM) {
 		register int i;
 
 		/* Erase (reset) from source to end */
 		for (i = 0; i < tglyph->sidx; i++)
-		    newsym(tglyph->saved[i].x,tglyph->saved[i].y);
-		tglyph->sidx = 0;
-		
-	    } else if (tglyph->sx >= 0) {     /* DISP_FLASH/ALWAYS (called at least once) */
-		newsym(tglyph->sx,tglyph->sy);	/* reset the location */
-		tglyph->sx = -1;		/* reset sx to an illegal pos for next time */
+		    newsym(tglyph->saved[i].x, tglyph->saved[i].y);
+	    } else {		/* DISP_FLASH or DISP_ALWAYS */
+		if (tglyph->sidx)	/* been called at least once */
+		    newsym(tglyph->saved[0].x, tglyph->saved[0].y);
 	    }
-	    tgcnt--;
-	    tmp = tglyph;
-	    tglyph = tglyph->prev;
-	    if (tgcnt > 0 && tmp != &tgfirst)
-		free((genericptr_t)tmp);
+	 /* tglyph->sidx = 0; -- about to be freed, so not necessary */
+	    tmp = tglyph->prev;
+	    if (tglyph != &tgfirst) free((genericptr_t)tglyph);
+	    tglyph = tmp;
 	    break;
 
-	case DISP_FREEMEM:
-	    tgcnt--;
-	    while (tgcnt > 0) {
-	    	tmp = tglyph;
-	    	tglyph = tglyph->prev;
-	    	free((genericptr_t)tmp);
-		tgcnt--;
-	    }
-	    break;
-	    
 	default:	/* do it */
-	    if (!cansee(x,y) && tglyph->status != DISP_ALWAYS) break;
-
-	    if (tglyph->status == DISP_BEAM) {
-		tglyph->saved[tglyph->sidx  ].x = x;	/* save pos for later erasing */
-		tglyph->saved[tglyph->sidx++].y = y;
+	    if (tglyph->style == DISP_BEAM) {
+		if (!cansee(x,y)) break;
+		/* save pos for later erasing */
+		tglyph->saved[tglyph->sidx].x = x;
+		tglyph->saved[tglyph->sidx].y = y;
+		tglyph->sidx += 1;
+	    } else {	/* DISP_FLASH/ALWAYS */
+		if (tglyph->sidx) { /* not first call, so reset previous pos */
+		    newsym(tglyph->saved[0].x, tglyph->saved[0].y);
+		    tglyph->sidx = 0;	/* display is presently up to date */
+		}
+		if (!cansee(x,y) && tglyph->style != DISP_ALWAYS) break;
+		tglyph->saved[0].x = x;
+		tglyph->saved[0].y = y;
+		tglyph->sidx = 1;
 	    }
 
-	    else {	/* DISP_FLASH/ALWAYS */
-		if (tglyph->sx >= 0)			/* not first call */
-		    newsym(tglyph->sx,tglyph->sy);	/* update the old position */
-		tglyph->sx = x;			/* save previous pos for next call */
-		tglyph->sy = y;
-	    }
-
-	    show_glyph(x,y,tglyph->glyph);	/* show it */
+	    show_glyph(x, y, tglyph->glyph);	/* show it */
 	    flush_screen(0);			/* make sure it shows up */
 	    break;
     } /* end case */
