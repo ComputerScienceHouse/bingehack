@@ -201,7 +201,7 @@ MAC
 MSDOS
       - The Rogue level is unable to use the proper characters for armor or
 	rings, since they would get interpreted as control characters.
-      - "RAMDISK" feature in nethack.cnf hasn't worked for some time 
+      - "RAMDISK" feature in defaults.nh hasn't worked for some time 
 	and is past much of its usefulness. A temp directory would be 
 	more appropriate.
       - The MSC7 compile results in "stack plus data exceeds 640k" messages.
@@ -213,7 +213,7 @@ MSDOS
       - On the djgpp version, a large number of arguments to "nethack -s"
 	can crash the program.  "nethack -s *" in a directory with a lot of
 	filenames can trigger this problem.
-      - people want the LEVELS and SAVE options to work in NetHack.cnf again.
+      - people want the LEVELS and SAVE options to work in defaults.nh again.
       - set_bonestemp_name() needs to be fixed for the #if MICRO configuration.  
         It currently uses the device+directory path for level files, but bones 
         can be placed elsewhere so renaming from the temp name to the final 
