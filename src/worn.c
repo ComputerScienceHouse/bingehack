@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)worn.c	3.3	2000/01/01	*/
+/*	SCCS Id: @(#)worn.c	3.3	2000/02/19	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -418,15 +418,17 @@ outer_break:
 
 	if (old) /* do this first to avoid "(being worn)" */
 	    old->owornmask = 0L;
-	if (!creation && canseemon(mon)) {
-	    if (old) {
+	if (!creation) {
+	    if (canseemon(mon)) {
 		char buf[BUFSZ];
 
-		Sprintf(buf, "%s", distant_name(old, doname));
-		pline("%s removes %s and puts on %s.",
-		    Monnam(mon), buf, distant_name(best, doname));
-	    } else
-		pline("%s puts on %s.", Monnam(mon),distant_name(best,doname));
+		if (old)
+		    Sprintf(buf, " removes %s and", distant_name(old, doname));
+		else
+		    buf[0] = '\0';
+		pline("%s%s puts on %s.", Monnam(mon),
+		      buf, distant_name(best,doname));
+	    } /* can see it */
 	    m_delay += objects[best->otyp].oc_delay;
 	    mon->mfrozen = m_delay;
 	    if (mon->mfrozen) mon->mcanmove = 0;
