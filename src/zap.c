@@ -1463,7 +1463,8 @@ struct obj *obj, *otmp;
 			    (void) get_obj_location(obj, &oox, &ooy, 0);
 			    if (!animate_statue(obj, oox, ooy,
 						ANIMATE_SPELL, (int *)0)) {
-makecorpse:			if (mvitals[obj->corpsenm].mvflags & (G_NOCORPSE|G_UNIQ)) {
+makecorpse:			if (mons[obj->corpsenm].geno &
+							(G_NOCORPSE|G_UNIQ)) {
 				    res = 0;
 				    break;
 				}
