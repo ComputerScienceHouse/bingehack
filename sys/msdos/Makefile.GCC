@@ -362,6 +362,7 @@ ifdef TERMLIB
 endif
 	if exist *.tib copy *.tib                $(GAMEDIR)
 	copy $(SSHR)\NetHack.cnf  $(GAMEDIR)\defaults.nh
+	copy $(MSYS)\NHAccess.nh  $(GAMEDIR)
 	copy recover.exe          $(GAMEDIR)
 	copy $(DOC)\guidebo*.txt   $(GAMEDIR)
 	if exist $(DOC)\recover.txt copy $(DOC)\recover.txt $(GAMEDIR)

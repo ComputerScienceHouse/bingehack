@@ -394,6 +394,7 @@ install.tag: DO_CL sp_lev.tag nhdat $(GAMEFILE)
 	copy $(SSHR)\termcap	  $(GAMEDIR)
 	copy *.tib                $(GAMEDIR)
 	copy $(SSHR)\NetHack.cnf  $(GAMEDIR)\defaults.nh
+	copy $(MSYS)\NHAccess.nh  $(GAMEDIR)
 	copy $(U)recover.exe          $(GAMEDIR)
 	copy $(DOC)\guidebo*.txt   $(GAMEDIR)
 	if exist $(DOC)\recover.txt copy $(DOC)\recover.txt $(GAMEDIR)
