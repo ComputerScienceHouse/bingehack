@@ -93,7 +93,7 @@ struct flag {
 	int	 pickup_burden;		/* maximum burden before prompt */
 	char	 inv_order[MAXOCLASSES];
 	char	 pickup_types[MAXOCLASSES];
-	char	 end_disclose[5];	/* disclose various info upon exit */
+	char	 end_disclose[6];	/* disclose various info upon exit */
 	char	 menu_style;	/* User interface style setting */
 #ifdef AMII_GRAPHICS
 	int numcols;

@@ -1329,7 +1329,7 @@ goodfruit:
 			 * value means all (was inventory and attributes,
 			 * the only things available then), but negated
 			 * it means "none"
-			 * (note "none" contains none of "iavkg")
+			 * (note "none" contains none of "iavkgc")
 			 */
 			if (negated) Strcpy(flags.end_disclose, "none");
 			return;

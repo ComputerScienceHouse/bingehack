@@ -1,8 +1,11 @@
-Boolean options available in all versions (with default values in []):
+Boolean options not under specific compile flags (with default values in []):
+(You can learn which options exist in your version by checking your current
+option setting, which is reached via the 'O' cmd.)
 
 autopickup     automatically pick up objects you move over        [TRUE]
 autoquiver     when firing with an empty quiver, select some
                suitable inventory weapon to fill the quiver       [FALSE]
+BIOS           allow the use of IBM ROM BIOS calls                [FALSE]
 confirm        ask before hitting tame or peaceful monsters       [TRUE]
 DECgraphics    use DEC/VT line-drawing characters for the dungeon [FALSE]
 eight_bit_tty  send 8-bit characters straight to terminal         [FALSE]
@@ -23,6 +26,7 @@ perm_invent    keep inventory in a permanent window               [FALSE]
 prayconfirm    use confirmation prompt when #pray command issued  [TRUE]
 pushweapon     when wielding a new weapon, put your previously
                wielded weapon into the secondary weapon slot      [FALSE]
+rawio          allow the use of raw I/O                           [FALSE]
 rest_on_space  count the space bar as a rest character            [FALSE]
 safe_pet       prevent you from (knowingly) attacking your pet(s) [TRUE]
 silent         don't use your terminal's bell sound               [TRUE]
@@ -37,9 +41,8 @@ toptenwin      print topten in a window rather than stdout        [FALSE]
 verbose        print more commentary during the game              [TRUE]
 
 
-There are further boolean options that exist in some versions of NetHack
-3.3.  (You can learn which options exist in your version by checking your
-current option setting, which is reached via the 'O' cmd.)
+
+There are further boolean options controlled by compilation flags.
 
 Boolean option if INSURANCE was set at compile time:
 checkpoint save game state after each level change, for possible  [TRUE]
@@ -50,10 +53,6 @@ news       print any news from game administrator on startup      [TRUE]
 
 Boolean option if MFLOPPY was set at compile time:
 checkspace check free disk space before writing files to disk     [TRUE]
-
-Boolean options if DGK was set at compile time:
-BIOS       allow the use of IBM ROM BIOS calls                    [FALSE]
-rawio      allow the use of raw I/O (may only be set on startup)  [FALSE]
 
 Boolean option if EXP_ON_BOTL was set at compile time:
 showexp    display your accumulated experience points             [FALSE]
