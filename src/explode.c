@@ -330,7 +330,7 @@ char olet;
 			    killer_format = KILLED_BY_AN;
 			} else if (type >= 0 && olet != SCROLL_CLASS) {
 			    killer_format = NO_KILLER_PREFIX;
-			    Sprintf(buf, "caught %sself in %s own %s.",
+			    Sprintf(buf, "caught %sself in %s own %s",
 				    him[flags.female], his[flags.female], str);
 			} else {
 			    killer_format = KILLED_BY;
@@ -339,8 +339,7 @@ char olet;
 			killer = buf;
 			/* Known BUG: BURNING suppresses corpse in bones data,
 			   but done does not handle killer reason correctly */
-			/* done(adtyp == AD_FIRE ? BURNING : DIED); */
-			done(BURNING);
+			done((adtyp == AD_FIRE) ? BURNING : DIED);
 		}
 		exercise(A_STR, FALSE);
 	}
