@@ -778,6 +778,15 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 	if (See_invisible) enl_msg(You_, "see", "saw", " invisible");
 	if (Blind_telepat) you_are("telepathic");
 	if (Warning) you_are("warned");
+#ifdef NEW_WARNING
+	if (Warn_of_mon && flags.warntype) {
+		Sprintf(buf, "aware of the presence of %s",
+			(flags.warntype & M2_ORC) ? "orcs" :
+			(flags.warntype & M2_DEMON) ? "demons" :
+			something); 
+		you_are(buf);
+	}
+#endif
 	if (Undead_warning) you_are("warned of undead");
 	if (Searching) you_have("automatic searching");
 	if (Clairvoyant) you_are("clairvoyant");
@@ -978,8 +987,6 @@ minimal_enlightenment()
 	/* Current name, race, role, gender */
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, "", FALSE);
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_BOLD, "Current", FALSE);
-	Sprintf(buf, fmtstr, "name", plname);
-	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
 	Sprintf(buf, fmtstr, "race", Upolyd ? youmonst.data->mname : urace.noun);
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
 	if (!Upolyd) {
