@@ -189,8 +189,6 @@ time it takes a monster to change armor doesn't depend on whether you see it
 character can't be totally digested on first turn of being swallowed
 level 25 engulfer would trigger divide by 0 crash via evaluating rnd(0)
 wielded egg that hatched wasn't cleaning up worn objects and might cause crash
-cease two-weapon combat immediately if either weapon becomes unwielded
-	(dropped, put into container, &c), rather than waiting til next attack
 mirror shouldn't show location of unseen monsters
 cloth headwear was being reported as leather when fire damaged
 modify moveloop so that time (moves) is not relative to the player's speed
@@ -325,6 +323,9 @@ amulet of change when polymorphed into single-gender monster could produce
 	inconsistent role name for Priest(ess) and Cave(wo)man
 prevent Fire Brand from "burning" a water elemental
 snatching cockatrice corpse gloveless by applying bullwhip will now stone
+inventory description of wielded two-handed weapon uses "weapon in hands"
+inventory description of secondary weapon explicitly lists it as non-wielded
+	to reduce confusion about two weapon combat
 
 
 Platform- and/or Interface-Specific Fixes

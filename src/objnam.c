@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)objnam.c	3.3	2000/03/03	*/
+/*	SCCS Id: @(#)objnam.c	3.3	2000/07/23	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -697,21 +697,21 @@ ring:
 	}
 
 	if((obj->owornmask & W_WEP) && !mrg_to_wielded) {
-		if (obj->quan != 1L)
+		if (obj->quan != 1L) {
 			Strcat(bp, " (wielded)");
-		else {
-			Strcat(bp, " (weapon in ");
-			Strcat(bp, body_part(HAND));
-			Strcat(bp, ")");
+		} else {
+			const char *hand_s = body_part(HAND);
+
+			if (bimanual(obj)) hand_s = makeplural(hand_s);
+			Sprintf(eos(bp), " (weapon in %s)", hand_s);
 		}
 	}
 	if(obj->owornmask & W_SWAPWEP) {
-		if (u.twoweap) {
-			Strcat(bp, " (wielded in other ");
-			Strcat(bp, body_part(HAND));
-			Strcat(bp, ")");
-		} else
-			Strcat(bp, " (secondary weapon)");
+		if (u.twoweap)
+			Sprintf(eos(bp), " (wielded in other %s)",
+				body_part(HAND));
+		else
+			Strcat(bp, " (alternate weapon; not wielded)");
 	}
 	if(obj->owornmask & W_QUIVER) Strcat(bp, " (in quiver)");
 	if(obj->unpaid)
