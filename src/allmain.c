@@ -298,6 +298,10 @@ moveloop()
 	    } else if (Unblind_telepat) {
 		see_monsters();
 	    }
+#ifdef NEW_WARNING
+	     else if (Warning || Warn_of_mon)
+	     	see_monsters();
+#endif
 	    if (vision_full_recalc) vision_recalc(0);	/* vision! */
 	}
 	if(flags.botl || flags.botlx) bot();

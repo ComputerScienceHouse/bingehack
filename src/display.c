@@ -424,8 +424,14 @@ display_monster(x, y, mon, in_sight, worm_tail)
 	    else
 		num = pet_to_glyph(mon);
 #ifdef NEW_WARNING
-	} else if ((Warning || Warn_of_mon) && (num = warn_of_mon(mon))) {
-		; /* num already assigned */
+	} else if (warn_of_mon(mon)) {
+		if (Warn_of_mon && flags.warntype &&
+		   (flags.warntype & mon->data->mflags2))
+			num = mon_to_glyph(mon);
+        	else {
+        		int tmplev = (int) (mon->m_lev / 4);
+	        	num = warning_to_glyph(tmplev);
+	        }
 #endif
 	} else {
 	    if (worm_tail)
@@ -2072,23 +2078,5 @@ do_crwall:
     }
     return idx;
 }
-
-#ifdef NEW_WARNING
-# ifdef OVLB
-int
-warn_of_mon(mon)
-struct monst *mon;
-{
-    if (mon && !canseemon(mon)) {
-	if (mon && Warn_of_mon && flags.warntype && (flags.warntype & mon->data->mflags2))
-		return mon_to_glyph(mon);
-	if (mon && Warning && !mon->mpeaceful &&
-	   ((int) (mon->m_lev / 4) >= flags.warnlevel) && (distu(mon->mx, mon->my) < 100)) 
-		return warnmon_to_glyph(mon);
-    }
-    return 0;
-}
-# endif
-#endif
 
 /*display.c*/
