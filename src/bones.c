@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)bones.c	3.3	2000/02/25	*/
+/*	SCCS Id: @(#)bones.c	3.3	2000/05/28	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985,1993. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -81,6 +81,7 @@ boolean restore;
 			otmp->dknown = otmp->bknown = 0;
 			otmp->rknown = 0;
 			otmp->invlet = 0;
+			otmp->no_charge = 0;
 
 			if (otmp->otyp == SLIME_MOLD) goodfruit(otmp->spe);
 #ifdef MAIL
