@@ -3,7 +3,7 @@
         NetHack is a Dungeons and Dragons like game where you (the adventurer)
 descend into the depths of the dungeon in search of the Amulet of Yendor,
 reputed to be hidden somewhere below the twentieth level.  You begin your
-adventure with a dog or cat that can help you in many ways, and can be trained
+adventure with a pet that can help you in many ways, and can be trained
 to do all sorts of things.  On the way you will find useful (or useless)
 items, quite possibly with magic properties, and assorted monsters.  You can
 attack a monster by trying to move onto the space a monster is on (but often
@@ -32,7 +32,7 @@ on.
         (        Some other useful object (pick-axe, key, lamp...)
         $        A pile of gold.
         *        A gem or rock (possibly valuable, possibly worthless).
-        +        A closed door, or a spell book containing a spell
+        +        A closed door, or a spellbook containing a spell
                  you can learn.
         ^        A trap (once you detect it).
         "        An amulet, or a spider web.
@@ -117,7 +117,7 @@ Commands:
         ^P      Repeat last message (subsequent ^P's repeat earlier messages).
         q       Drink (quaff) a potion.
         Q       Select ammunition for quiver.
-        r       Read a scroll or spell book.
+        r       Read a scroll or spellbook.
         R       Remove an accessory (ring, amulet, etc).
         ^R      Redraw the screen.
         s       Search for secret doors and traps around you.

@@ -9,7 +9,7 @@ STATIC_DCL void FDECL(get_mplname, (struct monst *, char *));
 STATIC_DCL void FDECL(mk_mplayer_armor, (struct monst *, SHORT_P));
 
 /* These are the names of those who
- * contributed to the development of NetHack 3.2.
+ * contributed to the development of NetHack 3.2/3.3.
  *
  * Keep in alphabetical order within teams.
  * Same first name is entered once within each team.
@@ -19,8 +19,8 @@ static const char *developers[] = {
 	"Dave", "Dean", "Eric", "Izchak", "Janet", "Jessie",
 	"Ken", "Kevin", "Michael", "Mike", "Pat", "Paul", "Steve", "Timo",
 	/* PC team */
-	"Bill", "Eric", "Ken", "Kevin", "Michael", "Mike", "Paul",
-	"Stephen", "Steve", "Timo", "Yamamoto", "Yitzhak",
+	"Bill", "Eric", "Keizo", "Ken", "Kevin", "Michael", "Mike", "Paul",
+	"Stephen", "Steve", "Timo", "Yitzhak",
 	/* Amiga team */
 	"Andy", "Gregg", "Keni", "Mike", "Olaf", "Richard",
 	/* Mac team */
@@ -30,7 +30,7 @@ static const char *developers[] = {
 	/* NT team */
 	"Michael",
 	/* OS/2 team */
-	"Timo",
+	"Helge", "Ron", "Timo",
 	/* VMS team */
 	"Joshua", "Pat",
 	""};

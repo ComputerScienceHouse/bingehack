@@ -75,24 +75,20 @@ Paul Winner, released version 3.2 in April of 1996.
 Version 3.2 marked the tenth anniversary of the formation of the development
 team.  In a testament to their dedication to the game, all thirteen members
 of the original development team remained on the team at the start of work
-on the current release.  During the interval between the release of 3.1.3
-and 3.2, one of the founding members of the development team, Dr. Izchak
-Miller, passed away.  Version 3.2 of the NetHack is dedicated in his memory
-by the development and porting teams.
+on that release.  During the interval between the release of 3.1.3 and 3.2,
+one of the founding members of the development team, Dr. Izchak Miller,
+passed away.  That release of the game was dedicated to him by the
+development and porting teams.
 
-Version 3.2 proved to be  more stable than previous versions.  Many bugs
+Version 3.2 proved to be more stable than previous versions.  Many bugs
 were fixed, abuses eliminated, and game features tuned for better game
 play.
 
-Late in 1999, the dev team released NetHack 3.3.  Along with the usual set
-of bug fixes and minor tweaks (including Y2K proofing), a merge of features
-was added to the game from variants that split off from the 3.2 base code.
-
-During the lifespan of NetHack 3.2, several enthusiasts of the game added
-their own modifications to the game and made these "variants" publically
+During the lifespan of NetHack 3.1 and 3.2, several enthusiasts of the game
+added their own modifications to the game and made these "variants" publicly
 available:
 
-Tom Proudfoot and Yuval Oren created NetHack++, which was later renamed
+Tom Proudfoot and Yuval Oren created NetHack++, which was quickly renamed
 NetHack--.  Working independently, Stephen White wrote NetHack Plus.
 Tom Proudfoot later merged NetHack Plus and his own NetHack-- to produce
 SLASH.  Larry Stewart-Zerba and Warwick Allison improved the spellcasting
