@@ -6,15 +6,18 @@
 # quickly.  This branch isn't particularly difficult, just time
 # consuming.  Some players may wish to skip this branch.
 #
-# The following actions are permitted:
+# The following actions are currently permitted without penalty:
+#   Carrying or throwing a boulder already in inventory
+#     (player or nonplayer).
+# The following actions are permitted, but with a luck penalty:
 #   Breaking boulders (including by other monsters).
 #   Stone-to-fleshing boulders.
 #   Creating new boulders (e.g., with a scroll of earth).
-#   Carrying or throwing a boulder already in inventory
-#     (player or nonplayer).
 #   Teleporting boulders.
-#   Jumping or hurtling (note: you won't get far enough across the pits/holes).
-#   Squeezing past boulders when naked.
+#   Jumping.
+#   Being pulled by a thrown iron ball.
+#   Hurtling through the air from Newton's 3rd law.
+#   Squeezing past boulders when naked or as a giant.
 #   Digging in the floor.
 # These actions are not permitted:
 #   Moving diagonally between two boulders and/or walls.

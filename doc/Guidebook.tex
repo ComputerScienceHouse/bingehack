@@ -1068,6 +1068,14 @@ see one triggered by moving onto it, see something fall into it, or you
 discover it with the `{\tt s}' (search) command.  Monsters can fall prey to
 traps, too, which can be a very useful defensive strategy.
 
+%.pg
+There is a special pre-mapped branch of the dungeon based on the
+classic computer game ``{\tt Sokoban}.''  The goal is to push the boulders
+into the pits or holes.  With careful foresight, it is possible to
+complete all of the levels according to the traditional rules of
+Sokoban.  Some allowances are permitted in case the player gets stuck;
+however, they will lower your luck.
+
 \subsection*{Stairs (`{\tt <}', `{\tt >}')}
 
 %.pg
@@ -1415,6 +1423,8 @@ because you won't be able to advance), ``unskilled'', ``basic'', ``skilled'',
 and ``expert''.  Restricted skills simply will not appear in the list
 shown by `{\tt \#enhance}'.  (Divine intervention might unrestrict a particular
 skill, in which case it will start at unskilled and be limited to basic.)
+Some characters can enhance their barehanded combat or martial arts skill
+beyond expert to ``master'' or ``grand master''.
 
 %.pg
 Use of a weapon in which you're restricted or unskilled
@@ -1749,42 +1759,42 @@ without resorting to these restrictions and that it is unusual for
 players to adhere to challenges the first time they win the game.
 
 %.pg
-Several of the challenges are related to eating behavior.
-Vegetarian characters do not eat meat.  A vegan diet also avoids
-any food derived from animals.  It is also possible (though difficult)
-to win the game without eating any food at all.  Although creatures
+Several of the challenges are related to eating behavior.  The most
+difficult of these is the foodless challenge.  Although creatures
 can survive long periods of time without food, there is a physiological
-need for water, so there is no restriction on drinking beverages,
+need for water; thus there is no restriction on drinking beverages,
 even if they provide some minor food benefits.
 Calling upon your god for help with starvation does
 not violate any food challenges either.
 
 %.pg
-Vegan, vegetarian, and unchallenged characters are further permitted
-to eat plant products such as fruits and vegetables.
-The corpses and tins of blobs (`b'), jellies (`j'), fungi (`F'), and
-puddings (`P') other than the black puddings
-are also considered to be vegetable matter.  Certain human
+A strict vegan diet is one which avoids any food derived from animals.
+The primary source of nutrition are fruits and vegetables.  The
+corpses and tins of blobs (`b'), jellies (`j'), fungi (`F'), and
+black puddings are also considered to be vegetable matter.  Certain human
 food is prepared without animal products; namely, lembas wafers, cram
 rations, food rations (gunyoki), K-rations, and C-rations.
-
-%.pg
 Metal or another normally indigestible material eaten while polymorphed
 into a creature that can digest it is also considered vegan food.
 Note however that eating such items still counts against foodless conduct.
 
 %.pg
-The difference between vegetarian and vegan diets is that a vegan
-diet avoids products derived from animals.  This includes eggs and
-food made from eggs (fortune cookies and pancakes), food made with
-milk (cream pies), and lumps of royal jelly.
+Vegetarians do not eat the flesh of animals that we normally call ``meat'';
+however, they are less selective about eating animal byproducts than vegans.
+In addition to the vegan items listed above, they may eat any kind
+of pudding (`P'), eggs and food made from eggs (fortune cookies and
+pancakes), food made with milk (cream pies and candy bars), and lumps of
+royal jelly.  Eating leather, dragon hide, wax, or bone items while
+polymorphed into a creature that can digest it, or eating monster brains
+while polymorphed into a (master) mind flayer, is considered vegetarian but
+nonvegan conduct.  Monks are expected to observe a vegetarian diet.
 
 %.pg
 Eating any kind of meat violates the vegetarian, vegan, and foodless
 conducts.  This includes tripe rations, the corpses or tins of any
 monsters not mentioned above, and the various other chunks of meat
-found in the dungeon.  Eating monster brains while polymorphed
-into a (master) mind flayer also counts against these challenges.
+found in the dungeon.  Swallowing and digesting a monster while polymorphed
+is treated as if you ate the creature's corpse.
 
 %.pg
 Regardless of conduct, there will be some items which are indigestible,
@@ -1798,7 +1808,6 @@ potions may be a translucent white, but they do not contain milk,
 so they are compatible with a vegan diet.  Slime molds or
 player-defined ``fruits'', although they could be anything
 from ``cherries'' to ``pork chops'', are also assumed to be vegan.
-Monks are expected to observe a vegetarian diet.
 
 %.pg
 An atheist is one who rejects religion.  This means that you cannot
@@ -1843,7 +1852,7 @@ considered a challenge.  You can change the form of any object into
 another object of the same type (``polypiling'') or the form of your own
 body into another creature (``polyself'') by wand, spell, or potion of
 polymorph; avoiding these effects are each considered challenges.
-Finally, you may sometimes receive wishes; a game without a successful
+Finally, you may sometimes receive wishes; a game without an attempt to
 wish for an object is a challenge, as is a game without wishing for
 an artifact (even if the artifact immediately disappears).
 
@@ -1880,12 +1889,12 @@ the option name, a colon or equals sign, and then the value of the string.
 The value is terminated by the next comma or the end of string.
 
 %.pg
-For example, to set up an environment variable so that {\it female\/}
+For example, to set up an environment variable so that {\it autoquiver\/}
 is on, {\it autopickup\/} is off, the {\it name\/} is set to ``Blue Meanie'',
 and the {\it fruit\/} is set to ``papaya'', you would enter the command
 %.sd
 \begin{verbatim}
-    setenv NETHACKOPTIONS "female,\!autopickup,name:Blue Meanie,fruit:papaya"
+    setenv NETHACKOPTIONS "autoquiver,\!autopickup,name:Blue Meanie,fruit:papaya"
 \end{verbatim}
 %.ed
 
@@ -1893,7 +1902,7 @@ and the {\it fruit\/} is set to ``papaya'', you would enter the command
 (note the need to escape the ! since it's special to the shell), or
 %.sd
 \begin{verbatim}
-    NETHACKOPTIONS="female,!autopickup,name:Blue Meanie,fruit:papaya"
+    NETHACKOPTIONS="autoquiver,!autopickup,name:Blue Meanie,fruit:papaya"
     export NETHACKOPTIONS
 \end{verbatim}
 %.ed
@@ -2074,7 +2083,8 @@ not require that you hit Enter.  It is implemented only by the tty port
 (default off), when the game has been compiled to support tty graphics.
 %.lp
 \item[\ib{female}]
-Set your starting gender to female. Cannot be set with the `{\tt O}' command.
+An obsolete synonym for ``{\tt gender:female}''.  Cannot be set with the
+`{\tt O}' command.
 %.lp
 \item[\ib{fixinv}]
 An object's inventory letter sticks to it when it's dropped (default on).
@@ -2133,8 +2143,8 @@ character as lit (default off).
 Enable mail delivery during the game.
 %.lp
 \item[\ib{male}]
-Set your starting gender to male.
-Cannot be set with the `{\tt O}' command.
+An obsolete synonym for ``{\tt gender:female}''.  Cannot be set with the
+`{\tt O}' command.
 %.lp
 \item[\ib{menustyle}]
 Controls the interface used when you need to choose various objects (in
@@ -2342,7 +2352,7 @@ Boldface monsters and ``{\tt --More--}'' (default off).
 \item[\ib{suppress\_alert}]
 This option may be set to a NetHack version level to suppress
 alert notification messages about feature changes for that 
-and prior versions (ex.\ ``{\tt suppress\_alert:3.3.0}'')
+and prior versions (ex.\ ``{\tt suppress\_alert:3.3.1}'')
 %.lp
 \item[\ib{time}]
 Show the elapsed game time in turns on bottom line (default off).

@@ -10,7 +10,6 @@ confirm        ask before hitting tame or peaceful monsters       [TRUE]
 DECgraphics    use DEC/VT line-drawing characters for the dungeon [FALSE]
 eight_bit_tty  send 8-bit characters straight to terminal         [FALSE]
 extmenu        use a menu for selecting extended commands (#)     [FALSE]
-(fe)male       sex of the player (may only be set on startup)     [MALE]
 fixinv         try to retain the same letter for the same object  [TRUE]
 help           print all available info when using the / command  [TRUE]
 IBMgraphics    use IBM extended characters for the dungeon        [FALSE]
@@ -70,6 +69,11 @@ timed_delay    on unix and VMS, use a timer instead of sending
                display effect.  on MSDOS without the termcap
                lib, whether or not to pause for visual effect.    [TRUE]
 
+Boolean option if USE_TILES was set at compile time (MSDOS protected mode only):
+preload_tiles  control whether tiles get pre-loaded into RAM at the
+               start of the game.  Doing so enhances performance
+               of the tile graphics, but uses more memory.        [TRUE]
+
 Any Boolean option can be negated by prefixing it with a '!' or 'no'.
 
 
@@ -103,7 +107,7 @@ scores        the parts of the score list you wish to see when the game ends
 suppress_alert disable various version-specific warnings about changes
               in game play or the user interface, such as notification given
               for the 'Q' command that quitting is now done via #quit
-              (e.g., use suppress_alert:3.3.0 to stop that and any other
+              (e.g., use suppress_alert:3.3.1 to stop that and any other
               notifications added in that version or earlier) default: (none)
 
 Compound options which may be set only on startup are:
