@@ -35,12 +35,12 @@ void img_set_colors(int handle,short *palette, int col);
 /* Konvertiert MFDB von Standard in Ger^Äteformat (0 if succeded, else error). */
 int convert(MFDB *, long );
 
-/* Transformiert das Bild in die Farbtiefe des VDI-Device */
+/* transforms image in VDI-Device format */
 int transform_img(MFDB *);
 
 /* Loads & depacks IMG (0 if succeded, else error). */
 /* Bitplanes are one after another in address IMG_HEADER.addr. */
 int depack_img(char *, IMG_header *);
 
-/* Erstellt ein halb so gro^Þes IMG im Standardformat!*/
-void half_img(MFDB *,MFDB *);
+/* Halves IMG in Device-format, dest memory has to be allocated*/
+int half_img(MFDB *,MFDB *);

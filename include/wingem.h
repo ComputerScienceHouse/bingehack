@@ -39,7 +39,6 @@ E void FDECL(mar_destroy_nhwindow, (int));
 E void FDECL(mar_print_glyph, (int, int, int, int));
 E void FDECL(mar_print_line, (int, int, int, char *));
 E void FDECL(mar_set_message, (char *, char *, char *));
-E void FDECL(mar_klasse_nicht_ok, (char));
 E Gem_menu_item *NDECL(mar_hol_inv);
 E void FDECL(mar_set_menu_type,(int));
 E void NDECL(mar_reverse_menu);
