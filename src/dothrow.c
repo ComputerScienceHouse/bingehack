@@ -480,14 +480,8 @@ hurtle(dx, dy, range, verbose)
     }
 
     /* make sure dx and dy are [-1,0,1] */
-    if (dx < 0)
-    	dx = -1;
-    else if (dx > 0)
-    	dx = 1;
-    if (dy < 0)
-	dy = -1;
-    else if (dy > 0)
-	dy = 1;
+    dx = sgn(dx);
+    dy = sgn(dy);
 
     if(!range || (!dx && !dy) || u.ustuck) return; /* paranoia */
 
