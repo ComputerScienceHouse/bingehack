@@ -1548,7 +1548,7 @@ register struct obj *obj;
 			makewish();
 			break;
 		case WAN_ENLIGHTENMENT:        
-			You("feel self-knowledgeable...");
+			You_feel("self-knowledgeable...");
 			display_nhwindow(WIN_MESSAGE, FALSE);
 			enlightenment(FALSE);
 			pline("The feeling subsides.");
@@ -1739,8 +1739,13 @@ boolean ordinary;
 		    /* have to test before changing HInvis but must change
 		     * HInvis before doing newsym().
 		     */
-		    int msg = !Invis && !Blind;
+		    int msg = !Invisible && !Blind && !BInvis;
 
+		    if (BInvis && uarmc->otyp == MUMMY_WRAPPING) {
+			/* A mummy wrapping absorbs it and protects you */
+		        You_feel("rather itchy under your %s.", xname(uarmc));
+		        break;
+		    }
 		    if (ordinary || !rn2(10)) {	/* permanent */
 			HInvis |= FROMOUTSIDE;
 		    } else {			/* temporary */

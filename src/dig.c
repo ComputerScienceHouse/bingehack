@@ -702,7 +702,7 @@ dig_up_grave()
 	exercise(A_WIS, FALSE);
 	if (Role_if(PM_ARCHEOLOGIST)) {
 	    adjalign(-sgn(u.ualign.type)*3);
-	    You("feel like a despicable grave-robber!");
+	    You_feel("like a despicable grave-robber!");
 	} else if (Role_if(PM_SAMURAI)) {
 	    adjalign(-sgn(u.ualign.type));
 	    You("disturb the honorable dead!");

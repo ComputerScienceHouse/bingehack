@@ -62,7 +62,7 @@ register boolean clumsy;
 	if (Role_if(PM_KNIGHT) &&
 		u.ualign.type == A_LAWFUL && u.ualign.record > -10 &&
 		(!mon->mcanmove || mon->msleeping || mon->mflee)) {
-	    You("feel like a caitiff!");
+	    You_feel("like a caitiff!");
 	    adjalign(-1);
 	}
 

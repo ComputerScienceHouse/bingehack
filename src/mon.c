@@ -1593,7 +1593,7 @@ cleanup:
 	if (is_unicorn(mdat) &&
 				sgn(u.ualign.type) == sgn(mdat->maligntyp)) {
 		change_luck(-5);
-		You("feel guilty...");
+		You_feel("guilty...");
 	}
 
 	/* give experience points */

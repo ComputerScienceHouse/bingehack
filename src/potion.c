@@ -453,8 +453,14 @@ peffects(otmp)
 			exercise(A_WIS, TRUE);
 		}
 		break;
-	case POT_INVISIBILITY:
 	case SPE_INVISIBILITY:
+		/* spell cannot penetrate mummy wrapping */
+		if (BInvis && uarmc->otyp == MUMMY_WRAPPING) {
+			You_feel("rather itchy under your %s.", xname(uarmc));
+			break;
+		}
+		/* FALLTHRU */
+	case POT_INVISIBILITY:
 		if (Invisible || Blind || BInvis) {
 		    nothing++;
 		} else {
@@ -690,7 +696,7 @@ peffects(otmp)
 		exercise(A_STR, TRUE);
 		break;
 	case POT_FULL_HEALING:        
-		You("feel completely healed.");
+		You_feel("completely healed.");
 		healup(400, 4+4*bcsign(otmp), !otmp->cursed, TRUE);
 		/* Restore one lost level if blessed */
 		if (otmp->blessed && (u.ulevel < u.ulevelmax))

@@ -220,7 +220,7 @@ choke(food)	/* To a full belly all food is bad. (It.) */
 			return;
 	} else if (Role_if(PM_KNIGHT) && u.ualign.type == A_LAWFUL) {
 			adjalign(-1);		/* gluttony is unchivalrous */
-			You("feel like a glutton!");
+			You_feel("like a glutton!");
 	}
 
 	exercise(A_CON, FALSE);
