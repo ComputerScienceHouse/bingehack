@@ -136,11 +136,11 @@ ENGRAVING:place[0],burn,"Elbereth"
 # The treasure of the lord
 OBJECT:'(',"chest",(37,08)
 # Traps
-TRAP:"trapdoor",(40,08)
-TRAP:"trapdoor",(44,08)
-TRAP:"trapdoor",(48,08)
-TRAP:"trapdoor",(52,08)
-TRAP:"trapdoor",(55,08)
+TRAP:"trap door",(40,08)
+TRAP:"trap door",(44,08)
+TRAP:"trap door",(48,08)
+TRAP:"trap door",(52,08)
+TRAP:"trap door",(55,08)
 # Soldiers guarding the entry hall
 MONSTER:'@',"soldier",(08,06)
 MONSTER:'@',"soldier",(09,05)

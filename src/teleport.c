@@ -1030,7 +1030,7 @@ register struct obj *obj;
 	if (flooreffects(obj, tx, ty, "fall")) {
 	    return;
 	} else if (otx == 0 && oty == 0) {
-	    ;	/* fell through a trapdoor; no update of old loc needed */
+	    ;	/* fell through a trap door; no update of old loc needed */
 	} else {
 	    if (costly_spot(otx, oty)
 	      && (!costly_spot(tx, ty) ||

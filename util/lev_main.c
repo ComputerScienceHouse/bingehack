@@ -113,7 +113,7 @@ static struct {
 	{ "pit",	PIT },
 	{ "spiked pit",	SPIKED_PIT },
 	{ "hole",	HOLE },
-	{ "trapdoor",	TRAPDOOR },
+	{ "trap door",	TRAPDOOR },
 	{ "teleport",	TELEP_TRAP },
 	{ "level teleport", LEVEL_TELEP },
 	{ "magic portal",   MAGIC_PORTAL },

@@ -2745,7 +2745,7 @@ boolean catchup;	/* restoring a level */
 	    return(3);
 	}
 	if (IS_ROOM(tmp_dam->typ)) {
-	    /* No messages if player already filled trapdoor */
+	    /* No messages if player already filled trap door */
 	    if (catchup || !ttmp)
 		return(1);
 	    newsym(x, y);

@@ -305,7 +305,7 @@ register int x, y, typ;
 
 void
 fall_through(td)
-boolean td;	/* td == TRUE : trapdoor or hole */
+boolean td;	/* td == TRUE : trap door or hole */
 {
 	d_level dtmp;
 	char msgbuf[BUFSZ];

@@ -735,7 +735,7 @@ currentlevel_rewrite()
 	register int fd;
 
 	/* since level change might be a bit slow, flush any buffered screen
-	 *  output (like "you fall through a trapdoor") */
+	 *  output (like "you fall through a trap door") */
 	mark_synch();
 
 	fd = create_levelfile(ledger_no(&u.uz));
@@ -873,7 +873,7 @@ boolean at_stairs, falling, portal;
 	fd = currentlevel_rewrite();
 	if (fd < 0) return;
 
-	if (falling) /* assuming this is only trapdoor or hole */
+	if (falling) /* assuming this is only trap door or hole */
 	    impact_drop((struct obj *)0, u.ux, u.uy, newlevel->dlevel);
 
 	check_special_room(TRUE);		/* probably was a trap door */

@@ -1230,7 +1230,7 @@ boolean shop_floor_obj;
 	     * possible to kick/throw an object belonging to one
 	     * shop into another shop through a gap in the wall,
 	     * and cause objects belonging to the other shop to
-	     * fall down a trapdoor--thereby getting two shopkeepers
+	     * fall down a trap door--thereby getting two shopkeepers
 	     * angry at the hero in one shot.
 	     */
 	    impact_drop(otmp, x, y, 0);

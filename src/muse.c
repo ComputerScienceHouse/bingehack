@@ -346,7 +346,7 @@ struct monst *mtmp;
 	} else if (sstairs.sx && sstairs.sx == x && sstairs.sy == y) {
 		m.has_defense = MUSE_SSTAIRS;
 	} else if (!stuck && !immobile) {
-	/* Note: trapdoors take precedence over teleport traps. */
+	/* Note: trap doors take precedence over teleport traps. */
 		int xx, yy;
 
 		for(xx = x-1; xx <= x+1; xx++) for(yy = y-1; yy <= y+1; yy++)
@@ -397,7 +397,7 @@ struct monst *mtmp;
 	}
 
 	/* use immediate physical escape prior to attempting magic */
-	if (m.has_defense)	/* stairs, trapdoor or tele-trap, bugle alert */
+	if (m.has_defense)    /* stairs, trap door or tele-trap, bugle alert */
 		goto botm;
 
 	/* kludge to cut down on trap destruction (particularly portals) */
@@ -669,8 +669,8 @@ mon_tele:
 		return 2;
 	    }
 	case MUSE_TRAPDOOR:
-		/* trapdoors on "bottom" levels of dungeons are rock-drop
-		 * trapdoors, not holes in the floor.  We check here for
+		/* trap doors on "bottom" levels of dungeons are rock-drop
+		 * trap doors, not holes in the floor.  We check here for
 		 * safety.
 		 */
 		if (Is_botlevel(&u.uz)) return 0;
@@ -680,7 +680,7 @@ mon_tele:
 			t = t_at(trapx,trapy);
 			pline("%s %s into a %s!", Monnam(mtmp),
 			makeplural(locomotion(mtmp->data, "jump")),
-			t->ttyp == TRAPDOOR ? "trapdoor" : "hole");
+			t->ttyp == TRAPDOOR ? "trap door" : "hole");
 			seetrap(t_at(trapx,trapy));
 		}
 
