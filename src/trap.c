@@ -1872,7 +1872,7 @@ long hmask, emask;     /* might cancel timeout */
 		/* falling through trap door calls goto_level,
 		   and goto_level does its own pickup() call */
 		on_level(&u.uz, &current_dungeon_level))
-	    pickup(1);
+	    (void) pickup(1);
 	return 1;
 }
 

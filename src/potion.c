@@ -1306,7 +1306,7 @@ register struct obj *obj;
 		return(FALSE);
 	}
 	(void) Shk_Your(Your_buf, obj);
-	/* (Rusting and diluting unpaid shop goods ought to be charged for.) */
+	/* (Rusting shop goods ought to be charged for.) */
 	switch (obj->oclass) {
 	    case WEAPON_CLASS:
 		if (!obj->oerodeproof && is_rustprone(obj) &&
@@ -1330,6 +1330,10 @@ register struct obj *obj;
 		}
 		pline("%s %s%s.", Your_buf, aobjnam(obj,"dilute"),
 		      obj->odiluted ? " further" : "");
+		if(obj->unpaid && costly_spot(u.ux, u.uy)) {
+		    You("dilute it, you pay for it.");
+		    bill_dummy_object(obj);
+		}
 		if (obj->odiluted) {
 			obj->odiluted = 0;
 #ifdef UNIXPC
@@ -1354,8 +1358,7 @@ register struct obj *obj;
 					oq1 ? "" : "s",
 					oq1 ? "s" : "");
 			}
-			if(obj->unpaid) {
-			    subfrombill(obj, shop_keeper(*u.ushops));
+			if(obj->unpaid && costly_spot(u.ux, u.uy)) {
 			    You("erase it, you pay for it.");
 			    bill_dummy_object(obj);
 			}
@@ -1376,8 +1379,7 @@ register struct obj *obj;
 				    pline_The("spellbook%s fade%s.",
 					oq1 ? "" : "s", oq1 ? "s" : "");
 			    }
-			    if(obj->unpaid) {
-			        subfrombill(obj, shop_keeper(*u.ushops));
+			    if(obj->unpaid && costly_spot(u.ux, u.uy)) {
 			        You("erase it, you pay for it.");
 			        bill_dummy_object(obj);
 			    }
@@ -1679,7 +1681,7 @@ dodip()
 		pline("%s is full.", Yname2(obj));
 	    } else {
 		You("fill %s with oil.", yname(obj));
-		check_unpaid(potion);	/* surcharge for using unpaid item */
+		check_unpaid(potion);	/* Yendorian Fuel Tax */
 		obj->age += 2*potion->age;	/* burns more efficiently */
 		if (obj->age > 1500L) obj->age = 1500L;
 		useup(potion);

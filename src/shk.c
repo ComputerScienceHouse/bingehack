@@ -3426,7 +3426,11 @@ boolean altusage; /* some items have an "alternate" use with different cost */
 #endif /*OVL3*/
 #ifdef OVLB
 
-/* for using charges of unpaid objects */
+/* Charge the player for partial use of an unpaid object.
+ *
+ * Note that bill_dummy_object() should be used instead
+ * when an object is completely used.
+ */
 void
 check_unpaid_usage(otmp, altusage)
 struct obj *otmp;

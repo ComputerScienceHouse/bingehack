@@ -1122,7 +1122,7 @@ stillinwater:;
 		dosinkfall();
 #endif
 	if (!in_steed_dismounting)
-		pickup(1);
+		(void) pickup(1);
 	if ((trap = t_at(u.ux,u.uy)) != 0)
 		dotrap(trap);	/* fall into pit, arrow trap, etc. */
 	if((mtmp = m_at(u.ux, u.uy)) && !u.uswallow) {
@@ -1428,21 +1428,21 @@ dopickup()
 	    if (Wwalking || is_floater(youmonst.data) || is_clinger(youmonst.data)
 			|| (Flying && !Breathless)) {
 		You("cannot dive into the water to pick things up.");
-		return(1);
+		return(0);
 	    } else if (!Underwater) {
 		You_cant("even see the bottom, let alone pick up %s.",
 				something);
-		return(1);
+		return(0);
 	    }
 	}
 	if (is_lava(u.ux, u.uy)) {
 	    if (Wwalking || is_floater(youmonst.data) || is_clinger(youmonst.data)
 			|| (Flying && !Breathless)) {
 		You_cant("reach the bottom to pick things up.");
-		return(1);
+		return(0);
 	    } else if (!likes_lava(youmonst.data)) {
 		You("would burn to a crisp trying to pick things up.");
-		return(1);
+		return(0);
 	    }
 	}
 	if(!OBJ_AT(u.ux, u.uy)) {
@@ -1457,10 +1457,9 @@ dopickup()
 		else
 #endif
 		You("cannot reach the %s.", surface(u.ux,u.uy));
-		return(1);
+		return(0);
 	}
-	pickup(-count);
-	return(1);
+	return (pickup(-count));
 }
 
 #endif /* OVLB */

@@ -513,8 +513,12 @@ int thrown;
 		    is_launcher(obj) ||
 		    /* or strike with a missile in your hand... */
 		    (!thrown && (is_missile(obj) || is_ammo(obj))) ||
-		    /* or use a pole at short range... */
-		    (!thrown && is_pole(obj)) ||
+		    /* or use a pole at short range and not mounted... */
+		    (!thrown &&
+#ifdef STEED
+		     !u.usteed &&
+#endif
+		     is_pole(obj)) ||
 		    /* or throw a missile without the proper bow... */
 		    (is_ammo(obj) && !ammo_and_launcher(obj, uwep))) {
 		    /* then do only 1-2 points of damage */
@@ -1315,8 +1319,9 @@ register struct attack *mattk;
 
 		You("eat %s brain!", s_suffix(mon_nam(mdef)));
 		u.uconduct.food++;
-		if (is_meat(mdef->data))
-		    atemeat();
+		if (nonvegan(mdef->data))
+		    u.uconduct.unvegan++;
+		/* Vegetarian okay */
 		if (mindless(mdef->data)) {
 		    pline("%s doesn't notice.", Monnam(mdef));
 		    break;
@@ -1534,8 +1539,10 @@ register struct attack *mattk;
 
 			/* KMH, conduct */
 			u.uconduct.food++;
-			if (is_meat(mdef->data))
-			    atemeat();
+			if (nonvegan(mdef->data))
+			     u.uconduct.unvegan++;
+			if (nonvegetarian(mdef->data))
+			     violated_vegetarian();
 
 			/* Use up amulet of life saving */
 			if (!!(otmp = mlifesaver(mdef))) m_useup(mdef, otmp);

@@ -905,6 +905,7 @@ register struct trobj *trop;
 			static NEARDATA short nocreate = STRANGE_OBJECT;
 			static NEARDATA short nocreate2 = STRANGE_OBJECT;
 			static NEARDATA short nocreate3 = STRANGE_OBJECT;
+			static NEARDATA short nocreate4 = STRANGE_OBJECT;
 		/*
 		 * For random objects, do not create certain overly powerful
 		 * items: wand of wishing, ring of levitation, or the
@@ -921,6 +922,7 @@ register struct trobj *trop;
 				|| otyp == nocreate
 				|| otyp == nocreate2
 				|| otyp == nocreate3
+				|| otyp == nocreate4
 #ifdef ELBERETH
 				|| otyp == RIN_LEVITATION
 #endif
@@ -930,6 +932,8 @@ register struct trobj *trop;
 				|| otyp == SCR_AMNESIA
 				|| otyp == SCR_FIRE
 				|| otyp == SCR_STINKING_CLOUD
+				|| otyp == SCR_BLANK_PAPER
+				|| otyp == SPE_BLANK_PAPER
 				|| otyp == RIN_AGGRAVATE_MONSTER
 				|| otyp == RIN_HUNGER
 				|| otyp == WAN_NOTHING
@@ -964,16 +968,18 @@ register struct trobj *trop;
 			switch (otyp) {
 			    case WAN_POLYMORPH:
 			    case RIN_POLYMORPH:
+			    case POT_POLYMORPH:
 				nocreate = RIN_POLYMORPH_CONTROL;
 				break;
 			    case RIN_POLYMORPH_CONTROL:
 				nocreate = RIN_POLYMORPH;
 				nocreate2 = SPE_POLYMORPH;
+				nocreate3 = POT_POLYMORPH;
 			}
 			/* Don't have 2 of the same ring or spellbook */
 			if (obj->oclass == RING_CLASS ||
 			    obj->oclass == SPBOOK_CLASS)
-				nocreate3 = otyp;
+				nocreate4 = otyp;
 		}
 
 		obj->dknown = obj->bknown = obj->rknown = 1;

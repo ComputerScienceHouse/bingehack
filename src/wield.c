@@ -385,8 +385,8 @@ dowieldquiver()
 
 	/* Finally, place it in the quiver */
 	setuqwep(newquiver);
-	/* Take no time if we are dextrous enough */
-	return (rnd(20) > ACURR(A_DEX));
+	/* Take no time since this is a convenience slot */
+	return (0);
 }
 
 int

@@ -320,12 +320,15 @@ register struct obj *otmp;
  *	>0  autopickup
  *	=0  interactive
  *	<0  pickup count of something
+ *
+ * Returns 1 if tried to pick something up, whether
+ * or not it succeeded.
  */
-void
+int
 pickup(what)
 int what;		/* should be a long */
 {
-	int i, n, res, count, n_picked = 0;
+	int i, n, res, count, n_tried = 0, n_picked = 0;
 	menu_item *pick_list = (menu_item *) 0;
 	boolean autopickup = what > 0;
 
@@ -338,14 +341,14 @@ int what;		/* should be a long */
 	if (autopickup && (flags.nopick || !OBJ_AT(u.ux, u.uy) ||
 			(is_pool(u.ux, u.uy) && !Underwater) || is_lava(u.ux, u.uy))) {
 	    read_engr_at(u.ux, u.uy);
-	    return;
+	    return (0);
 	}
 
 	/* no pickup if levitating & not on air or water level */
 	if (!can_reach_floor()) {
 	    if ((multi && !flags.run) || (autopickup && !flags.pickup))
 		read_engr_at(u.ux, u.uy);
-	    return;
+	    return (0);
 	}
 
 	/* multi && !flags.run means they are in the middle of some other
@@ -354,7 +357,7 @@ int what;		/* should be a long */
 	 */
 	if ((multi && !flags.run) || (autopickup && !flags.pickup)) {
 	    check_here(FALSE);
-	    return;
+	    return (0);
 	}
 
 	if (notake(youmonst.data)) {
@@ -362,7 +365,7 @@ int what;		/* should be a long */
 		You("are physically incapable of picking anything up.");
 	    else
 		check_here(FALSE);
-	    return;
+	    return (0);
 	}
 
 	/* if there's anything here, stop running */
@@ -399,6 +402,7 @@ int what;		/* should be a long */
 			    &pick_list, PICK_ANY, all_but_uchain);
 	    }
 menu_pickup:
+	    n_tried = n;
 	    for (n_picked = i = 0 ; i < n; i++) {
 		res = pickup_object(pick_list[i].item.a_obj,pick_list[i].count,
 					FALSE);
@@ -427,6 +431,7 @@ menu_pickup:
 		/* if only one thing, then pick it */
 		obj = level.objects[u.ux][u.uy];
 		lcount = min(obj->quan, (long)count);
+		n_tried++;
 		if (pickup_object(obj, lcount, FALSE) > 0)
 		    n_picked++;	/* picked something */
 		goto end_query;
@@ -439,7 +444,7 @@ menu_pickup:
 		if (!query_classes(oclasses, &selective, &all_of_a_type,
 				   "pick up", level.objects[u.ux][u.uy],
 				   TRUE, FALSE, &via_menu)) {
-		    if (!via_menu) return;
+		    if (!via_menu) return (0);
 		    n = query_objlist("Pick up what?",
 				  level.objects[u.ux][u.uy],
 				  BY_NEXTHERE|(selective ? 0 : INVORDER_SORT),
@@ -481,6 +486,7 @@ menu_pickup:
 		}
 		if (lcount == -1L) lcount = obj->quan;
 
+		n_tried++;
 		if ((res = pickup_object(obj, lcount, FALSE)) < 0) break;
 		n_picked += res;
 	    }
@@ -493,6 +499,7 @@ end_query:
 
 	/* see whether there's anything else here, after auto-pickup is done */
 	if (autopickup) check_here(n_picked > 0);
+	return (n_tried > 0);
 }
 
 /*

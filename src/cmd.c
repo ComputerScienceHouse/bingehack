@@ -441,7 +441,7 @@ domonability()
 	else if (u.umonnum == PM_GREMLIN) {
 	    if(IS_FOUNTAIN(levl[u.ux][u.uy].typ)) {
 		if (split_mon(&youmonst, (struct monst *)0))
-		    dryup(u.ux, u.uy);
+		    dryup(u.ux, u.uy, TRUE);
 	    } else There("is no fountain here.");
 	} else if (is_unicorn(youmonst.data)) {
 	    use_unicorn_horn((struct obj *)0);
@@ -1066,14 +1066,10 @@ int final;
 	if (!u.uconduct.food)
 	    enl_msg(You_, "have gone", "went", " without food");
 	    /* But beverages are okay */
-	else if (!u.uconduct.eatanim) {
-	    /* ie. don't eat any "animals" */
-	    if (!u.uconduct.eatanimbp)
-		you_have_been("a strict vegan");
-		/* NOR animal products */
-	    else
-		you_have_been("vegetarian");
-	}
+	else if (!u.uconduct.unvegan)
+	    you_have_X("followed a strict vegan diet");
+	else if (!u.uconduct.unvegetarian)
+	    you_have_been("vegetarian");
 
 	if (!u.uconduct.gnostic)
 	    you_have_been("an atheist");

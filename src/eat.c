@@ -318,7 +318,6 @@ register struct obj *otmp;
 		/* create a dummy duplicate to put on bill */
 		verbalize("You bit it, you bought it!");
 		bill_dummy_object(otmp);
-		otmp->no_charge = 1;	/* you now own this */
 	    }
 	    otmp->oeaten = (otmp->otyp == CORPSE ?
 				mons[otmp->corpsenm].cnutrit :
@@ -925,13 +924,14 @@ register int pm;
 }
 
 void
-atemeat()
+violated_vegetarian()
 {
-    u.uconduct.eatanim++;
+    u.uconduct.unvegetarian++;
     if (Role_if(PM_MONK)) {
 	You_feel("guilty.");
 	adjalign(-1);
     }
+    return;
 }
 
 STATIC_PTR
@@ -995,8 +995,10 @@ opentin()		/* called during each move whilst opening a tin */
 
 	    /* KMH, conduct */
 	    u.uconduct.food++;
-	    if (is_meat(&mons[tin.tin->corpsenm]))
-		atemeat();
+	    if (nonvegan(&mons[tin.tin->corpsenm]))
+		u.uconduct.unvegan++;
+	    if (nonvegetarian(&mons[tin.tin->corpsenm]))
+		violated_vegetarian();
 
 	    tin.tin->dknown = tin.tin->known = TRUE;
 	    cprefx(tin.tin->corpsenm); cpostfx(tin.tin->corpsenm);
@@ -1164,7 +1166,7 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 	if (mnum != PM_ACID_BLOB && !stoneable && rotted > 5L) {
 		pline("Ulch - that %s was tainted!",
 		      mons[mnum].mlet == S_FUNGUS ? "fungoid vegetation" :
-		      is_meat(&mons[mnum]) ? "meat" : "protoplasm");
+		      !nonvegetarian(&mons[mnum]) ? "meat" : "protoplasm");
 		if (Sick_resistance) {
 			pline("It doesn't seem at all sickening, though...");
 		} else {
@@ -1185,8 +1187,10 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 		}
 
 		/* KMH, conduct */
-		if (is_meat(&mons[mnum]))
-		     atemeat();
+		if (nonvegan(&mons[mnum]))
+		     u.uconduct.unvegan++;
+		if (nonvegetarian(&mons[mnum]))
+		     violated_vegetarian();
 
 		if (carried(otmp)) useup(otmp);
 		else useupf(otmp, 1L);
@@ -1230,8 +1234,10 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 	}
 
 	/* KMH, conduct */
-	if (is_meat(&mons[mnum]))
-	     atemeat();
+	if (nonvegan(&mons[mnum]))
+	     u.uconduct.unvegan++;
+	if (nonvegetarian(&mons[mnum]))
+	     violated_vegetarian();
 
 	return(retcode);
 }
@@ -1352,33 +1358,27 @@ struct obj *otmp;
 	}
 
 	/* KMH, conduct */
-	switch (objects[otmp->otyp].oc_material ) {
-	  /* non-vegan stuff */
+	switch (objects[otmp->otyp].oc_material) {
 	  case WAX: /* let's assume bees' wax */
-	    u.uconduct.eatanimbp++;
-	    break;
-
-	  /* non-vegetarian stuff */
-	  case FLESH:
-	    if ( otmp->otyp == EGG ) {
-		/* a non-vegan special case */
-		u.uconduct.eatanimbp++;
-		break;
-	    }
 	  case LEATHER:
 	  case BONE:
 	  case DRAGON_HIDE:
-	    atemeat();
+	    u.uconduct.unvegan++;
+	    break;
+
+	  case FLESH:
+	    if (otmp->otyp == EGG)
+	    u.uconduct.unvegan++;
+	    else
+		violated_vegetarian();
+	    break;
 
 	  default:
-	    if ( otmp->otyp == PANCAKE || otmp->otyp == FORTUNE_COOKIE ||
-			otmp->otyp == CREAM_PIE ||
-			otmp->otyp == LUMP_OF_ROYAL_JELLY) {
-		/* non-vegan */
-		u.uconduct.eatanimbp++;
-	    }
-	  /* else vegan stuff */
-	    ;
+	    if (otmp->otyp == PANCAKE || otmp->otyp == FORTUNE_COOKIE || /* eggs */
+			otmp->otyp == CREAM_PIE || otmp->otyp == CANDY_BAR || /* milk */
+			otmp->otyp == LUMP_OF_ROYAL_JELLY)
+		u.uconduct.unvegan++;
+	    break;
 	}
 }
 

@@ -324,6 +324,12 @@ struct obj *otmp;
  * purposes.  For example, when eating, where an interruption will yield
  * an object which is different from what it started out as; the "I x"
  * command needs to display the original object.
+ *
+ * The caller is responsible for checking otmp->unpaid and
+ * costly_spot(u.ux, u.uy).  This function will make otmp no charge.
+ *
+ * Note that check_unpaid_usage() should be used instead for partial
+ * usage of an object.
  */
 void
 bill_dummy_object(otmp)
@@ -346,6 +352,9 @@ register struct obj *otmp;
 	    (void)strncpy(ONAME(dummy), ONAME(otmp), (int)otmp->onamelth);
 	if (Is_candle(dummy)) dummy->lamplit = 0;
 	addtobill(dummy, FALSE, TRUE, TRUE);
+	otmp->no_charge = 1;
+	otmp->unpaid = 0;
+	return;
 }
 
 #endif /* OVL1 */

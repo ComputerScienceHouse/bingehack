@@ -447,7 +447,7 @@ int ttyp;
 	if (IS_FOUNTAIN(lev->typ)) {
 	    dogushforth(FALSE);
 	    lev->looted |= F_WARNED;		/* force dryup */
-	    dryup(x, y);
+	    dryup(x, y, madeby_u);
 	    return;
 #ifdef SINKS
 	} else if (IS_SINK(lev->typ)) {
@@ -490,7 +490,7 @@ int ttyp;
 		} else
 			u.utrap = 0;
 		if (oldobjs != newobjs)	/* something unearthed */
-			pickup(1);	/* detects pit */
+			(void) pickup(1);	/* detects pit */
 	    } else if(mtmp) {
 		if(is_flyer(mtmp->data) || is_floater(mtmp->data)) {
 		    if(canseemon(mtmp))
@@ -524,7 +524,7 @@ int ttyp;
 		    if (newobjs)
 			impact_drop((struct obj *)0, x, y, 0);
 		    if (oldobjs != newobjs)
-			pickup(1);
+			(void) pickup(1);
 		    if (shopdoor && madeby_u) pay_for_damage("ruin");
 
 		} else {

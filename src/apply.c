@@ -1052,7 +1052,7 @@ struct obj *obj;
 			plur(obj->quan),
 			obj->quan > 1L ? "" : "s",
 			Blind ? "." : " brightly!");
-		    if (obj->unpaid &&
+		    if (obj->unpaid && costly_spot(u.ux, u.uy) &&
 			  obj->age == 20L * (long)objects[obj->otyp].oc_cost) {
 			const char *ithem = obj->quan > 1L ? "them" : "it";
 			verbalize("You burn %s, you bought %s!", ithem, ithem);
@@ -1092,11 +1092,12 @@ light_cocktail(obj)
 
 	You("light %s potion.%s", shk_your(buf, obj),
 	    Blind ? "" : "  It gives off a dim light.");
-	if (obj->unpaid) {
-	    check_unpaid(obj);		/* surcharge for use of unpaid item */
-	    bill_dummy_object(obj);	/* treat it as having been used up    */
-	    obj->no_charge = 1;		/* you're now obligated to pay for it */
-	    obj->unpaid = 0;
+	if (obj->unpaid && costly_spot(u.ux, u.uy)) {
+	    /* Normally, we shouldn't both partially and fully charge
+	     * for an item, but (Yendorian Fuel) Taxes are inevitable...
+	     */
+	    check_unpaid(obj);
+	    bill_dummy_object(obj);
 	}
 	makeknown(obj->otyp);
 

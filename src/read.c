@@ -384,9 +384,11 @@ int curse_bless;
 		    if (obj->spe <= 10)
 			obj->spe += rn1(10, 6);
 		    else obj->spe += rn1(5, 6);
+		    if (obj->spe > 50) obj->spe = 50;
 		    p_glow2(obj,blue);
 		} else {
 		    obj->spe += rnd(5);
+		    if (obj->spe > 50) obj->spe = 50;
 		    p_glow1(obj);
 		}
 		break;
@@ -399,9 +401,11 @@ int curse_bless;
 		    stripspe(obj);
 		} else if (is_blessed) {
 		    obj->spe += d(2,4);
+		    if (obj->spe > 20) obj->spe = 20;
 		    p_glow2(obj,blue);
 		} else {
 		    obj->spe += rnd(4);
+		    if (obj->spe > 20) obj->spe = 20;
 		    p_glow1(obj);
 		}
 		break;
@@ -1430,7 +1434,10 @@ do_class_genocide()
 			    kill_genocided_monsters();
 			    update_inventory();		/* eggs & tins */
 			    pline("Wiped out all %s.", nam);
-			    if (Upolyd && i == u.umonnum && !Unchanging) rehumanize();
+			    if (Upolyd && i == u.umonnum) {
+				if (Unchanging) done(GENOCIDED);
+				rehumanize();
+			    }
 			    /* Self-genocide if it matches either your race or role */
 			    /* Assumption: male and female forms share the same letter */
 			    if (i == urole.malenum || i == urace.malenum) {

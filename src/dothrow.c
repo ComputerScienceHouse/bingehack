@@ -200,10 +200,12 @@ autoquiver()
 		if (otmp->owornmask || otmp->oartifact || !otmp->dknown) {
 			;	/* Skip it */
 		} else if (otmp->otyp == ROCK ||
-			    /* seen rocks or known flint or known glass */
-			    (objects[otmp->otyp].oc_name_known &&
-				(otmp->otyp == FLINT ||
-				 objects[otmp->otyp].oc_material == GLASS))) {
+			/* seen rocks or known flint or known glass */
+			(objects[otmp->otyp].oc_name_known &&
+			 otmp->otyp == FLINT) ||
+			(objects[otmp->otyp].oc_name_known &&
+			 otmp->oclass == GEM_CLASS &&
+			 objects[otmp->otyp].oc_material == GLASS)) {
 			if (uslinging())
 			    oammo = otmp;
 			else if (!omisc)
@@ -221,7 +223,7 @@ autoquiver()
 		} else if (is_missile(otmp)) {
 			/* Missile (dart, shuriken, etc.) */
 			omissile = otmp;
-		} else if (otmp->oclass == WEAPON_CLASS) {
+		} else if (otmp->oclass == WEAPON_CLASS && !is_launcher(otmp)) {
 			/* Ordinary weapon */
 			omisc = otmp;
 		}

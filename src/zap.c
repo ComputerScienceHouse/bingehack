@@ -688,7 +688,6 @@ cancel_item(obj)
 register struct obj *obj;
 {
 	boolean	u_ring = (obj == uleft) || (obj == uright);
-	register boolean unpaid = (carried(obj) && obj->unpaid);
 	register boolean holy = (obj->otyp == POT_WATER && obj->blessed);
 
 	switch(obj->otyp) {
@@ -744,21 +743,18 @@ register struct obj *obj;
 		 obj->otyp != CANDELABRUM_OF_INVOCATION) {
 		costly_cancel(obj);
 		obj->spe = (obj->oclass == WAND_CLASS) ? -1 : 0;
-		if (unpaid) addtobill(obj, TRUE, FALSE, TRUE);
 	    }
 	    switch (obj->oclass) {
 	      case SCROLL_CLASS:
 		costly_cancel(obj);
 		obj->otyp = SCR_BLANK_PAPER;
 		obj->spe = 0;
-		if (unpaid) addtobill(obj, TRUE, FALSE, TRUE);
 		break;
 	      case SPBOOK_CLASS:
 		if (obj->otyp != SPE_CANCELLATION &&
 			obj->otyp != SPE_BOOK_OF_THE_DEAD) {
 		    costly_cancel(obj);
 		    obj->otyp = SPE_BLANK_PAPER;
-		    if (unpaid) addtobill(obj, TRUE, FALSE, TRUE);
 		}
 		break;
 	      case POTION_CLASS:
@@ -774,13 +770,11 @@ register struct obj *obj;
 	            obj->otyp = POT_WATER;
 		    obj->odiluted = 0; /* same as any other water */
 		}
-		if (unpaid) addtobill(obj, TRUE, FALSE, TRUE);
 		break;
 	    }
 	}
 	if (holy) costly_cancel(obj);
 	unbless(obj);
-	if (unpaid && holy) addtobill(obj, TRUE, FALSE, TRUE);
 	uncurse(obj);
 #ifdef INVISIBLE_OBJECTS
 	if (obj->oinvis) obj->oinvis = 0;
@@ -795,7 +789,7 @@ boolean
 drain_item(obj)
 register struct obj *obj;
 {
-	boolean u_ring, unpaid;
+	boolean u_ring;
 
 
 	/* Is this a charged/enchanted object? */
@@ -808,7 +802,6 @@ register struct obj *obj;
 	    return (FALSE);
 
 	/* Charge for the cost of the object */
-	unpaid = (carried(obj) && obj->unpaid);
 	costly_cancel(obj);	/* The term "cancel" is okay for now */
 
 	/* Drain the object and any implied effects */
@@ -858,7 +851,6 @@ register struct obj *obj;
 	    flags.botl = 1;
 	    break;
 	}
-	if (unpaid) addtobill(obj, TRUE, FALSE, TRUE);
 	return (TRUE);
 }
 
@@ -3338,7 +3330,7 @@ boolean *shopdamage;
 		    if (cansee(x,y))
 			pline("Steam billows from the fountain.");
 		    rangemod -= 1;
-		    dryup(x,y);
+		    dryup(x, y, type > 0);
 	    }
 	}
 	else if(abstype == ZT_COLD && (is_pool(x,y) || is_lava(x,y))) {
