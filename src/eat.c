@@ -156,10 +156,13 @@ static NEARDATA struct {
 	struct	obj *piece;	/* the thing being eaten, or last thing that
 				 * was partially eaten, unless that thing was
 				 * a tin, which uses the tin structure above */
+	/* doeat() initializes these when piece is valid */
 	int	usedtime,	/* turns spent eating */
 		reqtime;	/* turns required to eat */
 	int	nmod;		/* coded nutrition per turn */
 	Bitfield(canchoke,1);	/* was satiated at beginning */
+
+	/* start_eating() initializes these */
 	Bitfield(fullwarn,1);	/* have warned about being full */
 	Bitfield(eating,1);	/* victual currently being eaten */
 	Bitfield(doreset,1);	/* stop eating at end of turn */
@@ -475,7 +478,8 @@ register int pm;
 		    /* It so happens that since we know these monsters */
 		    /* cannot appear in tins, victual.piece will always */
 		    /* be what we want, which is not generally true. */
-		    (void) revive_corpse(victual.piece);
+		    if (revive_corpse(victual.piece))
+			victual.piece = (struct obj *)0;
 		    return;
 		}
 	    case PM_GREEN_SLIME:
@@ -1180,7 +1184,7 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 		}
 		if (carried(otmp)) useup(otmp);
 		else useupf(otmp, 1L);
-		return(1);
+		return(2);
 	} else if (acidic(&mons[mnum]) && !Acid_resistance) {
 		tp++;
 		You("have a very bad case of stomach acid.");
@@ -1199,6 +1203,15 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 		You_feel("%ssick.", (Sick) ? "very " : "");
 		losehp(rnd(8), "cadaver", KILLED_BY_AN);
 	}
+
+	if (Role_if(PM_MONK) && is_meaty(&mons[mnum])) {
+	    You_feel("guilty.");
+	    adjalign(-1);
+	}
+
+	/* delay is weight dependent */
+	victual.reqtime = 3 + (mons[mnum].cwt >> 6);
+
 	if (!tp && mnum != PM_LIZARD && mnum != PM_LICHEN &&
 			(otmp->orotten || !rn2(7))) {
 	    if (rottenfood(otmp)) {
@@ -1214,13 +1227,6 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 		  (carnivorous(youmonst.data) && !herbivorous(youmonst.data)) ?
 			"is delicious" : "tastes terrible");
 	}
-	if (Role_if(PM_MONK) && is_meaty(&mons[mnum])) {
-	    You_feel("guilty.");
-	    adjalign(-1);
-	}
-
-	/* delay is weight dependent */
-	victual.reqtime = 3 + (mons[mnum].cwt >> 6);
 	return(0);
 }
 
@@ -1240,13 +1246,15 @@ start_eating(otmp)		/* called as you start to eat */
 
 	if (otmp->otyp == CORPSE) {
 	    cprefx(victual.piece->corpsenm);
-	    if (!victual.piece && victual.eating) do_reset_eat();
-	    if (victual.eating == FALSE) return; /* died and lifesaved */
+	    if (!victual.piece || !victual.eating) {
+		/* rider revived, or died and lifesaved */
+		return;
+	    }
 	}
 
 	if (bite()) return;
 
-	if(++victual.usedtime >= victual.reqtime) {
+	if (++victual.usedtime >= victual.reqtime) {
 	    /* print "finish eating" message if they just resumed -dlc */
 	    done_eating(victual.reqtime > 1 ? TRUE : FALSE);
 	    return;
@@ -1588,6 +1596,7 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 {
 	register struct obj *otmp;
 	int basenutrit;			/* nutrition of full item */
+	boolean dont_start = FALSE;
 
 	if (Strangled) {
 		pline("If you can't breathe air, how can you consume solids?");
@@ -1716,8 +1725,15 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 	 * then adjusted in accordance with the amount of food left.
 	 */
 	if(otmp->otyp == CORPSE) {
-	    if(eatcorpse(otmp)) return(1);
-	    /* else eatcorpse sets up reqtime and oeaten */
+	    int tmp = eatcorpse(otmp);
+	    if (tmp == 2) {
+		/* used up */
+		victual.piece = (struct obj *)0;
+		return(1);
+	    } else if (tmp)
+		dont_start = TRUE;
+	    /* if not used up, eatcorpse sets up reqtime and may modify
+	     * oeaten */
 	} else {
 	    victual.reqtime = objects[otmp->otyp].oc_delay;
 	    if (otmp->otyp != FORTUNE_COOKIE &&
@@ -1727,7 +1743,7 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 
 		if (rottenfood(otmp)) {
 		    otmp->orotten = TRUE;
-		    return(1);
+		    dont_start = TRUE;
 		}
 		otmp->oeaten >>= 1;
 	    } else fprefx(otmp);
@@ -1752,16 +1768,16 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 	 * TODO: add in a "remainder" value to be given at the end of the
 	 *	 meal.
 	 */
-	if(victual.reqtime == 0)
+	if (victual.reqtime == 0 || otmp->oeaten == 0)
 	    /* possible if most has been eaten before */
 	    victual.nmod = 0;
-	else if ((int)otmp->oeaten > victual.reqtime)
+	else if ((int)otmp->oeaten >= victual.reqtime)
 	    victual.nmod = -((int)otmp->oeaten / victual.reqtime);
 	else
 	    victual.nmod = victual.reqtime % otmp->oeaten;
 	victual.canchoke = (u.uhs == SATIATED);
 
-	start_eating(otmp);
+	if (!dont_start) start_eating(otmp);
 	return(1);
 }
 
