@@ -1,8 +1,8 @@
-#	SCCS Id: @(#)Makefile.MSC	      3.3     1999/11/06
+#	SCCS Id: @(#)Makefile.MSC	      3.3     2000/07/30
 #	Copyright (c) NetHack PC Development Team 1997.
 #	PC NetHack 3.3 Makefile for MSC
 #
-#	For questions or comments: nethack-bugs@linc.cis.upenn.edu
+#	For questions or comments: nethack-bugs@nethack.org
 #
 #	In addition to your C compiler,
 #
@@ -65,6 +65,12 @@ LEXYYC = lexyy.c
 # help files, etc. in a single library file.
 
 USE_DLB = Y
+
+#
+# Uncomment this line if you want to include support for ALT-numeric
+# sequences, such as ALT-2 for toggling #twoweapon mode.  
+# Note that this code did not get a thorough testing prior to 3.3.1
+#NEWALT=/DNEW_ALT
 
 #############################################################################
 #
@@ -922,7 +928,7 @@ random.o : $(HACK_H) $(SSHR)\random.c
 
 # sys/msdos
 msdos.o : $(HACK_H)  $(MSYS)\msdos.c
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\$(@B).c
+	$(CC) $(CFLAGS) $(SPECOPTS) $(NEWALT) /Fo$@ $(MSYS)\$(@B).c
 pckeys.o : $(HACK_H)  $(MSYS)\pckeys.c
 	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\$(@B).c
 pctiles.o : $(HACK_H)  $(MSYS)\pctiles.c $(INCL)\portio.h

@@ -1,13 +1,13 @@
-	SCCS Id: @(#)Install.dos	 3.3		1999/12/04
+	SCCS Id: @(#)Install.dos	 3.3		2000/07/30
 
-	   Copyright (c) NetHack PC Development Team 1990-1999.
+	   Copyright (c) NetHack PC Development Team 1990-2000.
        NetHack may be freely redistributed.  See license for details.
        ==============================================================
               Instructions for compiling and installing
 		     NetHack 3.3 on a DOS system
          ======================================================
                   (or, How to make PC NetHack 3.3)
-		  Last revision: December  4, 1999
+		  Last revision: July 30, 2000
 
 Credit for a runnable full PC NetHack 3.3 goes to the PC Development team
 of Paul Winner, Kevin Smolkowski, Michael Allison, Yitzhak Sapir, Bill Dyer, 
