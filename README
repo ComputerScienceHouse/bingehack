@@ -103,7 +103,7 @@ Please read items (1), (2) and (3) BEFORE doing anything with your new code.
         Intel 80386 or greater (or clone) and DEC Alpha desktop machines
                 running Windows NT
         Intel 80386 or greater (or clone) boxes running Linux, BSDI, or
-		Windows 95,98
+		Windows 95,98,2000
 	Intel Pentium or better (or clone) running BeOS 4.5
         Sun SPARC based machine running SunOS 4.x, Solaris 2.x, or Solaris 7
 
@@ -142,10 +142,15 @@ Please read items (1), (2) and (3) BEFORE doing anything with your new code.
     The Atari and Amiga ports are struggling to stay supported due to a
     lack of people with machines and time.
 
-    Support for Intel 80286 machines and DOS "real mode" versions has been
-    suspended.  Builds have not been attempted in quite a while.  The
-    overlay mechanism is still present in the code if someone wishes to
-    attempt to make it work.
+    With the demise of Windows NT on the DEC Alpha, no attempt has been
+    made to build NetHack 3.3.1 on that platform.
+    
+    A build for Intel 80286 machines and DOS "real mode" overlaid versions 
+    has been produced for 3.3.1, with a marginal attempt at tuning it for 
+    suitable performance.  If someone has access to real-mode compiler and 
+    lots of spare time on their hands, you may be able to enhance the 
+    performance even further.  We don't know how well it runs on a real
+    80286 since we no longer have access to one.
 
                         - - - - - - - - - - -
 
