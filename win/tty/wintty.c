@@ -2558,7 +2558,7 @@ copy_of(s)
     const char *s;
 {
     if (!s) s = "";
-    return Strcpy((char *) alloc((unsigned) (strlen(s) + 1)), s);
+    return strcpy((char *) alloc((unsigned) (strlen(s) + 1)), s);
 }
 
 #endif /* TTY_GRAPHICS */

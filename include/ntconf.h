@@ -47,14 +47,14 @@
 #include <stdlib.h>
 
 #define NO_SIGNAL
-#define Strcpy strcpy
-#define Strcat strcat
-#define Sprintf sprintf
-#define Vfprintf vfprintf
-#define Vsprintf vsprintf
+#define Strcpy   (void) strcpy
+#define Strcat   (void) strcat
+#define Sprintf  (void) sprintf
+#define Vfprintf (void) vfprintf
+#define Vsprintf (void) vsprintf
+#define Vprintf  (void) vprintf
 #define index	strchr
 #define rindex	strrchr
-#define Vprintf vprintf
 #include <time.h>
 #define USE_STDARG
 #ifdef RANDOM
