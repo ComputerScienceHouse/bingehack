@@ -210,8 +210,13 @@ mount_steed(mtmp, force)
 
 	/* Can the player reach and see the monster? */
     if (u.uswallow || u.ustuck || u.utrap || Punished) {
-        if (!force)
-        	You("are stuck here for now.");
+        if (!force) {
+		if (Punished)
+			You("are unable to swing your %s over.",
+				body_part(LEG)); 
+		else
+        		You("are stuck here for now.");
+	}
         return (FALSE);
     }
 	if (!mtmp || (!force && ((Blind && !Blind_telepat) ||
