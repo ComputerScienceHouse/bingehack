@@ -117,22 +117,28 @@ lookat(x, y, buf, monbuf)
 		Strcat(buf, ", leashed to you");
 
 	    {
-		int ways_seen=0, normal=0;
+		int ways_seen = 0, normal = 0, xraydist;
+		boolean useemon = (boolean) canseemon(mtmp);
 
+		xraydist = u.xray_range * u.xray_range;
 		/* normal vision */
-		if ((mtmp->wormno ? worm_known(mtmp) : cansee(mtmp->mx, mtmp->my)) && mon_visible(mtmp) && !mtmp->minvis) {
+		if ((mtmp->wormno ? worm_known(mtmp) : cansee(mtmp->mx, mtmp->my)) &&
+			mon_visible(mtmp) && !mtmp->minvis) {
 		    ways_seen++;
 		    normal++;
 		}
 		/* see invisible */
-		if (canseemon(mtmp) && mtmp->minvis) ways_seen++;
+		if (useemon && mtmp->minvis)
+		    ways_seen++;
 		/* infravision */
 		if ((!mtmp->minvis || See_invisible) && see_with_infrared(mtmp))
 		    ways_seen++;
 		/* telepathy */
-		if (tp_sensemon(mtmp)) ways_seen++;
+		if (tp_sensemon(mtmp))
+		    ways_seen++;
 		/* xray */
-		if (canseemon(mtmp) && u.xray_range > 0 && distu(mtmp->mx,mtmp->my) <= (u.xray_range*u.xray_range))
+		if (useemon && xraydist > 0 &&
+			distu(mtmp->mx, mtmp->my) <= xraydist)
 		    ways_seen++;
 		if (Detect_monsters)
 		    ways_seen++;
@@ -143,11 +149,12 @@ lookat(x, y, buf, monbuf)
 			/* can't actually be 1 yet here */
 			if (ways_seen-- > 1) Strcat(monbuf, ", ");
 		    }
-		    if (canseemon(mtmp) && mtmp->minvis) {
+		    if (useemon && mtmp->minvis) {
 			Strcat(monbuf, "see invisible");
 			if (ways_seen-- > 1) Strcat(monbuf, ", ");
 		    }
-		    if ((!mtmp->minvis || See_invisible) && see_with_infrared(mtmp)) {
+		    if ((!mtmp->minvis || See_invisible) &&
+			    see_with_infrared(mtmp)) {
 			Strcat(monbuf, "infravision");
 			if (ways_seen-- > 1) Strcat(monbuf, ", ");
 		    }
@@ -155,7 +162,8 @@ lookat(x, y, buf, monbuf)
 			Strcat(monbuf, "telepathy");
 			if (ways_seen-- > 1) Strcat(monbuf, ", ");
 		    }
-		    if (canseemon(mtmp) && u.xray_range > 0 && distu(mtmp->mx,mtmp->my) <= (u.xray_range*u.xray_range)) {
+		    if (useemon && xraydist > 0 &&
+			    distu(mtmp->mx, mtmp->my) <= xraydist) {
 			/* Eyes of the Overworld */
 			Strcat(monbuf, "astral vision");
 			if (ways_seen-- > 1) Strcat(monbuf, ", ");
@@ -171,10 +179,10 @@ lookat(x, y, buf, monbuf)
     else if (glyph_is_object(glyph)) {
 	struct obj *otmp = vobj_at(x,y);
 
-	if(otmp == (struct obj *) 0 || otmp->otyp != glyph_to_obj(glyph)) {
-	    if(glyph_to_obj(glyph) != STRANGE_OBJECT) {
+	if (!otmp || otmp->otyp != glyph_to_obj(glyph)) {
+	    if (glyph_to_obj(glyph) != STRANGE_OBJECT) {
 		otmp = mksobj(glyph_to_obj(glyph), FALSE, FALSE);
-		if(otmp->oclass == GOLD_CLASS)
+		if (otmp->oclass == GOLD_CLASS)
 		    otmp->quan = 2L; /* to force pluralization */
 		else if (otmp->otyp == SLIME_MOLD)
 		    otmp->spe = current_fruit;	/* give the fruit a type */
@@ -382,7 +390,7 @@ bad_data_file:	impossible("'data' file in wrong format");
 }
 
 /* getpos() return values */
-#define LOOK_TRADITIONAL	0	/* '.' -- ask about "more info?" */ 
+#define LOOK_TRADITIONAL	0	/* '.' -- ask about "more info?" */
 #define LOOK_QUICK		1	/* ',' -- skip "more info?" */
 #define LOOK_ONCE		2	/* ';' -- skip and stop looping */
 #define LOOK_VERBOSE		3	/* ':' -- show more info w/o asking */

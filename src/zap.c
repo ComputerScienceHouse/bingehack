@@ -1396,8 +1396,8 @@ struct obj *obj, *otmp;
 		res = 0;
 		break;
 	case SPE_STONE_TO_FLESH:
-		if (!(objects[obj->otyp].oc_material == MINERAL ||
-				objects[obj->otyp].oc_material == GEMSTONE)) {
+		if (objects[obj->otyp].oc_material != MINERAL &&
+			objects[obj->otyp].oc_material != GEMSTONE) {
 		    res = 0;
 		    break;
 		}
@@ -1408,9 +1408,9 @@ struct obj *obj, *otmp;
 			    poly_obj(obj, HUGE_CHUNK_OF_MEAT);
 			    goto smell;
 			} else if (obj->otyp == STATUE) {
-			    if (animate_statue(obj, obj->ox, obj->oy,
-				  ANIMATE_SPELL, (int *)0) == (struct monst *)0)
-			    	res = 0;
+			    if (!animate_statue(obj, obj->ox, obj->oy,
+						ANIMATE_SPELL, (int *)0))
+				res = 0;
 			} else { /* new rock class object... */
 			    /* impossible? */
 			    res = 0;
@@ -1424,7 +1424,8 @@ struct obj *obj, *otmp;
 			    res = 0;
 			    break;
 			}
-			mon = makemon(&mons[obj->corpsenm], obj->ox, obj->oy, NO_MM_FLAGS);
+			mon = makemon(&mons[obj->corpsenm],
+				      obj->ox, obj->oy, NO_MM_FLAGS);
 			if (mon) {
 			    delobj(obj);
 			    if (cansee(mon->mx, mon->my))
