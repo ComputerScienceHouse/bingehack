@@ -24,7 +24,12 @@
 #define COPYRIGHT_BANNER_C \
 "         See license for details."
 
-#if 0
+/*
+ * Marking compatible at start of 3.3.2 development. Change it
+ * if/when they become incompatible (Remove this comment before release)
+ */
+
+#if 1
 /*
  * If two successive patchlevels have compatible data files (fat chance),
  * defining this with the value of the older one will allow its bones and
