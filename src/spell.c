@@ -729,14 +729,10 @@ boolean atme;
 
 	switch(pseudo->otyp)  {
 	/*
-	 * At first these act as expected.  As the character increases in
-	 * experience the spell increases in its ability.  Initially the
-	 * spells have their expected levels of damage.  When the hero level
-	 * reaches three times the level of the spell the spell does special
-	 * damage.  This special damage is indicated before each spell.  Note
-	 * even when the hero reaches three times the level of the spell she
-	 * still has the choice of casting either spell. Also the new level
-	 * of spell has an increased cost in casting it.
+	 * At first spells act as expected.  As the hero increases in skill
+	 * with the appropriate spell type, some spells increase in their
+	 * effects, e.g. more damage, further distance, and so on, without
+	 * additional cost to the spellcaster.
 	 */
 	case SPE_CONE_OF_COLD:
 	case SPE_FIREBALL:
@@ -757,7 +753,8 @@ boolean atme;
 				    u.ulevel/2 + 1 + spell_damage_bonus(), 0);
 			}
 			u.dx = cc.x+rnd(3)-2; u.dy = cc.y+rnd(3)-2;
-			if (!cansee(u.dx,u.dy) || IS_STWALL(levl[u.dx][u.dy].typ)) {
+			if (!isok(u.dx,u.dy) || !cansee(u.dx,u.dy) ||
+			    IS_STWALL(levl[u.dx][u.dy].typ) || u.uswallow) {
 			    /* Spell is reflected back to center */
 			    u.dx = cc.x;
 			    u.dy = cc.y;
