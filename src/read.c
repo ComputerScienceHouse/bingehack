@@ -1568,7 +1568,7 @@ int how;
 			if(flags.soundok) {
 	/* fixme: unconditional "caverns" will be silly in some circumstances */
 			    if(flags.verbose)
-			pline("A thunderous voice booms though the caverns:");
+			pline("A thunderous voice booms through the caverns:");
 			    verbalize("No, mortal!  That will not be done.");
 			}
 			continue;
