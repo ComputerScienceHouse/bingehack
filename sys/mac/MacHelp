@@ -4,7 +4,7 @@ The following are options, features, or concerns specific to the
 Macintosh port of NetHack 3.3.  Bug reports, suggestions, comments,
 and so on, should be addressed to:
 
-	To: devteam@www.nethack.org
+	To: devteam@nethack.org
 	Subject: Mac NetHack 3.3
 
 or you can use our on-line bug reporting form at
@@ -75,7 +75,7 @@ and so on).
         after the Dungeon Map window is created.
 
     Default options may be set by editing the NetHack Defaults text
-        file (possibly using TeachText or your favorite editor).
+        file (possibly using SimpleText or your favorite editor).
         Unix(tm)-style notation is used, as in:
     OPTIONS=name:Arnold,time,!tombstone
 

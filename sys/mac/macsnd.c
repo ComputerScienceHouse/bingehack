@@ -15,6 +15,7 @@
  */
 
 #include "hack.h"
+#include "mactty.h"
 #include "macwin.h"
 #include <Sound.h>
 #include <Resources.h>

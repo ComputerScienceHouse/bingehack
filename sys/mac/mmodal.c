@@ -14,7 +14,7 @@ FlashButton (WindowPtr wind, short item) {
 	short type;
 	Handle handle;
 	Rect rect;
-	unsigned long ticks;
+	long ticks;
 
 
 	/* Apple recommends 8 ticks */

@@ -242,6 +242,11 @@ static	void askQuit(void);
 #define CH_ENTER	0x0003
 #define CH_ESCAPE	0x001b
 
+static void FDECL(ask_restring, (const char *, unsigned char *));
+static void FDECL(ask_enable, (WindowPtr, SHORT_P, int));
+static pascal void FDECL(ask_redraw, (WindowPtr, SHORT_P));
+static pascal Boolean FDECL(ask_filter, (WindowPtr,
+	EventRecord *, SHORT_P));
 #define noresource(t,n)	{SysBeep(3); ExitToShell();}
 #define fatal(s)	{SysBeep(3); ExitToShell();}
 

@@ -169,6 +169,7 @@ Boolean FDECL ( topl_key , ( unsigned char ) ) ;
 Boolean FDECL ( topl_ext_key , ( unsigned char ) ) ;
 extern void WindowGoAway(EventRecord *, WindowPtr);
 E void FDECL(HandleEvent, (EventRecord *));	/* used in mmodal.c */
+extern void NDECL(port_help);
 
 #define DimMenuBar() AdjustMenus(1)
 #define UndimMenuBar() AdjustMenus(0)

@@ -849,7 +849,7 @@ topl_ext_key(unsigned char ch) {
 
 static void
 topl_flash_resp(int resp_idx) {
-	unsigned long dont_care;
+	long dont_care;
 	Rect frame;
 	SetPort(theWindows[WIN_MESSAGE].its_window);
 	topl_resp_rect(resp_idx, &frame);
@@ -1112,6 +1112,12 @@ mac_number_pad (int pad) {
 
 void
 trans_num_keys(EventRecord *theEvent) {
+/* KMH -- Removed this translation.
+ * Number pad keys should always emit digit characters.
+ * That's consistent with the default MacOS behavior.
+ * The number_pad option controls how digits are interpreted.
+ */
+#if 0
 	if (iflags.num_pad) {
 		Handle h = GetResource('Nump', theEvent->modifiers & shiftKey ? 129 : 128);
 		if (h) {
@@ -1125,6 +1131,7 @@ trans_num_keys(EventRecord *theEvent) {
 			}
 		}
 	}
+#endif
 }
 
 
