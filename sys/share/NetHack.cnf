@@ -1,5 +1,5 @@
 #	SCSS Id: @(#)Nethack.cnf	3.3	    1999/11/06
-#	Copyright (c) NetHack PC Development Team 1993, 1996
+#	Copyright (c) NetHack PC Development Team 1993, 1996, 1999
 #	NetHack may be freely redistributed.  See license for details.
 #
 # A '#' at the beginning of a line means the rest of the line is a comment.
@@ -14,6 +14,8 @@
 #
 # To change the configuration, comment out the unwanted lines, and
 # uncomment the configuration you want.
+#
+# Note: For blind players, please use the file NHAccess.cnf as a template.
 #
 
 # *** OPTIONS ***
@@ -44,10 +46,6 @@ OPTIONS=time,noshowexp,number_pad,lit_corridor,rest_on_space
 # Some options to set personal preferences.  Uncomment and change these to
 # suit your personal preference.  If several people are to use the same
 # configuration, options like these should not be set.
-#
-# Note to blind players:
-#
-# Use menustyle:traditional for the best interface to speech synthesizers.
 #
 #OPTIONS=name:Janet-V,female,dogname:Fido,catname:Morris,fruit:apricot
 #OPTIONS=autopickup,pickup_types:$"=/!?+
@@ -90,10 +88,6 @@ SAVE=;n
 #
 # See the on-line help or the Guidebook for which symbols are in which
 # positions.
-#
-# Note to blind players:
-#
-# Turn off ibmgraphics, and do not use any of the character graphics sets.
 #
 # If you merely set the IBMgraphics option as above, NetHack will use IBM
 # extended ASCII for dungeon characters.  If you don't like the selections,
