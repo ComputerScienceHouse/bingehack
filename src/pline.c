@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)pline.c	3.3	1999/10/10	*/
+/*	SCCS Id: @(#)pline.c	3.3	1999/11/28	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -234,7 +234,7 @@ impossible VA_DECL(const char *, s)
 	VA_START(s);
 	VA_INIT(s, const char *);
 	vpline(s,VA_ARGS);
-	pline("Program in disorder - perhaps you'd better Quit.");
+	pline("Program in disorder - perhaps you'd better #quit.");
 	VA_END();
 }
 
