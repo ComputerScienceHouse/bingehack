@@ -204,7 +204,7 @@ char *argv[];
 			prscore(argc, argv);
 			nethack_exit(EXIT_SUCCESS);
 		}
-		/* Don't inialize the window system just to print usage */
+		/* Don't initialize the window system just to print usage */
 		if (!strncmp(argv[1], "-?", 2) || !strncmp(argv[1], "/?", 2)) {
 			nhusage();
 			nethack_exit(EXIT_SUCCESS);
