@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)steed.c	3.3	1999/08/16	*/
+/*	SCCS Id: @(#)steed.c	3.3	1999/12/12	*/
 /* Copyright (c) Kevin Hugo, 1998-1999. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -455,5 +455,19 @@ dismount_steed(reason)
 	return;
 }
 
+void
+place_monster(mon, x, y)
+struct monst *mon;
+int x, y;
+{
+    if (mon == u.usteed) {
+	impossible("placing steed onto map?");
+	return;
+    }
+    mon->mx = x, mon->my = y;
+    level.monsters[x][y] = mon;
+}
 
 #endif /* STEED */
+
+/*steed.c*/

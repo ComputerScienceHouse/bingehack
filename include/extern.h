@@ -1774,6 +1774,7 @@ E boolean FDECL(mount_steed, (struct monst *, BOOLEAN_P));
 E void NDECL(exercise_steed);
 E void NDECL(kick_steed);
 E void FDECL(dismount_steed, (int));
+E void FDECL(place_monster, (struct monst *,int,int));
 #endif
 
 /* ### teleport.c ### */
