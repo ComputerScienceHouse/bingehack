@@ -136,7 +136,8 @@ struct monst *victim;
 	if (!print && (!vulnerable || otmp->oerodeproof || erosion == MAX_ERODE))
 		return FALSE;
 
-	plural = is_gloves(otmp) || is_boots(otmp);
+	plural = (is_gloves(otmp) || is_boots(otmp)) &&
+		!strstri(ostr, "pair of ");	/* "pair of *s" is singular */
 
 	if (!vulnerable) {
 	    if (flags.verbose) {
