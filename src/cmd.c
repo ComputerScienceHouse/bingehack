@@ -1057,10 +1057,14 @@ int final;
 	if (!u.uconduct.food)
 	    enl_msg(You_, "have gone", "went", " without food");
 	    /* But beverages are okay */
-	else if (!u.uconduct.flesh)
-	    you_have_been("a strict vegan");
-	else if (!u.uconduct.meat)
-	    you_have_been("vegetarian");
+	else if (!u.uconduct.eatanim) {
+	    /* ie. don't eat any "animals" */
+	    if (!u.uconduct.eatanimbp)
+		you_have_been("a strict vegan");
+		/* NOR animal products */
+	    else
+		you_have_been("vegetarian");
+	}
 
 	if (!u.uconduct.gnostic)
 	    you_have_been("an atheist");

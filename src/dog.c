@@ -620,7 +620,7 @@ register struct obj *obj;
 			return POISON;
 		    else if (fptr->mlet == S_FUNGUS)
 			return (herbi ? CADAVER : MANFOOD);
-		    else if (is_meaty(fptr))
+		    else if (is_meat(fptr))
 		        return (carni ? CADAVER : MANFOOD);
 		    else return (carni ? ACCFOOD : MANFOOD);
 		case CLOVE_OF_GARLIC:

@@ -68,27 +68,31 @@ struct obj *obj;
 #define POTION_OCCUPANT_CHANCE(n) (13 + 2*(n))	/* also in potion.c */
 
 	    potion_descr = OBJ_DESCR(objects[obj->otyp]);
-	    if (potion_descr && !strcmp(potion_descr, "milky") &&
-		    flags.ghost_count < MAXMONNO &&
+	    if (potion_descr && !strcmp(potion_descr, "milky")) {
+	        if ( flags.ghost_count < MAXMONNO &&
 		    !rn2(POTION_OCCUPANT_CHANCE(flags.ghost_count))) {
-		if (!enexto(&cc, mon->mx, mon->my, &mons[PM_GHOST])) return 0;
-		mquaffmsg(mon, obj);
-		m_useup(mon, obj);
-		mtmp = makemon(&mons[PM_GHOST], cc.x, cc.y, NO_MM_FLAGS);
-		if (!mtmp) {
-		    if (vis) pline(empty);
-		} else {
-		    if (vis) {
-			pline("As %s opens the bottle, an enormous %s emerges!",
-			   mon_nam(mon),
-			   Hallucination ? rndmonnam() : (const char *)"ghost");
-			pline("%s is frightened to death, and unable to move.",
-				Monnam(mon));
+		    if (!enexto(&cc, mon->mx, mon->my, &mons[PM_GHOST])) return 0;
+		    mquaffmsg(mon, obj);
+		    m_useup(mon, obj);
+		    mtmp = makemon(&mons[PM_GHOST], cc.x, cc.y, NO_MM_FLAGS);
+		    if (!mtmp) {
+			if (vis) pline(empty);
+		    } else {
+			if (vis) {
+			    pline("As %s opens the bottle, an enormous %s emerges!",
+			       mon_nam(mon),
+			       Hallucination ? rndmonnam() : (const char *)"ghost");
+			    pline("%s is frightened to death, and unable to move.",
+				    Monnam(mon));
+			}
+			mon->mcanmove = 0;
+			mon->mfrozen = 3;
 		    }
-		    mon->mcanmove = 0;
-		    mon->mfrozen = 3;
+		    return 2;
+		} else {
+		    /* It's made from some magic milk, but still milk. */
+		    u.uconduct.eatanimbp++;
 		}
-		return 2;
 	    }
 	    if (potion_descr && !strcmp(potion_descr, "smoky") &&
 		    flags.djinni_count < MAXMONNO &&

@@ -58,8 +58,8 @@ struct u_event {
  * times a challenge has been violated.
  */
 struct u_conduct {		/* number of times... */
-	long	meat;		/* eaten corpse, tin, egg, tripe, body part */
-	long	flesh;		/* ... or anything "fleshy" */
+	long	eatanim;	/* eaten any animal */
+	long	eatanimbp;	/* ... or any animal byproduct */
 	long	food;		/* ... or any comestible */
 	long	gnostic;	/* used prayer, priest, or altar */
 	long	weaphit;	/* hit a monster with a weapon */

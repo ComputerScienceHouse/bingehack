@@ -44,10 +44,6 @@
 #define humanoid(ptr)		(((ptr)->mflags1 & M1_HUMANOID) != 0L)
 #define is_animal(ptr)		(((ptr)->mflags1 & M1_ANIMAL) != 0L)
 #define slithy(ptr)		(((ptr)->mflags1 & M1_SLITHY) != 0L)
-#define is_meaty(ptr)		(!amorphous(ptr) && \
-				 (ptr)->mlet != S_BLOB && \
-				 (ptr)->mlet != S_JELLY && \
-				 (ptr)->mlet != S_FUNGUS)
 #define is_wooden(ptr)		((ptr) == &mons[PM_WOOD_GOLEM])
 #define thick_skinned(ptr)	(((ptr)->mflags1 & M1_THICK_HIDE) != 0L)
 #define lays_eggs(ptr)		(((ptr)->mflags1 & M1_OVIPAROUS) != 0L)
@@ -152,5 +148,9 @@
 				 (ptr) == &mons[PM_MASTER_MIND_FLAYER])
 
 #define nonliving(ptr)		(is_golem(ptr) || is_undead(ptr))
+#define is_meat(ptr)		(!mindless(ptr) || is_undead(ptr) || \
+				 (ptr) == &mons[PM_FLESH_GOLEM] || \
+				 (ptr) == &mons[PM_LEATHER_GOLEM] || \
+				 (ptr) == &mons[PM_BLACK_PUDDING])
 
 #endif /* MONDATA_H */

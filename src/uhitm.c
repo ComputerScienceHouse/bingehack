@@ -1531,8 +1531,7 @@ register struct attack *mattk;
 
 			/* KMH, conduct */
 			u.uconduct.food++;
-			u.uconduct.flesh++;
-			if (is_meaty(mdef->data)) u.uconduct.meat++;
+			if (is_meat(mdef->data)) u.uconduct.eatanim++;
 
 			/* Use up amulet of life saving */
 			if (!!(otmp = mlifesaver(mdef))) m_useup(mdef, otmp);

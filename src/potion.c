@@ -294,18 +294,22 @@ dodrink() {
 #define POTION_OCCUPANT_CHANCE(n) (13 + 2*(n))	/* also in muse.c */
 
 	potion_descr = OBJ_DESCR(objects[otmp->otyp]);
-	if (potion_descr && !strcmp(potion_descr, "milky") &&
-		    flags.ghost_count < MAXMONNO &&
+	if (potion_descr) {
+	    if (!strcmp(potion_descr, "milky")) {
+		if ( flags.ghost_count < MAXMONNO &&
 		    !rn2(POTION_OCCUPANT_CHANCE(flags.ghost_count))) {
-		ghost_from_bottle();
-		useup(otmp);
-		return(1);
-	} else if (potion_descr && !strcmp(potion_descr, "smoky") &&
+		    ghost_from_bottle();
+		    useup(otmp);
+		    return(1);
+		}
+		u.uconduct.eatanimbp++;
+	    } else if (potion_descr && !strcmp(potion_descr, "smoky") &&
 		    flags.djinni_count < MAXMONNO &&
 		    !rn2(POTION_OCCUPANT_CHANCE(flags.djinni_count))) {
 		djinni_from_bottle(otmp);
 		useup(otmp);
 		return(1);
+	    }
 	}
 	return dopotion(otmp);
 }

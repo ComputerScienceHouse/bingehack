@@ -503,6 +503,7 @@ E void FDECL(morehungry, (int));
 E void FDECL(lesshungry, (int));
 E boolean NDECL(is_fainted);
 E void NDECL(reset_faint);
+E void NDECL(atemeat);
 #if 0
 E void NDECL(sync_hunger);
 #endif

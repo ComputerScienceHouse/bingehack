@@ -926,6 +926,16 @@ register int pm;
 	return;
 }
 
+void
+atemeat()
+{
+    u.uconduct.eatanim++;
+    if (Role_if(PM_MONK)) {
+	You_feel("guilty.");
+	adjalign(-1);
+    }
+}
+
 STATIC_PTR
 int
 opentin()		/* called during each move whilst opening a tin */
@@ -987,14 +997,8 @@ opentin()		/* called during each move whilst opening a tin */
 
 	    /* KMH, conduct */
 	    u.uconduct.food++;
-	    u.uconduct.flesh++;
-	    if (is_meaty(&mons[tin.tin->corpsenm])) {
-	    	u.uconduct.meat++;
-	    	if (Role_if(PM_MONK)) {
-	    	    You_feel("guilty.");
-	    	    adjalign(-1);
-	    	}
-	    }
+	    if (is_meat(&mons[tin.tin->corpsenm]))
+		atemeat();
 
 	    tin.tin->dknown = tin.tin->known = TRUE;
 	    cprefx(tin.tin->corpsenm); cpostfx(tin.tin->corpsenm);
@@ -1147,6 +1151,7 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 	int tp = 0, mnum = otmp->corpsenm;
 	long rotted = 0L;
 	boolean uniq = !!(mons[mnum].geno & G_UNIQ);
+	int retcode = 0;
 	boolean stoneable = (touch_petrifies(&mons[mnum]) && !Stone_resistance &&
 				!poly_when_stoned(youmonst.data));
 
@@ -1158,14 +1163,10 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 		else if (otmp->blessed) rotted -= 2L;
 	}
 
-	/* KMH, conduct */
-	u.uconduct.flesh++;
-	if (is_meaty(&mons[mnum])) u.uconduct.meat++;
-
 	if (mnum != PM_ACID_BLOB && !stoneable && rotted > 5L) {
 		pline("Ulch - that %s was tainted!",
 		      mons[mnum].mlet == S_FUNGUS ? "fungoid vegetation" :
-		      is_meaty(&mons[mnum]) ? "meat" : "protoplasm");
+		      is_meat(&mons[mnum]) ? "meat" : "protoplasm");
 		if (Sick_resistance) {
 			pline("It doesn't seem at all sickening, though...");
 		} else {
@@ -1184,6 +1185,11 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 				    s_suffix(mons[mnum].mname));
 			make_sick(sick_time, buf, TRUE, SICK_VOMITABLE);
 		}
+
+		/* KMH, conduct */
+		if (is_meat(&mons[mnum]))
+		     atemeat();
+
 		if (carried(otmp)) useup(otmp);
 		else useupf(otmp, 1L);
 		return(2);
@@ -1206,11 +1212,6 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 		losehp(rnd(8), "cadaver", KILLED_BY_AN);
 	}
 
-	if (Role_if(PM_MONK) && is_meaty(&mons[mnum])) {
-	    You_feel("guilty.");
-	    adjalign(-1);
-	}
-
 	/* delay is weight dependent */
 	victual.reqtime = 3 + (mons[mnum].cwt >> 6);
 
@@ -1219,9 +1220,9 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 	    if (rottenfood(otmp)) {
 		otmp->orotten = TRUE;
 		(void)touchfood(otmp);
-		return(1);
-	    }
-	    otmp->oeaten >>= 2;
+		retcode = 1;
+	    } else
+		otmp->oeaten >>= 2;
 	} else {
 	    pline("%s%s %s!",
 		  !uniq ? "This " : !type_is_pname(&mons[mnum]) ? "The " : "",
@@ -1229,7 +1230,12 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 		  (carnivorous(youmonst.data) && !herbivorous(youmonst.data)) ?
 			"is delicious" : "tastes terrible");
 	}
-	return(0);
+
+	/* KMH, conduct */
+	if (is_meat(&mons[mnum]))
+	     atemeat();
+
+	return(retcode);
 }
 
 STATIC_OVL void
@@ -1271,9 +1277,6 @@ STATIC_OVL void
 fprefx(otmp)		/* called on "first bite" of (non-corpse) food */
 struct obj *otmp;
 {
-	/* KMH, conduct */
-	if (objects[otmp->otyp].oc_material == FLESH) u.uconduct.flesh++;
-
 	switch(otmp->otyp) {
 	    case FOOD_RATION:
 		if(u.uhunger <= 200)
@@ -1282,7 +1285,6 @@ struct obj *otmp;
 		else if(u.uhunger <= 700) pline("That satiated your stomach!");
 		break;
 	    case TRIPE_RATION:
-		u.uconduct.meat++;
 		if (carnivorous(youmonst.data) && !humanoid(youmonst.data))
 		    pline("That tripe ration was surprisingly good!");
 		else {
@@ -1302,7 +1304,6 @@ struct obj *otmp;
 	    case MEAT_STICK:
 	    case HUGE_CHUNK_OF_MEAT:
 	    case MEAT_RING:
-		u.uconduct.meat++;
 		goto give_feedback;
 	     /* break; */
 	    case CLOVE_OF_GARLIC:
@@ -1312,8 +1313,6 @@ struct obj *otmp;
 		}
 		/* Fall through otherwise */
 	    default:
-		if (otmp->otyp == EGG && is_meaty(&mons[otmp->corpsenm]))
-			u.uconduct.meat++;
 		if (otmp->otyp==SLIME_MOLD && !otmp->cursed
 			&& otmp->spe == current_fruit)
 		    pline("My, that was a %s %s!",
@@ -1352,6 +1351,30 @@ struct obj *otmp;
 		      ? "bland." :
 		      Hallucination ? "gnarly!" : "delicious!");
 		break;
+	}
+
+	/* KMH, conduct */
+	switch (objects[otmp->otyp].oc_material ) {
+	  /* non-vegan stuff */
+	  case WAX: /* let's assume bees' wax */
+	    u.uconduct.eatanimbp++;
+	    break;
+
+	  /* non-vegetarian stuff */
+	  case FLESH:
+	    if ( otmp->otyp == EGG ) {
+		/* a non-vegan special case */
+		u.uconduct.eatanimbp++;
+		break;
+	    }
+	  case LEATHER:
+	  case BONE:
+	  case DRAGON_HIDE:
+	    atemeat();
+
+	  default:
+	  /* vegan stuff */
+	    ;
 	}
 }
 
