@@ -1293,28 +1293,6 @@ const char *filename;
 	char	buf[4*BUFSZ];
 	FILE	*fp;
 
-#ifdef MAC
-	long nul = 0L ;
-	Str255 volName ;
-	/*
-	 * We should try to get this data from a rsrc, in the profile file
-	 * the user double-clicked...  This data should be saved with the
-	 * save file in the resource fork, AND be saveable in "stationery"
-	 */
-	GetVol ( volName , & theDirs . dataRefNum ) ;
-	GetWDInfo ( theDirs . dataRefNum , & theDirs . dataRefNum , & theDirs .
-		dataDirID , & nul ) ;
-	if ( volName [ 0 ] > 31 ) volName [ 0 ] = 31 ;
-	for ( nul = 1 ; nul <= volName [ 0 ] ; nul ++ ) {
-		if ( volName [ nul ] == ':' ) {
-			volName [ nul ] = 0 ;
-			volName [ 0 ] = nul - 1 ;
-			break ;
-		}
-	}
-	BlockMove ( volName , theDirs . dataName , 32L ) ;
-#endif /* MAC */
-
 	if (!(fp = fopen_config_file(filename))) return;
 
 #ifdef MICRO

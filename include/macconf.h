@@ -147,6 +147,8 @@ typedef struct macflags {
 	Bitfield ( alias , 1 ) ;
 	Bitfield ( standardFile , 1 ) ;
 	Bitfield ( hasDebugger , 1 ) ;
+	Bitfield ( hasAE , 1 ) ;
+	Bitfield ( gotOpen, 1 );
 } MacFlags ;
 
 extern MacDirs theDirs ;		/* used in files.c */

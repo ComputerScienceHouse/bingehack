@@ -28,6 +28,8 @@
 #include <fcntl.h>
 #endif
 
+static void
+finder_file_request(void);
 
 int NDECL(main);
 
@@ -144,85 +146,6 @@ main (void)
 }
 
 
-/*
- * This filter handles the movable-modal dialog
- *
- */
-static pascal Boolean
-DragFilter (DialogPtr dp, EventRecord *event, short *item)
-{
-	WindowPtr wp;
-	short code;
-	Rect r;
-
-/*
- *	Handle shortcut keys
- *	enter, return -> OK
- *	clear, escape, period -> Cancel
- *	all others are handled default
- *
- */
-
-	if (event->what == keyDown) {
-
-		char c = event->message & 0xff;
-		unsigned char b = (event->message >> 8) & 0xff;
-
-		switch (c) {
-
-		case 3 :	/* 3 == Enter */
-		case 10 :	/* Newline */
-		case 13 :	/* Return */
-			* item = 1;
-			return 1;
-
-		case '.' :	/* Cmd-period - we allow only period */
-		case 27 :	/* Escape */
-			* item = 2;
-			return 1;
-		}
-
-		switch (b) {
-
-		case 0x4c :	/* Enter */
-		case 0x24 :	/* Return */
-			* item = 1;
-			return 1;
-
-		case 0x35 :	/* Escape */
-		case 0x47 :	/* Clear */
-			* item = 2;
-			return 1;
-		}
-
-		return 0;
-	}
-
-/*
- *	OK, don't handle others
- *
- */
-
-	if (event->what != mouseDown) {
-
-		return 0;
-	}
-	code = FindWindow (event->where, &wp);
-	if (wp != dp || code != inDrag) {
-
-		return 0;
-	}
-	r = (*GetGrayRgn ())->rgnBBox;
-	InsetRect (&r, 3, 3);
-
-	DragWindow (wp, event->where, &r);
-	SaveWindowPos (wp);
-
-	event->what = nullEvent;
-	return 1;
-}
-
-
 static OSErr
 copy_file(short src_vol, long src_dir, short dst_vol, long dst_dir,
 		Str255 fName,
@@ -276,59 +199,85 @@ force_hdelete(short vol, long dir, Str255 fName)
 	HDelete (vol, dir, fName);
 }
 
+
 void
+process_openfile (short src_vol, long src_dir, Str255 fName, OSType ftype)
+{
+	OSErr	err = noErr;
+	
+	if (ftype != SAVE_TYPE)
+		return;		/* only deal with save files */
+		
+	if (src_vol != theDirs.dataRefNum || src_dir != theDirs.dataDirID &&
+		 CatMove(src_vol, src_dir, fName, theDirs.dataDirID, "\p:") != noErr) {
+
+		HCreate(theDirs.dataRefNum, theDirs.dataDirID, fName, MAC_CREATOR, SAVE_TYPE);
+		err = copy_file(src_vol, src_dir, theDirs.dataRefNum, theDirs.dataDirID,
+						fName, &HOpen); /* HOpenDF is only there under 7.0 */
+		if (err == noErr)
+			err = copy_file(src_vol, src_dir, theDirs.dataRefNum, theDirs.dataDirID,
+							fName, &HOpenRF);
+		if (err == noErr)
+			force_hdelete(src_vol, src_dir, fName);
+		else
+			HDelete(theDirs.dataRefNum, theDirs.dataDirID, fName);
+	}
+
+	if (err == noErr) {
+		short ref;
+
+		ref = HOpenResFile(theDirs.dataRefNum, theDirs.dataDirID, fName, fsRdPerm);
+		if (ref != -1) {
+			Handle name = Get1Resource('STR ', PLAYER_NAME_RES_ID);
+			if (name) {
+				Str255 save_f_p;
+				P2C(*(StringHandle)name, plname);
+				set_savefile_name();
+				C2P(SAVEF, save_f_p);
+				force_hdelete(theDirs.dataRefNum, theDirs.dataDirID, save_f_p);
+
+				if (HRename(theDirs.dataRefNum, theDirs.dataDirID, fName, save_f_p) == noErr)
+					macFlags.gotOpen = 1;
+			}
+			CloseResFile(ref);
+		}
+	}
+}
+
+
+static void
 finder_file_request(void)
 {
-#ifdef MAC68K
-	short finder_msg, file_count;
-	CountAppFiles(&finder_msg, &file_count);
-	if (finder_msg == appOpen && file_count == 1) {
-		OSErr	err;
-		AppFile src;
-		short	src_vol;
-		long	src_dir, nul = 0;
-		GetAppFiles(1, &src);
-		err = GetWDInfo(src.vRefNum, &src_vol, &src_dir, &nul);
-		if (err == noErr && src.fType == SAVE_TYPE) {
+	if (macFlags.hasAE) {
+		/* we're capable of handling Apple Events, so let's see if we have any */
+		EventRecord event;
+		long toWhen = TickCount () + 20;	/* wait a third of a second for all initial AE */
 
-			if (src_vol != theDirs.dataRefNum ||
-				 src_dir != theDirs.dataDirID &&
-				 CatMove(src_vol, src_dir, src.fName,
-						 theDirs.dataDirID, "\p:") != noErr) {
-
-				HCreate(theDirs.dataRefNum, theDirs.dataDirID, src.fName,
-						MAC_CREATOR, SAVE_TYPE);
-				err = copy_file(src_vol, src_dir, theDirs.dataRefNum,
-								theDirs.dataDirID, src.fName, &HOpen); /* HOpenDF is only there under 7.0 */
-				if (err == noErr)
-					err = copy_file(src_vol, src_dir, theDirs.dataRefNum,
-									theDirs.dataDirID, src.fName, &HOpenRF);
-				if (err == noErr)
-					force_hdelete(src_vol, src_dir, src.fName);
-				else
-					HDelete(theDirs.dataRefNum, theDirs.dataDirID, src.fName);
+		while (TickCount () < toWhen) {
+			if (WaitNextEvent (highLevelEventMask, &event, 3L, 0)) {
+				AEProcessAppleEvent(&event);
+				if (macFlags.gotOpen)
+					break;
 			}
+		}	
+	}
+#ifdef MAC68K
+	else {
+		short finder_msg, file_count;
+		CountAppFiles(&finder_msg, &file_count);
+		if (finder_msg == appOpen && file_count == 1) {
+			OSErr	err;
+			AppFile src;
+			short	src_vol;
+			long	src_dir, nul = 0;
+			FSSpec filespec;
 
-			if (err == noErr) {
-				short ref = HOpenResFile(theDirs.dataRefNum, theDirs.dataDirID,
-										 src.fName, fsRdPerm);
-				if (ref != -1) {
-					Handle name = Get1Resource('STR ', PLAYER_NAME_RES_ID);
-					if (name) {
-
-						Str255 save_f_p;
-						P2C(*(StringHandle)name, plname);
-						set_savefile_name();
-						C2P(SAVEF, save_f_p);
-						force_hdelete(theDirs.dataRefNum, theDirs.dataDirID,
-									save_f_p);
-						if (HRename(theDirs.dataRefNum, theDirs.dataDirID,
-									src.fName, save_f_p) == noErr)
-							ClrAppFiles(1);
-
-					}
-					CloseResFile(ref);
-				}
+			GetAppFiles(1, &src);
+			err = FSMakeFSSpec(src.vRefNum, 0, src.fName, filespec);
+			if (err == noErr && src.fType == SAVE_TYPE) {
+				process_openfile (filespec.vRefNum, filespec.parID, filespec.name, src.fType);
+				if (macFlags.gotOpen)
+					ClrAppFiles(1);
 			}
 		}
 	}

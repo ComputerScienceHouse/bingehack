@@ -17,7 +17,7 @@
 #include <Resources.h>
 #include <Menus.h>
 #include <Devices.h>
-#include <Events.h>
+#include <AppleEvents.h>
 #include <Gestalt.h>
 #include <toolutils.h>
 #include <DiskInit.h>
@@ -222,10 +222,98 @@ GetNhWin(WindowPtr mac_win) {
 
 short win_fonts [NHW_TEXT + 1];
 
+
+static pascal OSErr AppleEventHandler (
+	const AppleEvent*	inAppleEvent,
+	AppleEvent*			outAEReply,
+	long				inRefCon)
+{
+	Size     actualSize;
+	AEKeyword   keywd;
+	DescType typeCode;
+	AEEventID EventID;
+	OSErr    err;
+
+	/* Get Event ID */
+	err = AEGetAttributePtr (inAppleEvent,
+								keyEventIDAttr,
+								typeType, &typeCode,
+								&EventID, sizeof (EventID), &actualSize);
+	if (err == noErr) {
+		switch (EventID) {
+			default :
+			case kAEOpenApplication :
+				macFlags.gotOpen = 1;
+				/* fall through */
+			case kAEPrintDocuments :
+				err = errAEEventNotHandled;
+				break;
+			case kAEQuitApplication :
+				/* Flush key queue */
+				keyQueueCount = keyQueueWrite = keyQueueRead = 0;
+				AddToKeyQueue ( 'S' , 1 ) ;
+				break;
+			case kAEOpenDocuments : {
+				FSSpec      fss;
+				AEDescList  docList;
+				long     index, itemsInList;
+
+				if((err = AEGetParamDesc(inAppleEvent, keyDirectObject, typeAEList, &docList)) != noErr ||
+					(err = AECountItems(&docList, &itemsInList)) != noErr){
+					if (err == errAEDescNotFound)
+						itemsInList = 0;
+					else
+						break;
+				}
+
+				for(index = 1; index <= itemsInList; index++){
+					err = AEGetNthPtr(&docList, index, typeFSS, &keywd, &typeCode, (Ptr)&fss,
+								sizeof(FSSpec), &actualSize);
+					if(noErr == err) {
+						FInfo fndrInfo;
+
+						err = FSpGetFInfo (&fss, &fndrInfo);
+						if (noErr != err)
+							break;
+
+						if (fndrInfo.fdType != SAVE_TYPE) 
+							continue;	/* only look at save files */
+
+						process_openfile (fss.vRefNum, fss.parID, fss.name, fndrInfo.fdType);
+						if (macFlags.gotOpen)
+							break;	/* got our save file */
+					}
+					else
+						break;
+				}
+				err = AEDisposeDesc(&docList);
+				break;
+			}
+		}
+	}			
+
+	/* Check to see if all required parameters for this type of event are present */
+	if (err == noErr) {
+		err = AEGetAttributePtr (inAppleEvent, 
+								keyMissedKeywordAttr, 
+						  		typeWildCard, &typeCode, 
+								NULL, 0, &actualSize);
+		if (err == errAEDescNotFound)											 
+			err = noErr;		/* got all the required parameters */
+		else if (err == noErr)										 
+		{						/* missed a required parameter */
+			err = errAEEventNotHandled;
+		}
+	}
+
+	return err;
+}
+
 void
 InitMac(void) {
 	short i;
 	long l;
+	Str255 volName;
 
 	if (LMGetDefltStack() < 50 * 1024L) {
 		SetApplLimit ((void *) ((long) LMGetCurStackBase() - (50 * 1024L)));
@@ -288,6 +376,36 @@ InitMac(void) {
 		i = geneva;
 	win_fonts [NHW_MESSAGE] = i;
 	win_fonts [NHW_TEXT] = geneva;
+	
+	macFlags.hasAE = 0;
+	if(!Gestalt(gestaltAppleEventsAttr, &l) && (l & (1L << gestaltAppleEventsPresent))){
+		if (AEInstallEventHandler (kCoreEventClass, typeWildCard,
+							NewAEEventHandlerProc (AppleEventHandler),
+							0,
+							FALSE) == noErr)
+			macFlags.hasAE = 1;
+	}
+
+	/*
+	 * We should try to get this data from a rsrc, in the profile file
+	 * the user double-clicked...  This data should be saved with the
+	 * save file in the resource fork, AND be saveable in "stationery"
+	 */
+	GetVol (volName, &theDirs.dataRefNum );
+	GetWDInfo (theDirs.dataRefNum, &theDirs.dataRefNum, &theDirs.dataDirID, &l);
+	if (volName [0] > 31) volName [0] = 31;
+	for (l = 1; l <= volName [0]; l++) {
+		if (volName [l] == ':') {
+			volName [l] = 0;
+			volName [0] = l - 1;
+			break;
+		}
+	}
+	BlockMove (volName, theDirs.dataName, l);
+	BlockMove (volName, theDirs.saveName, l);
+	BlockMove (volName, theDirs.levelName, l);
+	theDirs.saveRefNum = theDirs.levelRefNum = theDirs.dataRefNum;
+	theDirs.saveDirID = theDirs.levelDirID = theDirs.dataDirID;
 }
 
 
@@ -429,7 +547,8 @@ SanePositions (void) {
 /* Handle other windows */
 	for (ix = 0; ix < NUM_MACWINDOWS; ix ++) {
 		if (ix != WIN_STATUS && ix != WIN_MESSAGE && ix != WIN_MAP && ix != BASE_WINDOW) {
-			if (theWindow = theWindows [ix].its_window) {
+			theWindow = theWindows [ix].its_window;
+			if (theWindow) {
 				if (((WindowPeek) theWindow)->visible) {
 					int shift;
 					if (((WindowPeek)theWindow)->windowKind == WIN_BASE_KIND + NHW_MENU) {
@@ -1087,6 +1206,8 @@ mac_destroy_nhwindow (winid win) {
 			}
 			return;
 		}
+		if (win == WIN_MESSAGE)
+			WIN_MESSAGE = WIN_ERR;
 	}
 
 	kind = ((WindowPeek) theWindow)->windowKind - WIN_BASE_KIND;
@@ -1172,13 +1293,15 @@ macKeyMenu (EventRecord *theEvent, WindowPtr theWindow) {
 	int l, ch = theEvent->message & 0xff;
 	Rect r;
 
-	if (aWin) {		
+	if (aWin) {
+		HLock ((char**)aWin->menuInfo);
+		HLock ((char**)aWin->menuSelected);
 		for (l = 0, mi = *aWin->menuInfo; l < aWin->miLen; l++, mi++) {
 			if (mi->accelerator == ch) {
 				int i;
 			
 				for (i = aWin->miSelLen - 1; i >= 0; i--)
-					if (*aWin->menuSelected [i] == l)
+					if ((*aWin->menuSelected) [i] == l)
 						break;
 				if (i < 0) {
 					(*aWin->menuSelected) [aWin->miSelLen] = l;
@@ -1198,6 +1321,8 @@ macKeyMenu (EventRecord *theEvent, WindowPtr theWindow) {
 				break;
 			}
 		}
+		HUnlock ((char**)aWin->menuInfo);
+		HUnlock ((char**)aWin->menuSelected);
 		/* add key if didn't find it in menu and not filtered */
 		if (l == aWin->miLen && filter_scroll_key (ch, aWin))
 			GeneralKey (theEvent, theWindow);
@@ -1460,7 +1585,8 @@ macClickMenu (EventRecord *theEvent, WindowPtr theWindow) {
 				if (loRow > -1) {
 					int i;
 
-					item = -1;				
+					item = -1;
+					HLock ((char**)aWin->menuInfo);
 					for (i = 0, mi = *aWin->menuInfo; i < aWin->miLen; i++, mi++) {
 						if (mi->line == loRow + aWin->scrollPos) {
 							ToggleMenuSelect (aWin, loRow);
@@ -1468,6 +1594,7 @@ macClickMenu (EventRecord *theEvent, WindowPtr theWindow) {
 							break;
 						}
 					}
+					HUnlock ((char**)aWin->menuInfo);
 				}
 				else
 					item = -1;
@@ -1475,7 +1602,8 @@ macClickMenu (EventRecord *theEvent, WindowPtr theWindow) {
 		} while (StillDown ());
 		if (item > -1) {
 			int i;
-		
+
+			HLock ((char**)aWin->menuSelected);
 			for (i = aWin->miSelLen - 1; i >= 0; i--)
 				if ((*aWin->menuSelected) [i] == item)
 					break;
@@ -1488,6 +1616,7 @@ macClickMenu (EventRecord *theEvent, WindowPtr theWindow) {
 				for (; i < aWin->miSelLen; i++)
 					(*aWin->menuSelected) [i] = (*aWin->menuSelected) [i+1];
 			}
+			HUnlock ((char**)aWin->menuSelected);
 			if (aWin->how != PICK_ANY)	/* pick one or pick none */
 				AddToKeyQueue(CHAR_CR, 1);
 		}
@@ -1668,12 +1797,16 @@ macUpdateMenu (EventRecord *theEvent, WindowPtr theWindow) {
 	MacMHMenuItem *mi;
 	
 	GeneralUpdate (theEvent, theWindow);
+	HLock ((char**)aWin->menuInfo);
+	HLock ((char**)aWin->menuSelected);
 	for (i = 0; i < aWin->miSelLen; i++) {
 		mi = &(*aWin->menuInfo) [(*aWin->menuSelected) [i]];
 		line = mi->line;
 		if (line > aWin->scrollPos && line <= aWin->y_size)
 			ToggleMenuSelect (aWin, line - aWin->scrollPos);
 	}
+	HUnlock ((char**)aWin->menuInfo);
+	HUnlock ((char**)aWin->menuSelected);
 	return 0;
 }
 
@@ -1941,6 +2074,9 @@ HandleEvent (EventRecord *theEvent) {
 		break;
 	case osEvt :
 		DoOsEvt (theEvent);
+		break;
+	case kHighLevelEvent:
+		AEProcessAppleEvent(theEvent);
 	default :
 		break;
 	}
@@ -2277,12 +2413,14 @@ mac_add_menu (winid win, int glyph, const anything *any, CHAR_P menuChar, CHAR_P
 		
 		Sprintf(locStr, "%c - %s", (menuChar ? menuChar : ' '), inStr);
 		str = locStr;
+		HLock ((char**)aWin->menuInfo);
 		item = &(*aWin->menuInfo)[aWin->miLen];
 		aWin->miLen++;
 		item->id = *any;
 		item->accelerator = menuChar;
 		item->groupAcc = groupAcc;
 		item->line = aWin->y_size;
+		HUnlock ((char**)aWin->menuInfo);
 	} else
 		str = inStr;
 
@@ -2353,12 +2491,16 @@ mac_select_menu (winid win, int how, menu_item **selected_list) {
 		menu_item *mp;
 		MacMHMenuItem *mi;
 		*selected_list = mp = (menu_item *) alloc(aWin->miSelLen * sizeof(menu_item));
+		HLock ((char**)aWin->menuInfo);
+		HLock ((char**)aWin->menuSelected);
 		for (c = 0; c < aWin->miSelLen; c++) {
 			mi = &(*aWin->menuInfo)[(*aWin->menuSelected) [c]];
 			mp->item = mi->id;
 			mp->count = -1L;
 			mp++;
 		}
+		HUnlock ((char**)aWin->menuInfo);
+		HUnlock ((char**)aWin->menuSelected);
 	} else
 		*selected_list = 0;
 

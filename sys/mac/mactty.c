@@ -479,10 +479,12 @@ erase_rect (tty_record *record, Rect *area) {
 		PixPatHandle ppat;
 		
 		ppat = GetPixPat(iflags.use_stone + 127);	/* find which pat to get */
-		if (!ppat)
-			exit (-1);
-		FillCRect (area, ppat);
-		DisposePixPat (ppat);
+		if (!ppat) {
+			EraseRect (area);
+		} else {
+			FillCRect (area, ppat);
+			DisposePixPat (ppat);
+		}
 	}
 	else
 		EraseRect (area);

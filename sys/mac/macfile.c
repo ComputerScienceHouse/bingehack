@@ -44,7 +44,7 @@ static int FDECL(ReadHandleFile,(int, void *, unsigned));
 static long FDECL(SetHandleFilePos,(int, short, long));
 
 HandleFile theHandleFiles [ MAX_HF ] ;
-MacDirs theDirs ;		/* also referenced in files.c */
+MacDirs theDirs ;		/* also referenced in macwin.c */
 
 
 static HandleFile *

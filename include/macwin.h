@@ -64,7 +64,7 @@ typedef struct {
 
 typedef struct NhWindow {
 	WindowPtr		its_window ;
-//	short			kind ;
+/*	short			kind ;*/
 
 	short			font_number ;
 	short			font_size ;
@@ -153,7 +153,7 @@ extern void AdjustMenus(short);
 
 /* ### macmain.c ### */
 
-extern void NDECL ( finder_file_request ) ;
+extern void FDECL ( process_openfile, (short src_vol, long src_dir, Str255 fName, OSType ftype));
 
 /* ### macwin.c ### */
 
