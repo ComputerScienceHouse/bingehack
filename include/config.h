@@ -73,8 +73,11 @@
 #endif
 
 #ifdef __BEOS__
-/* leave at tty graphics for now */
-/* # define DEFAULT_WINDOW_SYS "be" */
+#define BEOS_GRAPHICS /* (optional) */
+#define DEFAULT_WINDOW_SYS "BeOS"  /* "tty" */
+#ifndef HACKDIR	/* override the default hackdir below */
+# define HACKDIR "/boot/apps/NetHack"
+#endif
 #endif
 
 #ifdef QT_GRAPHICS

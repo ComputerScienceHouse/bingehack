@@ -175,6 +175,12 @@ WINQTOBJ = qt_win.o qt_clust.o tile.o
 WINGEMSRC = ../win/gem/wingem.c ../win/gem/wingem1.c ../win/gem/load_img.c \
 	tile.c
 WINGEMOBJ = wingem.o wingem1.o load_img.o tile.o
+#
+# Files for a BeOS InterfaceKit port
+#
+WINBESRC = ../win/BeOS/winbe.cpp ../win/BeOS/NHWindow.cpp \
+	../win/BeOS/NHMenuWindow.cpp ../win/BeOS/NHMapWindow.cpp tile.c
+WINBEOBJ = winbe.o NHWindow.o NHMenuWindow.o NHMapWindow.o tile.o
 
 #
 #
@@ -212,6 +218,9 @@ WINKDELIB = -lkdecore -lkdeui -lXext
 #
 # libraries for Gem port
 WINGEMLIB = -le_gem -lgem
+#
+# libraries for BeOS 
+WINBELIB = -lbe
 
 WINLIB = $(WINTTYLIB)
 
@@ -368,6 +377,8 @@ SysV-AT:	DUMB.Setup $(HOBJ) Makefile
 SysBe: $(HOBJ) Makefile
 	@echo "Loading ..."
 	@$(LD) $(LFLAGS) -o $(GAME) $(HOBJ) $(WINLIB) $(LIBS)
+	@xres -o $(GAME) ../win/BeOS/nethack.rsrc
+	@mimeset -f $(GAME)
 	@touch SysBe
 
 DUMB.Setup:	../include/extern.h
@@ -533,6 +544,14 @@ unixunix.o: ../sys/unix/unixunix.c $(HACK_H)
 	$(CC) $(CFLAGS) -c ../sys/unix/unixunix.c
 bemain.o: ../sys/be/bemain.c $(HACK_H) ../include/dlb.h
 	$(CC) $(CFLAGS) -c ../sys/be/bemain.c
+winbe.o: ../win/BeOS/winbe.cpp $(HACK_H)
+	$(CXX) $(CXXFLAGS) -c ../win/BeOS/winbe.cpp
+NHWindow.o: ../win/BeOS/NHWindow.cpp $(HACK_H)
+	$(CXX) $(CXXFLAGS) -c ../win/BeOS/NHWindow.cpp
+NHMenuWindow.o: ../win/BeOS/NHMenuWindow.cpp $(HACK_H)
+	$(CXX) $(CXXFLAGS) -c ../win/BeOS/NHMenuWindow.cpp
+NHMapWindow.o: ../win/BeOS/NHMapWindow.cpp $(HACK_H)
+	$(CXX) $(CXXFLAGS) -c ../win/BeOS/NHMapWindow.cpp
 getline.o: ../win/tty/getline.c $(HACK_H) ../include/func_tab.h
 	$(CC) $(CFLAGS) -c ../win/tty/getline.c
 termcap.o: ../win/tty/termcap.c $(HACK_H) ../include/tcap.h

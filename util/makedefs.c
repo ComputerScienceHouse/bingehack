@@ -739,6 +739,9 @@ static const char *window_opts[] = {
 #ifdef WIN32_GRAPHICS
 		"Win32",
 #endif
+#ifdef BEOS_GRAPHICS
+		"BeOS InterfaceKit",
+#endif
 		0
 	};
 

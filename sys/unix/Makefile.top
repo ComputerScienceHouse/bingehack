@@ -43,6 +43,8 @@ VARDATND =
 # VARDATND = x11tiles pet_mark.xbm rip.xpm
 # for Atari/Gem
 # VARDATND = nh16.img title.img GEM_RSC.RSC
+# for BeOS
+# VARDATND = beostiles
 
 VARDATD = data oracles options quest.dat rumors
 VARDAT = $(VARDATD) $(VARDATND)
@@ -118,6 +120,10 @@ dungeon:
 x11tiles:
 	( cd util ; $(MAKE) tile2x11 )
 	( cd dat ; $(MAKE) x11tiles )
+
+beostiles:
+	( cd util ; $(MAKE) tile2beos )
+	( cd dat ; $(MAKE) beostiles )
 
 pet_mark.xbm:
 	( cd dat ; $(MAKE) pet_mark.xbm )
