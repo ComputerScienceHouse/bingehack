@@ -183,6 +183,7 @@ NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
 #define TOE 13
 #define HAIR 14
 #define BLOOD 15
+#define LUNG 16
 
 /* Flags to control menus */
 #define MENUTYPELEN sizeof("traditional ")

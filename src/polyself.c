@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)polyself.c	3.3	2000/02/07	*/
+/*	SCCS Id: @(#)polyself.c	3.3	2000/04/19	*/
 /*	Copyright (C) 1987, 1988, 1989 by Ken Arromdee */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -999,37 +999,40 @@ int part;
 	static NEARDATA const char
 	*humanoid_parts[] = { "arm", "eye", "face", "finger",
 		"fingertip", "foot", "hand", "handed", "head", "leg",
-		"light headed", "neck", "spine", "toe", "hair", "blood" },
+		"light headed", "neck", "spine", "toe", "hair", "blood", "lung"},
 	*jelly_parts[] = { "pseudopod", "dark spot", "front",
 		"pseudopod extension", "pseudopod extremity",
 		"pseudopod root", "grasp", "grasped", "cerebral area",
 		"lower pseudopod", "viscous", "middle", "surface",
-		"pseudopod extremity", "ripples", "juices" },
+		"pseudopod extremity", "ripples", "juices", "surface" },
 	*animal_parts[] = { "forelimb", "eye", "face", "foreclaw", "claw tip",
 		"rear claw", "foreclaw", "clawed", "head", "rear limb",
-		"light headed", "neck", "spine", "rear claw tip", "fur", "blood" },
+		"light headed", "neck", "spine", "rear claw tip",
+		"fur", "blood", "lung" },
 	*horse_parts[] = { "foreleg", "eye", "face", "forehoof", "hoof tip",
 		"rear hoof", "foreclaw", "hooved", "head", "rear leg",
-		"light headed", "neck", "backbone", "rear hoof tip", "mane", "blood" },
+		"light headed", "neck", "backbone", "rear hoof tip",
+		"mane", "blood", "lung" },
 	*sphere_parts[] = { "appendage", "optic nerve", "body", "tentacle",
 		"tentacle tip", "lower appendage", "tentacle", "tentacled",
 		"body", "lower tentacle", "rotational", "equator", "body",
-		"lower tentacle tip", "cilia", "life force" },
+		"lower tentacle tip", "cilia", "life force", "retina" },
 	*fungus_parts[] = { "mycelium", "visual area", "front", "hypha",
 		"hypha", "root", "strand", "stranded", "cap area",
 		"rhizome", "sporulated", "stalk", "root", "rhizome tip",
-		"spores", "juices" },
+		"spores", "juices", "gill" },
 	*vortex_parts[] = { "region", "eye", "front", "minor current",
 		"minor current", "lower current", "swirl", "swirled",
 		"central core", "lower current", "addled", "center",
-		"currents", "edge", "currents", "life force" },
+		"currents", "edge", "currents", "life force", "center" },
 	*snake_parts[] = { "vestigial limb", "eye", "face", "large scale",
 		"large scale tip", "rear region", "scale gap", "scale gapped",
 		"head", "rear region", "light headed", "neck", "length",
-		"rear scale", "scales", "blood" },
+		"rear scale", "scales", "blood", "lung" },
 	*fish_parts[] = { "fin", "eye", "premaxillary", "pelvic axillary",
 		"pelvic fin", "anal fin", "pectoral fin", "finned", "head", "peduncle",
-		"played out", "gills", "dorsal fin", "caudal fin", "scales", "blood" };
+		"played out", "gills", "dorsal fin", "caudal fin",
+		"scales", "blood", "gill" };
 	/* claw attacks are overloaded in mons[]; most humanoids with
 	   such attacks should still reference hands rather than claws */
 	static const char not_claws[] = {
