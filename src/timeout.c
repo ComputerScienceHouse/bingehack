@@ -474,7 +474,7 @@ long timeout;
 	    switch (egg->where) {
 		case OBJ_INVENT:
 		    knows_egg = TRUE; /* true even if you are blind */
-		    if (Blind)
+		    if (!cansee_hatchspot)
 			You_feel("%s %s from your pack!", something,
 			    locomotion(mon->data, "drop"));
 		    else
