@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)hack.h	3.3	1999/07/02	*/
+/*	SCCS Id: @(#)hack.h	3.3	2000/01/28	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -121,6 +121,7 @@ NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
 #define MM_EDOG		  0x04	/* add edog structure */
 #define MM_EMIN		  0x08	/* add emin structure */
 #define MM_ANGRY	  0x10  /* monster is created angry */
+#define MM_NONAME	  0x20  /* monster is not christened */
 
 /* flags to control query_objlist() */
 #define BY_NEXTHERE	  0x1	/* follow objlist by nexthere field */

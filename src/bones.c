@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)bones.c	3.3	97/10/17	*/
+/*	SCCS Id: @(#)bones.c	3.3	2000/01/28	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985,1993. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -255,10 +255,10 @@ savebones()
 		 * on your location
 		 */
 		in_mklev = TRUE;
-		mtmp = makemon(&mons[PM_GHOST], u.ux, u.uy, NO_MM_FLAGS);
+		mtmp = makemon(&mons[PM_GHOST], u.ux, u.uy, MM_NONAME);
 		in_mklev = FALSE;
 		if (!mtmp) return;
-		Strcpy((char *) mtmp->mextra, plname);
+		mtmp = christen_monst(mtmp, plname);
 	} else {
 		/* give your possessions to the monster you become */
 		in_mklev = TRUE;
