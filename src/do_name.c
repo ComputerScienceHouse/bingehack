@@ -505,7 +505,7 @@ register struct obj *obj;
 		undiscover_object(obj->otyp);
 	    }
 	} else {
-	    *str1 = Strcpy((char *) alloc((unsigned)strlen(buf)+1), buf);
+	    *str1 = strcpy((char *) alloc((unsigned)strlen(buf)+1), buf);
 	    discover_object(obj->otyp, FALSE, TRUE); /* possibly add to disco[] */
 	}
 }
@@ -580,7 +580,7 @@ const char *adjective;
 	    EHalluc_resistance = save_prop;
 	    if ((trunam || article == 3) && !strncmp(name, "the ", 4))
 		name += 4;
-	    return Strcpy(buf, name);
+	    return strcpy(buf, name);
 	}
 	if (!trunam && !use_your && !canspotmon(mtmp) &&
 #ifdef STEED

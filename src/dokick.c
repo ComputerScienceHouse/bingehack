@@ -539,7 +539,7 @@ char *buf;
 	else if (maploc->typ == LADDER) what = "a ladder";
 	else if (maploc->typ == IRONBARS) what = "an iron bar";
 	else what = "something weird";
-	return strcat(Strcpy(buf, "kicking "), what);
+	return strcat(strcpy(buf, "kicking "), what);
 }
 
 int

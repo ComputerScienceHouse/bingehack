@@ -1272,9 +1272,9 @@ const char *pre_msg, *post_msg;
 	assign_level(&u.utolev, tolev);
 
 	if (pre_msg)
-	    dfr_pre_msg = Strcpy((char *)alloc(strlen(pre_msg) + 1), pre_msg);
+	    dfr_pre_msg = strcpy((char *)alloc(strlen(pre_msg) + 1), pre_msg);
 	if (post_msg)
-	    dfr_post_msg = Strcpy((char *)alloc(strlen(post_msg)+1), post_msg);
+	    dfr_post_msg = strcpy((char *)alloc(strlen(post_msg)+1), post_msg);
 }
 
 /* handle something like portal ejection */
@@ -1323,7 +1323,7 @@ struct obj *corpse;
 
     where = corpse->where;
     is_uwep = corpse == uwep;
-    cname = eos(Strcpy(cname_buf, "bite-covered "));
+    cname = eos(strcpy(cname_buf, "bite-covered "));
     Strcpy(cname, corpse_xname(corpse, TRUE));
     mcarry = (where == OBJ_MINVENT) ? corpse->ocarry : 0;
     mtmp = revive(corpse);	/* corpse is gone if successful */

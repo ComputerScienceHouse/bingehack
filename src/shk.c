@@ -3593,7 +3593,7 @@ struct obj *obj;
 	    (obj->unpaid ||
 	     (obj->where==OBJ_FLOOR && !obj->no_charge && costly_spot(x,y)))) {
 	    shkp = shop_keeper(inside_shop(x, y));
-	    return Strcpy(buf, shkp ? s_suffix(shkname(shkp)) : "the");
+	    return strcpy(buf, shkp ? s_suffix(shkname(shkp)) : "the");
 	}
 	return (char *)0;
 }
@@ -3604,7 +3604,7 @@ char *buf;
 struct obj *obj;
 {
 	if (obj->where == OBJ_MINVENT)
-	    return Strcpy(buf, s_suffix(mon_nam(obj->ocarry)));
+	    return strcpy(buf, s_suffix(mon_nam(obj->ocarry)));
 	return (char *)0;
 }
 

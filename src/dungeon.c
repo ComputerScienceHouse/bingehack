@@ -1438,7 +1438,7 @@ const char *nam;
     /* allow strings like "the oracle level" to find "oracle" */
     if (!strncmpi(nam, "the ", 4)) nam += 4;
     if ((p = strstri(nam, " level")) != 0 && p == eos((char*)nam) - 6) {
-	nam = Strcpy(buf, nam);
+	nam = strcpy(buf, nam);
 	*(eos(buf) - 6) = '\0';
     }
     /* hell is the old name, and wouldn't match; gehennom would match its

@@ -267,8 +267,8 @@ checkfile(inp, pm, user_typed_name, without_asking)
      * user_typed_name and picked name.
      */
     if (pm != (struct permonst *) 0 && !user_typed_name)
-	dbase_str = Strcpy(newstr, pm->mname);
-    else dbase_str = Strcpy(newstr, inp);
+	dbase_str = strcpy(newstr, pm->mname);
+    else dbase_str = strcpy(newstr, inp);
     (void) lcase(dbase_str);
 
     if (!strncmp(dbase_str, "interior of ", 12))

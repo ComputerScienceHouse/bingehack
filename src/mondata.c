@@ -282,7 +282,7 @@ const char *in_str;
 	char buf[BUFSZ];
 	int len, slen;
 
-	str = Strcpy(buf, in_str);
+	str = strcpy(buf, in_str);
 
 	if (!strncmp(str, "a ", 2)) str += 2;
 	else if (!strncmp(str, "an ", 3)) str += 3;
