@@ -402,7 +402,7 @@ register struct monst *mtmp;
 		for(m2=fmon; m2; m2 = nmon) {
 			nmon = m2->nmon;
 			if (DEADMONSTER(m2)) continue;
-			if (m2->mpeaceful != mtmp->mpeaceful) continue;
+			if (m2->mpeaceful == mtmp->mpeaceful) continue;
 			if (mindless(m2->data)) continue;
 			if (m2 == mtmp) continue;
 			if ((telepathic(m2->data) &&
