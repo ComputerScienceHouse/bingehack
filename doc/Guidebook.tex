@@ -39,7 +39,7 @@
 %.au
 \author{Eric S. Raymond\\
 (Extensively edited and expanded for 3.0 by Mike Threepoint)}
-\date{November 13, 1999}
+\date{November 24, 1999}
 
 \maketitle
 
@@ -405,14 +405,14 @@ symbols mean:
 \blist{}
 %.lp
 \item[\tb{- {\rm and} |}]
-The walls of a room, or an open door.
+The walls of a room, or an open door.  Or a grave ({\tt |}).
 %.lp
 \item[\tb{.}]
 The floor of a room, ice, or a doorless doorway.
 %.lp
 \item[\tb{\#}]
-A corridor, or possibly a kitchen sink (if your dungeon
-has sinks) or drawbridge.
+A corridor, or iron bars, or a tree, or possibly a kitchen sink (if
+your dungeon has sinks), or a drawbridge.
 %.lp
 \item[\tb{<}]
 A way to the previous level.
@@ -424,13 +424,13 @@ A way to the next level.
 A closed door, or a spell book containing a spell you can learn.
 %.lp
 \item[\tb{@}]
-A human (you, usually).
+Your character or a human.
 %.lp
 \item[\tb{\$}]
 A pile of gold.
 %.lp
 \item[\tb{\^}]
-A trap (once you detect it).
+A trap (once you have detected it).
 %.lp
 \item[\tb{)}]
 A weapon.
@@ -635,19 +635,20 @@ Panic button.  Quit the game.
 %.lp
 \item[\tb{d}]
 Drop something.\\
-{\tt d7a} -- drop seven items of object
+{\tt d7a} --- drop seven items of object
 {\it a}.
 %.lp
 \item[\tb{D}]
 Drop several things.  In answer to the question
 ``{\tt What kinds of things do you want to drop? [!\%= au]}''
 you should type zero or more object symbols possibly followed by
-`{\tt a}' and/or `{\tt u}'.\\
+`{\tt a}' and/or `{\tt m}' and/or `{\tt u}'.\\
 %.sd
 %.si
-{\tt Da}  -- drop all objects, without asking for confirmation.\\
-{\tt Du}  -- drop only unpaid objects (when in a shop).\\
-{\tt D\%u} -- drop only unpaid food.
+{\tt Da}  --- drop all objects, without asking for confirmation.\\
+{\tt Dm}  --- use a menu to pick which object(s) to drop.\\
+{\tt Du}  --- drop only unpaid objects (when in a shop).\\
+{\tt D\%u} --- drop only unpaid food.
 %.ei
 %.ed
 %.lp
@@ -665,7 +666,7 @@ often useful to give yourself a breather.  (This feature may be compiled out
 of the game, so your version might not have it.)\\
 %.sd
 %.si
-{\tt E-} -- write in the dust with your fingers.
+{\tt E-} --- write in the dust with your fingers.
 %.ei
 %.ed
 %.Ip
@@ -681,10 +682,10 @@ List your inventory (everything you're carrying).
 List selected parts of your inventory.\\
 %.sd
 %.si
-{\tt I*} -- list all gems in inventory;\\
-{\tt Iu} -- list all unpaid items;\\
-{\tt Ix} -- list all used up items that are on your shopping bill;\\
-{\tt I\$} -- count your money.
+{\tt I*} --- list all gems in inventory;\\
+{\tt Iu} --- list all unpaid items;\\
+{\tt Ix} --- list all used up items that are on your shopping bill;\\
+{\tt I\$} --- count your money.
 %.ei
 %.ed
 %.lp
@@ -806,14 +807,14 @@ Tell what amulet you are wearing.
 Tell what tools you are using.
 %.lp
 \item[\tb{*}]
-Tell what equipment you are using; combines the preceding five type--specific
+Tell what equipment you are using; combines the preceding five type-specific
 commands into one.
 %.lp
 \item[\tb{\$}]
 Count your gold pieces.
 %.lp
 \item[\tb{+}]
-List the spells you know (same as `{\tt x}').
+List the spells you know.
 %.lp
 \item[\tb{$\backslash$}]
 Show what types of objects have been discovered.
@@ -833,10 +834,12 @@ the game was compiled with.
 \nd If your keyboard has a meta key (which, when pressed in combination
 with another key, modifies it by setting the `meta' [8th, or `high']
 bit), you can invoke the extended commands by meta-ing the first
-letter of the command.  In {\it OS/2, PC\/ {\rm and} ST NetHack}, the `Alt'
-key can be used in this fashion; on the Amiga set the
-{\it altmeta\/}
-option to get this behavior.
+letter of the command.
+%- In {\it OS/2, PC\/ {\rm and} ST NetHack},
+%- the `Alt' key can be used in this fashion;
+%- on the Amiga set the {\it altmeta\/} option to get this behavior.
+In {\it NT, OS/2, {\rm and} PC NetHack},
+the `Alt' key can be used in this fashion.
 \blist{}
 %.lp
 \item[\tb{M-a}]
@@ -1014,7 +1017,7 @@ monster will arrive on the staircase and you will end up nearby.
 
 %.pg
 Ladders serve the same purpose as staircases, and the two types of
-inter--level connections are nearly indistinguishable during game play.
+inter-level connections are nearly indistinguishable during game play.
 
 %.hn 1
 \section{Monsters}
@@ -1071,7 +1074,7 @@ Your pet will follow you up and down staircases if it is next to you
 when you move.  Otherwise your pet will be stranded and may become
 wild.  Similarly, when you trigger certain types of traps which alter
 your location (for instance, a trap door which drops you to a lower
-dungeon level), any adjacent pet will accompany you and any non--adjacent
+dungeon level), any adjacent pet will accompany you and any non-adjacent
 pet will be left behind.  Your pet may trigger such traps itself; you
 will not be carried along with it even if adjacent at the time.
 
@@ -1190,6 +1193,8 @@ description of the item.
 Given a chance, most monsters in the Mazes of Menace will gratuitously try to
 kill you.  You need weapons for self-defense (killing them first).  Without a
 weapon, you do only 1--2 hit points of damage (plus bonuses, if any).
+Monk characters are an exception; they normally do much more damage with
+bare hands than they do with weapons.
 
 %.pg
 There are wielded weapons, like maces and swords, and thrown weapons,
@@ -1249,7 +1254,7 @@ various suits of armor:
 dragon scale mail      & 1 & \makebox[20mm]{}  & plate mail            & 3\\
 crystal plate mail     & 3 &                   & bronze plate mail     & 4\\
 splint mail            & 4 &                   & banded mail           & 4\\
-dwarvish mitheril-coat & 4 &                   & elven mithril-coat    & 5\\
+dwarvish mithril-coat  & 4 &                   & elven mithril-coat    & 5\\
 chain mail             & 5 &                   & orcish chain mail     & 6\\
 scale mail             & 6 &                   & studded leather armor & 7\\
 ring mail              & 7 &                   & orcish ring mail      & 8\\
@@ -1309,7 +1314,7 @@ some rather unpleasant side-effects.
 
 %.pg
 You can name one food item after something you like to eat with the
-{\it fruit\/} option, if your dungeon has it.
+{\it fruit\/} option.
 
 %.pg
 The command to eat food is `{\tt e}'.
@@ -1395,7 +1400,7 @@ magical energies.
 When you have fully identified a particular wand, inventory display will
 include additional information in parentheses: the number of times it has
 been recharged followed by a colon and then by its current number of charges.
-A current charge count of ${-1}$ is a special case indicating that the wand
+A current charge count of {\tt -1} is a special case indicating that the wand
 has been cancelled.
 
 %.pg
@@ -1466,15 +1471,17 @@ be placed into or taken out of.
 The command to use tools is `{\tt a}' (apply).
 
 %.hn 3
-\subsection*{Chests and boxes}
+\subsection*{Containers}
 
 %.pg
-You may encounter chests or boxes in your travels.  These can be
-opened with the ``{\tt \#loot}'' extended command when they are on the floor,
-or with the `{\tt a}' (apply) command when you are carrying one.  However,
+You may encounter bags, boxes, and chests in your travels.  A tool of
+this sort can be opened with the ``{\tt \#loot}'' extended command when
+you are standing on top of it (that is, on the same floor spot),
+or with the `{\tt a}' (apply) command when you are carrying it.  However,
 chests are often locked, and are in any case unwieldy objects.
-You must set one down before unlocking it by kicking it,
+You must set one down before unlocking it by
 using a key or lock-picking tool with the `{\tt a}' (apply) command,
+by kicking it with the `{\tt \^{}D}' command,
 or by using a weapon to force the lock with the ``{\tt \#force}''
 extended command.
 
@@ -1902,9 +1909,9 @@ The number of top line messages to save (and recall with `{\tt \^{}P}')
 %.lp
 \item[\ib{name}]
 Set your character's name (defaults to your user name).  You can also
-set your character class by appending a dash and the first letter of
+set your character class by appending a dash and one or more letters of
 the character class (that is, by suffixing one of
-``{\tt -A -B -C -H -K -P -R -S -T -V -W}'').
+``{\tt -A -B -C -H -K -M -P -Ra -Ro -S -T -V -W}'').
 If ``{\tt -@}'' is used for the class, then a random one will be
 automatically chosen.
 Cannot be set with the `{\tt O}' command.
@@ -1945,7 +1952,7 @@ that uses both types of pets.  Possible values are ``{\tt cat}''
 and ``{\tt dog}''.
 Cannot be set with the `{\tt O}' command.
 %.Ip
-\item[\ib{pickup_burden}]
+\item[\ib{pickup\_burden}]
 When you pick up an item that would exceeds this encumberance
 level (Unburdened, Burdened, streSsed, straiNed, overTaxed,
 or overLoaded), you will be asked if you want to continue.

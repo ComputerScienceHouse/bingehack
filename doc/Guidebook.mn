@@ -4,7 +4,7 @@
 .ds vr "NetHack 3.3
 .ds f0 "\*(vr
 .ds f1
-.ds f2 "November 13, 1999
+.ds f2 "November 24, 1999
 .mt
 A Guide to the Mazes of Menace
 (Guidebook for NetHack 3.3)
@@ -292,12 +292,12 @@ various graphics options to change some of the symbols the game uses;
 otherwise, the game will use default symbols.  Here is a list of what the
 default symbols mean:
 .lp "- and |
-The walls of a room, or an open door.
+The walls of a room, or an open door.  Or a grave (|).
 .lp .
 The floor of a room, ice, or a doorless doorway.
 .lp #
-A corridor, or possibly a kitchen sink (if your dungeon
-has sinks) or drawbridge.
+A corridor, or iron bars, or a tree, or possibly a kitchen sink (if
+your dungeon has sinks), or a drawbridge.
 .lp <
 A way to the previous level.
 .lp >
@@ -305,11 +305,11 @@ A way to the next level.
 .lp +
 A closed door, or a spell book containing a spell you can learn.
 .lp @
-A human (you, usually).
+Your character or a human.
 .lp $
 A pile of gold.
 .lp ^
-A trap (once you detect it).
+A trap (once you have detected it).
 .lp )
 A weapon.
 .lp [
@@ -469,10 +469,11 @@ Drop something.  Ex. ``d7a'' means drop seven items of object \fIa\fP.
 Drop several things.  In answer to the question
 ``What kinds of things do you want to drop? [!%= au]''
 you should type zero or more object symbols possibly followed by 
-`a' and/or `u'.
+`a' and/or `m' and/or `u'.
 .sd
 .si
 Da  - drop all objects, without asking for confirmation.
+Dm  - use a menu to pick which object(s) to drop.
 Du  - drop only unpaid objects (when in a shop).
 D%u - drop only unpaid food.
 .ei
@@ -601,7 +602,7 @@ commands into one.
 .lp $
 Count your gold pieces.
 .lp +
-List the spells you know (same as `x').
+List the spells you know.
 .lp "\e
 Show what types of objects have been discovered.
 .lp !
@@ -616,10 +617,9 @@ compiled with.
 If your keyboard has a meta key (which, when pressed in combination
 with another key, modifies it by setting the `meta' [8th, or `high']
 bit), you can invoke the extended commands by meta-ing the first
-letter of the command.  In OS/2, PC, and ST NetHack, the `Alt' key
-can be used in this fashion; on the Amiga set the
-.op altmeta
-option to get this behavior.
+letter of the command.
+In NT, OS/2, and PC NetHack, the `Alt' key
+can be used in this fashion.
 .lp M-a
 Adjust inventory letters (most useful when the
 .op fixinv
@@ -904,6 +904,8 @@ Weapons (`)')
 Given a chance, most monsters in the Mazes of Menace will gratuitously try to
 kill you.  You need weapons for self-defense (killing them first).  Without a
 weapon, you do only 1-2 hit points of damage (plus bonuses, if any).
+Monk characters are an exception; they normally do much more damage with
+bare hands than they do with weapons.
 .pg
 There are wielded weapons, like maces and swords, and thrown weapons,
 like arrows and spears.  To hit monsters with a weapon, you must wield it and
@@ -1012,7 +1014,7 @@ some rather unpleasant side-effects.
 .pg
 You can name one food item after something you like to eat with the
 .op fruit
-option, if your dungeon has it.
+option.
 .pg
 The command to eat food is `e'.
 .hn 2
@@ -1137,14 +1139,16 @@ be placed into or taken out of.
 .pg
 The command to use tools is `a' (apply).
 .hn 3
-Chests and boxes
+Containers
 .pg
-You may encounter chests or boxes in your travels.  These can be
-opened with the ``#loot'' extended command when they are on the floor,
-or with the `a' (apply) command when you are carrying one.  However,
+You may encounter bags, boxes, and chests in your travels.  A tool of
+this sort can be opened with the ``#loot'' extended command when
+you are standing on top of it (that is, on the same floor spot),
+or with the `a' (apply) command when you are carrying it.  However,
 chests are often locked, and are in any case unwieldy objects.
-You must set one down before unlocking it by kicking it,
+You must set one down before unlocking it by
 using a key or lock-picking tool with the `a' (apply) command,
+by kicking it with the `^D' command,
 or by using a weapon to force the lock with the ``#force'' extended command.
 .pg
 Some chests are trapped, causing nasty things to happen when you
@@ -1517,9 +1521,9 @@ The number of top line messages to save (and recall with ^P) (default 20).
 Cannot be set with the `O' command.
 .lp "name    "
 Set your character's name (defaults to your user name).  You can also
-set your character class by appending a dash and the first letter of
+set your character class by appending a dash and one or more letters of
 the character class (that is, by suffixing one of
-.op "-A -B -C -H -K -P -R -S -T -V -W" ).
+.op "-A -B -C -H -K -M -P -Ra -Ro -S -T -V -W" ).
 If
 .op "-@"
 is used for the class, then a random one will be automatically chosen.
