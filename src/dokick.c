@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)dokick.c	3.3	2000/02/07	*/
+/*	SCCS Id: @(#)dokick.c	3.3	2000/04/21	*/
 /* Copyright (c) Izchak Miller, Mike Stephenson, Steve Linhart, 1989. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -25,6 +25,8 @@ static NEARDATA struct obj *kickobj;
 
 #define IS_SHOP(x)	(rooms[x].rtype >= SHOPBASE)
 
+static const char kick_passes_thru[] = "kick passes harmlessly through";
+
 STATIC_OVL void
 kickdmg(mon, clumsy)
 register struct monst *mon;
@@ -39,10 +41,10 @@ register boolean clumsy;
 	    dmg += 5;
 
 	/* excessive wt affects dex, so it affects dmg */
-	if(clumsy) dmg = dmg/2;
+	if (clumsy) dmg /= 2;
 
 	/* kicking a dragon or an elephant will not harm it */
-	if(thick_skinned(mon->data)) dmg = 0;
+	if (thick_skinned(mon->data)) dmg = 0;
 
 	/* attacking a shade is useless */
 	if (mon->data == &mons[PM_SHADE])
@@ -52,13 +54,14 @@ register boolean clumsy;
 		uarmf->blessed)
 	    blessed_foot_damage = 1;
 
-	if (mon->data == &mons[PM_SHADE] && !blessed_foot_damage)
-	    pline_The("kick passes harmlessly through.");
+	if (mon->data == &mons[PM_SHADE] && !blessed_foot_damage) {
+	    pline_The("%s.", kick_passes_thru);
+	    /* doesn't exercise skill or abuse alignment or frighten pet,
+	       and shades have no passive counterattack */
+	    return;
+	}
 
-	/* a good kick exercises your dex */
-	exercise(A_DEX, TRUE);
-
-/*	it is unchivalrous to attack the defenseless or from behind */
+	/* it is unchivalrous to attack the defenseless or from behind */
 	if (Role_if(PM_KNIGHT) &&
 		u.ualign.type == A_LAWFUL && u.ualign.record > -10 &&
 		(!mon->mcanmove || mon->msleeping || mon->mflee)) {
@@ -84,6 +87,8 @@ register boolean clumsy;
 		    if (dmg > 1) kick_skill = P_MARTIAL_ARTS;
 		    dmg += rn2(ACURR(A_DEX)/2 + 1);
 		}
+		/* a good kick exercises your dex */
+		exercise(A_DEX, TRUE);
 	}
 	if (blessed_foot_damage) dmg += rnd(4);
 	if (uarmf) dmg += uarmf->spe;
@@ -134,24 +139,33 @@ register xchar x, y;
 	 * normally, getting all your attacks _including_ all your kicks.
 	 * If you have >1 kick attack, you get all of them.
 	 */
-	if (attacktype(youmonst.data, AT_KICK)) {
+	if (Upolyd && attacktype(youmonst.data, AT_KICK)) {
+	    struct attack *uattk;
+	    int sum;
 	    schar tmp = find_roll_to_hit(mon);
-	    for(i=0; i<NATTK; i++) {
-		if (youmonst.data->mattk[i].aatyp == AT_KICK && multi >= 0) {
-		    /* check multi; maybe they had 2 kicks and the first */
-		    /* was a kick against a floating eye */
-		    if (tmp > rnd(20)) {
-			int sum;
 
-			You("kick %s.", mon_nam(mon));
-			sum = damageum(mon, &(youmonst.data->mattk[i]));
-			if (sum == 2)
-				(void)passive(mon, 1, 0, AT_KICK);
-			else (void)passive(mon, sum, 1, AT_KICK);
-		    } else {
-			missum(mon, &(youmonst.data->mattk[i]));
-			(void)passive(mon, 0, 1, AT_KICK);
-		    }
+	    for (i = 0; i < NATTK; i++) {
+		/* first of two kicks might have provoked counterattack
+		   that has incapacitated the hero (ie, floating eye) */
+		if (multi < 0) break;
+
+		uattk = &youmonst.data->mattk[i];
+		/* we only care about kicking attacks here */
+		if (uattk->aatyp != AT_KICK) continue;
+
+		if (mon->data == &mons[PM_SHADE] &&
+			(!uarmf || !uarmf->blessed)) {
+		    /* doesn't matter whether it would have hit or missed,
+		       and shades have no passive counterattack */
+		    Your("%s %s.", kick_passes_thru, mon_nam(mon));
+		    break;	/* skip any additional kicks */
+		} else if (tmp > rnd(20)) {
+		    You("kick %s.", mon_nam(mon));
+		    sum = damageum(mon, uattk);
+		    (void)passive(mon, (sum == 2) ? 1 : sum, 1, AT_KICK);
+		} else {
+		    missum(mon, uattk);
+		    (void)passive(mon, 0, 1, AT_KICK);
 		}
 	    }
 	    return;
