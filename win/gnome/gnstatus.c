@@ -2,13 +2,10 @@
 /* Copyright (C) 1998 by Erik Andersen <andersee@debian.org> */
 /* NetHack may be freely redistributed.  See license for details. */
 
-
 #include "gnstatus.h"
 #include "gnsignal.h"
 #include "xpms.h"
-#include "../../include/hack.h"
-#include "../../include/dlb.h"
-#include "../../include/patchlevel.h"
+#include "gnomeprv.h"
 
 
 extern const char *hu_stat[]; /* from eat.c */

@@ -6,8 +6,8 @@
 #include "gnmain.h"
 #include <gnome.h>
 
-/* include the standard RIP window */
-#include "rip.xpm" 
+/* include the standard RIP window (win/X11/rip.xpm) */
+#include "gn_rip.h"
 
 /* dimensions of the pixmap */
 #define RIP_IMAGE_WIDTH 400

@@ -117,4 +117,4 @@ dungeon: dungeon.def ../util/makedefs ../util/dgn_comp
 
 spotless:
 	-rm -f spec_levs quest_levs *.lev $(VARDAT) dungeon dungeon.pdf
-	-rm -f nhdat x11tiles beostiles pet_mark.xbm rip.xpm
+	-rm -f nhdat x11tiles beostiles pet_mark.xbm rip.xpm mapbg.xpm
