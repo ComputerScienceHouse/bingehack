@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)options.c	3.3	2000/01/29	*/
+/*	SCCS Id: @(#)options.c	3.3	2000/04/27	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1981,9 +1981,9 @@ char *buf;
 	else if (!strcmp(optname, "dogname")) 
 		Sprintf(buf, "%s", dogname[0] ? dogname : none );
 	else if (!strcmp(optname, "dungeon"))
-		Sprintf(buf, "%s", "(to be done)");
+		Sprintf(buf, "%s", to_be_done);
 	else if (!strcmp(optname, "effects"))
-		Sprintf(buf, "%s", "(to be done)");
+		Sprintf(buf, "%s", to_be_done);
 	else if (!strcmp(optname, "fruit")) 
 		Sprintf(buf, "%s", pl_fruit);
 	else if (!strcmp(optname, "gender"))
@@ -2062,7 +2062,7 @@ char *buf;
 		Sprintf(buf, "%s", (flags.suppress_alert == 0L) ? none : tbuf);
 	     }
 	else if (!strcmp(optname, "traps"))
-		Sprintf(buf, "%s", "(to be done)");
+		Sprintf(buf, "%s", to_be_done);
 #ifdef MSDOS
 	else if (!strcmp(optname, "video"))
 		Sprintf(buf, "%s", to_be_done);
