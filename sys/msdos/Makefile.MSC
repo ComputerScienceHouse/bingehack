@@ -257,7 +257,7 @@ YOU_H	   = $(MONST_H)		$(YOUPROP_H)	    $(INCL)\align.h   \
 	     $(INCL)\attrib.h	$(INCL)\you.h
 DISPLAY_H  = $(MONDATA_H)	$(INCL)\vision.h    $(INCL)\display.h
 PCCONF_H   = $(INCL)\micro.h	$(INCL)\system.h    $(INCL)\pcconf.h \
-	    $(INCL)\pcvideo.h
+	    $(MSYS)\pcvideo.h
 CONFIG_H   = $(GLOBAL_H)	$(INCL)\tradstdc.h  $(INCL)\config1.h \
 	    $(INCL)\config.h
 DECL_H	   = $(YOU_H)		$(INCL)\spell.h	    $(INCL)\color.h   \
@@ -271,7 +271,7 @@ HACK_H	   = $(CONFIG_H)	$(DUNGEON_H)	    $(DECL_H)	      \
 	      $(INCL)\engrave.h	 $(INCL)\rect.h	  \
 	       $(INCL)\trampoli.h $(INCL)\hack.h
 DLB_H      = $(INCL)\dlb.h
-TILE_H	   = $(INCL)\tile.h $(INCL)\pctiles.h
+TILE_H	   = $(WSHR)\tile.h $(MSYS)\pctiles.h
 
 
 # Make Roolz dude.
@@ -507,9 +507,9 @@ spotless: clean
 	if exist $(INCL)\pm.h	   del $(INCL)\pm.h
 	if exist $(INCL)\vis_tab.h del $(INCL)\vis_tab.h
 	if exist $(INCL)\pcvideo.h del $(INCL)\pcvideo.h
-	if exist $(INCL)\pctiles.h del $(INCL)\pctiles.h
-	if exist $(INCL)\portio.h  del $(INCL)\portio.h
-	if exist $(INCL)\tile.h	   del $(INCL)\tile.h
+	if exist $(MSYS)\pctiles.h del $(MSYS)\pctiles.h
+	if exist $(INCL)\portio.h  del $(MSYS)\portio.h
+	if exist $(WSHR)\tile.h	   del $(WSHR)\tile.h
 	if exist monstr.c	   del monstr.c
 	if exist vis_tab.c	   del vis_tab.c
 	if exist $(SRC)\panic.c	   del $(SRC)\panic.c
@@ -750,16 +750,16 @@ recover.o:   $(CONFIG_H) $(UTIL)\recover.c
 #  Header file moves required for tile support
 #
 
-#$(INCL)\tile.h: $(WSHR)\tile.h
+#$(WSHR)\tile.h: $(WSHR)\tile.h
 #	copy $(WSHR)\tile.h $@
 
-#$(INCL)\pctiles.h: $(MSYS)\pctiles.h
+#$(MSYS)\pctiles.h: $(MSYS)\pctiles.h
 #	copy $(MSYS)\pctiles.h $@
 
 #$(INCL)\pcvideo.h: $(MSYS)\pcvideo.h
 #	copy $(MSYS)\pcvideo.h $@
 
-#$(INCL)\portio.h: $(MSYS)\portio.h
+#$(MSYS)\portio.h: $(MSYS)\portio.h
 #	copy $(MSYS)\portio.h $@
 
 #
@@ -808,31 +808,31 @@ til2bin2.exe: til2bin2.o $(TEXTIO2)
 thintile.exe: thintile.o 
 	$(LINK) $(LFLAGS) thintile.o,$@,$(@B);
 
-thintile.o:  $(HACK_H) $(INCL)\tile.h $(WSHR)\thintile.c
+thintile.o:  $(HACK_H) $(WSHR)\tile.h $(WSHR)\thintile.c
 
 thintile.tag: thintile.exe $(TILEFILES)
 	thintile
 	@echo thintiles created >thintile.tag
 
-tile2bin.o:  $(HACK_H) $(INCL)\tile.h $(INCL)\pctiles.h $(INCL)\pcvideo.h \
+tile2bin.o:  $(HACK_H) $(WSHR)\tile.h $(MSYS)\pctiles.h $(MSYS)\pcvideo.h \
 	$(MSYS)\tile2bin.c
 
-til2bin2.o:  $(HACK_H) $(INCL)\tile.h $(INCL)\pctiles.h $(INCL)\pcvideo.h \
+til2bin2.o:  $(HACK_H) $(WSHR)\tile.h $(MSYS)\pctiles.h $(MSYS)\pcvideo.h \
 	$(MSYS)\tile2bin.c
 	-$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 -DOVERVIEW_FILE /Zg $(MSYS)\tile2bin.c >$(@B).pro
 	$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 -DOVERVIEW_FILE /Fo$@ $(MSYS)\tile2bin.c
 
-tiletext.o:  $(CONFIG_H) $(INCL)\tile.h $(WSHR)\tiletext.c
+tiletext.o:  $(CONFIG_H) $(WSHR)\tile.h $(WSHR)\tiletext.c
 
-tiletex2.o:  $(CONFIG_H) $(INCL)\tile.h $(WSHR)\tiletext.c
+tiletex2.o:  $(CONFIG_H) $(WSHR)\tile.h $(WSHR)\tiletext.c
 	-$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 /Zg $(WSHR)\tiletext.c >$(@B).pro
 	$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 /Fo$@ $(WSHR)\tiletext.c
 
-tiletxt.o: $(CONFIG_H)	$(INCL)\tile.h tilemap.c
+tiletxt.o: $(CONFIG_H)	$(WSHR)\tile.h tilemap.c
 	-$(CC) $(CFLAGS) $(SPECOPTS) -DTILETEXT /Zg tilemap.c >$(@B).pro
 	$(CC) $(CFLAGS) $(SPECOPTS) -DTILETEXT /Fo$@ tilemap.c
   
-tiletxt2.o: $(CONFIG_H)	$(INCL)\tile.h tilemap.c
+tiletxt2.o: $(CONFIG_H)	$(WSHR)\tile.h tilemap.c
 	-$(CC) $(CFLAGS) $(SPECOPTS) -DTILETEXT /Zg tilemap.c >$(@B).pro
 	$(CC) $(CFLAGS) $(SPECOPTS) -DTILETEXT -DTILE_X=8 /Fo$@ tilemap.c
 #
@@ -851,15 +851,15 @@ txt2ppm.exe: $(PPMWRITERS) $(TEXTIO)
 txt2ppm2.exe: $(PPMWRIT2) $(TEXTIO2)
 	$(LINK) $(LFLAGS) $(PPMWRIT2) $(TEXTIO2),$@,$(@B);
 
-gifread.o: $(CONFIG_H) $(INCL)\tile.h
+gifread.o: $(CONFIG_H) $(WSHR)\tile.h
 
-gifread2.o: $(CONFIG_H) $(INCL)\tile.h $(WSHR)\gifread.c
+gifread2.o: $(CONFIG_H) $(WSHR)\tile.h $(WSHR)\gifread.c
 	-$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 /Zg gifread.c >$(@B).pro
 	$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 $(WSHR)\gifread.c
 
-ppmwrite.o: $(CONFIG_H)	$(INCL)\tile.h $(WSHR)\ppmwrite.c
+ppmwrite.o: $(CONFIG_H)	$(WSHR)\tile.h $(WSHR)\ppmwrite.c
 
-ppmwrit2.o:  $(CONFIG_H) $(INCL)\tile.h $(WSHR)\ppmwrite.c
+ppmwrit2.o:  $(CONFIG_H) $(WSHR)\tile.h $(WSHR)\ppmwrite.c
 	-$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 /Zg ppmwrite.c >$(@B).pro
 	$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 $(WSHR)\ppmwrite.c
 
@@ -877,7 +877,7 @@ viewtib.o: $(MSYS)\viewtib.c
 #
 
 alloc.o: $(CONFIG_H)	 alloc.c
-drawing.o: $(CONFIG_H) drawing.c $(INCL)\pcvideo.h
+drawing.o: $(CONFIG_H) drawing.c $(MSYS)\pcvideo.h
 decl.o: $(CONFIG_H) decl.c
 monst.o: $(CONFIG_H)	     $(PERMONST_H)	$(ESHK_H)	   \
 	$(EPRI_H)	      $(VAULT_H)	 $(INCL)\monsym.h   \
@@ -969,16 +969,16 @@ msdos.o : $(HACK_H)  $(MSYS)\msdos.c
 	$(CC) $(CFLAGS) $(SPECOPTS) $(NEWALT) /Fo$@ $(MSYS)\msdos.c
 pckeys.o : $(HACK_H)  $(MSYS)\pckeys.c
 	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\pckeys.c
-pctiles.o : $(HACK_H)  $(MSYS)\pctiles.c $(INCL)\portio.h
+pctiles.o : $(HACK_H)  $(MSYS)\pctiles.c $(MSYS)\portio.h
 	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\pctiles.c
-sound.o : $(HACK_H)  $(MSYS)\sound.c $(INCL)\portio.h
+sound.o : $(HACK_H)  $(MSYS)\sound.c $(MSYS)\portio.h
 	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\sound.c
-video.o : $(HACK_H)  $(INCL)\pcvideo.h $(INCL)\portio.h $(MSYS)\video.c
+video.o : $(HACK_H)  $(MSYS)\pcvideo.h $(MSYS)\portio.h $(MSYS)\video.c
 	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\video.c
-vidvga.o : $(HACK_H)  $(INCL)\pcvideo.h $(INCL)\portio.h $(TILE_H) \
+vidvga.o : $(HACK_H)  $(MSYS)\pcvideo.h $(MSYS)\portio.h $(TILE_H) \
 	$(MSYS)\vidvga.c
 	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\vidvga.c
-vidtxt.o : $(HACK_H)  $(INCL)\pcvideo.h $(INCL)\portio.h $(TILE_H) \
+vidtxt.o : $(HACK_H)  $(MSYS)\pcvideo.h $(MSYS)\portio.h $(TILE_H) \
 	$(MSYS)\vidtxt.c
 	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\vidtxt.c
 stubvid.o : $(HACK_H) $(MSYS)\video.c
@@ -992,7 +992,7 @@ termcap.o: $(WIN)\termcap.c $(HACK_H) $(INCL)\tcap.h
 topl.o: $(WIN)\topl.c $(HACK_H) $(INCL)\tcap.h
 	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(WIN)\topl.c
 wintty.o: $(WIN)\wintty.c $(HACK_H) $(INCL)\dlb.h \
-		$(INCL)\patchlevel.h $(INCL)\tcap.h
+		$(INCL)\patchlev.h $(INCL)\tcap.h
 	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(WIN)\wintty.c
 
 # src dependencies
