@@ -423,7 +423,7 @@ display_monster(x, y, mon, in_sight, worm_tail)
 	    else
 		num = pet_to_glyph(mon);
 #ifdef NEW_WARNING
-	} else if (warn_of_mon(mon)) {
+	} else if (warn_of_mon(mon) && !tp_sensemon(mon)) {
 		if (MATCH_WARN_OF_MON(mon))
 			num = mon_to_glyph(mon);
         	else {
