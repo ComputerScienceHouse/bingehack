@@ -547,7 +547,7 @@
                cation to examine; `:' will show additional  info,  if  any,
                without  asking  for confirmation.  When picking a location,
                pressing the ESC key will terminate this command, or  press-
-               ing `?' will give a brief reminder about how it works.
+               ing `?'  will give a brief reminder about how it works.
 
                Specifying a name rather than a location  always  gives  any
           additional information available about that name.
@@ -752,6 +752,9 @@
           X    Enter explore (discovery) mode, explained in its own section
                later.
 
+          ^X   Display your name, role, race, gender, and alignment as well
+               as the various deities in your game.
+
           z    Zap a wand.  To aim at yourself, use `.' for the direction.
 
           Z    Zap (cast) a spell.
@@ -778,9 +781,6 @@
 
           (    Tell what tools you are using.
 
-          *    Tell what equipment you are using;  combines  the  preceding
-               five type-specific commands into one.
-
 
           __________
           (R)UNIX is a registered trademark of AT&T.
@@ -795,6 +795,9 @@
 
           NetHack Guidebook                                              13
 
+
+          *    Tell what equipment you are using;  combines  the  preceding
+               five type-specific commands into one.
 
           $    Count your gold pieces.
 
@@ -846,9 +849,6 @@
                Use a monster's special ability (when polymorphed into  mon-
                ster form).
 
-          #name
-               Name an item or type of object.
-
 
 
 
@@ -861,6 +861,9 @@
 
           NetHack Guidebook                                              14
 
+
+          #name
+               Name an item or type of object.
 
           #offer
                Offer a sacrifice to the gods.
@@ -913,9 +916,6 @@
 
           M-f  #force
 
-          M-i  #invoke
-
-
 
 
           NetHack 3.3                                      December 2, 1999
@@ -927,6 +927,8 @@
 
           NetHack Guidebook                                              15
 
+
+          M-i  #invoke
 
           M-j  #jump
 
@@ -979,8 +981,6 @@
 
                Secret corridors are hidden.  You can find them with the `s'
           (search) command.
-
-
 
 
 
@@ -1046,8 +1046,8 @@
           previously visited level, it will be loaded from its file on disk
           and reactivated.  If you're moving to a level which has  not  yet
           been  visited,  it  will be created (from scratch for most random
-          levels, from a template for some "special" levels, or loaded from
-          the  remains  of  an  earlier game for a "bones" level as briefly
+          levels, from a template for some ``special''  levels,  or  loaded
+          from  the  remains  of  an  earlier game for a ``bones'' level as
 
 
           NetHack 3.3                                      December 2, 1999
@@ -1060,8 +1060,9 @@
           NetHack Guidebook                                              17
 
 
-          described below).  Monsters are only active on the current level;
-          those on other levels are essentially placed into stasis.
+          briefly described  below).   Monsters  are  only  active  on  the
+          current  level; those on other levels are essentially placed into
+          stasis.
 
                Ordinarily when you climb a set of stairs, you  will  arrive
           on  the  corresponding  staircase  at your destination.  However,
@@ -1113,7 +1114,6 @@
           usually feeds itself on fresh carrion and other meats.  If you're
           worried about it or want to train it, you can feed  it,  too,  by
           throwing  it  food.   A  properly  trained pet can be very useful
-          under certain circumstances.
 
 
           NetHack 3.3                                      December 2, 1999
@@ -1125,6 +1125,8 @@
 
           NetHack Guidebook                                              18
 
+
+          under certain circumstances.
 
                Your pet also gains experience from  killing  monsters,  and
           can  grow  over  time,  gaining hit points and doing more damage.
@@ -1178,8 +1180,6 @@
           and  you  won't  be able to pick up anything more.  Otherwise, it
           will add the object(s) to your pack and tell you  what  you  just
           picked up.
-
-
 
 
           NetHack 3.3                                      December 2, 1999
@@ -1297,7 +1297,7 @@
 
                The chance that an attack will successfully hit  a  monster,
           and  the  amount  of damage such a hit will do, depends upon many
-          factors.  Among them are: type of weapon, quality of weapon  (en-
+          factors.  Among them are:  type of weapon, quality of weapon (en-
           chantment and/or erosion), experience level, strength, dexterity,
           encumbrance, and proficiency (see below).   The  monster's  armor
           class  - a general defense rating, not necessarily due to wearing
@@ -1411,13 +1411,13 @@
                The `#enhance' extended command is used  to  review  current
           weapons  proficiency (also spell proficiency) and to choose which
           skill(s) to improve when you've used one or more skills enough to
-          become  eligible  to do so.  The skill rankings are "none" (some-
-          times also referred to as "restricted", because you won't be able
-          to advance), "unskilled", "basic", "skilled", and "expert".  Res-
-          tricted skills simply will  not  appear  in  the  list  shown  by
-          `#enhance'.   (Divine  intervention might unrestrict a particular
-          skill, in which case it will start at unskilled and be limited to
-          basic.)
+          become eligible to do so.  The skill rankings are ``none'' (some-
+          times also referred to as ``restricted'', because  you  won't  be
+          able  to  advance),  ``unskilled'',  ``basic'',  ``skilled'', and
+          ``expert''.  Restricted skills simply will not appear in the list
+          shown  by  `#enhance'.   (Divine  intervention might unrestrict a
+          particular skill, in which case it will start at unskilled and be
+          limited to basic.)
 
                Use of a weapon in which you're restricted or unskilled will
           incur a modest penalty in the chance to hit a monster and also in
@@ -1868,14 +1868,22 @@
                set with the `O' command.
 
           character
-               Pick your type of character (ex. ``character:Elf''); synonym
-               for  ``role''.   See  ``name''  for  an  alternate method of
-               specifying your role.  Normally only the first letter of the
-               value is examined; the string ``random'' is an exception.
+               Pick  your  type  of  character  (ex.   ``character:Monk'');
+               synonym  for ``role''.  See ``name'' for an alternate method
+               of specifying your role.  Normally only the first letter  of
+               the  value  is  examined; the string ``random'' is an excep-
+               tion.
 
           checkpoint
                Save game  state  after  each  level  change,  for  possible
                recovery after program crash (default on).
+
+          checkspace
+               Check free disk space before writing files to disk  (default
+               on).   You may have to turn this off if you have more than 2
+               GB free space on the partition used for your save and  level
+               files.   Only applies when MFLOPPY was defined during compi-
+               lation.
 
           color
                Use color  for  different  monsters,  objects,  and  dungeon
@@ -1893,14 +1901,6 @@
                up proper handling of graphics characters  for  such  termi-
                nals,  so you should specify it when appropriate even if you
                override the selections with your own graphics strings.
-
-          extmenu
-               Changes the extended commands interface to pop-up a menu  of
-               available  commands.  It  is  keystroke  compatible with the
-               traditional interface except that it does not  require  that
-               you  hit  Enter. It is implemented only by the tty port (de-
-               fault off), when the game has been compiled to  support  tty
-               graphics.
 
           disclose
                Offer to disclose various information  when  the  game  ends
@@ -2000,6 +2000,19 @@
 
                Cannot be set with the `O' command.
 
+          eight_bit_tty
+               Pass eight-bit character values (for example, specified with
+               the traps option) straight through to your terminal (default
+               off).  Only applies to the tty port.
+
+          extmenu
+               Changes the extended commands interface to pop-up a menu  of
+               available  commands.  It  is  keystroke  compatible with the
+               traditional interface except that it does not  require  that
+               you  hit  Enter. It is implemented only by the tty port (de-
+               fault off), when the game has been compiled to  support  tty
+               graphics.
+
           female
                Set your starting gender to female.  Cannot be set with  the
                `O' command.
@@ -2025,6 +2038,18 @@
                fault is to randomly pick an appropriate gender.  Cannot  be
                set with the `O' command.
 
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              32
+
+
           help If more information is available for  an  object  looked  at
                with  the  `/'  command,  ask if you want to see it (default
                on). Turning help off makes just looking at  things  faster,
@@ -2037,18 +2062,6 @@
                off).   In  text windowing, use text highlighting when color
                is turned off; with X tiles, display  a  heart  symbol  near
                pets.
-
-
-
-          NetHack 3.3                                      December 2, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              32
-
 
           horsename
                Name your starting horse (ex. ``horsename:Trigger'').   Can-
@@ -2091,6 +2104,18 @@
                ters, followed by an object-by-object prompt for  all  items
                matching  the selected object class(es).  Combination starts
                with a prompt for object class(es)  of  interest,  but  then
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              33
+
+
                displays  a  menu  of matching objects rather than prompting
                one-by-one.  Partial skips the object  class  filtering  and
                immediately displays a menu of all objects.  Full displays a
@@ -2104,17 +2129,6 @@
           menu_deselect_page
                Menu character accelerator deselect all items on  this  page
                of a menu.  Implemented only by the tty port.  Default '\'.
-
-
-          NetHack 3.3                                      December 2, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              33
-
 
           menu_first_page
                Menu character accelerator to jump to the first  page  in  a
@@ -2155,21 +2169,7 @@
           monsters
                Set the characters used to display monster classes  (default
                ``abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWX-
-               YZ@ '&;:~]'').  This string is subjected to  the  same  pro-
-               cessing  as the dungeon option.  The order of the symbols is
-               ant or other insect, blob, cockatrice, dog or other  canine,
-               eye  or  sphere,  feline,  gremlin,  humanoid,  imp or minor
-               demon, jelly, kobold, leprechaun,  mimic,  nymph,  orc,  pi-
-               ercer,  quadruped,  rodent, spider, trapper or lurker above,
-               horse   or   unicorn,   vortex,   worm,   xan    or    other
-               mythical/fantastic  insect, light, zruty, angelic being, bat
-               or bird, centaur, dragon, elemental, fungus or mold,  gnome,
-               giant humanoid, invisible monster, jabberwock, Keystone Kop,
-               lich, mummy, naga, ogre, pudding or ooze, quantum  mechanic,
-               rust  monster,  snake,  troll,  umber hulk, vampire, wraith,
-               xorn, yeti or ape  or  other  large  beast,  zombie,  human,
-               ghost,  golem,  demon,  sea monster, lizard, long worm tail,
-               and mimic.  Cannot be set with the `O' command.
+               YZ@ '&;:~]'').   This  string  is  subjected  to  the   same
 
 
           NetHack 3.3                                      December 2, 1999
@@ -2181,6 +2181,21 @@
 
           NetHack Guidebook                                              34
 
+
+               processing  as the dungeon option.  The order of the symbols
+               is ant or other insect, blob, cockatrice, dog or other  can-
+               ine,  eye or sphere, feline, gremlin, humanoid, imp or minor
+               demon, jelly, kobold, leprechaun,  mimic,  nymph,  orc,  pi-
+               ercer,  quadruped,  rodent, spider, trapper or lurker above,
+               horse   or   unicorn,   vortex,   worm,   xan    or    other
+               mythical/fantastic  insect, light, zruty, angelic being, bat
+               or bird, centaur, dragon, elemental, fungus or mold,  gnome,
+               giant humanoid, invisible monster, jabberwock, Keystone Kop,
+               lich, mummy, naga, ogre, pudding or ooze, quantum  mechanic,
+               rust  monster,  snake,  troll,  umber hulk, vampire, wraith,
+               xorn, yeti or ape  or  other  large  beast,  zombie,  human,
+               ghost,  golem,  demon,  sea monster, lizard, long worm tail,
+               and mimic.  Cannot be set with the `O' command.
 
           msghistory
                The number of top line messages to save (and recall with ^P)
@@ -2222,6 +2237,17 @@
                Any omitted types are filled in at the end from the previous
                order.
 
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              35
+
+
           perm_invent
                If true, always display your current inventory in a  window.
                This  only  makes sense for windowing system interfaces that
@@ -2236,18 +2262,6 @@
           pickup_burden
                When you pick up an item that would exceed this  encumbrance
                level  (Unburdened, Burdened, streSsed, straiNed, overTaxed,
-
-
-          NetHack 3.3                                      December 2, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              35
-
-
                or overLoaded), you will be asked if you want  to  continue.
                (Default `S').
 
@@ -2289,6 +2303,17 @@
                value  is  examined;  `r'  is  an  exception with ``Rogue'',
                ``Ranger'', and ``random'' values.
 
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              36
+
+
           safe_pet
                Prevent you from (knowingly) attacking  your  pets  (default
                on).
@@ -2302,17 +2327,6 @@
           showexp
                Show your accumulated experience points on bottom line  (de-
                fault off).
-
-
-          NetHack 3.3                                      December 2, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              36
-
 
           showscore
                Show your approximate accumulated score on bottom line  (de-
@@ -2355,6 +2369,17 @@
                list around after game end on a terminal or  emulating  win-
                dow.
 
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              37
+
+
           traps
                Set the  graphics  symbols  for  displaying  traps  (default
                ``^^^^^^^^^^^^^^^^^"^^^^'').   The  traps  option  should be
@@ -2368,17 +2393,6 @@
                spiked  pit,  hole,  trap  door,  teleportation  trap, level
                teleporter, magic portal,  web,  statue  trap,  magic  trap,
                anti-magic field, polymorph trap.
-
-
-          NetHack 3.3                                      December 2, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              37
-
 
                Cannot be set with the `O' command.
 
@@ -2420,6 +2434,18 @@
           the PC cursor. It is always  where  your  character  is  located.
           Merely  searching for an @-sign will not always find your charac-
           ter since there are other humanoids represented by the same sign.
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              38
+
+
           Your  screen-reader  should  also have a function which gives you
           the row and column of your  review  cursor  and  the  PC  cursor.
           These  co-ordinates  are  often useful in giving players a better
@@ -2434,18 +2460,6 @@
           and with editing files, you may want to alter settings to  better
           suit your preferences. Instructions on how to do this are includ-
           ed in the NHAccess.nh file itself. The most crucial  settings  to
-
-
-          NetHack 3.3                                      December 2, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              38
-
-
           make the game accessible are:
 
           IBMgraphics
@@ -2486,6 +2500,18 @@
           finder's fees).  So, consider whether you want to take  one  last
           hit  at  that  monster  and  possibly live, or quit and stop with
           whatever you have.  If you quit, you keep all your gold,  but  if
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              39
+
+
           you swing and live, you might find more.
 
                If you just want to see what the current  top  players/games
@@ -2500,17 +2526,6 @@
           plore''  or  ``discovery'' mode that enables you to keep old save
           files and cheat death, at the paltry cost of not getting  on  the
           high score list.
-
-
-          NetHack 3.3                                      December 2, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              39
-
 
                There are two ways of enabling  explore  mode.   One  is  to
           start the game with the -X switch.  The other is to issue the `X'
@@ -2551,6 +2566,18 @@
           1.4.  He then coordinated a cast of thousands  in  enhancing  and
           debugging NetHack 1.4 and released NetHack versions 2.2 and 2.3.
 
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              40
+
+
                Later, Mike coordinated a major rewrite of the game, heading
           a team which included Ken Arromdee, Jean-Christophe Collet, Steve
           Creps,  Eric  Hendrickson,  Izchak  Miller,  John  Rupley,   Mike
@@ -2566,18 +2593,6 @@
           code for PC NetHack 3.0.  Johnny Lee ported NetHack  3.0  to  the
           Macintosh.   Along with various other Dungeoneers, they continued
           to enhance the PC, Macintosh, and Amiga ports through  the  later
-
-
-          NetHack 3.3                                      December 2, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              40
-
-
           revisions of 3.0.
 
                Headed by Mike Stephenson and coordinated by  Izchak  Miller
@@ -2617,6 +2632,18 @@
                The 3.2 development team, comprised of: Michael Allison; Ken
           Arromdee;  David  Cohrs; Jessie Collet; Steve Creps; Kevin Darcy;
           Timo Hakulinen; Steve  Linhart;  Dean  Luick;  Pat  Rankin;  Eric
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              41
+
+
           Smith;  Mike  Stephenson;  Janet  Walz; and, Paul Winner, release
           version 3.2 in April of 1996.
 
@@ -2632,17 +2659,6 @@
                During  the  lifespan  of  NetHack  3.1  and  3.2,   several
           enthusiasts of the game added their own modifications to the game
           and made these ``variants'' publicly available:
-
-
-          NetHack 3.3                                      December 2, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              41
-
 
                Tom Proudfoot and Yuval Oren created  NetHack++,  which  was
           quickly  renamed NetHack--.  Working independently, Stephen White
@@ -2677,26 +2693,10 @@
                Dean Luick, Mark Modrall,  and  Kevin  Hugo  maintained  and
           enhanced the Macintosh port of 3.3.
 
-               The Atari port of NetHack was discontinued.
-
                Michael Allison maintained and enhanced 3.3 for  the  Micro-
           soft Windows NT platform.
 
                Ron Van Iwaarden took over responsibility for the OS/2 port.
-                  - - - - - - - - - -
-
-               From time to time, some depraved  individual  out  there  in
-          netland  sends a particularly intriguing modification to help out
-          with the game.  The Gods of the Dungeon sometimes  make  note  of
-          the  names  of the worst of these miscreants in this, the list of
-          Dungeoneers:
-
-
-
-
-
-
-
 
 
 
@@ -2710,53 +2710,53 @@
           NetHack Guidebook                                              42
 
 
-                   Adam Aronow           Helge Hafting           Mike Engber
-                   Andy Church       Irina Rempt-Drijfhout       Mike Gallop
-                  Andy Swanson           Izchak Miller         Mike Passaretti
-                  Ari Huttunen             Janet Walz          Mike Stephenson
-                  Barton House       Jean-Christophe Collet      Norm Meluch
-               Benson I. Margulies       Jochen Erwied          Olaf Seibert
-                    Bill Dyer             John Kallen            Pat Rankin
-                Boudewijn Waijers         John Rupley            Paul Winner
-                    Bruce Cox             John S. Bien        Pierre Martineau
-                 Bruce Holloway            Johnny Lee            Ralf Brown
-                 Bruce Mewborne            Jon W{tte           Richard Addison
-                  Carl Schelin          Jonathan Handler      Richard P. Hughey
-                   Chris Russo          Joshua Delahunty          Rob Menke
-                   David Cohrs           Keizo Yamamoto        Roland McGrath
-                 David Damerell           Ken Arromdee        Ron Van Iwaarden
-                  David Gentzel            Ken Lorber           Ronnen Miller
-                 David Hairston          Ken Washikita           Ross Brown
-                   Dean Luick             Kevin Darcy          Sascha Wostmann
-                    Del Lamb               Kevin Hugo          Scott R. Turner
-                  Deron Meranda           Kevin Sitze         Stephen Spackman
-                 Dylan O'Donnell        Kevin Smolkowski        Stephen White
-                   Eric Backus            Kevin Sweet            Steve Creps
-                Eric Hendrickson         Mark Gooderum          Steve Linhart
-                  Eric R. Smith           Mark Modrall        Steve VanDevender
-                 Eric S. Raymond          Matthew Day            Tim Lennan
-                Frederick Roeber          Merlyn LeRoy         Timo Hakulinen
-                   Gil Neiger           Michael Allison           Tom Almy
-                   Greg Laskin            Michael Feir            Tom West
-                   Greg Olson            Michael Hamel         Warwick Allison
-                 Gregg Wonderly         Michael Sokolov         Yitzhak Sapir
-                  Hao-yang Wang
+               The Atari port of  NetHack  was  resurrected  for  3.3.1  by
+          Christian ``Marvin'' Bressler.
+
+                       - - - - - - - - - -
+
+               From time to time, some depraved  individual  out  there  in
+          netland  sends a particularly intriguing modification to help out
+          with the game.  The Gods of the Dungeon sometimes  make  note  of
+          the  names  of the worst of these miscreants in this, the list of
+          Dungeoneers:
+
+
+                   Adam Aronow       Irina Rempt-Drijfhout       Mike Gallop
+                   Andy Church           Izchak Miller         Mike Passaretti
+                  Andy Swanson             Janet Walz          Mike Stephenson
+                  Ari Huttunen       Jean-Christophe Collet      Norm Meluch
+                  Barton House           Jochen Erwied          Olaf Seibert
+               Benson I. Margulies        John Kallen            Pat Rankin
+                    Bill Dyer             John Rupley            Paul Winner
+                Boudewijn Waijers         John S. Bien        Pierre Martineau
+                    Bruce Cox              Johnny Lee            Ralf Brown
+                 Bruce Holloway            Jon W{tte           Richard Addison
+                 Bruce Mewborne         Jonathan Handler       Richard Beigel
+                  Carl Schelin          Joshua Delahunty      Richard P. Hughey
+                   Chris Russo           Keizo Yamamoto           Rob Menke
+                   David Cohrs            Ken Arromdee          Robin Johnson
+                 David Damerell            Ken Lorber          Roland McGrath
+                  David Gentzel          Ken Washikita        Ron Van Iwaarden
+                 David Hairston           Kevin Darcy           Ronnen Miller
+                   Dean Luick              Kevin Hugo            Ross Brown
+                    Del Lamb              Kevin Sitze          Sascha Wostmann
+                  Deron Meranda         Kevin Smolkowski       Scott R. Turner
+                 Dylan O'Donnell          Kevin Sweet         Stephen Spackman
+                   Eric Backus            Lars Huttar           Stephen White
+                Eric Hendrickson         Mark Gooderum           Steve Creps
+                  Eric R. Smith           Mark Modrall          Steve Linhart
+                 Eric S. Raymond        Marvin Bressler       Steve VanDevender
+                Frederick Roeber          Matthew Day            Tim Lennan
+                   Gil Neiger             Merlyn LeRoy         Timo Hakulinen
+                   Greg Laskin          Michael Allison           Tom Almy
+                   Greg Olson             Michael Feir            Tom West
+                 Gregg Wonderly          Michael Hamel          Warren Cheung
+                  Hao-yang Wang         Michael Sokolov        Warwick Allison
+                  Helge Hafting           Mike Engber           Yitzhak Sapir
 
           Brand and product names are trademarks or  registered  trademarks
           of their respective holders.
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
