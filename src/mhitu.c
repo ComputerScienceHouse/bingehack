@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mhitu.c	3.3	2000/01/22	*/
+/*	SCCS Id: @(#)mhitu.c	3.3	2000/02/19	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1529,33 +1529,36 @@ gulpmu(mtmp, mattk)	/* monster swallows you, or damage if u.uswallow */
 		display_nhwindow(WIN_MESSAGE, FALSE);
 		vision_recalc(2);	/* hero can't see anything */
 		u.uswallow = 1;
-		/* assume that u.uswldtim always set >= 0 */
-		u.uswldtim = (tim_tmp =
-			(-u.uac + 10 + rnd(25 - (int)mtmp->m_lev)) >> 1) > 0 ?
-			    tim_tmp : 0;
+		/* u.uswldtim always set > 1 */
+		tim_tmp = 25 - (int)mtmp->m_lev;
+		if (tim_tmp > 0) tim_tmp = rnd(tim_tmp) / 2;
+		else if (tim_tmp < 0) tim_tmp = -(rnd(-tim_tmp) / 2);
+		tim_tmp += -u.uac + 10;
+		u.uswldtim = (unsigned)((tim_tmp < 2) ? 2 : tim_tmp);
 		swallowed(1);
-		for(otmp2 = invent; otmp2; otmp2 = otmp2->nobj) {
-			(void) snuff_lit(otmp2);
-		}
+		for (otmp2 = invent; otmp2; otmp2 = otmp2->nobj)
+		    (void) snuff_lit(otmp2);
 	}
 
 	if (mtmp != u.ustuck) return(0);
+	if (u.uswldtim > 0) u.uswldtim -= 1;
 
 	switch(mattk->adtyp) {
 
 		case AD_DGST:
 		    if (Slow_digestion) {
-		    	/* Messages are handled below */
-		    	u.uswldtim = 0;
-		    	tmp = 0;
-		    } else
-		    if(u.uswldtim <= 1) {	/* a3 *//*no cf unsigned <=0*/
+			/* Messages are handled below */
+			u.uswldtim = 0;
+			tmp = 0;
+		    } else if (u.uswldtim == 0) {
 			pline("%s totally digests you!", Monnam(mtmp));
 			tmp = u.uhp;
 			if (Half_physical_damage) tmp *= 2; /* sorry */
 		    } else {
-			pline("%s digests you!", Monnam(mtmp));
-		        exercise(A_STR, FALSE);
+			pline("%s%s digests you!", Monnam(mtmp),
+			      (u.uswldtim == 2) ? " thoroughly" :
+			      (u.uswldtim == 1) ? " utterly" : "");
+			exercise(A_STR, FALSE);
 		    }
 		    break;
 		case AD_PHYS:
@@ -1627,17 +1630,16 @@ gulpmu(mtmp, mattk)	/* monster swallows you, or damage if u.uswallow */
 
 	mdamageu(mtmp, tmp);
 	if (tmp) stop_occupation();
-	if (u.uswldtim) --u.uswldtim;
 
 	if (touch_petrifies(youmonst.data) && !resists_ston(mtmp)) {
-		pline("%s very hurriedly %s you!", Monnam(mtmp),
-		       is_animal(mtmp->data)? "regurgitates" : "expels");
-		expels(mtmp, mtmp->data, FALSE);
+	    pline("%s very hurriedly %s you!", Monnam(mtmp),
+		  is_animal(mtmp->data)? "regurgitates" : "expels");
+	    expels(mtmp, mtmp->data, FALSE);
 	} else if (!u.uswldtim || youmonst.data->msize >= MZ_HUGE) {
 	    You("get %s!", is_animal(mtmp->data)? "regurgitated" : "expelled");
-	    if (flags.verbose && (is_animal(mtmp->data) || (dmgtype(mtmp->data, AD_DGST) && Slow_digestion)))
-		    pline("Obviously %s doesn't like your taste.",
-			   mon_nam(mtmp));
+	    if (flags.verbose && (is_animal(mtmp->data) ||
+		    (dmgtype(mtmp->data, AD_DGST) && Slow_digestion)))
+		pline("Obviously %s doesn't like your taste.", mon_nam(mtmp));
 	    expels(mtmp, mtmp->data, FALSE);
 	}
 	return(1);
