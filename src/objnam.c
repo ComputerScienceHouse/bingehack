@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)objnam.c	3.3	1999/12/29	*/
+/*	SCCS Id: @(#)objnam.c	3.3	2000/01/11	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -743,6 +743,8 @@ register struct obj *otmp;
 	    !otmp->bknown ||
 #endif
 	    !objects[otmp->otyp].oc_name_known)	/* ?redundant? */
+	return TRUE;
+    if (otmp->oartifact && undiscovered_artifact(otmp->oartifact))
 	return TRUE;
     /* otmp->rknown is the only item of interest if we reach here */
        /*

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)artifact.c 3.3	1999/12/29	*/
+/*	SCCS Id: @(#)artifact.c 3.3	2000/01/11	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -617,6 +617,23 @@ xchar m;
     /* there is one slot per artifact, so we should never reach the
        end without either finding the artifact or an empty slot... */
     impossible("couldn't discover artifact (%d)", (int)m);
+}
+
+/* used to decide whether an artifact has been fully identified */
+boolean
+undiscovered_artifact(m)
+xchar m;
+{
+    int i;
+
+    /* look for this artifact in the discoveries list;
+       if we hit an empty slot then it's undiscovered */
+    for (i = 0; i < NROFARTIFACTS; i++)
+	if (artidisco[i] == m)
+	    return FALSE;
+	else if (artidisco[i] == 0)
+	    break;
+    return TRUE;
 }
 
 /* display a list of discovered artifacts; return their count */
