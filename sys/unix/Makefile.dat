@@ -3,6 +3,7 @@
 
 # for Atari
 # SHELL=E:/GEMINI2/MUPFEL.TTP
+# UUDECODE=uudecode
 
 VARDAT = data rumors quest.dat oracles options
 
@@ -47,10 +48,12 @@ nh16.img: ../util/tile2img.ttp ../win/share/monsters.txt \
 	../util/tile2img.ttp nh16.img
 
 title.img:
-	cp ../win/gem/title.img title.img
+	# cp ../win/gem/title.img title.img
+	$(UUDECODE) ../win/gem/title.uu
 
 GEM_RSC.RSC:
-	cp ../win/gem/GEM_RSC.RSC GEM_RSC.RSC
+	# cp ../win/gem/GEM_RSC.RSC GEM_RSC.RSC
+	$(UUDECODE) ../win/gem/gem_rsc.uu
 
 
 data:	data.base ../util/makedefs

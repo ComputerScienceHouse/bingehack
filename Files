@@ -100,8 +100,8 @@ multi.h         split.doc       split.h         splitter.c
 
 sys/atari:
 (files for Atari version)
-Install.tos     atari.cnf       atarifnt.uue    nethack.mnu     setup.g
-tos.c           unx2atar.sed
+Install.tos     atarifnt.uue    nethack.mnu     setup.g         tos.c
+unx2atar.sed
 
 sys/be:
 (files for BeOS version)
@@ -216,8 +216,8 @@ wintext.c       winval.c
 
 win/gem:
 (files for GEM versions)
-Install.gem     bitmfile.c      gem_rsc.rsc     gem_rsc.rso     load_img.c
-tile2img.c      title.img       wingem.c        wingem1.c
+Install.gem     bitmfile.c      gem_rsc.uu      gem_rso.uu      load_img.c
+tile2img.c      title.uu        wingem.c        wingem1.c
 
 win/share:
 (files for versions using optional tiles)

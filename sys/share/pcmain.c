@@ -297,15 +297,20 @@ char *argv[];
 # endif
 	getlock();
 #else   /* PC_LOCKING */
-#ifdef AMIGA /* We'll put the bones & levels in the user specified directory -jhsa */
-  Strcat(lock,plname);
-#else
-	Strcpy(lock,plname);
-#endif
+# ifdef AMIGA /* We'll put the bones & levels in the user specified directory -jhsa */
+	Strcat(lock,plname);
 	Strcat(lock,".99");
-#ifndef AMIGA /* Must not regularize since lock may contain a full path -jhsa */
+# else
+#  ifndef MFLOPPY
+	/* I'm not sure what, if anything, is left here, but MFLOPPY has
+	 * conflicts with set_lock_and_bones() in files.c.
+	 */
+	Strcpy(lock,plname);
+	Strcat(lock,".99");
 	regularize(lock);	/* is this necessary? */
-#endif
+				/* not compatible with full path a la AMIGA */
+#  endif
+# endif
 #endif	/* PC_LOCKING */
 
 	/* Set up level 0 file to keep the game state.
