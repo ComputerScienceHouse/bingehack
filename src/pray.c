@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)pray.c	3.3	2000/03/31	*/
+/*	SCCS Id: @(#)pray.c	3.3	2000/04/06	*/
 /* Copyright (c) Benson I. Margulies, Mike Stephenson, Steve Linhart, 1989. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -738,12 +738,6 @@ pleased(g_align)
 			    !carrying(SPE_FINGER_OF_DEATH)) {
 			obj = mksobj(SPE_FINGER_OF_DEATH, TRUE, FALSE);
 			bless(obj);
-			for (sp_no = 0; sp_no < MAXSPELL; sp_no++)
-			    if (spl_book[sp_no].sp_id == SPE_FINGER_OF_DEATH) {
-				/* if spell is already known, enhance weapon */
-				if (uwep) obj = uwep;	/* to be blessed,&c */
-				break;
-			    }
 			dropped_item = "A spellbook appears";
 		    } else if (!exist_artifact(LONG_SWORD,
 					       artiname(ART_VORPAL_BLADE))) {
@@ -760,10 +754,19 @@ pleased(g_align)
 			dropy(obj);
 			u.ugifts++;
 		    }
-		    /* acquire this skill regardless of weapon */
+		    /* acquire this skill regardless of weapon (or book) */
 		    unrestrict_weapon_skill(P_LONG_SWORD);
 		    if (obj && obj->oartifact == ART_VORPAL_BLADE)
 			discover_artifact(ART_VORPAL_BLADE);
+		    /* when getting a new book for known spell, enhance
+		       currently wielded weapon rather than the book */
+		    if (obj && obj->otyp == SPE_FINGER_OF_DEATH) {
+			for (sp_no = 0; sp_no < MAXSPELL; sp_no++)
+			    if (spl_book[sp_no].sp_id == SPE_FINGER_OF_DEATH) {
+				if (uwep) obj = uwep;	/* to be blessed,&c */
+				break;
+			    }
+		    }
 		    break;
 		case A_CHAOTIC:
 		    u.uevent.uhand_of_elbereth = 3;
