@@ -349,8 +349,6 @@ struct monst *mtmp;
     }
 
     if (otmp) { /* we have something to snatch */
-	char oname[BUFSZ];
-
 	if (otmp->owornmask)
 	    remove_worn_item(otmp);
 	freeinv(otmp);

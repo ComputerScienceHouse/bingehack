@@ -125,7 +125,9 @@ STATIC_DCL void FDECL(display_monster,(XCHAR_P,XCHAR_P,struct monst *,int,XCHAR_
 STATIC_DCL int FDECL(swallow_to_glyph, (int, int));
 
 STATIC_DCL int FDECL(check_pos, (int, int, int));
+#ifdef WA_VERBOSE
 STATIC_DCL boolean FDECL(more_than_one, (int, int, int, int, int));
+#endif
 STATIC_DCL int FDECL(set_twall, (int,int, int,int, int,int, int,int));
 STATIC_DCL int FDECL(set_wall, (int, int, int));
 STATIC_DCL int FDECL(set_corn, (int,int, int,int, int,int, int,int));
