@@ -1704,8 +1704,11 @@ A lot of speech access programs use the number-pad to review the screen.
 If this is the case, turn off the number_pad option and use the traditional
 Rogue-like commands.
 .lp "Character graphics"
-Make certain that all character graphics sets found near the bottom of the
-\fBNetHack.cnf\fP file are commented out.
+Comment out all character graphics sets found near the bottom of the
+\fBNetHack.cnf\fP file.  Most of these replace \fBNetHack\fP's
+default representation of the dungeon using standard ASCII characters
+with fancier characters from extended character sets, and these fancier
+characters can annoy screen-readers.
 .hn 1
 Scoring
 .pg
