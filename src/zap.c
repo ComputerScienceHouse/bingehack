@@ -255,12 +255,11 @@ struct obj *otmp;
 		if (!Blind) makeknown(WAN_SLEEP);
 		break;
 	case SPE_STONE_TO_FLESH:
-		/* perhaps for stone giants too (but what to turn them into)? */
 		if (monsndx(mtmp->data) == PM_STONE_GOLEM) {
 		    /* turn into flesh golem */
 		    (void) newcham(mtmp, &mons[PM_FLESH_GOLEM]);
 		    if (cansee(mtmp->mx, mtmp->my))
-			pline("The stone golem turns to flesh!");
+			pline("%s turns to flesh!", Monnam(mtmp));
 		} else
 		    wake = FALSE;
 		break;
