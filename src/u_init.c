@@ -841,8 +841,12 @@ u_init()
 	    }
 
 	/* make sure you can carry all you have - especially for Tourists */
-	while(inv_weight() > 0 && ACURR(A_STR) < STR18(100))
-		(void) adjattrib(A_STR, 1, TRUE);
+	while (inv_weight() > 0) {
+		if (adjattrib(A_STR, 1, TRUE)) continue;
+		if (adjattrib(A_CON, 1, TRUE)) continue;
+		/* only get here when didn't boost strength or constitution */
+		break;
+	}
 
 	return;
 }
