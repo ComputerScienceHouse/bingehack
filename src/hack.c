@@ -1118,11 +1118,11 @@ stillinwater:;
 			    pline("Its blow glances off your helmet.");
 			else if (u.uac + 3 <= rnd(20))
 			    You("are almost hit by %s!",
-				x_monnam(mtmp, 2, "falling", 1));
+				x_monnam(mtmp, ARTICLE_A, "falling", 0, TRUE));
 			else {
 			    int dmg;
 			    You("are hit by %s!",
-				x_monnam(mtmp, 2, "falling", 1));
+				x_monnam(mtmp, ARTICLE_A, "falling", 0, TRUE));
 			    dmg = d(4,6);
 			    if(Half_physical_damage) dmg = (dmg+1) / 2;
 			    mdamageu(mtmp, dmg);

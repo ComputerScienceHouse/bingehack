@@ -268,7 +268,7 @@ do_mname()
 	}
 	/* special case similar to the one in lookat() */
 	if (mtmp->data != &mons[PM_HIGH_PRIEST])
-	    Strcpy(buf, x_monnam(mtmp, 0, (char *)0, 1));
+	    Strcpy(buf, x_monnam(mtmp, ARTICLE_THE, (char *)0, 0, TRUE));
 	else
 	    Sprintf(buf, "the high priest%s", mtmp->female ? "ess" : "");
 	Sprintf(qbuf, "What do you want to call %s?", buf);
@@ -549,21 +549,26 @@ rndghostname()
  * y_monnam:	your newt     your xan	your invisible orc	Fido
  */
 
-char *
-x_monnam(mtmp, article, adjective, called)
-register struct monst *mtmp;
-/* Articles:
- * 0: "the" in front of everything except names and "it"
- * 1: "the" in front of everything except "it"; looks bad for names unless you
- *    are also using an adjective.
- * 2: "a" in front of everything except "it".
- * 3: no article at all.
- * 4: no article; "it" and invisible suppressed.
- * 5: "your" instead of an article; include "invisible" even when unseen
- * 6: same as 0 but inability to see the monster is ignored
+/* Bug: if the monster is a priest or shopkeeper, not every one of these
+ * options works, since those are special cases.
  */
-int article, called;
+char *
+x_monnam(mtmp, article, adjective, suppress, called)
+register struct monst *mtmp;
+int article;
+/* ARTICLE_NONE, ARTICLE_THE, ARTICLE_A: obvious
+ * ARTICLE_YOUR: "your" on pets, "the" on everything else
+ *
+ * If the monster would be referred to as "it" or if the monster has a name
+ * _and_ there is no adjective, "invisible", "saddled", etc., override this
+ * and always use no article.
+ */
 const char *adjective;
+int suppress;
+/* SUPPRESS_IT,SUPPRESS_INVISIBLE, SUPPRESS_HALLUCINATION, SUPPRESS_MISC
+ * EXACT_NAME: combination of all the above
+ */
+boolean called;
 {
 #ifdef LINT	/* static char buf[BUFSZ]; */
 	char buf[BUFSZ];
@@ -571,104 +576,147 @@ const char *adjective;
 	static char buf[BUFSZ];
 #endif
 	struct permonst *mdat = mtmp->data;
-	char *name = 0;
-	int force_the = 0, trunam = (article == 4), use_your = (article == 5);
+	boolean do_hallu, do_invis, do_it, do_misc;
+	int name_at_start;
 
-	buf[0] = '\0';
-	if (use_your && !mtmp->mtame)
-	    use_your = 0,  article = 0;
+	if (article == ARTICLE_YOUR && !mtmp->mtame)
+	    article = ARTICLE_THE;
+
+	do_hallu = Hallucination && !(suppress & SUPPRESS_HALLUCINATION);
+	do_invis = mtmp->minvis && !(suppress & SUPPRESS_INVISIBLE);
+	do_it = !canspotmon(mtmp) && article != ARTICLE_YOUR && !killer &&
+#ifdef STEED
+	    mtmp != u.usteed &&
+#endif
+	    !(u.uswallow && mtmp == u.ustuck) &&
+	    !(suppress & SUPPRESS_IT);
+	do_misc = !(suppress & SUPPRESS_MISC);
+
+	buf[0] = 0;
+
+	/* priests and minions: don't even use this function */
 	if (mtmp->ispriest || mtmp->isminion) {
 	    char priestnambuf[BUFSZ];
+	    char *name;
 	    long save_prop = EHalluc_resistance;
 
 	    /* when true name is wanted, explicitly block Hallucination */
-	    if (trunam) EHalluc_resistance = 1L;
+	    if (!do_hallu) EHalluc_resistance = 1L;
 	    name = priestname(mtmp, priestnambuf);
 	    EHalluc_resistance = save_prop;
-	    if ((trunam || article == 3) && !strncmp(name, "the ", 4))
+	    if (article == ARTICLE_NONE && !strncmp(name, "the ", 4))
 		name += 4;
 	    return strcpy(buf, name);
 	}
-	if (article == 6)
-	    article = 0; /* skip "it" code and then act like case 0 */
-	else if (!trunam && !use_your && !canspotmon(mtmp) &&
-#ifdef STEED
-		(mtmp != u.usteed) &&
-#endif
-		!(u.uswallow && mtmp == u.ustuck) && !killer) {
-	    if (!mon_visible(mtmp) || (!cansee(bhitpos.x,bhitpos.y) &&
-!see_with_infrared(mtmp))) {
-		Strcpy(buf, "it");
-		return  buf;
-	    }
-	}
-	if (trunam || !Hallucination) {
-	    if (mtmp->isshk) {
-		Strcpy(buf, shkname(mtmp));
-		if ((mdat == &mons[PM_SHOPKEEPER] && !mtmp->minvis) || trunam)
-		    return buf;
-		/* For normal shopkeepers, just 'Asidonhopo'.
-		 * For unusual ones, 'Asidonhopo the invisible shopkeeper'
-		 * or 'Asidonhopo the blue dragon'.
-		 */
-		Strcat(buf, " ");
-	    } else if (mtmp->mnamelth) {
-		name = NAME(mtmp);
-		if (mdat == &mons[PM_GHOST]) {
-		    called = 0;
-		    Sprintf(buf, "%s ghost", s_suffix(name));
-		    goto bot_nam;
-		}
-	    }
+
+	/* unseen monsters, etc.  Use "it" */
+	if (do_it) {
+	    Strcpy(buf, "it");
+	    return buf;
 	}
 
-	if (!trunam) {
-	    force_the = (!Hallucination &&
-			 (mdat == &mons[PM_WIZARD_OF_YENDOR] || mtmp->isshk));
-	    if (force_the ||
-		    ((article == 1 || ((!name || called) && article == 0)) &&
-			(Hallucination || !type_is_pname(mdat))))
-		Strcat(buf, "the ");
-	    else if (use_your && !name)
-		Strcat(buf, "your ");
-	    if (adjective)
+	/* Shopkeepers: use shopkeeper name.  For normal shopkeepers, just
+	 * "Asidonhopo"; for unusual ones, "Asidonhopo the invisible
+	 * shopkeeper" or "Asidonhopo the blue dragon".  If hallucinating,
+	 * none of this applies.
+	 */
+	if (mtmp->isshk && !do_hallu) {
+	    if (do_misc && adjective && article == ARTICLE_THE) {
+		/* pathological case: "the angry Asidonhopo the blue dragon"
+		   sounds silly */
+		Strcpy(buf, "the ");
 		Strcat(strcat(buf, adjective), " ");
-	    if (mtmp->minvis && !Blind)
+		Strcat(buf, shkname(mtmp));
+		return buf;
+	    }
+	    Strcat(buf, shkname(mtmp));
+	    if (mdat == &mons[PM_SHOPKEEPER] && !do_invis &&
+			!(do_misc && adjective))
+		return buf;
+	    Strcat(buf, " the ");
+	    if (do_invis)
 		Strcat(buf, "invisible ");
+	    Strcat(buf, mdat->mname);
+	    return buf;
+	}
+
+	name_at_start = -1; /* -1: unknown, 0: no, 1: yes */
+	/* Put the adjectives in the buffer */
+	if (do_misc && adjective)
+	    Strcat(strcat(buf, adjective), " ");
+	if (do_invis)
+	    Strcat(buf, "invisible ");
 #ifdef STEED
-	    if ((mtmp->misc_worn_check & W_SADDLE) &&
-			!Blind && (!name || called) && mtmp != u.usteed)
-		Strcat(buf, "saddled ");
+	if (do_misc && (mtmp->misc_worn_check & W_SADDLE) &&
+			!Blind && mtmp != u.usteed)
+	    Strcat(buf, "saddled ");
 #endif
-	}
+	/* Put the actual monster name or type into the buffer now */
+	/* Be sure to remember whether the buffer starts with a name */
 
-	if (name && !called) {
-	    Strcat(buf, name);
-	    goto bot_nam;
-	}
+	if (buf[0] != 0) /* adjectives at start? */
+	    name_at_start = 0;
 
-	if (Hallucination && !trunam) {
+	if (do_hallu) {
+	    name_at_start = 0;
 	    Strcat(buf, rndmonnam());
+	} else if (mtmp->mnamelth) {
+	    char *name = NAME(mtmp);
+	    
+	    if (mdat == &mons[PM_GHOST]) {
+		Sprintf(eos(buf), "%s ghost", s_suffix(name));
+		if (name_at_start == -1)
+		    name_at_start = 1;
+	    } else if (called) {
+		Sprintf(eos(buf), "%s called %s", mdat->mname, name);
+		if (name_at_start == -1)
+		    name_at_start = type_is_pname(mdat) ? 1 : 0;
+	    } else {
+		Strcat(buf, name);
+		if (name_at_start == -1)
+		    name_at_start = 1;
+	    }
 	} else if (is_mplayer(mdat) && !In_endgame(&u.uz)) {
 	    char pbuf[BUFSZ];
 	    Strcpy(pbuf, rank_of((int)mtmp->m_lev,
 				 monsndx(mdat),
 				 (boolean)mtmp->female));
 	    Strcat(buf, lcase(pbuf));
+	    name_at_start = 0;
 	} else {
 	    Strcat(buf, mdat->mname);
+	    if (name_at_start == -1)
+		name_at_start = type_is_pname(mdat) ? 1 : 0;
 	}
 
-	if (name) {	/* if we reach here, `name' implies `called' */
-	    Strcat(buf, " called ");
-	    Strcat(buf, NAME(mtmp));
+	if (name_at_start == 1) {
+	    if (mdat == &mons[PM_WIZARD_OF_YENDOR])
+		article = ARTICLE_THE;
+	    else
+		article = ARTICLE_NONE;
 	}
- bot_nam:
-	if (article == 2 && !force_the && (!name || called) &&
-		(Hallucination || !type_is_pname(mdat)))
-	    return an(buf);
-	else
-	    return buf;
+
+	{
+	    char buf2[BUFSZ];
+
+	    switch(article) {
+		case ARTICLE_YOUR:
+		    Strcpy(buf2, "your ");
+		    Strcat(buf2, buf);
+		    Strcpy(buf, buf2);
+		    return buf;
+		case ARTICLE_THE:
+		    Strcpy(buf2, "the ");
+		    Strcat(buf2, buf);
+		    Strcpy(buf, buf2);
+		    return buf;
+		case ARTICLE_A:
+		    return(an(buf));
+		case ARTICLE_NONE:
+		default:
+		    return buf;
+	    }
+	}
 }
 
 #endif /* OVL0 */
@@ -678,7 +726,7 @@ char *
 l_monnam(mtmp)
 register struct monst *mtmp;
 {
-	return(x_monnam(mtmp, 3, (char *)0, 1));
+	return(x_monnam(mtmp, ARTICLE_NONE, (char *)0, 0, TRUE));
 }
 
 #endif /* OVLB */
@@ -688,7 +736,7 @@ char *
 mon_nam(mtmp)
 register struct monst *mtmp;
 {
-	return(x_monnam(mtmp, 0, (char *)0, 0));
+	return(x_monnam(mtmp, ARTICLE_THE, (char *)0, 0, FALSE));
 }
 
 /* print the name as if mon_nam() was called, but assume that the player
@@ -699,7 +747,7 @@ char *
 noit_mon_nam(mtmp)
 register struct monst *mtmp;
 {
-	return(x_monnam(mtmp, 6, (char *)0, 0));
+	return(x_monnam(mtmp, ARTICLE_THE, (char *)0, SUPPRESS_IT, FALSE));
 }
 
 char *
@@ -731,7 +779,7 @@ struct monst *mtmp;
 	unsigned save_invis = mtmp->minvis;
 
 	mtmp->minvis = 0;  /* affects priestname() as well as x_monnam() */
-	result = x_monnam(mtmp, 4, (char *)0, 0);
+	result = x_monnam(mtmp, ARTICLE_NONE, (char *)0, EXACT_NAME, FALSE);
 	mtmp->minvis = save_invis;
 	return result;
 }
@@ -741,7 +789,7 @@ char *
 y_monnam(mtmp)
 struct monst *mtmp;
 {
-	return x_monnam(mtmp, 5, (char *)0, 0);
+	return x_monnam(mtmp, ARTICLE_YOUR, (char *)0, 0, FALSE);
 }
 
 #endif /* OVL0 */
@@ -752,7 +800,7 @@ Adjmonnam(mtmp, adj)
 register struct monst *mtmp;
 register const char *adj;
 {
-	register char *bp = x_monnam(mtmp,1,adj,0);
+	register char *bp = x_monnam(mtmp, ARTICLE_THE, adj, 0, FALSE);
 
 	*bp = highc(*bp);
 	return(bp);
@@ -762,7 +810,7 @@ char *
 a_monnam(mtmp)
 register struct monst *mtmp;
 {
-	return x_monnam(mtmp, 2, (char *)0, 0);
+	return x_monnam(mtmp, ARTICLE_A, (char *)0, 0, FALSE);
 }
 
 char *

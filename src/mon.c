@@ -1507,8 +1507,9 @@ xkilled(mtmp, dest)
 		You("destroy it!");
 	    else {
 		You("destroy %s!",
-			mtmp->mtame ? x_monnam(mtmp, 0, "poor", 0)
-			: mon_nam(mtmp));
+			mtmp->mtame
+			    ? x_monnam(mtmp, ARTICLE_THE, "poor", 0, FALSE)
+			    : mon_nam(mtmp));
 	    }
 	}
 

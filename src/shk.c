@@ -1092,7 +1092,8 @@ proceed:
 			return(1);
 		    }
 		    You("try to appease %s by giving %s 1000 gold pieces.",
-			x_monnam(shkp, 1, "angry", 0), him[shk_pronoun]);
+			x_monnam(shkp, ARTICLE_THE, "angry", 0, FALSE),
+			him[shk_pronoun]);
 		    pay(1000L,shkp);
 		    if (strncmp(eshkp->customer, plname, PL_NSIZ) || rn2(3))
 			make_happy_shk(shkp, FALSE);

@@ -121,7 +121,7 @@ int distance;
 		if (canseemon(mtmp)) {
 		    if (!could_see_mon)
 			You("notice %s, swaying with the music.",
-			    an(mon_nam(mtmp)));
+			    a_monnam(mtmp));
 		    else
 			pline("%s freezes, then sways with the music%s.",
 			      Monnam(mtmp),
@@ -295,7 +295,7 @@ do_pit:		    chasm = maketrap(x,y,PIT);
 					pline("It is destroyed!");
 				    else {
 					You("destroy %s!", mtmp->mtame ?
-					    x_monnam(mtmp, 0, "poor", 0) :
+					    x_monnam(mtmp, ARTICLE_THE, "poor", 0, FALSE) :
 					    mon_nam(mtmp));
 				    }
 				    xkilled(mtmp,0);

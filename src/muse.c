@@ -189,8 +189,9 @@ struct obj *otmp;
 	    pline("%s reads %s!", Monnam(mtmp), onambuf);
 	else
 	    You_hear("%s reading %s.",
-		     an(Hallucination ? rndmonnam() : mtmp->data->mname),
-		     onambuf);
+		x_monnam(mtmp, ARTICLE_A, (char *)0,
+		    (SUPPRESS_IT|SUPPRESS_INVISIBLE|SUPPRESS_MISC), FALSE),
+		onambuf);
 
 	if (mtmp->mconf)
 	    pline("Being confused, %s mispronounces the magic words...",

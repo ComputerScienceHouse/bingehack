@@ -323,7 +323,7 @@ E struct obj *FDECL(oname, (struct obj *,const char *));
 E int NDECL(ddocall);
 E void FDECL(docall, (struct obj *));
 E const char *NDECL(rndghostname);
-E char *FDECL(x_monnam, (struct monst *,int,const char *,int));
+E char *FDECL(x_monnam, (struct monst *,int,const char *,int,int));
 E char *FDECL(l_monnam, (struct monst *));
 E char *FDECL(mon_nam, (struct monst *));
 E char *FDECL(noit_mon_nam, (struct monst *));

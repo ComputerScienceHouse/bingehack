@@ -282,6 +282,19 @@ E struct c_common_strings {
 #define Something	   c_common_strings.c_Something
 #define You_can_move_again c_common_strings.c_You_can_move_again
 
+/* Monster name articles */
+#define ARTICLE_NONE	0
+#define ARTICLE_THE	1
+#define ARTICLE_A	2
+#define ARTICLE_YOUR	3
+
+/* Monster name suppress masks */
+#define SUPPRESS_IT		0x01
+#define SUPPRESS_INVISIBLE	0x02
+#define SUPPRESS_HALLUCINATION  0x04
+#define SUPPRESS_MISC		0x08
+#define EXACT_NAME		0x0F
+
 /* Vision */
 E NEARDATA boolean vision_full_recalc;	/* TRUE if need vision recalc */
 E NEARDATA char **viz_array;		/* could see/in sight row pointers */
