@@ -9,7 +9,6 @@
 
 # Some options to set personal preferences.  If several people are to
 # use it, options like these should not be set here - use the command line
-# (if playing from CLI) or ToolTypes (if playing from WorkBench)
 #OPTIONS=name:Janet-V,female,dogname:Fido,fruit:apricot
 #OPTIONS=packorder:")[%?+/=!(*0_`,scores:10t/2a,noverbose
 
@@ -60,6 +59,8 @@ EFFECTS =  241 240 242 243 042 033 123 125	   \
 	   064 038 042 035			   \
 	   244 245 246 247 239 248 249 250	   \
 	   230 234 231 236 212 237 232 235 233
+
+WARNING =  048 049 050 051 052 053
 
 # Monitors vary greatly in their color response.  If the default colors
 # are not good on your monitor, here are some other alternatives for the
