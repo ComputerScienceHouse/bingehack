@@ -42,8 +42,10 @@
 
 /*  Patch 1, August 9, 2000
  *  Many, many general fixes, including a number for riding, twoweapon,
- *	and invisible monsters.
- *  Redo Ranger quest.
+ *	and invisible monsters
+ *  A security fix for a couple of potentially exploitable buffer overflows
+ *	in previous versions
+ *  Redo Ranger quest
  *  Introduction of differentiation between different causes of blindness
  *  Overhaul of warning
  *  Functionality restored to Amiga (courtesy Janne Salmijarvi) and Atari
