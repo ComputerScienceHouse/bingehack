@@ -28,7 +28,12 @@ static struct val_list { struct valuable_data *list; int size; } valuables[] = {
 	{ 0, 0 }
 };
 
+#ifndef NO_SIGNAL
 STATIC_PTR void FDECL(done_intr, (int));
+# if defined(UNIX) || defined(VMS) || defined (__EMX__)
+static void FDECL(done_hangup, (int));
+# endif
+#endif
 STATIC_DCL void FDECL(disclose,(int,BOOLEAN_P));
 STATIC_DCL void FDECL(get_valuables, (struct obj *));
 STATIC_DCL void FDECL(sort_valuables, (struct valuable_data *,int));
@@ -37,9 +42,6 @@ STATIC_DCL void FDECL(display_artifact_score, (struct obj *,winid));
 STATIC_DCL void FDECL(savelife, (int));
 STATIC_DCL void NDECL(list_vanquished);
 STATIC_DCL void NDECL(list_genocided);
-#if defined(UNIX) || defined(VMS) || defined (__EMX__)
-static void FDECL(done_hangup, (int));
-#endif
 
 #if defined(__BEOS__) || defined(MICRO) || defined(WIN32) || defined(OS2)
 extern void FDECL(nethack_exit,(int));
@@ -147,22 +149,21 @@ done2()
 	return 0;
 }
 
+#ifndef NO_SIGNAL
 /*ARGSUSED*/
 STATIC_PTR void
 done_intr(sig_unused) /* called as signal() handler, so sent at least one arg */
 int sig_unused;
 {
 	done_stopprint++;
-#ifndef NO_SIGNAL
 	(void) signal(SIGINT, SIG_IGN);
 # if defined(UNIX) || defined(VMS)
 	(void) signal(SIGQUIT, SIG_IGN);
 # endif
-#endif /* NO_SIGNAL */
 	return;
 }
 
-#if defined(UNIX) || defined(VMS) || defined(__EMX__)
+# if defined(UNIX) || defined(VMS) || defined(__EMX__)
 static void
 done_hangup(sig)	/* signal() handler */
 int sig;
@@ -172,7 +173,8 @@ int sig;
 	done_intr(sig);
 	return;
 }
-#endif
+# endif
+#endif /* NO_SIGNAL */
 
 void
 done_in_by(mtmp)

@@ -66,7 +66,7 @@ use_saddle(otmp)
 	/* Is this a valid monster? */
 	if (mtmp->misc_worn_check & W_SADDLE ||
 			which_armor(mtmp, W_SADDLE)) {
-	    pline("%s is already saddled.", Monnam(mtmp));
+	    pline("%s doesn't need another one.", Monnam(mtmp));
 	    return 1;
 	}
 	ptr = mtmp->data;
