@@ -1026,7 +1026,7 @@ register struct trobj *trop;
 		}
 
 		if (obj->oclass == WEAPON_CLASS || is_weptool(obj) ||
-			otyp == TIN_OPENER || otyp == ROCK) {
+			otyp == TIN_OPENER || otyp == FLINT || otyp == ROCK) {
 		    if (is_ammo(obj) || is_missile(obj)) {
 			if (!uquiver) setuqwep(obj);
 		    } else if (!uwep) setuwep(obj);
