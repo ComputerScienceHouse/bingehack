@@ -923,6 +923,7 @@ boolean your_fault;
 		if(!resist(mon, POTION_CLASS, 0, NOTELL))  mon->mconf = TRUE;
 		break;
 	case POT_INVISIBILITY:
+		angermon = FALSE;
 		mon_set_minvis(mon);
 		break;
 	case POT_SLEEPING:
@@ -964,6 +965,7 @@ boolean your_fault;
 			else if (is_were(mon->data) && !is_human(mon->data))
 			    new_were(mon);	/* revert to human */
 		    } else if (obj->cursed) {
+			angermon = FALSE;
 			if (canseemon(mon))
 			    pline("%s looks healthier.", Monnam(mon));
 			mon->mhp += d(2,6);
@@ -973,6 +975,7 @@ boolean your_fault;
 			    new_were(mon);	/* transform into beast */
 		    }
 		} else if(mon->data == &mons[PM_GREMLIN]) {
+		    angermon = FALSE;
 		    (void)split_mon(mon, (struct monst *)0);
 		}
 		break;
