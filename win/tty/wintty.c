@@ -2529,7 +2529,21 @@ tty_nh_poskey(x, y, mod)
     int *x, *y, *mod;
 {
 # if defined(WIN32CON)
-    return ntposkey(x, y, mod);
+    int i;
+    (void) fflush(stdout);
+    /* Note: if raw_print() and wait_synch() get called to report terminal
+     * initialization problems, then wins[] and ttyDisplay might not be
+     * available yet.  Such problems will probably be fatal before we get
+     * here, but validate those pointers just in case...
+     */
+    if (WIN_MESSAGE != WIN_ERR && wins[WIN_MESSAGE])
+	    wins[WIN_MESSAGE]->flags &= ~WIN_STOP;
+    i = ntposkey(x, y, mod);
+    if (!i && mod && *mod == 0)
+    	i = '\033'; /* map NUL to ESC since nethack doesn't expect NUL */
+    if (ttyDisplay && ttyDisplay->toplin == 1)
+		ttyDisplay->toplin = 2;
+    return i;
 # else
     return tty_nhgetch();
 # endif
