@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)drawing.c	3.3	94/09/16	*/
+/*	SCCS Id: @(#)drawing.c	3.3	1999/12/02	*/
 /* Copyright (c) NetHack Development Team 1992.			  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -59,7 +59,7 @@ const char *objexplain[] = {	/* these match def_oc_syms, above */
 	"piece of food",
 	"potion",
 	"scroll",
-/*10*/	"spell book",
+/*10*/	"spellbook",
 	"wand",
 	"pile of coins",
 	"gem or rock",
@@ -81,7 +81,7 @@ const char *oclass_names[] = {
 	"food",
 	"potions",
 	"scrolls",
-/*10*/	"spell books",
+/*10*/	"spellbooks",
 	"wands",
 	"coins",
 	"rocks",

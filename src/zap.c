@@ -1582,7 +1582,7 @@ register struct obj *obj;
 			}
 			makewish();
 			break;
-		case WAN_ENLIGHTENMENT:        
+		case WAN_ENLIGHTENMENT:
 			known = TRUE;
 			You_feel("self-knowledgeable...");
 			display_nhwindow(WIN_MESSAGE, FALSE);
@@ -1935,7 +1935,7 @@ boolean ordinary;
 }
 
 #ifdef STEED
-/* you've zapped a wand downwards while riding 
+/* you've zapped a wand downwards while riding
  * Return TRUE if the steed was hit by the wand.
  * Return FALSE if the steed was not hit by the wand.
  */
@@ -1949,11 +1949,11 @@ struct obj *obj;	/* wand or spell */
 	
 	switch (obj->otyp) {
 
-           /*
-            * Wands that are allowed to hit the steed
-            * Carefully test the results of any that are
-            * moved here from the bottom section.
-            */
+	   /*
+	    * Wands that are allowed to hit the steed
+	    * Carefully test the results of any that are
+	    * moved here from the bottom section.
+	    */
 		case WAN_PROBING:
 		    probe_monster(u.usteed);
 		    makeknown(WAN_PROBING);
@@ -2861,8 +2861,8 @@ xchar sx, sy;
 #ifdef OVLB
 
 /*
- * burn scrolls and spell books on floor at position x,y
- * return the number of scrolls and spell books burned
+ * burn scrolls and spellbooks on floor at position x,y
+ * return the number of scrolls and spellbooks burned
  */
 int
 burn_floor_paper(x, y, give_feedback)

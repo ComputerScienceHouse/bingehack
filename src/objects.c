@@ -783,7 +783,7 @@ POTION("water", "clear",                0, 0,          92, 100, CLR_CYAN),
 	SCROLL("blank paper",           "unlabeled",        0,  28,  60),
 #undef SCROLL
 
-/* spell books ... */
+/* spellbooks ... */
 #define SPELL(name,desc,sub,prob,delay,level,mgc,dir,color) OBJECT( \
 		OBJ(name,desc), BITS(0,0,0,0,mgc,0,0,0,0,0,dir,sub,PAPER), 0, \
 		SPBOOK_CLASS, prob, delay, \
@@ -915,7 +915,7 @@ GEM("worthless piece of white glass", "white",   77, 1, 0, 6, 5, GLASS, CLR_WHIT
 GEM("worthless piece of blue glass", "blue",     77, 1, 0, 6, 5, GLASS, CLR_BLUE),
 GEM("worthless piece of red glass", "red",       77, 1, 0, 6, 5, GLASS, CLR_RED),
 GEM("worthless piece of yellowish brown glass", "yellowish brown",
-                                                 77, 1, 0, 6, 5, GLASS, CLR_BROWN),
+						 77, 1, 0, 6, 5, GLASS, CLR_BROWN),
 GEM("worthless piece of orange glass", "orange", 76, 1, 0, 6, 5, GLASS, CLR_ORANGE),
 GEM("worthless piece of yellow glass", "yellow", 77, 1, 0, 6, 5, GLASS, CLR_YELLOW),
 GEM("worthless piece of black glass",  "black",  76, 1, 0, 6, 5, GLASS, CLR_BLACK),

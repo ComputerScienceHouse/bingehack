@@ -4,7 +4,7 @@
 .ds vr "NetHack 3.3
 .ds f0 "\*(vr
 .ds f1
-.ds f2 "November 24, 1999
+.ds f2 "December 2, 1999
 .mt
 A Guide to the Mazes of Menace
 (Guidebook for NetHack 3.3)
@@ -307,7 +307,7 @@ A way to the previous level.
 .lp >
 A way to the next level.
 .lp +
-A closed door, or a spell book containing a spell you can learn.
+A closed door, or a spellbook containing a spell you can learn.
 .lp @
 Your character or a human.
 .lp $
@@ -539,7 +539,7 @@ Select an object for your quiver.  You can then throw this using
 the `f' command.  (In versions prior to 3.3 this was the command to quit
 the game, which has now been moved to `#quit'.)
 .lp r
-Read a scroll or spell book.
+Read a scroll or spellbook.
 .lp R
 Remove an accessory (ring, amulet, etc).
 .lp ^R
@@ -1111,12 +1111,12 @@ varying with the type of ring.
 .pg
 The commands to use rings are `P' (put on) and `R' (remove).
 .hn 2
-Spell books (`+')
+Spellbooks (`+')
 .pg
-Spell books are tomes of mighty magic.  When studied with the `r' (read)
+Spellbooks are tomes of mighty magic.  When studied with the `r' (read)
 command, they bestow the knowledge of a spell\(emunless the attempt
 backfires.
-Reading a cursed spell book or one with mystic runes beyond
+Reading a cursed spellbook or one with mystic runes beyond
 your ken can be harmful to your health!
 .pg
 A spell (even when learned) can also backfire when you cast it.  If you
@@ -1133,7 +1133,7 @@ details completely and must relearn it.
 Casting a spell also requires flexible movement, and wearing various types
 of armor may interfere with that.
 .pg
-The command to read a spell book is the same as for scrolls, `r'
+The command to read a spellbook is the same as for scrolls, `r'
 (read).  The `+' command lists your current spells and the number of
 spell points they require.  The `Z' (cast) command casts a spell.
 .hn 2
@@ -1551,7 +1551,7 @@ This string is subjected to the same processing as the
 option.
 The order of the symbols is
 illegal-object (should never be seen), weapon, armor, ring, amulet, tool,
-food, potion, scroll, spell book, wand, gold, gem or rock, boulder or statue,
+food, potion, scroll, spellbook, wand, gold, gem or rock, boulder or statue,
 iron ball, chain, and venom.
 Cannot be set with the `O' command.
 .lp packorder
