@@ -501,42 +501,42 @@ give_up:	/* Quit */
 			}
 		    }
 		}
-	    }
 
-	    /* Permit the user to pick, if there is more than one */
-	    if (n > 1) {
-		win = create_nhwindow(NHW_MENU);
-		start_menu(win);
-		any.a_void = 0;         /* zero out all bits */
-		for (i = 0; i < ROLE_GENDERS; i++)
-		    if (ok_gend(flags.initrole, flags.initrace, i,
-							flags.initalign)) {
-			any.a_int = i+1;
-			add_menu(win, NO_GLYPH, &any, genders[i].adj[0],
+		/* Permit the user to pick, if there is more than one */
+		if (n > 1) {
+		    win = create_nhwindow(NHW_MENU);
+		    start_menu(win);
+		    any.a_void = 0;         /* zero out all bits */
+		    for (i = 0; i < ROLE_GENDERS; i++)
+			if (ok_gend(flags.initrole, flags.initrace, i,
+							    flags.initalign)) {
+			    any.a_int = i+1;
+			    add_menu(win, NO_GLYPH, &any, genders[i].adj[0],
 				0, ATR_NONE, genders[i].adj, MENU_UNSELECTED);
-		    }
-		any.a_int = pick_gend(flags.initrole, flags.initrace,
-					flags.initalign)+1;
-		if (any.a_int == 0)	/* must be non-zero */
-		    any.a_int = randgend(flags.initrole, flags.initrace)+1;
-		add_menu(win, NO_GLYPH, &any , '*', 0, ATR_NONE,
-				"Random", MENU_UNSELECTED);
-		any.a_int = i+1;	/* must be non-zero */
-		add_menu(win, NO_GLYPH, &any , 'q', 0, ATR_NONE,
-				"Quit", MENU_UNSELECTED);
-		Sprintf(pbuf, "Pick the gender of your %s %s",
-				races[flags.initrace].adj,
-				roles[flags.initrole].name.m);
-		end_menu(win, pbuf);
-		n = select_menu(win, PICK_ONE, &selected);
-		destroy_nhwindow(win);
-		if (n != 1 || selected[0].item.a_int == any.a_int)
-		    goto give_up;		/* Selected quit */
+			}
+		    any.a_int = pick_gend(flags.initrole, flags.initrace,
+					    flags.initalign)+1;
+		    if (any.a_int == 0)	/* must be non-zero */
+			any.a_int = randgend(flags.initrole, flags.initrace)+1;
+		    add_menu(win, NO_GLYPH, &any , '*', 0, ATR_NONE,
+				    "Random", MENU_UNSELECTED);
+		    any.a_int = i+1;	/* must be non-zero */
+		    add_menu(win, NO_GLYPH, &any , 'q', 0, ATR_NONE,
+				    "Quit", MENU_UNSELECTED);
+		    Sprintf(pbuf, "Pick the gender of your %s %s",
+				    races[flags.initrace].adj,
+				    roles[flags.initrole].name.m);
+		    end_menu(win, pbuf);
+		    n = select_menu(win, PICK_ONE, &selected);
+		    destroy_nhwindow(win);
+		    if (n != 1 || selected[0].item.a_int == any.a_int)
+			goto give_up;		/* Selected quit */
 
-		k = selected[0].item.a_int - 1;
-		free((genericptr_t) selected),	selected = 0;
+		    k = selected[0].item.a_int - 1;
+		    free((genericptr_t) selected),	selected = 0;
+		}
+		flags.initgend = k;
 	    }
-	    flags.initgend = k;
 	}
 
 	/* Select an alignment, if necessary */
@@ -570,45 +570,45 @@ give_up:	/* Quit */
 			}
 		    }
 		}
-	    }
 
-	    /* Permit the user to pick, if there is more than one */
-	    if (n > 1) {
-		win = create_nhwindow(NHW_MENU);
-		start_menu(win);
-		any.a_void = 0;         /* zero out all bits */
-		for (i = 0; i < ROLE_ALIGNS; i++)
-		    if (ok_align(flags.initrole, flags.initrace, flags.initgend,
-							i)) {
-			any.a_int = i+1;
-			add_menu(win, NO_GLYPH, &any, aligns[i].adj[0],
+		/* Permit the user to pick, if there is more than one */
+		if (n > 1) {
+		    win = create_nhwindow(NHW_MENU);
+		    start_menu(win);
+		    any.a_void = 0;         /* zero out all bits */
+		    for (i = 0; i < ROLE_ALIGNS; i++)
+			if (ok_align(flags.initrole, flags.initrace,
+							flags.initgend, i)) {
+			    any.a_int = i+1;
+			    add_menu(win, NO_GLYPH, &any, aligns[i].adj[0],
 				 0, ATR_NONE, aligns[i].adj, MENU_UNSELECTED);
-		    }
-		any.a_int = pick_align(flags.initrole, flags.initrace,
-					flags.initgend)+1;
-		if (any.a_int == 0)	/* must be non-zero */
-		    any.a_int = randalign(flags.initrole, flags.initrace)+1;
-		add_menu(win, NO_GLYPH, &any , '*', 0, ATR_NONE,
-				"Random", MENU_UNSELECTED);
-		any.a_int = i+1;	/* must be non-zero */
-		add_menu(win, NO_GLYPH, &any , 'q', 0, ATR_NONE,
-				"Quit", MENU_UNSELECTED);
-		Sprintf(pbuf, "Pick the alignment of your %s %s %s",
-				genders[flags.initgend].adj,
-				races[flags.initrace].adj,
-				(flags.initgend && roles[flags.initrole].name.f) ?
-				roles[flags.initrole].name.f :
-				roles[flags.initrole].name.m);
-		end_menu(win, pbuf);
-		n = select_menu(win, PICK_ONE, &selected);
-		destroy_nhwindow(win);
-		if (n != 1 || selected[0].item.a_int == any.a_int)
-		    goto give_up;		/* Selected quit */
+			}
+		    any.a_int = pick_align(flags.initrole, flags.initrace,
+					    flags.initgend)+1;
+		    if (any.a_int == 0)	/* must be non-zero */
+			any.a_int = randalign(flags.initrole, flags.initrace)+1;
+		    add_menu(win, NO_GLYPH, &any , '*', 0, ATR_NONE,
+				    "Random", MENU_UNSELECTED);
+		    any.a_int = i+1;	/* must be non-zero */
+		    add_menu(win, NO_GLYPH, &any , 'q', 0, ATR_NONE,
+				    "Quit", MENU_UNSELECTED);
+		    Sprintf(pbuf, "Pick the alignment of your %s %s %s",
+			    genders[flags.initgend].adj,
+			    races[flags.initrace].adj,
+			    (flags.initgend && roles[flags.initrole].name.f) ?
+			    roles[flags.initrole].name.f :
+			    roles[flags.initrole].name.m);
+		    end_menu(win, pbuf);
+		    n = select_menu(win, PICK_ONE, &selected);
+		    destroy_nhwindow(win);
+		    if (n != 1 || selected[0].item.a_int == any.a_int)
+			goto give_up;		/* Selected quit */
 
-		k = selected[0].item.a_int - 1;
-		free((genericptr_t) selected),	selected = 0;
+		    k = selected[0].item.a_int - 1;
+		    free((genericptr_t) selected),	selected = 0;
+		}
+		flags.initalign = k;
 	    }
-	    flags.initalign = k;
 	}
 	/* Success! */
 	tty_display_nhwindow(BASE_WINDOW, FALSE);
