@@ -3590,7 +3590,7 @@ char *buf;
 struct obj *obj;
 {
 	if (!shk_owns(buf, obj) && !mon_owns(buf, obj))
-	    Strcpy(buf, obj->where == OBJ_INVENT ? "your" : "the");
+	    Strcpy(buf, carried(obj) ? "your" : "the");
 	return buf;
 }
 

@@ -1166,7 +1166,7 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 	if (mnum != PM_ACID_BLOB && !stoneable && rotted > 5L) {
 		pline("Ulch - that %s was tainted!",
 		      mons[mnum].mlet == S_FUNGUS ? "fungoid vegetation" :
-		      !nonvegetarian(&mons[mnum]) ? "meat" : "protoplasm");
+		      nonvegetarian(&mons[mnum]) ? "meat" : "protoplasm");
 		if (Sick_resistance) {
 			pline("It doesn't seem at all sickening, though...");
 		} else {

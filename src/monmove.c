@@ -965,7 +965,7 @@ postmov:
 		    boolean btrapped = (here->doormask & D_TRAPPED);
 
 		    if(here->doormask & (D_LOCKED|D_CLOSED) && amorphous(ptr)) {
-			if (flags.verbose && canseeit)
+			if (flags.verbose && canseemon(mtmp))
 			    pline("%s %ss under the door.", Monnam(mtmp),
 				  (ptr == &mons[PM_FOG_CLOUD] ||
 				   ptr == &mons[PM_YELLOW_LIGHT])

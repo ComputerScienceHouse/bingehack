@@ -338,6 +338,10 @@ still_chewing(x,y)
 	return 1;
     }
 
+    /* Okay, you've chewed through something */
+    u.uconduct.food++;
+    u.uhunger += rnd(20);
+
     if (boulder) {
 	delobj(boulder);		/* boulder goes bye-bye */
 	You("eat the boulder.");	/* yum */

@@ -225,6 +225,7 @@ m_throw(mon, x, y, dx, dy, range, obj)
 	struct obj *singleobj;
 	char sym = obj->oclass;
 	int hitu, blindinc = 0;
+	boolean save_dkn, save_okn;
 
 	bhitpos.x = x;
 	bhitpos.y = y;
@@ -342,13 +343,29 @@ m_throw(mon, x, y, dx, dy, range, obj)
 			    if (bigmonst(youmonst.data)) hitv++;
 			    hitv += 8+singleobj->spe;
 
+			    /* Killed by an "orcish arrow" rather than "crude arrow" */
+			    save_dkn = singleobj->dknown;
+			    save_okn = objects[singleobj->otyp].oc_name_known;
+			    singleobj->dknown = 1;
+			    objects[singleobj->otyp].oc_name_known = 1;
 			    if (dam < 1) dam = 1;
 			    hitu = thitu(hitv, dam,
 				    singleobj, xname(singleobj));
+			    singleobj->dknown = save_dkn;
+			    objects[singleobj->otyp].oc_name_known = save_okn;
 		    }
 		    if (hitu && singleobj->opoisoned) {
-			char *singlename = xname(singleobj);
+			char *singlename;
+
+			/* Killed by an "orcish arrow" rather than "crude arrow" */
+		    save_dkn = singleobj->dknown;
+		    save_okn = objects[singleobj->otyp].oc_name_known;
+			singleobj->dknown = 1;
+			objects[singleobj->otyp].oc_name_known = 1;
+			singlename = xname(singleobj);
 			poisoned(singlename, A_STR, singlename, 10);
+			singleobj->dknown = save_dkn;
+			objects[singleobj->otyp].oc_name_known = save_okn;
 		    }
 		    if(hitu && (singleobj->otyp == CREAM_PIE ||
 				 singleobj->otyp == BLINDING_VENOM)) {

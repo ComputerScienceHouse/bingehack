@@ -167,6 +167,8 @@ register int x, y;
 	    return "altar";
 	else if(IS_GRAVE(levl[x][y].typ))
 	    return "headstone";
+	else if(IS_FOUNTAIN(levl[x][y].typ))
+	    return "fountain";
 	else if ((IS_ROOM(lev->typ) && !Is_earthlevel(&u.uz)) ||
 		 IS_WALL(lev->typ) || IS_DOOR(lev->typ) || lev->typ == SDOOR)
 	    return "floor";

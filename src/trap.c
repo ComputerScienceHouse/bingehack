@@ -820,7 +820,7 @@ glovecheck:		(void) rust_dmg(uarmg, "gauntlets", 1, TRUE, &youmonst);
 		{
 		    register int str = ACURR(A_STR);
 
-		    if (str == 3) u.utrap = rn1(6,6);
+		    if (str <= 3) u.utrap = rn1(6,6);
 		    else if (str < 6) u.utrap = rn1(6,4);
 		    else if (str < 9) u.utrap = rn1(4,4);
 		    else if (str < 12) u.utrap = rn1(4,2);

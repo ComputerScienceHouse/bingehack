@@ -1833,7 +1833,8 @@ register int  typ, fatal;
 	if(u.uhp < 1) {
 		killer_format = KILLED_BY_AN;
 		killer = pname;
-		done(POISONING);
+		/* "Poisoned by a poisoned ___" is redundant */
+		done(thrown_weapon ? DIED : POISONING);
 	}
 	(void) encumber_msg();
 }

@@ -196,8 +196,6 @@ struct obj *wep;
 	    }
 	}
 	return(res);
-	/* Take no time if we are dextrous enough */
-/*	return ((rnd(20) > ACURR(A_DEX)) ? res : 0);*/
 }
 
 void
@@ -513,9 +511,9 @@ boolean acid_dmg;
 
 	if (!target)
 	    return;
-	if (target->where != OBJ_INVENT && target->where != OBJ_MINVENT)
+	if (!carried(target) && !mcarried(target))
 	    panic("erode whose weapon? (%d)", (int)target->where);
-	victim = (target->where == OBJ_INVENT) ? &youmonst : target->ocarry;
+	victim = carried(target) ? &youmonst : target->ocarry;
 	vismon = (victim != &youmonst) && canseemon(victim);
 
 	erosion = acid_dmg ? target->oeroded2 : target->oeroded;

@@ -422,8 +422,7 @@ long timeout;
 	mon = mon2 = (struct monst *)0;
 	mnum = big_to_little(egg->corpsenm);
 	/* The identity of one's father is learned, not innate */
-	yours = (egg->spe || (!flags.female && egg->where == OBJ_INVENT
-		&& !rn2(2)));
+	yours = (egg->spe || (!flags.female && carried(egg) && !rn2(2)));
 	silent = (timeout != monstermoves);	/* hatched while away */
 
 	/* only can hatch when in INVENT, FLOOR, MINVENT */
@@ -440,12 +439,10 @@ long timeout;
 		       same dungeon level, or any dragon egg which hatches
 		       while it's in your inventory */
 		    if ((yours && !silent) ||
-			(mon->data->mlet == S_DRAGON &&
-				egg->where == OBJ_INVENT)) {
+			(carried(egg) && mon->data->mlet == S_DRAGON)) {
 			if ((mon2 = tamedog(mon, (struct obj *)0)) != 0) {
 			    mon = mon2;
-			    if (egg->where == OBJ_INVENT &&
-				    mon->data->mlet != S_DRAGON)
+			    if (carried(egg) && mon->data->mlet != S_DRAGON)
 				mon->mtame = 20;
 			}
 		    }
@@ -564,7 +561,7 @@ long timeout;
 		    (void) start_timer((long)rnd(12), TIMER_OBJECT,
 					HATCH_EGG, (genericptr_t)egg);
 		}
-	    } else if (egg->where == OBJ_INVENT) {
+	    } else if (carried(egg)) {
 		useup(egg);
 	    } else {
 		/* free egg here because we use it above */

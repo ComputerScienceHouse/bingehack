@@ -73,7 +73,7 @@ char olet;
 							"disintegration field";
 			adtyp = AD_DISN;
 			break;
-		case 5: str = "ball lightning";
+		case 5: str = "ball of lightning";
 			adtyp = AD_ELEC;
 			break;
 		case 6: str = "poison gas cloud";

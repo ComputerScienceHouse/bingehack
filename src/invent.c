@@ -177,13 +177,13 @@ struct obj **potmp, **pobj;
 		if (obj->owornmask) {
 			otmp->owornmask |= obj->owornmask;
 			/* (it isn't necessary to "unwear" `obj' first) */
-			if (otmp->where == OBJ_INVENT)
+			if (carried(otmp))
 			    setworn(otmp, otmp->owornmask);
 #if 0
 			/* (this should never be necessary, since items
 			    already in a monster's inventory don't ever get
 			    merged into other objects [only vice versa]) */
-			else if (otmp->where == OBJ_MINVENT) {
+			else if (mcarried(otmp)) {
 			    if (obj == MON_WEP(otmp->ocarry))
 				MON_WEP(otmp->ocarry) = otmp;
 			}

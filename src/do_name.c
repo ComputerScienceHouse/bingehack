@@ -298,7 +298,8 @@ register struct obj *obj;
 	const char *aname;
 	short objtyp;
 
-	Sprintf(qbuf, "What do you want to name %s?", doname(obj));
+	Sprintf(qbuf, "What do you want to name %s %s?",
+		(obj->quan > 1L) ? "these" : "this", xname(obj));
 	getlin(qbuf, buf);
 	if(!*buf || *buf == '\033')	return;
 	/* strip leading and trailing spaces; unnames item if all spaces */
@@ -424,7 +425,7 @@ const char *name;
 	}
 	if (lth) artifact_exists(obj, name, TRUE);
 	if (obj->oartifact && obj == uswapwep) untwoweapon();
-	if (obj->where == OBJ_INVENT) update_inventory();
+	if (carried(obj)) update_inventory();
 	return obj;
 }
 
@@ -885,8 +886,14 @@ static const char *bogusmons[] = {
 	"mother-in-law"				/* common pest */
 };
 
+
+/* Return a random monster name, for hallucination.
+ * KNOWN BUG: May be a proper name (Godzilla, Barney), may not
+ * (the Terminator, a Dalek).  There's no elegant way to deal
+ * with this without radically modifying the calling functions.
+ */
 const char *
-rndmonnam()	/* Random name of monster type, if hallucinating */
+rndmonnam()
 {
 	int name;
 

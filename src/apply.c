@@ -1824,7 +1824,7 @@ set_trap()
 	struct trap *ttmp;
 	int ttyp;
 
-	if (!otmp || otmp->where != OBJ_INVENT ||
+	if (!otmp || !carried(otmp) ||
 		u.ux != trapinfo.tx || u.uy != trapinfo.ty) {
 	    /* ?? */
 	    reset_trapset();
