@@ -1139,6 +1139,8 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 	int tp = 0, mnum = otmp->corpsenm;
 	long rotted = 0L;
 	boolean uniq = !!(mons[mnum].geno & G_UNIQ);
+	boolean stoneable = (touch_petrifies(&mons[mnum]) && !Stone_resistance &&
+				!poly_when_stoned(youmonst.data));
 
 	if (mnum != PM_LIZARD && mnum != PM_LICHEN) {
 		long age = peek_at_iced_corpse_age(otmp);
@@ -1152,7 +1154,7 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 	u.uconduct.flesh++;
 	if (is_meaty(&mons[mnum])) u.uconduct.meat++;
 
-	if (mnum != PM_ACID_BLOB && rotted > 5L) {
+	if (mnum != PM_ACID_BLOB && !stoneable && rotted > 5L) {
 		pline("Ulch - that %s was tainted!",
 		      mons[mnum].mlet == S_FUNGUS ? "fungoid vegetation" :
 		      is_meaty(&mons[mnum]) ? "meat" : "protoplasm");
