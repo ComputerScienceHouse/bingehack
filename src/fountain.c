@@ -406,8 +406,10 @@ register struct obj *obj;
 			dowatersnakes();
 			break;
 		case 24: /* Find a gem */
-			dofindgem();
-			break;
+			if (!levl[u.ux][u.uy].looted) {
+				dofindgem();
+				break;
+			}
 		case 25: /* Water gushes forth */
 			dogushforth(FALSE);
 			break;
