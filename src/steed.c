@@ -267,7 +267,15 @@ mount_steed(mtmp, force)
 	if (!force && (Confusion || Fumbling || Glib || Wounded_legs ||
 			otmp->cursed || (u.ulevel+mtmp->mtame < rnd(MAXULEV/2+5)))) {
 	    You("slip while trying to get on %s.", mon_nam(mtmp));
-	    Sprintf(buf, "slipped while mounting %s", a_monnam(mtmp));
+	    /* Unfortunately we don't have a version of the monster-naming
+	     * function that works well with "a" and "the" but ignores
+	     * hallucination.  Fortunately, we know the monster must be saddled
+	     * at this point, and that it can't have type_is_pname(), so we
+	     * don't need to worry about the special cases such a function
+	     * would have to consider.
+	     */
+	    Sprintf(buf, "slipped while mounting a saddled %s",
+		    m_monnam(mtmp));
 	    losehp(rn1(5,10), buf, NO_KILLER_PREFIX);
 	    return (FALSE);
 	}

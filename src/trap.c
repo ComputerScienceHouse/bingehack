@@ -1780,16 +1780,18 @@ long hmask, emask;     /* might cancel timeout */
 			You_feel("heavier.");
 		/* u.uinwater msgs already in spoteffects()/drown() */
 		else if (!u.uinwater && !no_msg) {
+#ifdef STEED
+		    if (!(emask & W_SADDLE))
+#endif
+		    {
 			if (Hallucination)
 				pline("Bummer!  You've %s.",
 				      is_pool(u.ux,u.uy) ?
 					"splashed down" : "hit the ground");
 			else
-#ifdef STEED
-			if (!(emask & W_SADDLE))
-#endif
 				You("float gently to the %s.",
 				    surface(u.ux, u.uy));
+		    }
 		}
 		trap = t_at(u.ux,u.uy);
 	}
