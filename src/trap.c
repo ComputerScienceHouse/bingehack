@@ -1994,7 +1994,9 @@ register boolean force, here;
 
 		(void) snuff_lit(obj);
 
-		if(obj->greased) {
+		if(obj->otyp == CAN_OF_GREASE && obj->spe > 0) {
+			continue;
+		} else if(obj->greased) {
 			if (force || !rn2(2)) obj->greased = 0;
 		} else if(Is_container(obj) && !Is_box(obj) &&
 			(obj->otyp != OILSKIN_SACK || (obj->cursed && !rn2(3)))) {
