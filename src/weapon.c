@@ -762,7 +762,7 @@ int skill;
     u.weapon_slots -= slots_required(skill);
     P_SKILL(skill)++;
     u.skill_record[u.skills_advanced++] = skill;
-    /* subtly change the adavnce message to indicate no more advancement */
+    /* subtly change the advance message to indicate no more advancement */
     You("are now %s skilled in %s.",
     	P_SKILL(skill) >= P_MAX_SKILL(skill) ? "most" : "more",
     	P_NAME(skill));
