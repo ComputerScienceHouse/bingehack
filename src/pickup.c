@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)pickup.c	3.3	1999/12/15	*/
+/*	SCCS Id: @(#)pickup.c	3.3	2000/03/01	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1160,17 +1160,76 @@ doloot()	/* loot a container on the floor. */
 	register struct obj *cobj, *nobj;
 	register int c = -1;
 	int timepassed = 0;
+	int x,y;
+	boolean underfoot = FALSE;
+	const char *dont_find_anything = "don't find anything";
+	struct monst *mtmp;
+	int container_count = 0;
+#ifdef STEED
+	char qbuf[QBUFSZ];
+	struct obj *otmp;
+	boolean saddled_there = FALSE;
+	boolean got_saddle = FALSE;
+#endif
 
 	if (check_capacity((char *)0)) {
 		/* "Can't do that while carrying so much stuff." */
 		return 0;
 	}
 
-#if 0 /*ifdef STEED*/
+	/*
+	 * 3.3.1 introduced directional looting for some things.
+	 */
+	if(!getdir((char *)0)) return(0);
+	x = u.ux + u.dx;
+	y = u.uy + u.dy;
+	if (x == u.ux && y == u.uy)
+		underfoot = TRUE;
+	mtmp = m_at(x, y);
+
+	if (u.dz < 0) {
+		You("%s to loot on the %s.", dont_find_anything,
+			ceiling(x, y));
+		timepassed = 1;
+		return timepassed;
+	}
+
+#ifdef STEED
+	/* 3.3.1 allows saddle removal */
+	if (mtmp && (mtmp != u.usteed) && (otmp = which_armor(mtmp, W_SADDLE))) {
+	    int unwornmask;
+	    saddled_there = TRUE;
+	    Sprintf(qbuf, "Do you want to remove %s saddle?",
+			s_suffix(y_monnam(mtmp)));
+	    if ((c = yn_function(qbuf, ynqchars, 'n')) == 'y') {
+		if (nolimbs(youmonst.data)) {
+			You_cant("do that without limbs."); /* not body_part(HAND) */
+			return (0);
+		}
+		if (otmp->cursed) {
+			You("can't. The saddle seems to be stuck to %s.",
+				mon_nam(mtmp));
+			/* the attempt costs you time */
+			return (1);
+		}
+		obj_extract_self(otmp);
+	    	if ((unwornmask = otmp->owornmask) != 0L) {
+			mtmp->misc_worn_check &= ~unwornmask;
+			otmp->owornmask = 0L;
+			update_mon_intrinsics(mtmp, otmp, FALSE);
+		}
+		otmp = hold_another_object(otmp,
+			"You drop %s!", doname(otmp),
+			(const char *)0);
+		timepassed = rnd(3);
+		got_saddle = TRUE;
+	    } else if (c == 'q') {
+	    	return (0);
+	    }
+	}
+# if 0
 	/* Loot your steed, even if you can't reach the floor */
 	if (u.usteed) {
-	    char qbuf[QBUFSZ];
-
 	    Sprintf(qbuf, "Do you want to loot %s inventory?",
 	    		s_suffix(y_monnam(u.usteed)));
 	    switch (c = ynq(qbuf)) {
@@ -1190,7 +1249,38 @@ doloot()	/* loot a container on the floor. */
 		    return (0);
 	    }
 	}
+# endif
 #endif	/* STEED */
+
+	for(cobj = level.objects[x][y]; cobj; cobj = nobj) {
+		nobj = cobj->nexthere;
+		if(Is_container(cobj)) {
+			container_count++;
+			break;
+		}
+	}
+
+	/* Preserve pre-3.3.1 behaviour for containers.
+	 * Adjust this if-block to allow container looting
+         * from one square away to change that in the future.
+	 */
+	if (!underfoot) {
+		if (mtmp && container_count) {
+			You("can't loot anything %swith %s in the way%s",
+				saddled_there ? "else " : "", mon_nam(mtmp),
+				got_saddle ? "." : "!");
+			return (0);	/* no time passage */
+#ifndef LOOT_CONTAINERS_FROM_ONE_SQUARE_AWAY
+		} else {
+			if (container_count) {
+				You("have to be at a container to loot it.");
+			} else
+				You("%s there to loot.", dont_find_anything);
+			return (0);	/* no time passage */
+		}
+#endif
+	}
+
 
 	if (!can_reach_floor()) {
 #ifdef STEED
@@ -1198,25 +1288,26 @@ doloot()	/* loot a container on the floor. */
 			You("aren't skilled enough to reach from %s.", mon_nam(u.usteed));
 		else
 #endif
-		You("cannot reach the %s.", surface(u.ux, u.uy));
+		You("cannot reach the %s.", surface(x, y));
 		return(0);
-	} else if (is_pool(u.ux, u.uy) || is_lava(u.ux, u.uy)) {
+	} else if (is_pool(x, y) || is_lava(x, y)) {
 		/* at present, can't loot in water even when Underwater */
 		You("cannot loot things that are deep in the %s.",
-		    is_lava(u.ux, u.uy) ? "lava" : "water");
+		    is_lava(x, y) ? "lava" : "water");
 		return(0);
 	} else if (nolimbs(youmonst.data)) {
 		pline("Without limbs, you cannot loot anything.");
 		return(0);
 	}
 
-	for(cobj = level.objects[u.ux][u.uy]; cobj; cobj = nobj) {
+	for(cobj = level.objects[x][y]; cobj; cobj = nobj) {
 		nobj = cobj->nexthere;
 
 		if(Is_container(cobj)) {
 		    char qbuf[QBUFSZ];
 
-		    Sprintf(qbuf, "There is %s here, loot it?", doname(cobj));
+		    Sprintf(qbuf, "There is %s %s, loot it?", doname(cobj),
+				underfoot ? "here" : "there");
 		    c = ynq(qbuf);
 		    if(c == 'q') return (timepassed);
 		    if(c == 'n') continue;
@@ -1242,7 +1333,7 @@ doloot()	/* loot a container on the floor. */
 		}
 	}
 	if(c == -1){
-	    if(Confusion){
+	    if(Confusion && underfoot){
 		if(u.ugold){
 		    long contribution = rnd((int)min(LARGEST_INT,u.ugold));
 		    struct obj *goldob = mkgoldobj(contribution);
@@ -1284,10 +1375,10 @@ verbalize("Thank you for your contribution to reduce the debt.");
 			pline("Ok, now there is loot here.");
 		    }
 		}
-	    } else if (IS_GRAVE(levl[u.ux][u.uy].typ)) {
+	    } else if (IS_GRAVE(levl[x][y].typ)) {
 		You("need to dig up a grave in order to effectively loot it...");
 	    } else {
-		You("don't find anything here to loot.");
+		You("%s %s to loot.", dont_find_anything, underfoot ? "here" : "there");
 	    }
 	}
     return (timepassed);
