@@ -859,6 +859,12 @@ label2:			if (mdef->mhp > 0) return 0;
 			char onambuf[BUFSZ];
 
 			otmp = mdef->minvent;
+#ifdef STEED
+			if (u.usteed == mdef &&
+					otmp == which_armor(mdef, W_SADDLE))
+				/* "You can no longer ride <steed>." */
+				dismount_steed(DISMOUNT_POLY);
+#endif
 			obj_extract_self(otmp);
 			if (otmp->owornmask) {
 				mdef->misc_worn_check &= ~otmp->owornmask;
