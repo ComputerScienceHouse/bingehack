@@ -16,6 +16,7 @@ static NEARDATA struct obj *book;	/* last/current book being xscribed */
 #define spellet(spell)	\
 	((char)((spell < 26) ? ('a' + spell) : ('A' + spell - 26)))
 
+static int FDECL(spell_let_to_idx, (CHAR_P));
 static void FDECL(cursed_book, (int));
 static void FDECL(deadbook, (struct obj *));
 STATIC_PTR int NDECL(learn);
@@ -82,6 +83,20 @@ static int FDECL(isqrt, (int));
 
 /* since the spellbook itself doesn't blow up, don't say just "explodes" */
 static const char explodes[] = "radiates explosive energy";
+
+/* convert a letter into a number in the range 0..51, or -1 if not a letter */
+static int
+spell_let_to_idx(ilet)
+char ilet;
+{
+    int indx;
+
+    indx = ilet - 'a';
+    if (indx >= 0 && indx < 26) return indx;
+    indx = ilet - 'A';
+    if (indx >= 0 && indx < 26) return indx + 26;
+    return -1;
+}
 
 static void
 cursed_book(lev)
@@ -328,27 +343,27 @@ register struct obj *spellbook;
 			return(1);
 		}
 		switch (objects[booktype].oc_level) {
-			case 1:
-			case 2:
+		 case 1:
+		 case 2:
 			delay = -objects[booktype].oc_delay;
 			break;
-			case 3:
-			case 4:
-				delay = -(objects[booktype].oc_level - 1) *
-					objects[booktype].oc_delay;
+		 case 3:
+		 case 4:
+			delay = -(objects[booktype].oc_level - 1) *
+				objects[booktype].oc_delay;
 			break;
-			case 5:
-			case 6:
-				delay = -objects[booktype].oc_level *
-					objects[booktype].oc_delay;
+		 case 5:
+		 case 6:
+			delay = -objects[booktype].oc_level *
+				objects[booktype].oc_delay;
 			break;
-			case 7:
+		 case 7:
 			delay = -8 * objects[booktype].oc_delay;
 			break;
-		default:
-				impossible("Unknown spellbook level %d, book %d;",
-					objects[booktype].oc_level, booktype);
-				return (0);
+		 default:
+			impossible("Unknown spellbook level %d, book %d;",
+				objects[booktype].oc_level, booktype);
+			return 0;
 		}
 
 		/* Books are often wiser than their readers (Rus.) */
@@ -470,8 +485,8 @@ getspell(spell_no)
 
 	    if (nspells == 1)  Strcpy(lets, "a");
 	    else if (nspells < 27)  Sprintf(lets, "a-%c", 'a' + nspells - 1);
-	    else if (nspells == 27)  Sprintf(lets, "a-z A");
-	    else Sprintf(lets, "a-z A-%c", 'A' + nspells - 27);
+	    else if (nspells == 27)  Sprintf(lets, "a-zA");
+	    else Sprintf(lets, "a-zA-%c", 'A' + nspells - 27);
 
 	    for(;;)  {
 		Sprintf(qbuf, "Cast which spell? [%s ?]", lets);
@@ -481,24 +496,18 @@ getspell(spell_no)
 		if (index(quitchars, ilet))
 		    return FALSE;
 
-		if (letter(ilet) && ilet != '@') {
-		    /* in a-zA-Z, convert back to an index */
-		    if (lowc(ilet) == ilet)	/* lower case */
-			idx = ilet - 'a';
-		    else
-			idx = ilet - 'A' + 26;
-
-		    if (idx < nspells) {
-			*spell_no = idx;
-			return TRUE;
-		    }
-		}
-		You("don't know that spell.");
+		idx = spell_let_to_idx(ilet);
+		if (idx >= 0 && idx < nspells) {
+		    *spell_no = idx;
+		    return TRUE;
+		} else
+		    You("don't know that spell.");
 	    }
 	}
 	return dospellmenu(PICK_ONE, spell_no);
 }
 
+/* the 'Z' command -- cast a spell */
 int
 docast()
 {
@@ -908,6 +917,7 @@ losespells()
 	}
 }
 
+/* the '+' command -- view known spells */
 int
 dovspell()
 {
