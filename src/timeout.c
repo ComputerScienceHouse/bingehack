@@ -199,13 +199,15 @@ nh_timeout()
 			if (!killer) {
 				killer_format = KILLED_BY;
 				killer = "petrification";
-			} done(STONING);
+			}
+			done(STONING);
 			break;
 		case SLIMED:
 			if (!killer) {
 				killer_format = KILLED_BY;
 				killer = "turning into green slime";
-			} done(TURNED_SLIME);
+			}
+			done(TURNED_SLIME);
 			break;
 		case VOMITING:
 			make_vomiting(0L, TRUE);
@@ -277,11 +279,11 @@ nh_timeout()
 		case SLEEPING:
 			if (unconscious() || Sleep_resistance)
 				HSleeping += rnd(100);
-			else if (ESleeping) {
+			else if (Sleeping) {
 				You("fall asleep.");
 				sleeptime = rnd(20);
 				fall_asleep(-sleeptime, TRUE);
-				HSleeping = sleeptime + rnd(100);
+				HSleeping += sleeptime + rnd(100);
 			}
 			break;
 		case LEVITATION:

@@ -370,6 +370,7 @@ m_throw(mon, x, y, dx, dy, range, obj)
 				&& !(poly_when_stoned(youmonst.data) &&
 				    polymon(PM_STONE_GOLEM)))
 			    Stoned = 5;
+			    killer = (char *) 0;
 		    }
 		    stop_occupation();
 		    if (hitu || !range) {

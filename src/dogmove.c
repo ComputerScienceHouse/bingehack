@@ -287,7 +287,8 @@ int udist;
 		if (dogfood(mtmp, obj) <= CADAVER)
 		    return dog_eat(mtmp, obj, omx, omy, FALSE);
 
-		if(can_carry(mtmp, obj) && !obj->cursed)
+		if(can_carry(mtmp, obj) && !obj->cursed &&
+			!is_pool(mtmp->mx,mtmp->my))
 		    if(rn2(20) < edog->apport+3)
 			if (rn2(udist) || !rn2(edog->apport)) {
 			    if (cansee(omx, omy) && flags.verbose)

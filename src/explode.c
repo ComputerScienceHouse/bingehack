@@ -256,9 +256,8 @@ char olet;
 				      (adtyp == AD_DRST) ? "intoxicated" :
 				      (adtyp == AD_ACID) ? "burned" :
 				       "fried");
-		} else
-		pline("%s is caught in the %s!",
-			cansee(i+x-1, j+y-1) ? Monnam(mtmp) : "It", str);
+		} else if (cansee(i+x-1, j+y-1))
+		pline("%s is caught in the %s!", Monnam(mtmp), str);
 
 		idamres += destroy_mitem(mtmp, SCROLL_CLASS, (int) adtyp);
 		idamres += destroy_mitem(mtmp, SPBOOK_CLASS, (int) adtyp);
@@ -277,9 +276,8 @@ char olet;
 			int mdam = dam;
 
 			if (resist(mtmp, olet, 0, FALSE)) {
-				pline("%s resists the %s!",
-					cansee(i+x-1,j+y-1) ? Monnam(mtmp) : "It",
-					str);
+				if (cansee(i+x-1,j+y-1))
+				    pline("%s resists the %s!", Monnam(mtmp), str);
 				mdam = dam/2;
 			}
 			if (mtmp == u.ustuck)

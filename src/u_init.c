@@ -761,10 +761,10 @@ u_init()
 	case PM_ELF:
 	    /*
 	     * Elves are people of music and song, or they are warriors.
-	     * Non-warriors MAY get an instrument.  We use a kludge to
+	     * Non-warriors get an instrument.  We use a kludge to
 	     * get only non-magic instruments.
 	     */
-	    if (Role_if(PM_HEALER) || Role_if(PM_WIZARD)) {
+	    if (Role_if(PM_PRIEST) || Role_if(PM_WIZARD)) {
 		static int trotyp[] = {
 		    WOODEN_FLUTE, TOOLED_HORN, WOODEN_HARP,
 		    BELL, BUGLE, LEATHER_DRUM

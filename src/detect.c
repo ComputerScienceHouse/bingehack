@@ -854,6 +854,13 @@ genericptr_t num;
 			newsym(zx, zy);
 			(*(int*)num)++;
 		}
+		if (!canspotmon(mtmp) &&
+				    !glyph_is_invisible(levl[zx][zy].glyph))
+			map_invisible(zx, zy);
+	} else if (glyph_is_invisible(levl[zx][zy].glyph)) {
+		unmap_object(zx, zy);
+		newsym(zx, zy);
+		(*(int*)num)++;
 	}
 }
 

@@ -1280,7 +1280,7 @@ struct obj *otmp;
 		    (Upolyd ? (!carnivorous(youmonst.data) ||
 				(humanoid(youmonst.data) &&
 					!is_orc(youmonst.data)))
-			    : !(Role_if(PM_CAVEMAN) || Race_if(PM_ORC)))) {
+			    : !CANNIBAL_ALLOWED())) {
 			make_vomiting((long)rn1(victual.reqtime, 14), FALSE);
 		}
 		break;
@@ -1439,7 +1439,7 @@ struct obj *otmp;
 		choke(otmp);
 		break;
 	    case AMULET_OF_RESTFUL_SLEEP: /* another bad idea! */
-		HSleeping = rnd(100);
+		HSleeping = FROMOUTSIDE | rnd(100);
 		break;
 		case RIN_SUSTAIN_ABILITY:
 	    case AMULET_OF_LIFE_SAVING:

@@ -1164,7 +1164,35 @@ doloot()	/* loot a container on the floor. */
 	if (check_capacity((char *)0)) {
 		/* "Can't do that while carrying so much stuff." */
 		return 0;
-	} else if (!can_reach_floor()) {
+	}
+
+#if 0 /*ifdef STEED*/
+	/* Loot your steed, even if you can't reach the floor */
+	if (u.usteed) {
+	    char qbuf[QBUFSZ];
+
+	    Sprintf(qbuf, "Do you want to loot %s inventory?",
+	    		s_suffix(y_monnam(u.usteed)));
+	    switch (c = ynq(qbuf)) {
+		case 'y':
+		    if (!u.usteed->minvent) {
+			impossible("no saddle?");
+			break;
+		    }
+		    /* TO DO: get and put things into the inventory */
+		    You("peek at %s inventory...", s_suffix(y_monnam(u.usteed)));;
+		    (void) display_minventory(u.usteed, MINV_ALL);
+		    timepassed = 1;
+		    break;
+		case 'n':
+		    break;
+		case 'q':
+		    return (0);
+	    }
+	}
+#endif	/* STEED */
+
+	if (!can_reach_floor()) {
 #ifdef STEED
 		if (u.usteed && P_SKILL(P_RIDING) < P_BASIC)
 			You("aren't skilled enough to reach from %s.", mon_nam(u.usteed));
@@ -1256,7 +1284,7 @@ verbalize("Thank you for your contribution to reduce the debt.");
 			pline("Ok, now there is loot here.");
 		    }
 		}
-	    } else if (levl[u.ux][u.uy].typ == GRAVE) {
+	    } else if (IS_GRAVE(levl[u.ux][u.uy].typ)) {
 		You("need to dig up a grave in order to properly loot it...");
 	    } else {
 		You("don't find anything here to loot.");

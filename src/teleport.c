@@ -825,6 +825,13 @@ struct monst *mtmp;	/* mx==0 implies migrating monster arrival */
 	register int x, y, trycount;
 	xchar omx = mtmp->mx, omy = mtmp->my;
 
+#ifdef STEED
+	if (mtmp == u.usteed) {
+	    tele();
+	    return;
+	}
+#endif
+
 	if (mtmp->iswiz && omx) {	/* Wizard, not just arriving */
 	    if (!In_W_tower(u.ux, u.uy, &u.uz))
 		x = xupstair,  y = yupstair;

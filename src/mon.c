@@ -726,6 +726,7 @@ mpickstuff(mtmp, str)
 			continue;
 		if (!touch_artifact(otmp,mtmp)) continue;
 		if (!can_carry(mtmp,otmp)) continue;
+		if (is_pool(mtmp->mx,mtmp->my)) continue;
 #ifdef INVISIBLE_OBJECTS
 		if (otmp->oinvis && !perceives(mtmp->data)) continue;
 #endif

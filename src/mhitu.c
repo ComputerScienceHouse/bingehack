@@ -1106,6 +1106,8 @@ do_stone:
 				    && !(poly_when_stoned(youmonst.data) &&
 					polymon(PM_STONE_GOLEM))) {
 				Stoned = 5;
+				killer_format = KILLED_BY_AN;
+				killer = mtmp->data->mname;
 				return(1);
 				/* You("turn to stone..."); */
 				/* done_in_by(mtmp); */

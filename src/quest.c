@@ -321,6 +321,7 @@ prisoner_speaks (mtmp)
 	    	pline("%s speaks:", Monnam(mtmp));
 	    verbalize("I'm finally free!");
 	    mtmp->mstrategy &= ~STRAT_WAITMASK;
+	    mtmp->mpeaceful = 1;
 
 	    /* Your god is happy... */
 	    adjalign(3);
