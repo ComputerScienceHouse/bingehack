@@ -47,10 +47,10 @@
 			 * Also define this for AIX 3.2 */
 #define TERMINFO	/* uses terminfo rather than termcap */
 			/* Should be defined for most SYSV, SVR4 (including
-			 * Solaris 2+) and HPUX systems.  In particular, it
-			 * should NOT be defined for the UNIXPC unless you
-			 * remove the use of the shared library in the
-			 * Makefile */
+			 * Solaris 2+), HPUX, and Linux systems.  In
+			 * particular, it should NOT be defined for the UNIXPC
+			 * unless you remove the use of the shared library in
+			 * the Makefile */
 #define TEXTCOLOR	/* Use System V r3.2 terminfo color support */
 			/* and/or ANSI color support on termcap systems */
 			/* and/or X11 color */
