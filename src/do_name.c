@@ -770,6 +770,7 @@ static const char *bogusmons[] = {
 	"Totoro",				/* Tonari no Totoro */
 	"ohmu",					/* Nausicaa */
 	"youma",				/* Sailor Moon */
+	"nyaasu",				/* Pokemon (Meowth) */
 	"Godzilla", "King Kong",		/* monster movies */
 	"earthquake beast",			/* old L of SH */
 	"Invid",				/* Robotech */
