@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)spell.c	3.3	1999/11/01	*/
+/*	SCCS Id: @(#)spell.c	3.3	2000/01/10	*/
 /*	Copyright (c) M. Stephenson 1988			  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -378,14 +378,14 @@ register struct obj *spellbook;
 			} else {
 			    /* uncursed - chance to fail */
 			    int read_ability = ACURR(A_INT) + 4 + u.ulevel/2
-				- 2*objects[booktype].oc_level;
+					       - 2*objects[booktype].oc_level;
 			    /* only wizards know if a spell is too difficult */
 			    if (Role_if(PM_WIZARD) && read_ability < 20) {
 				char qbuf[QBUFSZ];
 				Sprintf(qbuf,
 		      "This spellbook is %sdifficult to comprehend. Continue?",
 					(read_ability < 12 ? "very " : ""));
-				if (ynq(qbuf) != 'y') {
+				if (yn(qbuf) != 'y') {
 				    spellbook->in_use = FALSE;
 				    return(1);
 				}
