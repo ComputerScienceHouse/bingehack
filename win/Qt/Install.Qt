@@ -44,8 +44,12 @@ To use this code:
         OPTIONS=hilite_pet,toptenwin,msghistory:200
 
 
-If you are using KDE, you may also wish to add "-DKDE" to the CXXFLAGS and
-add $(WINKDESRC), $(WINKDEOBJ), and $(WINKDELIB) to WINSRC, WINOBJ, and WINLIB
-respectively.  Some additional files here, knh-mini.xpm, knh.lnk,
-and knethack.xpm are useful if you want to install "knethack" in the KDE games
-directory.
+If you are using KDE, you may want to also try the KDE version. It just
+uses the KDE menubar and follows other KDE conventions - there is no
+extra functionality. To do so, first ensure that you have KDE 2.x
+libraries on your system (in 1999 KDE 1.x was the norm); then, add
+$(KDECXXFLAGS) to the CXXFLAGS definition, $(KDELFLAGS) to the LFLAGS
+definition and $(WINKDELIB) to WINLIB.  Some additional files here -
+knh-mini.xpm, knh.lnk, and knethack.xpm are useful if you want to
+install "knethack" in the KDE games directory.  
+
