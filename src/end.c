@@ -690,13 +690,13 @@ die:
 			otmp->known = 1;	/* for fake amulets */
 			otmp->onamelth = 0;
 			otmp->quan = count;
-			Sprintf(pbuf, "%8d %s (worth %ld zorkmids),",
+			Sprintf(pbuf, "%8ld %s (worth %ld zorkmids),",
 				count, xname(otmp),
 				count * (long)objects[typ].oc_cost);
 			obfree(otmp, (struct obj *)0);
 		    } else {
 			Sprintf(pbuf,
-				"%8d worthless piece%s of colored glass,",
+				"%8ld worthless piece%s of colored glass,",
 				count, plur(count));
 		    }
 		    putstr(endwin, 0, pbuf);
