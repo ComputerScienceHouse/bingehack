@@ -2314,7 +2314,8 @@ do_break_wand(obj)
 			       PIT : HOLE);
 	    continue;
 	} else if(obj->otyp == WAN_CREATE_MONSTER) {
-	    (void) makemon((struct permonst *)0, x, y, NO_MM_FLAGS);
+	    /* u.ux,u.uy creates it near you--x,y might create it in rock */
+	    (void) makemon((struct permonst *)0, u.ux, u.uy, NO_MM_FLAGS);
 	    continue;
 	} else {
 	    if (x == u.ux && y == u.uy) {
