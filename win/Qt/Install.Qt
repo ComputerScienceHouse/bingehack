@@ -23,14 +23,16 @@ To use this code:
 
    3. ../../src/Makefile
 
+	ensure your QTDIR environment variable was set correctly when
+	you installed Qt - $QTDIR/include/qwidget.h should exist, for
+	example.
+
 	ensure CXX and LD are set to the compiler and linker you need
 	for compiling and linking C++ software (e.g., set both to g++).
 
         add $(WINQTSRC), $(WINQTOBJ), and $(WINQTLIB) to WINSRC, WINOBJ,
         and WINLIB respectively, and compile.  This will give you an
-        executable supporting both Qt and tty windowing.  Prepend
-        -L$(QTDIR)/lib to LFLAGS, and ensure your QTDIR environment variable
-        was set correctly when you installed Qt.
+        executable supporting both Qt and tty windowing.
 
    4. ../../Makefile (the top-level makefile)
 
