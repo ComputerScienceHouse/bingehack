@@ -1482,6 +1482,7 @@ doturn()
 	}
 	pline("Calling upon %s, you chant an arcane formula.", u_gname());
 	exercise(A_WIS, TRUE);
+	u.uconduct.gnostic++;
 
 	/* note: does not perform unturn_dead() on victims' inventories */
 	range = BOLT_LIM + (u.ulevel / 5);	/* 5 to 11 */
