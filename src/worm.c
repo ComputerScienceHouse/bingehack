@@ -732,7 +732,7 @@ boolean
 worm_known(worm)
 struct monst *worm;
 {
-    struct wseg *curr = (wtails[worm->wormno])->nseg;
+    struct wseg *curr = wtails[worm->wormno];
 
     while (curr) {
 	if(cansee(curr->wx,curr->wy)) return TRUE;
