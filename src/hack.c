@@ -256,13 +256,15 @@ moverock()
 	    if (throws_rocks(youmonst.data)) {
 #ifdef STEED
 		if (u.usteed && P_SKILL(P_RIDING) < P_BASIC)
-			You("aren't skilled enough to %s %s from %s.",
-				flags.pickup ? "pick up" : "push aside",
-				the(xname(otmp)), mon_nam(u.usteed));
+		    You("aren't skilled enough to %s %s from %s.",
+			(flags.pickup && !In_sokoban(&u.uz))
+			    ? "pick up" : "push aside",
+			the(xname(otmp)), mon_nam(u.usteed));
 		else
 #endif
-		  pline("However, you can easily %s.",
-			flags.pickup ? "pick it up" : "push it aside");
+		    pline("However, you can easily %s.",
+			(flags.pickup && !In_sokoban(&u.uz))
+			    ? "pick it up" : "push it aside");
 		break;
 	    }
 
