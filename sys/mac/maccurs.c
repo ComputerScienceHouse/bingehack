@@ -7,10 +7,7 @@
 #include "macwin.h"
 
 #include <Folders.h>
-#include <Windows.h>
-#include <ToolUtils.h>
 #include <Resources.h>
-#include <Files.h>
 
 
 static Boolean winFileInit = 0;

@@ -34,7 +34,8 @@ topl_getlin(const char *query, char *bufp, key_func key) {
 		return;
 
 	enter_topl_mode((char *) query);
-	while ((*key)(nhgetch()));
+	while ((*key)(nhgetch()))
+		;
 	leave_topl_mode(bufp);
 }
 

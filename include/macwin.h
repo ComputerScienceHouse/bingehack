@@ -131,14 +131,15 @@ extern Boolean FDECL(RetrieveWinPos, (WindowPtr,short *,short *));
 
 /* ### macerrs.c ### */
 
-extern void comment(char *,long);
 extern void showerror(char *,const char *);
 extern Boolean itworked( short );
 extern void mustwork( short );
 extern void attemptingto( char *  );
+/* appear to be unused 
+extern void comment(char *,long);
 extern void pushattemptingto( char *  );
 extern void popattempt( void );
-
+*/
 /* ### macfile.c ### */
 
 /* extern char *macgets(int fd, char *ptr, unsigned len); unused */

@@ -604,6 +604,35 @@ RgnHandle rh = NewRgn ();
 
 
 /*
+ * get and set window invalid region.  exposed for HandleUpdateEvent in macwin.c
+ * to correct display problem
+ */
+
+short get_invalid_region (WindowPtr window, Rect *inval_rect) {
+	RECORD_EXISTS (record);
+#if CLIP_RECT_ONLY
+	if (record->invalid_rect.right <= record->invalid_rect.left ||
+		record->invalid_rect.bottom <= record->invalid_rect.top) {
+		return general_failure;
+	}
+	*inval_rect = record->invalid_rect;
+#else
+	if (EmptyRgn (record->invalid_part)) {
+		return return general_failure;
+	}
+	*inval_rect = (*(record->invalid_part))->rgnBBox;
+#endif
+	return noErr;
+}
+
+short set_invalid_region (WindowPtr window, Rect *inval_rect) {
+	RECORD_EXISTS (record);
+	accumulate_rect (record, inval_rect);
+	return noErr;
+}
+
+
+/*
  * Invert the specified position
  */
 static void

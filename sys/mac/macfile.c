@@ -425,7 +425,6 @@ char *rsrc_dlb_fgets(char *buf, int len, dlb *dp)
 {
 	HandleFile *hfp = IsHandleFile(dp->fd);
 	char *p;
-	long mark;
 	int bytesLeft, n = 0;
 
 	if (hfp && hfp->mark < hfp->size) {
@@ -456,7 +455,6 @@ int rsrc_dlb_fgetc(dlb *dp)
 {
 	HandleFile *hfp = IsHandleFile(dp->fd);
 	int ret;
-	long mark;
 
 	if (!hfp || hfp->size <= hfp->mark) return EOF;
 

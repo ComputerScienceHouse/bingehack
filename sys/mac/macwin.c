@@ -2022,11 +2022,21 @@ HandleUpdate (EventRecord *theEvent) {
 	WindowPtr theWindow = (WindowPtr) theEvent->message;
 	NhWindow *aWin = GetNhWin (theWindow);
 
+	char existing_update_region = FALSE;
+	Rect rect;
+	
+	if (theWindow == _mt_window) {
+		existing_update_region = (get_invalid_region (theWindow, &rect) == noErr);
+	}
 	BeginUpdate (theWindow);
 	SetPort (theWindow);
 	EraseRect (&(theWindow->portRect));
 	winUpdateFuncs [((WindowPeek)theWindow)->windowKind - WIN_BASE_KIND] 
 				(theEvent, theWindow);
+
+	if (theWindow == _mt_window && existing_update_region) {
+		set_invalid_region (theWindow, &rect);
+	}
 	aWin->drawn = TRUE;
 	EndUpdate (theWindow);
 }
@@ -2423,6 +2433,8 @@ mac_add_menu (winid win, int glyph, const anything *any, CHAR_P menuChar, CHAR_P
 		Sprintf(locStr, "%c - %s", (menuChar ? menuChar : ' '), inStr);
 		str = locStr;
 		HLock ((char**)aWin->menuInfo);
+		HLock ((char**)aWin->menuSelected);
+		(*aWin->menuSelected)[aWin->miLen] = preselected;
 		item = &(*aWin->menuInfo)[aWin->miLen];
 		aWin->miLen++;
 		item->id = *any;
@@ -2430,6 +2442,7 @@ mac_add_menu (winid win, int glyph, const anything *any, CHAR_P menuChar, CHAR_P
 		item->groupAcc = groupAcc;
 		item->line = aWin->y_size;
 		HUnlock ((char**)aWin->menuInfo);
+		HUnlock ((char**)aWin->menuSelected);
 	} else
 		str = inStr;
 

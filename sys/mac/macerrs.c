@@ -7,46 +7,19 @@
 #endif
 
 #include "hack.h"
-#include "macwin.h"
-
-#include <OSUtils.h>
-#include <files.h>
-#include <Types.h>
-#ifdef MAC_MPW32
-#include <String.h>
-#include <Strings.h>
-#else
-# ifdef __MWERKS__
-#  include <strings.h>
-# else
-#  include <pascal.h>
-# endif
-#endif
-#include <Dialogs.h>
-#include <Packages.h>
-#include <ToolUtils.h>
 #include <Resources.h>
 
-#define stackDepth  4
+#define stackDepth  1
 #define errAlertID 129
 #define stdIOErrID 1999
 
-static void VDECL(vprogerror,(const char *line, va_list the_args));
+void showerror(char *,const char *);
+Boolean itworked( short );
+void mustwork( short );
+void attemptingto( char *  );
 
-static Str255 gActivities[stackDepth] = {"","","",""};
+static Str255 gActivities[stackDepth] = {""};
 static short gTopactivity = 1;
-
-#if 0	/* Apparently unused */
-void comment(char *s, long n)
-{
-	Str255 paserr;
-	short itemHit;
-	
-	sprintf((char *)paserr, "%s - %d",s,n);
-	ParamText(c2pstr((char *)paserr),(StringPtr)"",(StringPtr)"",(StringPtr)"");
-	itemHit = Alert(128, (ModalFilterUPP)nil);
-}
-#endif	/* Apparently unused */
 
 void showerror(char * errdesc, const char * errcomment)
 {
@@ -149,6 +122,17 @@ void attemptingto(char * activity)
 	activity = (char *)c2pstr((char *)gActivities[gTopactivity]);
 }
 
+#if 0 /* Apparently unused */
+void comment(char *s, long n)
+{
+	Str255 paserr;
+	short itemHit;
+	
+	sprintf((char *)paserr, "%s - %d",s,n);
+	ParamText(c2pstr((char *)paserr),(StringPtr)"",(StringPtr)"",(StringPtr)"");
+	itemHit = Alert(128, (ModalFilterUPP)nil);
+}
+
 void pushattemptingto(char * activity)
 /* Push a new description onto stack so we can pop later to previous state */
 {
@@ -165,3 +149,4 @@ void popattempt(void)
 	if (gTopactivity > 1) --gTopactivity;
 	else error("activity stack underflow");
 }
+#endif /* Apparently unused */

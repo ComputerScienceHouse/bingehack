@@ -294,6 +294,12 @@ extern short clear_tty_window ( WindowPtr window , short from_row ,
 	short from_col , short to_row , short to_col ) ;
 
 /*
+ * get and set the invalid region of the main window
+ */
+ extern short get_invalid_region (WindowPtr window, Rect *inval_rect);
+ extern short set_invalid_region (WindowPtr window, Rect *inval_rect);
+ 
+/*
  * Now in macsnd.c, which seemed like a good place
  */
 extern void tty_nhbell ();
