@@ -134,6 +134,13 @@ SYSOBJ = ioctl.o unixmain.o unixtty.o unixunix.o
 #LD = gcc
 #LFLAGS = -Xlinker -soname=_APP_
 
+# Only used for the Gnome interface.
+# When including the Gnome interface, you need to include gnome specific
+# directories.  The ones given below is the usual spot for linux systems.
+# The paths are for glibconfig.h and gnomesupport.h respectively.
+#
+GNOMEINC=-I/usr/lib/glib/include -I/usr/lib/gnome-libs/include -I../win/gnome -DGNOME_GRAPHICS=1
+
 # flags for debugging:
 # CFLAGS = -g -I../include
 
@@ -170,6 +177,36 @@ WINX11OBJ = Window.o dialogs.o winX.o winmap.o winmenu.o winmesg.o \
 WINQTSRC = ../win/Qt/qt_win.cpp ../win/Qt/qt_clust.cpp
 WINQTOBJ = qt_win.o qt_clust.o tile.o
 # WINQTOBJ = qt_win.o qt_clust.o # tile.o
+#
+# Files for a Gnome port
+#
+WINGNOMESRC= ../win/gnome/GnomeHackAskStringDialog.c \
+	../win/gnome/GnomeHackBind.c \
+	../win/gnome/GnomeHackGlyph.c \
+	../win/gnome/GnomeHackMainWindow.c \
+	../win/gnome/GnomeHackMapWindow.c \
+	../win/gnome/GnomeHackMenuWindow.c \
+	../win/gnome/GnomeHackMessageWindow.c \
+	../win/gnome/GnomeHackPlayerSelDialog.c \
+	../win/gnome/GnomeHackSettings.c \
+	../win/gnome/GnomeHackSignals.c \
+	../win/gnome/GnomeHackStatusWindow.c \
+	../win/gnome/GnomeHackTextWindow.c \
+	../win/gnome/GnomeHackYesNoDialog.c
+WINGNOMEOBJ= ../win/gnome/GnomeHackAskStringDialog.o \
+	../win/gnome/GnomeHackBind.o \
+	../win/gnome/GnomeHackGlyph.o \
+	../win/gnome/GnomeHackMainWindow.o \
+	../win/gnome/GnomeHackMapWindow.o \
+	../win/gnome/GnomeHackMenuWindow.o \
+	../win/gnome/GnomeHackMessageWindow.o \
+	../win/gnome/GnomeHackPlayerSelDialog.o \
+	../win/gnome/GnomeHackSettings.o \
+	../win/gnome/GnomeHackSignals.o \
+	../win/gnome/GnomeHackStatusWindow.o \
+	../win/gnome/GnomeHackTextWindow.o \
+	../win/gnome/GnomeHackYesNoDialog.o \
+	tile.o
 #
 # Files for a Gem port
 WINGEMSRC = ../win/gem/wingem.c ../win/gem/wingem1.c ../win/gem/load_img.c \
@@ -215,6 +252,9 @@ WINQTLIB = -L$(QTDIR)/lib -lqt
 #
 # libraries for KDE (with Qt)
 WINKDELIB = -lkdecore -lkdeui -lXext
+#
+# libraries for Gnome
+WINGNOMELIB = -lgnomeui -lgnome -lart_lgpl -lgtk -lgdk -lpopt
 #
 # libraries for Gem port
 WINGEMLIB = -le_gem -lgem

@@ -43,8 +43,9 @@
  * Some combinations make no sense.  See the installation document.
  */
 #define TTY_GRAPHICS	/* good old tty based graphics */
-/* #define X11_GRAPHICS */ /* X11 interface */
+/* #define X11_GRAPHICS */	/* X11 interface */
 /* #define QT_GRAPHICS */	/* Qt interface */
+/* #define GNOME_GRAPHICS */	/* Gnome interface */
 
 /*
  * Define the default window system.  This should be one that is compiled
@@ -85,6 +86,14 @@
 # define GRAPHIC_TOMBSTONE	/* Use graphical tombstone (rip.ppm) */
 # ifndef DEFAULT_WINDOW_SYS
 #  define DEFAULT_WINDOW_SYS "Qt"
+# endif
+#endif
+
+#ifdef GNOME_GRAPHICS
+# define USE_XPM		/* Use XPM format for images (required) */
+# define GRAPHIC_TOMBSTONE	/* Use graphical tombstone (rip.ppm) */
+# ifndef DEFAULT_WINDOW_SYS
+#  define DEFAULT_WINDOW_SYS "Gnome"
 # endif
 #endif
 

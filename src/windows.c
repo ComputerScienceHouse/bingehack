@@ -33,6 +33,10 @@ extern void NDECL(ami_wininit_data);
 #ifdef WIN32_GRAPHICS
 extern struct window_procs win32_procs;
 #endif
+#ifdef GNOME_GRAPHICS
+#include "winGnome.h"
+extern struct window_procs Gnome_procs;
+#endif
 
 STATIC_DCL void FDECL(def_raw_print, (const char *s));
 
@@ -67,6 +71,9 @@ struct win_choices {
 #endif
 #ifdef WIN32_GRAPHICS
     { &win32_procs, 0 },
+#endif
+#ifdef GNOME_GRAPHICS
+    { &Gnome_procs, 0 },
 #endif
     { 0, 0 }		/* must be last */
 };
