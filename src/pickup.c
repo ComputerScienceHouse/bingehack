@@ -1358,7 +1358,7 @@ register struct obj *obj;
 		/*
 		 *  xname() uses a static result array.  Save obj's name
 		 *  before current_container's name is computed.  Don't
-		 *  use the result of strcpy() within You() --- the order
+		 *  use the result of Strcpy() within You() --- the order
 		 *  of evaluation of the parameters is undefined.
 		 */
 		Strcpy(buf, the(xname(obj)));

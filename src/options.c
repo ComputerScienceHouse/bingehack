@@ -1879,7 +1879,7 @@ doset()
 				}
 		    } else if (!strcmp("pickup_types", compopt[opt_indx].name)) {
 			/* parseoptions will prompt for the list of types */
-			parseoptions(strcpy(buf, "pickup_types"), FALSE, FALSE);
+			parseoptions(Strcpy(buf, "pickup_types"), FALSE, FALSE);
 		    } else {
 			Sprintf(buf, "Set %s to what?", compopt[opt_indx].name);
 			getlin(buf, buf2);

@@ -2167,7 +2167,7 @@ boolean unpaid;
 	    invbuf = (char *) alloc(invbufsiz);
 	}
 	if (unpaid)
-	    Strcat(strcpy(invbuf, "Unpaid "), class_name);
+	    Strcat(Strcpy(invbuf, "Unpaid "), class_name);
 	else
 	    Strcpy(invbuf, class_name);
 	return invbuf;

@@ -187,7 +187,7 @@ tabexpand(sbuf)		/* expand tabs into proper number of spaces */
 	    idx++;
 	}
     *bp = 0;
-    return strcpy(sbuf, buf);
+    return Strcpy(sbuf, buf);
 }
 
 char *
@@ -232,7 +232,7 @@ sitoa(n)		/* make a signed digit string from a number */
 {
     Static char buf[13];
 
-    (void) sprintf(buf, (n < 0) ? "%d" : "+%d", n);
+    (void) Sprintf(buf, (n < 0) ? "%d" : "+%d", n);
     return buf;
 }
 

@@ -19,7 +19,7 @@ char *
 getversionstring(buf)
 char *buf;
 {
-	return strcpy(buf, VERSION_ID);
+	return Strcpy(buf, VERSION_ID);
 }
 
 int
@@ -132,7 +132,7 @@ char *str;
 	int j = 0;
 
 	if (!str) return 0L;
-	strcpy(buf,str);
+	Strcpy(buf,str);
 	str = buf;
 	istr[j] = str;
 	while (*str) {

@@ -594,7 +594,7 @@ slip_or_trip()
 		  ((otmp = sobj_at(ROCK, u.ux, u.uy)) == 0 ? something :
 		  (otmp->quan == 1L ? "a rock" : "some rocks"));
 	    if (Hallucination) {
-		what = strcpy(buf, what);
+		what = Strcpy(buf, what);
 		buf[0] = highc(buf[0]);
 		pline("Egads!  %s bite%s your %s!",
 			what, (!otmp || otmp->quan == 1L) ? "s" : "",

@@ -98,7 +98,7 @@ char *rumor_buf;
 			break;
 		  default:
 			    impossible("strange truth value for rumor");
-			return strcpy(rumor_buf, "Oops...");
+			return Strcpy(rumor_buf, "Oops...");
 		}
 		(void) dlb_fseek(rumors, beginning + tidbit, SEEK_SET);
 		(void) dlb_fgets(line, sizeof line, rumors);

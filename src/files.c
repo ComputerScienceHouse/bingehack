@@ -110,7 +110,7 @@ const char *filename, *mode;
 	char tmp[BUFSIZ];
 
 	if (!index(filename, '.') && !index(filename, ';'))
-		filename = strcat(strcpy(tmp, filename), ";0");
+		filename = strcat(Strcpy(tmp, filename), ";0");
 	fp = fopen(filename, mode, "mbc=16");
 # else
 	fp = fopen(filename, mode);
