@@ -66,14 +66,21 @@ and so on).
 
 === Default options
     The following options are specific to the Macintosh port:
+    background:  - black or white
     MACgraphics  - use enhanced dungeon map symbols [TRUE]
     large_font   - use 12 point font instead of 9 point font [FALSE]
     popup_dialog - use real dialogs for question prompts [FALSE]
     page_wait    - display  --MORE--  after messages [TRUE]
+    use_stone:#  - use a background pattern for the dungeon.
 
     large_font is currently a pre-game option and has no effect
         after the Dungeon Map window is created.
 
+	use_stone is also a pre-game option.  The number parameter
+        specifies which pattern to use.  If the number is 0 or
+        greater than the number of available patterns, it has no
+        effect.
+        
     Default options may be set by editing the NetHack Defaults text
         file (possibly using SimpleText or your favorite editor).
         Unix(tm)-style notation is used, as in:

@@ -256,13 +256,9 @@ short hor, vert;
 	mustwork (set_tty_attrib (_mt_window, TTY_ATTRIB_FLAGS, flag));
 
 	mustwork (get_tty_attrib (_mt_window, TTY_ATTRIB_CURSOR, &flag));
-	flag |= TA_BLINKING_CURSOR;
-#ifdef applec
-	flag &= ~ TA_CR_ADD_NL;
-#else
-	flag &= ~ TA_NL_ADD_CR;
-#endif
+	flag |= (TA_BLINKING_CURSOR | TA_NL_ADD_CR);
 	mustwork (set_tty_attrib (_mt_window, TTY_ATTRIB_CURSOR, flag));
+
 	mustwork (set_tty_attrib (_mt_window, TTY_ATTRIB_FOREGROUND, _mt_colors [NO_COLOR] [0]));
 	mustwork (set_tty_attrib (_mt_window, TTY_ATTRIB_BACKGROUND, _mt_colors [NO_COLOR] [1]));
 
@@ -275,7 +271,6 @@ tgetch (void) {
 EventRecord event;
 long sleepTime = 0;
 int ret = 0;
-int key;
 
 	for (;!ret;) {
 		WaitNextEvent (-1, &event, sleepTime, 0);
@@ -500,16 +495,6 @@ long flag;
 	flag |= TA_INHIBIT_VERT_SCROLL; /* don't scroll */
 	mustwork (set_tty_attrib (_mt_window, TTY_ATTRIB_FLAGS, flag));
 
-	mustwork (get_tty_attrib (_mt_window, TTY_ATTRIB_CURSOR, &flag));
-
-#ifdef applec
-	flag &= ~ TA_CR_ADD_NL;
-#else
-	flag &= ~ TA_NL_ADD_CR;
-#endif
-
-	mustwork (set_tty_attrib (_mt_window, TTY_ATTRIB_CURSOR, flag));
-
 	iflags.cbreak = 1;
 }
 
@@ -538,16 +523,6 @@ long flag;
 	flag &= ~ TA_INHIBIT_VERT_SCROLL; /* scroll */
 	flag |= TA_ALWAYS_REFRESH;
 	mustwork (set_tty_attrib (_mt_window, TTY_ATTRIB_FLAGS, flag));
-
-	mustwork (get_tty_attrib (_mt_window, TTY_ATTRIB_CURSOR, &flag));
-
-#ifdef applec
-	flag |= TA_CR_ADD_NL;
-#else
-	flag |= TA_NL_ADD_CR;
-#endif
-
-	mustwork (set_tty_attrib (_mt_window, TTY_ATTRIB_CURSOR, flag));
 
 	tty_raw_print ("\n");
 	if (str) {

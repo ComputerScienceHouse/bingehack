@@ -637,7 +637,6 @@ got1 :
 	aWin->menuChar = 'a';
 	
 	dprintf ("cre_win: New win kind %d", kind);
-//	aWin->kind = kind;
 
 	if (kind == NHW_BASE || kind == NHW_MAP || kind == NHW_STATUS) {
 		short x_sz, x_sz_p, y_sz, y_sz_p;
@@ -2586,8 +2585,14 @@ mac_resume_nhwindows (void) {
 int
 try_key_queue (char *bufp) {
 	if (keyQueueCount) {
-		while (*bufp++ = GetFromKeyQueue())
-			;
+		char ch;
+		for (ch = GetFromKeyQueue(); ; ch = GetFromKeyQueue()) {
+			if (ch == CHAR_LF || ch == CHAR_CR)
+				ch = 0;
+			*bufp++ = ch;
+			if (ch == 0)
+				break;
+		}
 		return 1;
 	}
 	return 0;
