@@ -7,6 +7,10 @@
 static NEARDATA schar delay;		/* moves left for this spell */
 static NEARDATA struct obj *book;	/* last/current book being xscribed */
 
+/* spellmenu arguments; 0 thru n-1 used as spl_book[] index when swapping */
+#define SPELLMENU_CAST (-2)
+#define SPELLMENU_VIEW (-1)
+
 #define KEEN 20000
 #define MAX_SPELL_STUDY 3
 #define incrnknow(spell)        spl_book[spell].sp_know = KEEN
@@ -504,7 +508,8 @@ getspell(spell_no)
 		    You("don't know that spell.");
 	    }
 	}
-	return dospellmenu("Choose which spell to cast", -1, spell_no);
+	return dospellmenu("Choose which spell to cast",
+			   SPELLMENU_CAST, spell_no);
 }
 
 /* the 'Z' command -- cast a spell */
@@ -928,7 +933,8 @@ dovspell()
 	if (spellid(0) == NO_SPELL)
 	    You("don't know any spells right now.");
 	else {
-	    while (dospellmenu("Currently known spells", -1, &splnum)) {
+	    while (dospellmenu("Currently known spells",
+			       SPELLMENU_VIEW, &splnum)) {
 		Sprintf(qbuf, "Reordering spells; swap '%c' with",
 			spellet(splnum));
 		if (!dospellmenu(qbuf, splnum, &othnum)) break;
@@ -942,13 +948,13 @@ dovspell()
 }
 
 static boolean
-dospellmenu(prompt, preselect, spell_no)
+dospellmenu(prompt, splaction, spell_no)
 const char *prompt;
-int preselect;
+int splaction;	/* SPELLMENU_CAST, SPELLMENU_VIEW, or spl_book[] index */
 int *spell_no;
 {
 	winid tmpwin;
-	int i, n;
+	int i, n, how;
 	char buf[BUFSZ];
 	menu_item *selected;
 	anything any;
@@ -978,27 +984,30 @@ int *spell_no;
 		any.a_int = i+1;	/* must be non-zero */
 		add_menu(tmpwin, NO_GLYPH, &any,
 			 spellet(i), 0, ATR_NONE, buf,
-			 (i == preselect) ? MENU_SELECTED : MENU_UNSELECTED);
+			 (i == splaction) ? MENU_SELECTED : MENU_UNSELECTED);
 	      }
 	end_menu(tmpwin, prompt);
 
-	n = select_menu(tmpwin, PICK_ONE, &selected);
+	how = PICK_ONE;
+	if (splaction == SPELLMENU_VIEW && spellid(1) == NO_SPELL)
+	    how = PICK_NONE;	/* only one spell => nothing to swap with */
+	n = select_menu(tmpwin, how, &selected);
 	destroy_nhwindow(tmpwin);
 	if (n > 0) {
 		*spell_no = selected[0].item.a_int - 1;
 		/* menu selection for `PICK_ONE' does not
 		   de-select any preselected entry */
-		if (n > 1 && *spell_no == preselect)
+		if (n > 1 && *spell_no == splaction)
 		    *spell_no = selected[1].item.a_int - 1;
 		free((genericptr_t)selected);
 		/* default selection of preselected spell means that
 		   user chose not to swap it with anything */
-		if (*spell_no == preselect) return FALSE;
+		if (*spell_no == splaction) return FALSE;
 		return TRUE;
-	} else if (preselect != -1) {
+	} else if (splaction >= 0) {
 	    /* explicit de-selection of preselected spell means that
 	       user is still swapping but not for the current spell */
-	    *spell_no = preselect;
+	    *spell_no = splaction;
 	    return TRUE;
 	}
 	return FALSE;
