@@ -1,7 +1,7 @@
 
 
 
-LEV_COMP(6)                   1996                    LEV_COMP(6)
+Games and Demos                                       LEV_COMP(6)
 
 
 
@@ -60,14 +60,14 @@ GRAMMAR
 
 
 
-May                      Last change: 16                        1
+SunOS 5.7           Last change: 16 May 1996                    1
 
 
 
 
 
 
-LEV_COMP(6)                   1996                    LEV_COMP(6)
+Games and Demos                                       LEV_COMP(6)
 
 
 
@@ -126,14 +126,14 @@ LEV_COMP(6)                   1996                    LEV_COMP(6)
 
 
 
-May                      Last change: 16                        2
+SunOS 5.7           Last change: 16 May 1996                    2
 
 
 
 
 
 
-LEV_COMP(6)                   1996                    LEV_COMP(6)
+Games and Demos                                       LEV_COMP(6)
 
 
 
@@ -192,14 +192,14 @@ LEV_COMP(6)                   1996                    LEV_COMP(6)
 
 
 
-May                      Last change: 16                        3
+SunOS 5.7           Last change: 16 May 1996                    3
 
 
 
 
 
 
-LEV_COMP(6)                   1996                    LEV_COMP(6)
+Games and Demos                                       LEV_COMP(6)
 
 
 
@@ -258,14 +258,14 @@ LEV_COMP(6)                   1996                    LEV_COMP(6)
 
 
 
-May                      Last change: 16                        4
+SunOS 5.7           Last change: 16 May 1996                    4
 
 
 
 
 
 
-LEV_COMP(6)                   1996                    LEV_COMP(6)
+Games and Demos                                       LEV_COMP(6)
 
 
 
@@ -324,14 +324,14 @@ LEV_COMP(6)                   1996                    LEV_COMP(6)
 
 
 
-May                      Last change: 16                        5
+SunOS 5.7           Last change: 16 May 1996                    5
 
 
 
 
 
 
-LEV_COMP(6)                   1996                    LEV_COMP(6)
+Games and Demos                                       LEV_COMP(6)
 
 
 
@@ -390,14 +390,14 @@ LEV_COMP(6)                   1996                    LEV_COMP(6)
 
 
 
-May                      Last change: 16                        6
+SunOS 5.7           Last change: 16 May 1996                    6
 
 
 
 
 
 
-LEV_COMP(6)                   1996                    LEV_COMP(6)
+Games and Demos                                       LEV_COMP(6)
 
 
 
@@ -456,14 +456,14 @@ LEV_COMP(6)                   1996                    LEV_COMP(6)
 
 
 
-May                      Last change: 16                        7
+SunOS 5.7           Last change: 16 May 1996                    7
 
 
 
 
 
 
-LEV_COMP(6)                   1996                    LEV_COMP(6)
+Games and Demos                                       LEV_COMP(6)
 
 
 
@@ -522,14 +522,14 @@ LEV_COMP(6)                   1996                    LEV_COMP(6)
 
 
 
-May                      Last change: 16                        8
+SunOS 5.7           Last change: 16 May 1996                    8
 
 
 
 
 
 
-LEV_COMP(6)                   1996                    LEV_COMP(6)
+Games and Demos                                       LEV_COMP(6)
 
 
 
@@ -588,14 +588,14 @@ LEV_COMP(6)                   1996                    LEV_COMP(6)
 
 
 
-May                      Last change: 16                        9
+SunOS 5.7           Last change: 16 May 1996                    9
 
 
 
 
 
 
-LEV_COMP(6)                   1996                    LEV_COMP(6)
+Games and Demos                                       LEV_COMP(6)
 
 
 
@@ -617,6 +617,8 @@ LEV_COMP(6)                   1996                    LEV_COMP(6)
      'P'     a pool
      'L'     lava
      'W'     water (yes, different from a pool)
+     'T'     a tree
+     'F'     iron bars
      '#'     a corridor
      '.'     a normal room location (unlit unless lit in a REGION declaration)
      ' '     stone
@@ -649,22 +651,22 @@ EXAMPLE
      CONTAINER: '(', "sack", place[2]
      OBJECT: '*', "diamond", contained
      OBJECT[50%]: '*', "ruby", contained
+
+
+
+SunOS 5.7           Last change: 16 May 1996                   10
+
+
+
+
+
+
+Games and Demos                                       LEV_COMP(6)
+
+
+
      # a random dragon somewhere
      MONSTER: 'D', random, random
-
-
-
-May                      Last change: 16                       10
-
-
-
-
-
-
-LEV_COMP(6)                   1996                    LEV_COMP(6)
-
-
-
      # 3 out of 4 chance for a random trap in the EAST end
      TRAP[75%]: random, (6,4)
      # an electric eel below the SOUTH end
@@ -718,9 +720,7 @@ BUGS
 
 
 
-
-
-May                      Last change: 16                       11
+SunOS 5.7           Last change: 16 May 1996                   11
 
 
 

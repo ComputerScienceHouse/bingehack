@@ -123,10 +123,10 @@
                You may also choose the race of your character:
 
                Dwarves are smaller than humans or elves, but are stocky and
-          solid  individuals.   Dwarves  most  notable trait is their great
+          solid  individuals.   Dwarves'  most notable trait is their great
 
 
-          NetHack 3.3                                     November 24, 1999
+          NetHack 3.3                                      December 2, 1999
 
 
 
@@ -186,13 +186,13 @@
           is recommended; if the screen is larger,  only  a  21x80  section
           will be used for the map.
 
-               NetHack generates a new dungeon every time you play it; even
-          the  authors  still  find  it  an  entertaining and exciting game
-          despite having won several times.
+               NetHack can even be played by blind players, with the assis-
+          tance  of  Braille  readers or speech synthesisers.  Instructions
+          for configuring NetHack for the blind are included later in  this
+          document.
 
 
-
-          NetHack 3.3                                     November 24, 1999
+          NetHack 3.3                                      December 2, 1999
 
 
 
@@ -200,6 +200,11 @@
 
 
           NetHack Guidebook                                               4
+
+
+               NetHack generates a new dungeon every time you play it; even
+          the  authors  still  find  it  an  entertaining and exciting game
+          despite having won several times.
 
 
           3.  What do all those things on the screen mean?
@@ -251,14 +256,9 @@
           status line becomes longer than the  width  of  the  screen,  you
           might not see all of it.  Here are explanations of what the vari-
           ous status items mean (though your configuration may not have all
-          the status items listed below):
-
-          Rank
-               Your character's name and professional ranking (based on the
-               experience level, see below).
 
 
-          NetHack 3.3                                     November 24, 1999
+          NetHack 3.3                                      December 2, 1999
 
 
 
@@ -267,6 +267,12 @@
 
           NetHack Guidebook                                               5
 
+
+          the status items listed below):
+
+          Rank
+               Your character's name and professional ranking (based on the
+               experience level, see below).
 
           Strength
                A measure of your character's  strength;  one  of  your  six
@@ -300,10 +306,11 @@
 
           Alignment
                Lawful, Neutral, or Chaotic.  Often, Lawful is taken as good
-               and  Chaotic  as  evil.  Your alignment influences how other
-               monsters react toward you.  Monsters of a like alignment are
-               more likely to be non-aggressive, while those of an opposing
-               alignment are more likely to be seriously offended  at  your
+               and  Chaotic  as  evil,  but legal and ethical do not always
+               coincide.  Your  alignment  influences  how  other  monsters
+               react  toward  you.   Monsters  of a like alignment are more
+               likely to be non-aggressive,  while  those  of  an  opposing
+               alignment  are  more likely to be seriously offended at your
                presence.
 
           Dungeon Level
@@ -315,16 +322,9 @@
 
           Gold
                The number of gold pieces you  are  openly  carrying.   Gold
-               which you have concealed in containers is not counted.
-
-          Hit Points
-               Your current and maximum hit points.   Hit  points  indicate
-               how  much  damage you can take before you die.  The more you
-               get hit in a fight, the lower they get.  You can regain  hit
-               points  by  resting,  or  by  using certain magical items or
 
 
-          NetHack 3.3                                     November 24, 1999
+          NetHack 3.3                                      December 2, 1999
 
 
 
@@ -334,6 +334,13 @@
           NetHack Guidebook                                               6
 
 
+               which you have concealed in containers is not counted.
+
+          Hit Points
+               Your current and maximum hit points.   Hit  points  indicate
+               how  much  damage you can take before you die.  The more you
+               get hit in a fight, the lower they get.  You can regain  hit
+               points  by  resting,  or  by  using certain magical items or
                spells.  The number in parentheses  is  the  maximum  number
                your hit points can reach.
 
@@ -378,6 +385,21 @@
           make certain that you've read the one that is  there  first.   To
           read the next message, just press the space bar.
 
+
+
+
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                               7
+
+
           3.3.  The map (rest of the screen)
 
                The rest of the screen is the map of the level as  you  have
@@ -389,27 +411,16 @@
           - and |
                The walls of a room, or an open door.  Or a grave (|).
 
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                               7
-
-
           .    The floor of a room, ice, or a doorless doorway.
 
           #    A corridor, or iron bars, or a tree, or possibly  a  kitchen
                sink (if your dungeon has sinks), or a drawbridge.
 
-          <    A way to the previous level.
+          >    Stairs down: a way to the next level.
 
-          >    A way to the next level.
+          <    Stairs up: a way to the previous level.
 
-          +    A closed door, or a spell book containing a  spell  you  can
+          +    A closed door, or a spellbook containing  a  spell  you  can
                learn.
 
           @    Your character or a human.
@@ -434,7 +445,7 @@
 
           (    A useful item (pick-axe, key, lamp...).
 
-          "    An amulet (or a spider web).
+          "    An amulet or a spider web.
 
           *    A gem or rock (possibly valuable, possibly worthless).
 
@@ -442,21 +453,10 @@
 
           0    An iron ball.
 
-          _    An altar, or an iron chain.
-
-          }    A pool of water or moat or a pool of lava.
-
-          {    A fountain.
-
-          \    An opulent throne.
-
-          a-zA-Z and other symbols
-               Letters and certain other symbols represent the various  in-
-               habitants  of  the  Mazes of Menace.  Watch out, they can be
-               nasty and vicious.  Sometimes, however, they can be helpful.
 
 
-          NetHack 3.3                                     November 24, 1999
+
+          NetHack 3.3                                      December 2, 1999
 
 
 
@@ -466,9 +466,22 @@
           NetHack Guidebook                                               8
 
 
+          _    An altar, or an iron chain.
+
+          {    A fountain.
+
+          }    A pool of water or moat or a pool of lava.
+
+          \    An opulent throne.
+
+          a-zA-Z and other symbols
+               Letters and certain other symbols represent the various  in-
+               habitants  of  the  Mazes of Menace.  Watch out, they can be
+               nasty and vicious.  Sometimes, however, they can be helpful.
+
                You need not memorize all these symbols;  you  can  ask  the
           game  what  any  symbol  represents with the `/' command (see the
-          Commands section for more info).
+          next section for more info).
 
 
           4.  Commands
@@ -495,7 +508,7 @@
           you change your mind and decide you don't want to do this command
           after all, you can press the ESC key to abort the command.
 
-               You can put a number before most  commands  to  repeat  them
+               You can put a number before some  commands  to  repeat  them
           that  many times; for example, ``10s'' will search ten times.  If
           you have the number_pad option set, you must type `n' to prefix a
           count,  so  the  example  above  would be typed ``n10s'' instead.
@@ -508,6 +521,17 @@
           a menu of helpful texts.  Here are the commands for  your  refer-
           ence:
 
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                               9
+
+
           ?    Help menu:  display one of several help texts available.
 
           /    Tell what a symbol represents.  You may choose to specify  a
@@ -519,20 +543,8 @@
                upon whether the help option is on, and  then  you  will  be
                asked  to pick another location; `,' will explain the symbol
                but skip any additional information; `;' will skip addition-
-               al  info  and  also  not bother asking you to choose another
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                               9
-
-
-               location to examine; `:' will show additional info, if  any,
+               al info and also not bother asking you to choose another lo-
+               cation to examine; `:' will show additional  info,  if  any,
                without  asking  for confirmation.  When picking a location,
                pressing the ESC key will terminate this command, or  press-
                ing `?'  will give a brief reminder about how it works.
@@ -574,6 +586,18 @@
 
           F[yuhjklbn]
                Prefix:  fight a monster (even if  you  only  guess  one  is
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              10
+
+
                there)
 
           M[yuhjklbn]
@@ -585,18 +609,6 @@
           G[yuhjklbn] or <CONTROL->[yuhjklbn]
                Prefix:  same as `g', but forking of corridors is  not  con-
                sidered interesting.
-
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              10
-
 
           .    Rest, do nothing for one turn.
 
@@ -612,20 +624,20 @@
 
           C    Call (name) an individual monster.
 
-          ^C or #quit
-               Panic button.  Quit the game.
+          ^C   Panic button.  Quit the game.
 
           d    Drop something.  Ex. ``d7a'' means drop seven items  of  ob-
                ject a.
 
           D    Drop several things.  In answer to the question ``What kinds
-               of  things  do  you want to drop? [!%= au]'' you should type
+               of  things do you want to drop? [!%= aium]'' you should type
                zero or more object symbols possibly followed by `a'  and/or
-               `m' and/or `u'.
+               `i' and/or `u' and/or `m'.
 
                Da  - drop all objects, without asking for confirmation.
-               Dm  - use a menu to pick which object(s) to drop.
+               Di  - examine your inventory before dropping anything.
                Du  - drop only unpaid objects (when in a shop).
+               Dm  - use a menu to pick which object(s) to drop.
                D%u - drop only unpaid food.
 
           ^D   Kick something (usually a door).
@@ -641,20 +653,8 @@
 
                E- - write in the dust with your fingers.
 
-          f    Fire one of the objects placed  in  your  quiver.   You  may
-               select  ammunition  with  a previous `Q' command, or let the
-               computer pick something appropriate if autoquiver is true.
 
-          i    List your inventory (everything you're carrying).
-
-          I    List selected parts of your inventory.
-
-
-
-
-
-
-          NetHack 3.3                                     November 24, 1999
+          NetHack 3.3                                      December 2, 1999
 
 
 
@@ -664,10 +664,18 @@
           NetHack Guidebook                                              11
 
 
-                    I* - list all gems in inventory;
-                    Iu - list all unpaid items;
-                    Ix - list all used up items that are on your shopping bill;
-                    I$ - count your money.
+          f    Fire one of the objects placed  in  your  quiver.   You  may
+               select  ammunition  with  a previous `Q' command, or let the
+               computer pick something appropriate if autoquiver is true.
+
+          i    List your inventory (everything you're carrying).
+
+          I    List selected parts of your inventory.
+
+               I* - list all gems in inventory;
+               Iu - list all unpaid items;
+               Ix - list all used up items that are on your shopping bill;
+               I$ - count your money.
 
           o    Open a door.
 
@@ -678,8 +686,8 @@
                face).  For the  non-boolean  choices,  a  further  menu  or
                prompt will appear once you've closed this menu.  The avail-
                able options are listed later in  this  Guidebook.   Options
-               are  usually  set before the game, not with the `O' command;
-               see the section on options below.
+               are  usually  set  before  the game rather than with the `O'
+               command; see the section on options below.
 
           p    Pay your shopping bill.
 
@@ -695,7 +703,7 @@
                the command to quit the game, which has now  been  moved  to
                `#quit'.)
 
-          r    Read a scroll or spell book.
+          r    Read a scroll or spellbook.
 
           R    Remove an accessory (ring, amulet, etc).
 
@@ -704,23 +712,15 @@
           s    Search for secret doors and traps around  you.   It  usually
                takes several tries to find something.
 
-          S    Save the game.  The game will be restored automatically  the
-               next time you play.
+          S    Save (and suspend) the game.  The game will be restored  au-
+               tomatically the next time you play.
 
           t    Throw an object or shoot a projectile.
 
-          T    Take off armor.
-
-          ^T   Teleport, if you have the ability.
-
-          v    Display version number.
-
-          V    Display the game history.
 
 
 
-
-          NetHack 3.3                                     November 24, 1999
+          NetHack 3.3                                      December 2, 1999
 
 
 
@@ -730,8 +730,17 @@
           NetHack Guidebook                                              12
 
 
-          w    Wield weapon.  `w-'  means  wield  nothing,  use  your  bare
-               hands.
+          T    Take off armor.
+
+          ^T   Teleport, if you have the ability.
+
+          v    Display version number.
+
+          V    Display the game history.
+
+          w    Wield weapon.
+
+               w- - wield nothing, use your bare hands.
 
           W    Wear armor.
 
@@ -740,7 +749,8 @@
                two-weapon combat.  Note that if one of these slots is  emp-
                ty, the exchange still takes place.
 
-          X    Enter explore (discovery) mode.
+          X    Enter explore (discovery) mode, explained in its own section
+               later.
 
           z    Zap a wand.  To aim at yourself, use `.' for the direction.
 
@@ -771,22 +781,12 @@
           *    Tell what equipment you are using;  combines  the  preceding
                five type-specific commands into one.
 
-          $    Count your gold pieces.
-
-          +    List the spells you know.
-
-          \    Show what types of objects have been discovered.
-
-          !    Escape to a shell.
-
-          #    Perform an extended command.  As you can see, the authors of
-               NetHack  used  up  all  the  letters,  so  this  is a way to
 
           __________
           (R)UNIX is a registered trademark of AT&T.
 
 
-          NetHack 3.3                                     November 24, 1999
+          NetHack 3.3                                      December 2, 1999
 
 
 
@@ -796,63 +796,63 @@
           NetHack Guidebook                                              13
 
 
-               introduce the less frequently used commands.  You may obtain
-               a list of them by entering `?' after the `#'.  What extended
-               commands are available depends on what features the game was
+          $    Count your gold pieces.
+
+          +    List the spells you know.  Using this command, you can  also
+               rearrange  the  order in which your spells are listed.  They
+               are shown via a menu, and if you  select  a  spell  in  that
+               menu, you'll be re-prompted for another spell to swap places
+               with it, and then  have  opportunity  to  make  further  ex-
+               changes.
+
+          \    Show what types of objects have been discovered.
+
+          !    Escape to a shell.
+
+          #    Perform an extended command.  As you can see, the authors of
+               NetHack  used up all the letters, so this is a way to intro-
+               duce the less frequently used commands.  What extended  com-
+               mands  are  available  depends on what features the game was
                compiled with.
 
-               If your keyboard has a meta key (which, when pressed in com-
-          bination  with  another  key,  modifies  it by setting the `meta'
-          [8th, or `high'] bit), you can invoke the  extended  commands  by
-          meta-ing  the  first  letter of the command.  In NT, OS/2, and PC
-          NetHack, the `Alt' key can be used in this fashion.
-
-          M-a  Adjust inventory letters (most useful when the fixinv option
+          #adjust
+               Adjust inventory letters (most useful when the fixinv option
                is ``on'').
 
-          M-c  Talk to someone.
+          #chat
+               Talk to someone.
 
-          M-d  Dip an object into something.
+          #conduct
+               List which challenges you have adhered to.
 
-          M-e  Advance or check weapons skills.
+          #dip Dip an object into something.
 
-          M-f  Force a lock.
+          #enhance
+               Advance or check weapons skills.
 
-          M-i  Invoke an object's special powers.
+          #force
+               Force a lock.
 
-          M-j  Jump to another location.
+          #invoke
+               Invoke an object's special powers.
 
-          M-l  Loot a box on the floor.
+          #jump
+               Jump to another location.
 
-          M-m  Use a monster's special ability.
+          #loot
+               Loot a box on the floor.
 
-          M-n  Name an item or type of object.
+          #monster
+               Use a monster's special ability (when polymorphed into  mon-
+               ster form).
 
-          M-o  Offer a sacrifice to the gods.
-
-          M-p  Pray to the gods for help.
-
-          M-q  Quit the program without saving your game.
-
-          M-r  Rub a lamp.
-
-          M-s  Sit down.
-
-          M-t  Turn undead.
-
-          M-u  Untrap something (trap, door, or chest).
-
-          M-v  Print compile time options for this version of NetHack.
-
-          M-w  Wipe off your face.
-
-          #twoweapon
-               Toggle two-weapon combat on or off.  Note that you must  use
-               suitable  weapons for this type of combat, or it will be au-
-               tomatically turned off.
+          #name
+               Name an item or type of object.
 
 
-          NetHack 3.3                                     November 24, 1999
+
+
+          NetHack 3.3                                      December 2, 1999
 
 
 
@@ -861,6 +861,98 @@
 
           NetHack Guidebook                                              14
 
+
+          #offer
+               Offer a sacrifice to the gods.
+
+          #pray
+               Pray to the gods for help.
+
+          #quit
+               Quit the program without saving your game.
+
+          #ride
+               Ride (or stop riding) a monster.
+
+          #rub Rub a lamp.
+
+          #sit Sit down.
+
+          #turn
+               Turn undead.
+
+          #twoweapon
+               Toggle two-weapon combat on or off.  Note that you must  use
+               suitable  weapons for this type of combat, or it will be au-
+               tomatically turned off.
+
+          #untrap
+               Untrap something (trap, door, or chest).
+
+          #version
+               Print compile time options for this version of NetHack.
+
+          #wipe
+               Wipe off your face.
+
+          #?   Help menu:  get the list of available extended commands.
+
+               If your keyboard has a meta key (which, when pressed in com-
+          bination  with  another  key,  modifies  it by setting the `meta'
+          [8th, or `high'] bit), you can invoke many extended  commands  by
+          meta-ing  the  first  letter of the command.  In NT, OS/2, and PC
+          NetHack, the `Alt' key can be used in this fashion.
+
+          M-a  #adjust
+
+          M-c  #chat
+
+          M-d  #dip
+
+          M-e  #enhance
+
+          M-f  #force
+
+          M-i  #invoke
+
+
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              15
+
+
+          M-j  #jump
+
+          M-l  #loot
+
+          M-m  #monster
+
+          M-n  #name
+
+          M-o  #offer
+
+          M-p  #pray
+
+          M-q  #quit
+
+          M-r  #rub
+
+          M-s  #sit
+
+          M-t  #turn
+
+          M-u  #untrap
+
+          M-v  #version
+
+          M-w  #wipe
 
                If the number_pad option is on, some additional letter  com-
           mands are available:
@@ -887,6 +979,20 @@
 
                Secret corridors are hidden.  You can find them with the `s'
           (search) command.
+
+
+
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              16
+
 
           5.1.  Doorways
 
@@ -916,18 +1022,6 @@
 
                There are traps throughout the dungeon to snare  the  unwary
           delver.   For  example,  you  may suddenly fall into a pit and be
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              15
-
-
           stuck for a few turns trying to climb out.  Traps don't appear on
           your map until you see one triggered by moving onto it, see some-
           thing fall into it, or you discover it with the `s' (search) com-
@@ -954,6 +1048,18 @@
           been  visited,  it  will be created (from scratch for most random
           levels, from a template for some "special" levels, or loaded from
           the  remains  of  an  earlier game for a "bones" level as briefly
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              17
+
+
           described below).  Monsters are only active on the current level;
           those on other levels are essentially placed into stasis.
 
@@ -982,18 +1088,6 @@
                The commands `/' and `;' may be used to  obtain  information
           about  those  monsters who are displayed on the screen.  The com-
           mand `C' allows you to assign a name to a monster, which  may  be
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              16
-
-
           useful  to  help  distinguish one from another when multiple mon-
           sters are present.  Assigning a name which is just a  space  will
           remove any prior name.
@@ -1001,7 +1095,8 @@
                The extended command ``#chat'' can be used to interact  with
           an  adjacent monster.  There is no actual dialog (in other words,
           you don't get to choose what you'll say), but chatting with  some
-          monsters such as the Oracle of Delphi can produce useful results.
+          monsters such as a shopkeeper or the Oracle of Delphi can produce
+          useful results.
 
           6.1.  Fighting
 
@@ -1019,6 +1114,17 @@
           worried about it or want to train it, you can feed  it,  too,  by
           throwing  it  food.   A  properly  trained pet can be very useful
           under certain circumstances.
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              18
+
 
                Your pet also gains experience from  killing  monsters,  and
           can  grow  over  time,  gaining hit points and doing more damage.
@@ -1039,26 +1145,15 @@
                Some types of creatures in the dungeon can actually be  rid-
           den if you have the right equipment and skill.  Convincing a wild
           beast to let you saddle it up is  difficult  to  say  the  least.
-          Many  a  dungeoneer has had resort to magic and wizardry in order
-          to forge the alliance.  Once you do have  the  beast  under  your
+          Many a dungeoneer has had to resort to magic and wizardry in ord-
+          er to forge the alliance.  Once you do have the beast under  your
           control  however,  you  can easily climb in and out of the saddle
-          with the #ride command. Lead the beast around  the  dungeon  when
-          riding,  in the same manner as you would move yourself. It is the
-          beast that you will see.
+          with the `#ride' command.  Lead the beast around the dungeon when
+          riding, in the same manner as you would move yourself.  It is the
+          beast that you will see displayed on the map.
 
-
-
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              17
-
+               Riding skill is managed by the `#enhance' command.  See  the
+          section on Weapon proficiency for more information about that.
 
           6.4.  Bones levels
 
@@ -1084,16 +1179,29 @@
           will add the object(s) to your pack and tell you  what  you  just
           picked up.
 
+
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              19
+
+
                As you add items to your inventory, you also add the  weight
           of  that  object  to  your  load.   The amount that you can carry
-          depends on your strength.  The stronger you are, the less the ad-
-          ditional load will affect you.  There comes a point, though, when
-          the weight of all of that stuff you are carrying around with  you
-          through  the  dungeon will begin to encumber you.  Your reactions
-          will get slower and you'll burn calories faster,  requiring  food
-          more  frequently to cope with it.  Eventually, you'll be so over-
-          loaded that you'll either have to discard  some  of  what  you're
-          carrying or collapse under it's weight.
+          depends on your strength and your constitution.  The stronger you
+          are, the less the additional load will affect you.  There comes a
+          point, though, when the weight of all of that stuff you are  car-
+          rying  around  with  you  through  the dungeon will encumber you.
+          Your reactions will get slower and you'll burn  calories  faster,
+          requiring  food  more  frequently  to  cope with it.  Eventually,
+          you'll be so overloaded that you'll either have to  discard  some
+          of what you're carrying or collapse under it's weight.
 
                NetHack will tell you how badly have loaded  yourself.   The
           symbols   `Burdened',  `Stressed',  `Strained',  `Overtaxed'  and
@@ -1112,19 +1220,6 @@
           vary according to type.  During a game, any two objects with  the
           same  description  are  the same type.  However, the descriptions
           will vary from game to game.
-
-
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              18
-
 
                When you use one of these objects, if its effect is obvious,
           NetHack  will  remember  what it is for you.  If its effect isn't
@@ -1151,6 +1246,18 @@
           better  or more beneficially than normal uncursed items.  For ex-
           ample, a blessed weapon will do more damage against demons.
 
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              20
+
+
                There are magical means of bestowing or removing curses upon
           objects,  so  even  if you are stuck with one, you can still have
           the curse lifted and the item removed.  Priests  and  Priestesses
@@ -1176,50 +1283,156 @@
                There are wielded weapons, like maces and swords, and thrown
           weapons,  like arrows and spears.  To hit monsters with a weapon,
           you must wield it and attack them, or throw it at them.  You  can
-          simply  select  to  throw a spear.  To shoot an arrow, you should
+          simply  elect  to  throw  a spear.  To shoot an arrow, you should
           first wield  a  bow,  then  throw  the  arrow.   Crossbows  shoot
           crossbow  bolts.   Slings  hurl  rocks  and  (other) stones (like
-          gems).  You can wield only one weapon at  a  time,  but  you  can
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              19
-
-
-          change weapons unless you're wielding a cursed one.  To switch to
-          bare hands, wield `-', or use the `A' command which allows you to
-          unwield  the  current weapon in addition to taking off other worn
-          items.
-
-               The ``#enhance'' command  deals  with  your  proficiency  in
-          various types of weapons (also spells).
+          gems).
 
                Enchanted weapons have a ``plus'' (or ``to hit enhancement''
-          which  can be either positive or negative) that adds or subtracts
-          to/from your chance to hit and the damage you do  to  a  monster.
-          The  only  way  to determine a weapon's enchantment is to have it
-          magically identified somehow.
+          which  can  be  either  positive  or  negative) that adds to your
+          chance to hit and the damage you do to a monster.  The  only  way
+          to determine a weapon's enchantment is to have it magically iden-
+          tified somehow.  Most weapons are subject to some type of  damage
+          like rust.  Such ``erosion'' damage can be repaired.
 
-               Most weapons are subject to some type of damage  like  rust.
-          Such damage can be repaired.
+               The chance that an attack will successfully hit  a  monster,
+          and  the  amount  of damage such a hit will do, depends upon many
+          factors.  Among them are:  type of weapon, quality of weapon (en-
+          chantment and/or erosion), experience level, strength, dexterity,
+          encumbrance, and proficiency (see below).   The  monster's  armor
+          class  - a general defense rating, not necessarily due to wearing
+          of armor - is a factor too; also, some monsters are  particularly
+          vulnerable to certain types of weapons.
+
+               Many weapons can be wielded in one hand; some  require  both
+          hands.   When  wielding  a  two-handed weapon, you can not wear a
+          shield, and vice versa.  When wielding a one-handed  weapon,  you
+          can  have  another  weapon ready to use by setting things up with
+          the `x' command, which exchanges  your  primary  (the  one  being
+          wielded)  and  secondary weapons.  And if you have proficiency in
+          the ``two weapon combat'' skill, you may wield both  primary  and
+          secondary  weapons  simultaneously; use the `#twoweapon' extended
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              21
+
+
+          command to engage or disengage that.  Only some types of  charac-
+          ters  (barbarians, for instance), have the necessary skill avail-
+          able.  Even with that skill, using two weapons at once  incurs  a
+          penalty  in  the chance to hit your target compared to using just
+          one weapon at a time.
+
+               There might be times when you'd rather not wield any  weapon
+          at  all.  To accomplish that, wield `-', or else use the `A' com-
+          mand which allows you to unwield the current weapon  in  addition
+          to taking off other worn items.
 
                Those of you in the audience who are AD&D players, be  aware
-          that  each  weapon  which  exists in AD&D does the same damage to
-          monsters in NetHack.  Some of the more obscure weapons  (such  as
-          the  aklys,  lucern  hammer, and bec-de-corbin) are defined in an
-          appendix to Unearthed Arcana, an AD&D supplement.
+          that  each weapon which exists in AD&D does roughly the same dam-
+          age to monsters in NetHack.  Some of  the  more  obscure  weapons
+          (such as the aklys, lucern hammer, and bec-de-corbin) are defined
+          in an appendix to Unearthed Arcana, an AD&D supplement.
 
                The commands to use weapons are `w'  (wield),  `t'  (throw),
-          and  the ``#enhance'' extended command.  The `Q' (quiver) and `f'
-          (fire) commands are convenient for throwing a  stack  of  objects
-          (such  as  arrows).   You  may use two-weapon combat with the `x'
-          (exchange) and ``#twoweapon'' commands.
+          `f'  (fire,  an  alternative  way of throwing), `Q' (quiver), `x'
+          (exchange), `#twoweapon', and `#enhance' (see below).
+
+          7.2.1.  Throwing and shooting
+
+               You can throw just about anything via the `t'  command.   It
+          will  prompt  for the item to throw; picking `?' will list things
+          in your inventory which are considered likely to  be  thrown,  or
+          picking `*' will list your entire inventory.  After you've chosen
+          what to throw, you will be prompted for a direction  rather  than
+          for  a  specific  target.   The  distance something can be thrown
+          depends mainly on the type of object and your  strength.   Arrows
+          can be thrown by hand, but can be thrown much farther and will be
+          more likely to hit when thrown while you are wielding a bow.
+
+               You can simplify the throwing operation  by  using  the  `Q'
+          command  to select your preferred ``missile'', then using the `f'
+          command to throw it.  You'll  be  prompted  for  a  direction  as
+          above,  but  you  don't  have to specify which item to throw each
+          time you use `f'.  There is also an option, autoquiver, which has
+          NetHack  choose  another  item  to automatically fill your quiver
+          when the inventory slot used for `Q' runs out.
+
+               Some characters will throw multiple items in  a  single  ac-
+          tion.  Rangers, for instance, or anyone who achieves a high level
+          of proficiency in the relevant weapon  skill  (in  bow  skill  if
+          you're  wielding one to shoot arrows, or in sling skill if you're
+          wielding one to shoot stones).  There is little  you  can  do  to
+          control this; if NetHack decides that you'll be shooting 3 arrows
+          on the current shot, then three arrows will travel in the  direc-
+          tion  you've  indicated,  even if the first or second succeeds in
+          killing the target.  You can explicitly limit the number of shots
+          by using a numeric prefix before the `t' or `f' command.  For ex-
+          ample, ``2f'' (or ``n2f'' if using number_pad mode) would  ensure
+          that  at most 2 arrows are shot even if NetHack decides that your
+          skill warrants 3.  If you specify a larger number than would have
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              22
+
+
+          been  shot  (``4f'' in this example), you'll just end up shooting
+          the same number (3, here) as if no limit had been specified.
+
+          7.2.2.  Weapon proficiency
+
+               You will have varying degrees of skill in the weapons avail-
+          able.   Weapon proficiency, or weapon skills, affect how well you
+          can use particular types of weapons, and you'll be  able  to  im-
+          prove  your  skills  as you progress through a game, depending on
+          your role, your experience level, and use of the weapons.
+
+               For the purposes of proficiency, weapons have  been  divided
+          up   into  various  groups  such  as  daggers,  broadswords,  and
+          polearms.  Each role has a limit on what level of  proficiency  a
+          character  can achieve for each group.  For instance, wizards can
+          become highly skilled in daggers or staves but not in  swords  or
+          bows.
+
+               The `#enhance' extended command is used  to  review  current
+          weapons  proficiency (also spell proficiency) and to choose which
+          skill(s) to improve when you've used one or more skills enough to
+          become  eligible  to do so.  The skill rankings are "none" (some-
+          times also referred to as "restricted", because you won't be able
+          to advance), "unskilled", "basic", "skilled", and "expert".  Res-
+          tricted skills simply will  not  appear  in  the  list  shown  by
+          `#enhance'.   (Divine  intervention might unrestrict a particular
+          skill, in which case it will start at unskilled and be limited to
+          basic.)
+
+               Use of a weapon in which you're restricted or unskilled will
+          incur a modest penalty in the chance to hit a monster and also in
+          the amount of damage done when you do hit; at basic level,  there
+          is  no  penalty  or bonus; at skilled level, you receive a modest
+          bonus in the chance to hit and amount of damage done;  at  expert
+          level,  the  bonus  is  higher.  A successful hit has a chance to
+          boost your training towards the next skill level  (unless  you've
+          already  reached  the  limit for this skill).  Once such training
+          reaches the threshold for that next level, you'll  be  told  that
+          you  feel  more  confident in your skills.  At that point can use
+          `#enhance' to increase one or more skills.  Such skills  are  not
+          increased  automatically  because  there is a limit to your total
+          overall skills, so you need to actively choose  which  skills  to
+          enhance and which to ignore.
 
           7.3.  Armor (`[')
 
@@ -1231,6 +1444,17 @@
           armor.   Each  suit  of armor which exists in AD&D gives the same
           protection in NetHack.  Here is an (incomplete) list of the armor
           classes provided by various suits of armor:
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              23
+
 
                              dragon scale mail         1
                              plate mail                3
@@ -1246,18 +1470,6 @@
                              studded leather armor     7
                              ring mail                 7
                              orcish ring mail          8
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              20
-
-
                              leather armor             8
                              leather jacket            9
                              no armor                 10
@@ -1298,6 +1510,18 @@
           give you special powers when you eat them.  A good rule of  thumb
           is ``you are what you eat.''
 
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              24
+
+
                Some classes and some monsters are  vegetarian.   Vegetarian
           monsters will typically never eat animal corpses, while vegetari-
           an players can, but with some rather unpleasant side-effects.
@@ -1311,19 +1535,7 @@
 
                Scrolls are labeled with various titles, probably chosen  by
           ancient  wizards  for  their amusement value (ex. ``READ ME,'' or
-          ``HOLY BIBLE'' backwards).  Scrolls disappear after you read them
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              21
-
-
+          ``THANX MAUD'' backwards).  Scrolls disappear after you read them
           (except for blank ones, without magic spells on them).
 
                One of the most useful of these is the scroll  of  identify,
@@ -1364,6 +1576,18 @@
 
                Magic wands usually have  multiple  magical  charges.   Some
           wands  are  directional-you must give a direction in which to zap
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              25
+
+
           them.  You can also zap them at yourself (just give a `.' or  `s'
           for the direction). Be warned, however, for this is often unwise.
           Other wands are nondirectional-they don't  require  a  direction.
@@ -1378,17 +1602,6 @@
           doing  so runs the risk of causing it to explode.  The chance for
           such an explosion starts out very small and increases  each  time
           the wand is recharged.
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              22
-
 
                In a truly desperate situation, when your back is up against
           the  wall,  you might decide to go for broke and break your wand.
@@ -1418,17 +1631,29 @@
 
                The commands to use rings are `P' (put on) and `R' (remove).
 
-          7.9.  Spell books (`+')
+          7.9.  Spellbooks (`+')
 
-               Spell books are tomes of mighty magic.   When  studied  with
-          the  `r'  (read)  command,  they bestow the knowledge of a spell-
-          unless the attempt backfires.  Reading a cursed spell book or one
-          with mystic runes beyond your ken can be harmful to your health!
+               Spellbooks are tomes of mighty magic.  When studied with the
+          `r'  (read)  command, they bestow the knowledge of a spell-unless
+          the attempt backfires.  Reading a cursed spellbook  or  one  with
+          mystic runes beyond your ken can be harmful to your health!
 
                A spell (even when learned) can also backfire when you  cast
           it.   If  you  attempt to cast a spell well above your experience
           level, or cast it at a time when your luck is  particularly  bad,
           you  can  end up wasting both the energy and the time required in
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              26
+
+
           casting.
 
                Casting a spell calls forth  magical  energies  and  focuses
@@ -1440,28 +1665,17 @@
                Casting a spell also requires flexible movement, and wearing
           various types of armor may interfere with that.
 
-               The command to read a spell book is the same as for scrolls,
+               The command to read a spellbook is the same as for  scrolls,
           `r'  (read).   The  `+' command lists your current spells and the
           number of spell points they  require.   The  `Z'  (cast)  command
           casts a spell.
 
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              23
-
-
           7.10.  Tools (`(')
 
                Tools are miscellaneous objects with various purposes.  Some
-          tools,  like  wands, have a limited number of uses.  For example,
-          lamps burn out after a while.  Other tools are containers,  which
-          objects can be placed into or taken out of.
+          tools  have  a limited number of uses, akin to wand charges.  For
+          example, lamps burn out after a  while.   Other  tools  are  con-
+          tainers, which objects can be placed into or taken out of.
 
                The command to use tools is `a' (apply).
 
@@ -1492,6 +1706,20 @@
                The commands to use amulets are the same as for  rings,  `P'
           (put on) and `R' (remove).
 
+
+
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              27
+
+
           7.12.  Gems (`*')
 
                Some gems are valuable, and can be sold for a lot  of  gold.
@@ -1510,28 +1738,15 @@
           generally  heavy.   It  is rumored that some statues are not what
           they seem.
 
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              24
-
-
                Very large humanoids (giants and their ilk) have been  known
           to use boulders as weapons.
 
           7.14.  Gold (`$')
 
                Gold adds to your score, and you can  buy  things  in  shops
-          with  it.   Your version of NetHack may display how much gold you
-          have on the status line.  If not, the `$' command will count  it.
-          There  are a number of monsters in the dungeon that may be influ-
-          enced by the amount of gold you are carrying (shopkeepers aside).
+          with  it.  There are a number of monsters in the dungeon that may
+          be influenced by the amount of gold you are carrying (shopkeepers
+          aside).
 
 
           8.  Options
@@ -1560,6 +1775,17 @@
           equals sign, and then the value of the string.  The value is ter-
           minated by the next comma or the end of string.
 
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              28
+
+
                For example, to set up an environment variable so that ``fe-
           male''  is  on,  ``autopickup'' is off, the name is set to ``Blue
           Meanie'', and the fruit is set to ``papaya'', you would enter the
@@ -1574,19 +1800,6 @@
                $ export NETHACKOPTIONS
 
           in sh or ksh.
-
-
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              25
-
 
           8.3.  Using a configuration file
 
@@ -1619,13 +1832,26 @@
                not be set with the `O' command.
 
           autopickup
-               Pick up things you move onto by default (default on).
+               Automatically pick up things onto which  you  move  (default
+               on).
 
           autoquiver
                This option controls what happens when you attempt  the  `f'
                (fire) command with an empty quiver.  When true, the comput-
                er will fill your quiver with some  suitable  weapon.   Note
                that  it  will  not  take  into  account  the blessed/cursed
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              29
+
+
                status, enchantment, damage, or quality of the  weapon;  you
                are  free  to manually fill your quiver with the `Q' command
                instead.  If no weapon is found or the option is false,  the
@@ -1640,19 +1866,6 @@
           catname
                Name your starting cat (ex. ``catname:Morris'').  Cannot  be
                set with the `O' command.
-
-
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              26
-
 
           character
                Pick your type of character (ex. ``character:Elf''); synonym
@@ -1684,14 +1897,27 @@
           extmenu
                Changes the extended commands interface to pop-up a menu  of
                available  commands.  It  is  keystroke  compatible with the
-               traditional interface, and is implemented only  by  the  tty
-               port  (default off), when the game has been compiled to sup-
-               port tty graphics.
+               traditional interface except that it does not  require  that
+               you  hit  Enter. It is implemented only by the tty port (de-
+               fault off), when the game has been compiled to  support  tty
+               graphics.
 
           disclose
                Offer to disclose various information  when  the  game  ends
                (default  all).   The possibilities are identifying your in-
                ventory ('i'), disclosing your attributes ('a'), summarizing
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              30
+
+
                monsters  that  have been vanquished ('v'), and listing mon-
                ster species that have been genocided ('g').  Note that  the
                vanquished  monsters  list  includes  all monsters killed by
@@ -1708,27 +1934,17 @@
                acters to be used instead of the default map-drawing charac-
                ters.  The dungeon map will use the characters  you  specify
                instead  of the default symbols, and default symbols for any
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              27
-
-
                you do not specify.  Remember that you may  need  to  escape
-               some of these characters if, for example, you use csh.
+               some  of these characters on a command line if they are spe-
+               cial to your shell.
 
-               Note that this option string is escape-processed in  conven-
-               tional  C  fashion.  This means that `\' is a prefix to take
-               the following character literally, and not as a special pre-
-               fix.   The special escape form `\m' switches on the meta bit
-               in the following character, and the `^'  prefix  causes  the
-               following character to be treated as a control character.
+               Note that NetHack escape-processes  this  option  string  in
+               conventional  C fashion.  This means that `\' is a prefix to
+               take the following character literally.  Thus `\'  needs  to
+               be  represented  as  `\\'.   The  special  escape  form `\m'
+               switches on the meta bit in the following character, and the
+               `^' prefix causes the following character to be treated as a
+               control character.
 
                The order of the symbols is:   solid  rock,  vertical  wall,
                horizontal  wall,  upper  left  corner,  upper right corner,
@@ -1756,13 +1972,25 @@
                option should be followed by a string of 1-29 characters  to
                be  used  instead of the default special-effects characters.
                This string is subjected  to  the  same  processing  as  the
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              31
+
+
                dungeon option.
 
                The order of the  symbols  is:   vertical  beam,  horizontal
                beam,  left  slant,  right slant, digging beam, camera flash
                beam, left boomerang, right boomerang,  four  glyphs  giving
-               the  sequence  for magic resistance displays; the eight sur-
-               rounding glyphs for swallowed display; nine glyphs  for  ex-
+               the  sequence  for magic resistance displays, the eight sur-
+               rounding glyphs for swallowed display, nine glyphs  for  ex-
                plosions.  An explosion consists of three rows (top, middle,
                and bottom) of three characters.  The explosion is  centered
                in the center of this 3 by 3 array.
@@ -1774,18 +2002,6 @@
 
           female
                Set your starting gender to female.  Cannot be set with  the
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              28
-
-
                `O' command.
 
           fixinv
@@ -1822,9 +2038,21 @@
                is turned off; with X tiles, display  a  heart  symbol  near
                pets.
 
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              32
+
+
           horsename
-               Name your starting dog (ex. ``horsename:Trigger'').   Cannot
-               be set with the `O' command.
+               Name your starting horse (ex. ``horsename:Trigger'').   Can-
+               not be set with the `O' command.
 
           IBMgraphics
                Use a predefined selection of IBM extended ASCII  characters
@@ -1839,20 +2067,8 @@
                Ignore interrupt signals, including breaks (default off).
 
           legacy
-               Display an  introductory  message  when  starting  the  game
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              29
-
-
-               (default on).
+               Display an introductory message when starting the game  (de-
+               fault on).
 
           lit_corridor
                Show corridor squares seen by night vision or a light source
@@ -1889,6 +2105,17 @@
                Menu character accelerator deselect all items on  this  page
                of a menu.  Implemented only by the tty port.  Default '\'.
 
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              33
+
+
           menu_first_page
                Menu character accelerator to jump to the first  page  in  a
                menu.  Implemented only by the tty port.  Default '^'.
@@ -1904,19 +2131,6 @@
           menu_last_page
                Menu character accelerator to jump to the  last  page  in  a
                menu.  Implemented only by the tty port.  Default '|'.
-
-
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              30
-
 
           menu_next_page
                Menu character accelerator to goto the next menu page.   Im-
@@ -1948,14 +2162,25 @@
                demon, jelly, kobold, leprechaun,  mimic,  nymph,  orc,  pi-
                ercer,  quadruped,  rodent, spider, trapper or lurker above,
                horse   or   unicorn,   vortex,   worm,   xan    or    other
-               mythical/fantastic insect, light, zruty, angelic being, bat,
-               centaur, dragon, elemental, fungus  or  mold,  gnome,  giant
-               humanoid, invisible stalker, jabberwock, Keystone Kop, lich,
-               mummy, naga, ogre, pudding or ooze, quantum  mechanic,  rust
-               monster,  snake,  troll,  umber hulk, vampire, wraith, xorn,
-               yeti or ape or other  large  beast,  zombie,  human,  ghost,
-               golem,  demon, sea monster, lizard, long worm tail, and mim-
-               ic.  Cannot be set with the `O' command.
+               mythical/fantastic  insect, light, zruty, angelic being, bat
+               or bird, centaur, dragon, elemental, fungus or mold,  gnome,
+               giant humanoid, invisible monster, jabberwock, Keystone Kop,
+               lich, mummy, naga, ogre, pudding or ooze, quantum  mechanic,
+               rust  monster,  snake,  troll,  umber hulk, vampire, wraith,
+               xorn, yeti or ape  or  other  large  beast,  zombie,  human,
+               ghost,  golem,  demon,  sea monster, lizard, long worm tail,
+               and mimic.  Cannot be set with the `O' command.
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              34
+
 
           msghistory
                The number of top line messages to save (and recall with ^P)
@@ -1963,27 +2188,15 @@
 
           name
                Set your character's name (defaults to your user name).  You
-               can  also  set  your character class by appending a dash and
-               one or more letters of the character class (that is, by suf-
-               fixing one of -A -B -C -H -K -M -P -Ra -Ro -S -T -V -W).  If
-               -@ is used for the class, then a random one will be automat-
-               ically chosen.  Cannot be set with the `O' command.
+               can  also  set your character's role by appending a dash and
+               one or more letters of the role (that is, by  suffixing  one
+               of -A -B -C -H -K -M -P -Ra -Ro -S -T -V -W).  If -@ is used
+               for the role,  then  a  random  one  will  be  automatically
+               chosen.  Cannot be set with the `O' command.
 
           news
                Read the NetHack news file, if present (default on).   Since
                the  news  is shown at the beginning of the game, there's no
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              31
-
-
                point in setting this with the `O' command.
 
           null
@@ -1998,14 +2211,16 @@
                ``])[="(%!?+/$*`0_.'').   This  string  is  subjected to the
                same processing as the dungeon option.   The  order  of  the
                symbols  is  illegal-object  (should never be seen), weapon,
-               armor, ring, amulet, tool, food, potion, scroll, spell book,
+               armor, ring, amulet, tool, food, potion, scroll,  spellbook,
                wand,  gold,  gem  or  rock,  boulder  or statue, iron ball,
                chain, and venom.  Cannot be set with the `O' command.
 
           packorder
                Specify  the  order  to  list  object  types   in   (default
-               ``\")[%?+/=!(*`0_'').   The value of this option should be a
-               string containing the symbols for the various object types.
+               ``")[%?+!=/(*`0_'').   The  value of this option should be a
+               string containing the symbols for the various object  types.
+               Any omitted types are filled in at the end from the previous
+               order.
 
           perm_invent
                If true, always display your current inventory in a  window.
@@ -2014,15 +2229,27 @@
 
           pettype
                Specify the type of your initial pet, if you are  playing  a
-               character  class  that  uses  both  types of pets.  Possible
+               character  class that uses multiple types of pets.  Possible
                values are ``cat'' and ``dog''.  Cannot be set with the  `O'
                command.
 
           pickup_burden
-               When you pick up an item that would exceeds  this  encumber-
-               ance  level (Unburdened, Burdened, streSsed, straiNed, over-
-               Taxed, or overLoaded), you will be asked if you want to con-
-               tinue.  (Default `B').
+               When you pick up an item that would exceed this  encumbrance
+               level  (Unburdened, Burdened, streSsed, straiNed, overTaxed,
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              35
+
+
+               or overLoaded), you will be asked if you want  to  continue.
+               (Default `B').
 
           pickup_types
                Specify the object types to be picked up when autopickup  is
@@ -2037,23 +2264,10 @@
                enhances performance of the tile  graphics,  but  uses  more
                memory. (default on).  Cannot be set with the `O' command.
 
-
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              32
-
-
           pushweapon
-               When you use the `w' (wield) command and you had been wield-
-               ing  something,  place the old item in your secondary weapon
-               slot (default off).
+               Using the `w' (wield) command when  already  wielding  some-
+               thing  pushes  the  old item into your secondary weapon slot
+               (default off).
 
           race Selects your race (for example, ``race:human'').  Default is
                random.  Cannot be set with the `O' command.
@@ -2072,7 +2286,8 @@
                Pick your type of character (ex. ``role:Samurai'');  synonym
                for  ``character''.  See ``name'' for an alternate method of
                specifying your role.  Normally only the first letter of the
-               value is examined; the string ``random'' is an exception.
+               value  is  examined;  `r'  is  an  exception with ``Rogue'',
+               ``Ranger'', and ``random'' values.
 
           safe_pet
                Prevent you from (knowingly) attacking  your  pets  (default
@@ -2088,6 +2303,17 @@
                Show your accumulated experience points on bottom line  (de-
                fault off).
 
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              36
+
+
           showscore
                Show your approximate accumulated score on bottom line  (de-
                fault off).
@@ -2102,20 +2328,13 @@
           standout
                Boldface monsters and ``--More--'' (default off).
 
+          suppress_alert
+               This option may  be  set  to  a  NetHack  version  level  to
+               suppress  alert  notification messages about feature changes
+               for that and prior versions (ex. ``suppress_alert:3.3.0'').
+
           time
                Show the elapsed game time in turns on bottom line  (default
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              33
-
-
                off).
 
           timed_delay
@@ -2150,6 +2369,17 @@
                teleporter, magic portal,  web,  statue  trap,  magic  trap,
                anti-magic field, polymorph trap.
 
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              37
+
+
                Cannot be set with the `O' command.
 
           verbose
@@ -2170,23 +2400,72 @@
                this  does  not  correct the problem, try !color.  Cannot be
                set with the `O' command.
 
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              34
-
-
           windowtype
                Select which windowing system to use,  such  as  ``tty''  or
                ``X11''  (default  depends  on version).  Cannot be set with
                the `O' command.
 
+          8.5.  Configuring NetHack for Play by the Blind
+
+               NetHack can be set up to use only standard ASCII  characters
+          for  making  maps of the dungeons. This makes the MS-DOS versions
+          of NetHack completely accessible to  the  blind  who  use  speech
+          and/or  Braille access technologies.  Players will require a good
+          working knowledge of their screen-reader's review  features,  and
+          will  have  to  know  how to navigate horizontally and vertically
+          character by character. They will also find the search  capabili-
+          ties  of their screen-readers to be quite valuable. Be certain to
+          examine this Guidebook before playing so you have  an  idea  what
+          the  screen layout is like. You'll also need to be able to locate
+          the PC cursor. It is always  where  your  character  is  located.
+          Merely  searching for an @-sign will not always find your charac-
+          ter since there are other humanoids represented by the same sign.
+          Your  screen-reader  should  also have a function which gives you
+          the row and column of your  review  cursor  and  the  PC  cursor.
+          These  co-ordinates  are  often useful in giving players a better
+          sense of the overall location of items on the screen.
+
+               While it is not difficult for experienced users to edit  the
+          NetHack.nh  file  to  accomplish this, novices may find this task
+          somewhat daunting.  Included in  all  official  distributions  of
+          NetHack  is a file called NHAccess.nh.  Replacing NetHack.nh with
+          this file will cause the game to run in a  manner  accessible  to
+          the  blind.  After  you have gained some experience with the game
+          and with editing files, you may want to alter settings to  better
+          suit your preferences. Instructions on how to do this are includ-
+          ed in the NHAccess.nh file itself. The most crucial  settings  to
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              38
+
+
+          make the game accessible are:
+
+          IBMgraphics
+               Disable IBMgraphics by commenting out this option.
+
+          menustyle:traditional
+               This will assist in the interface to speech synthesizers.
+
+          number_pad
+               A lot of speech access programs use the number-pad to review
+               the  screen.   If  this is the case, turn off the number_pad
+               option and use the traditional Rogue-like commands.
+
+          Character graphics
+               Comment out all character graphics sets found near the  bot-
+               tom   of  the  defaults.nh  file.   Most  of  these  replace
+               NetHack's default representation of the dungeon using  stan-
+               dard  ASCII characters with fancier characters from extended
+               character sets,  and  these  fancier  characters  can  annoy
+               screen-readers.
 
           9.  Scoring
 
@@ -2222,10 +2501,21 @@
           files and cheat death, at the paltry cost of not getting  on  the
           high score list.
 
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              39
+
+
                There are two ways of enabling  explore  mode.   One  is  to
           start the game with the -X switch.  The other is to issue the `X'
           command while already playing the game.  The  other  benefits  of
-          explore mode are left for the intrepid reader to discover.
+          explore mode are left for the trepid reader to discover.
 
 
           11.  Credits
@@ -2235,18 +2525,6 @@
           from A Guide to the Dungeons of Doom, by Michael C. Toy and  Ken-
           neth  C.  R. C. Arnold.  Small portions were adapted from Further
           Exploration of the Dungeons of Doom, by Ken Arromdee.
-
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              35
-
 
                NetHack is the product of literally dozens of people's work.
           Main  events  in the course of the game development are described
@@ -2288,6 +2566,18 @@
           code for PC NetHack 3.0.  Johnny Lee ported NetHack  3.0  to  the
           Macintosh.   Along with various other Dungeoneers, they continued
           to enhance the PC, Macintosh, and Amiga ports through  the  later
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              40
+
+
           revisions of 3.0.
 
                Headed by Mike Stephenson and coordinated by  Izchak  Miller
@@ -2302,18 +2592,6 @@
 
                Ken Lorber, Gregg Wonderly and Greg Olson,  with  help  from
           Richard  Addison,  Mike  Passaretti,  and Olaf Seibert, developed
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              36
-
-
           NetHack 3.1 for the Amiga.
 
                Norm Meluch and Kevin Smolkowski, with help from Carl  Sche-
@@ -2328,7 +2606,7 @@
 
                Timo Hakulinen ported NetHack 3.1 to OS/2.  Eric Smith port-
           ed  NetHack  3.1 to the Atari.  Pat Rankin, with help from Joshua
-          Delahunty, is responsible for the VMS  version  of  NetHack  3.1.
+          Delahunty, was responsible for the VMS version  of  NetHack  3.1.
           Michael Allison ported NetHack 3.1 to Windows NT.
 
                Dean Luick, with help from David  Cohrs,  developed  NetHack
@@ -2343,43 +2621,39 @@
                Version 3.2 marked the tenth anniversary of the formation of
           the  development team.  In a testament to their dedication to the
           game, all thirteen  members  of  the  original  development  team
-          remained on the team at the start of work on the current release.
-          During the interval between the release of 3.1.3 and 3.2, one  of
-          the  founding members of the development team, Dr. Izchak Miller,
-          was diagnosed with cancer and passed away.  This release  of  the
-          game was dedicated to him by the development and porting teams.
+          remained  on the team at the start of work on that release.  Dur-
+          ing the interval between the release of 3.1.3 and 3.2, one of the
+          founding  members of the development team, Dr. Izchak Miller, was
+          diagnosed with cancer and passed away.  That release of the  game
+          was dedicated to him by the development and porting teams.
 
-               Late in 1999, the dev team released NetHack 3.3.  Along with
-          the usual set of bug fixes and minor tweaks (including Y2K proof-
-          ing), a merge of features was added to  the  game  from  variants
-          that split off from the 3.2 base code.
+               During  the  lifespan  of  NetHack  3.1  and  3.2,   several
+          enthusiasts of the game added their own modifications to the game
+          and made these ``variants'' publicly available:
 
-               During the lifespan of NetHack 3.2, Several  enthusiasts  of
-          the game added their own modifications to the game and made these
-          "variants" publicly available:
+
+
+
+          NetHack 3.3                                      December 2, 1999
+
+
+
+
+
+
+          NetHack Guidebook                                              41
+
 
                Tom Proudfoot and Yuval Oren created  NetHack++,  which  was
-          later  renamed  NetHack--.   Working independently, Stephen White
+          quickly  renamed NetHack--.  Working independently, Stephen White
           wrote NetHack Plus.  Tom Proudfoot later merged NetHack Plus  and
           his  own  NetHack--  to  produce  SLASH.  Larry Stewart-Zerba and
-          Warwick Allison improved the spellcasting system with the  Wizard
+          Warwick Allison improved the spell casting system with the Wizard
           Patch.
 
                Warren Cheung combined SLASH with the Wizard Patch  to  pro-
           duce  Slash'em,  and  with  the  help  of  Kevin Hugo, added more
           features.  Kevin later joined the DevTeam  and  incorporated  the
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              37
-
-
           best of these ideas in NetHack 3.3.
 
                The 3.3 development team consisted of Michael  Allison,  Ken
@@ -2393,8 +2667,8 @@
 
                Pat Rankin maintained 3.3 for VMS.
 
-               Michael Allison ported NetHack 3.3 for the MS-DOS  platform.
-          Paul Winner and Yitzhak Sapir provided encouragement.
+               Michael Allison maintained NetHack 3.3 for the MS-DOS  plat-
+          form.  Paul Winner and Yitzhak Sapir provided encouragement.
 
                Elvis was seen playing NetHack on an Amiga.  That is to say,
           like Elvis, it it might come back, but don't hold your breath.
@@ -2404,11 +2678,11 @@
 
                The Atari port of NetHack was discontinued.
 
-               Michael Allison ported 3.3  for  the  Microsoft  Windows  NT
-          platform.
+               Michael Allison maintained and enhanced 3.3 for  the  Micro-
+          soft Windows NT platform.
 
-               Timo Hakulinen continues to  be  responsible  for  the  OS/2
-          port.          - - - - - - - - - -
+               Ron Van Iwaarden took over responsibility for the OS/2 port.
+                  - - - - - - - - - -
 
                From time to time, some depraved  individual  out  there  in
           netland  sends a particularly intriguing modification to help out
@@ -2426,24 +2700,14 @@
 
 
 
+          NetHack 3.3                                      December 2, 1999
 
 
 
 
 
 
-
-
-
-
-          NetHack 3.3                                     November 24, 1999
-
-
-
-
-
-
-          NetHack Guidebook                                              38
+          NetHack Guidebook                                              42
 
 
                    Andy Church             Janet Walz            Mike Gallop
@@ -2502,7 +2766,7 @@
 
 
 
-          NetHack 3.3                                     November 24, 1999
+          NetHack 3.3                                      December 2, 1999
 
 
 
