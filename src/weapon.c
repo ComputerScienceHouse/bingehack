@@ -941,7 +941,7 @@ int n;	/* number of slots to lose; normally one */
 	    u.weapon_slots = slots_required(skill) - 1;
 	    /* It might now be possible to advance some other pending
 	       skill by using the refunded slots, but giving a message
-	       to that affect would seem pretty confusing.... */
+	       to that effect would seem pretty confusing.... */
 	}
     }
 }

@@ -720,9 +720,16 @@ static const uchar r_oc_syms[MAXOCLASSES] = {
 };
 
 # ifdef ASCIIGRAPH
+/* Rogue level graphics.  Under IBM graphics mode, use the symbols that were
+ * used for Rogue on the IBM PC.  Unfortunately, this can't be completely
+ * done because some of these are control characters--armor and rings under
+ * DOS, and a whole bunch of them under Linux.  Use the TTY Rogue characters
+ * for those cases.
+ */
 static const uchar IBM_r_oc_syms[MAXOCLASSES] = {	/* a la EPYX Rogue */
 /* 0*/	'\0',
 	ILLOBJ_SYM,
+#  if defined(MSDOS) || defined(OS2)
 	0x18,			/* weapon: up arrow */
 /*	0x0a, */ ARMOR_SYM,	/* armor:  Vert rect with o */
 /*	0x09, */ RING_SYM,	/* ring:   circle with arrow */
@@ -735,6 +742,20 @@ static const uchar IBM_r_oc_syms[MAXOCLASSES] = {	/* a la EPYX Rogue */
 	0xe7,			/* wand:   greek tau */
 	0x0f,			/* gold:   yes it's the same as gems */
 	0x0f,			/* gems:   fancy '*' */
+#  else  /* Not MSDOS or OS2 */
+	')',			/* weapon  */
+	ARMOR_SYM,		/* armor */
+	RING_SYM,		/* ring */
+/* 5*/	',',			/* amulet  */
+	TOOL_SYM,
+	':',			/* food    */
+	0xad,			/* potion: upside down '!' */
+	SCROLL_SYM,		/* scroll  */
+/*10*/	SPBOOK_SYM,
+	0xe7,			/* wand:   greek tau */
+	GEM_SYM,		/* gold:   yes it's the same as gems */
+	GEM_SYM,		/* gems    */
+#  endif /* MSDOS or OS2 */
 	ROCK_SYM,
 /*15*/	BALL_SYM,
 	CHAIN_SYM,
