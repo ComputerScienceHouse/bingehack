@@ -667,7 +667,8 @@ register struct monst *mtmp;
 		verbl_msg = "I'm trapped!";
 	    else if (mtmp->mhp < mtmp->mhpmax/2)
 		pline_msg = "asks for a potion of healing.";
-	    else if (mtmp->mtame && moves > EDOG(mtmp)->hungrytime)
+	    else if (mtmp->mtame && !mtmp->isminion &&
+						moves > EDOG(mtmp)->hungrytime)
 		verbl_msg = "I'm hungry.";
 	    /* Specific monsters' interests */
 	    else if (is_elf(ptr))

@@ -1525,7 +1525,7 @@ xkilled(mtmp, dest)
 			    */
 
 	/* your pet knows who just killed it...watch out */
-	if (mtmp->mtame) EDOG(mtmp)->killed_by_u = 1;
+	if (mtmp->mtame && !mtmp->isminion) EDOG(mtmp)->killed_by_u = 1;
 
 	/* dispose of monster and make cadaver */
 	if(stoned) monstone(mtmp);
@@ -1889,7 +1889,8 @@ wake_nearby()
 	for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
 	    if (!DEADMONSTER(mtmp) && distu(mtmp->mx,mtmp->my) < u.ulevel*20) {
 		mtmp->msleeping = 0;
-		if (mtmp->mtame) EDOG(mtmp)->whistletime = moves;
+		if (mtmp->mtame && !mtmp->isminion)
+		    EDOG(mtmp)->whistletime = moves;
 	    }
 	}
 }

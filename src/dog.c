@@ -766,8 +766,12 @@ wary_dog(mtmp, quietly)
 struct monst *mtmp;
 boolean quietly;
 {
+    int has_edog;
+
     if (!mtmp->mtame) return;
-    if ((EDOG(mtmp)->killed_by_u == 1) || (EDOG(mtmp)->abuse > 2)) {
+    has_edog = !mtmp->isminion;
+    if (has_edog &&
+		((EDOG(mtmp)->killed_by_u == 1) || (EDOG(mtmp)->abuse > 2))) {
 	mtmp->mpeaceful = mtmp->mtame = 0;
 	if (EDOG(mtmp)->abuse >= 0 && EDOG(mtmp)->abuse < 10)
 		if (!rn2(EDOG(mtmp)->abuse + 1)) mtmp->mpeaceful = 1;
@@ -791,7 +795,7 @@ boolean quietly;
     	}
     }
     /* if its still a pet, start a clean pet-slate now */
-    if (mtmp->mtame) {
+    if (has_edog && mtmp->mtame) {
 	EDOG(mtmp)->revivals++;
     	EDOG(mtmp)->killed_by_u = 0;
     	EDOG(mtmp)->abuse = 0;
@@ -807,7 +811,7 @@ struct monst *mtmp;
 	if (Aggravate_monster || Conflict) mtmp->mtame /=2;
 	else mtmp->mtame--;
 
-	if (mtmp->mtame) 
+	if (mtmp->mtame && !mtmp->isminion)
 		EDOG(mtmp)->abuse++;
 
 	if (mtmp->mtame && rn2(mtmp->mtame)) yelp(mtmp);
