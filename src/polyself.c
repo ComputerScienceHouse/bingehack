@@ -189,6 +189,10 @@ newman()
 	polyman("feel like a new %s!",
 		(flags.female && urace.individual.f) ? urace.individual.f :
 		(urace.individual.m) ? urace.individual.m : urace.noun);
+	if (Slimed) {
+		Your("body transforms, but there is still slime on you.");
+		Slimed = 10L;
+	}
 	flags.botl = 1;
 	see_monsters();
 	(void) encumber_msg();
@@ -375,6 +379,15 @@ int	mntmp;
 	if (Sick_resistance && Sick) {
 		make_sick(0L, (char *) 0, FALSE, SICK_ALL);
 		You("no longer feel sick.");
+	}
+	if (Slimed) {
+	    if (mntmp == PM_FIRE_VORTEX || mntmp == PM_FIRE_ELEMENTAL) {
+		pline_The("slime burns away!");
+		Slimed = 0;
+	    } else if (mntmp == PM_GREEN_SLIME) {
+		/* do it silently */
+		Slimed = 0;
+	    }
 	}
 	if (nohands(youmonst.data)) Glib = 0;
 
