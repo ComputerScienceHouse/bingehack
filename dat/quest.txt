@@ -1248,6 +1248,9 @@ the planes of the elements, to achieve this goal.
 #
 #       Monk
 #
+# The quest artifact is "The Eyes of the Overworld", hence needs
+# to be treated as plural by messages which use %o.
+#
 %Cc Mon 00001
 You find yourself standing in sight of %H.  Something
 is obviously wrong here. Strange shapes lumber around
@@ -1314,7 +1317,7 @@ tell you of what has transpired:
 
 "During one of the Great Meditations a short time ago, %n and
 a legion of elementals invaded %H.  Many %gP were
-killed, including the one carrying %o.
+killed, including the one bearing %o.
 
 Now, there are barely enough %gP left to keep the
 elementals at bay.
@@ -1342,7 +1345,7 @@ legions of elementals that slay our students.
 "Remember your studies, and you will prevail!"
 %E
 %Cp Mon 00025
-"Acquire and wear %o if you can.  It will aid you
+"Acquire and wear %o if you can.  They will aid you
 against %n."
 %E
 %Cp Mon 00026
@@ -1355,11 +1358,11 @@ against %n."
 "Do not lose faith, %p.  If you do so, %n will grow stronger."
 %E
 %Cp Mon 00029
-"Wear %o.  It will assist you in your efforts."
+"Wear %o.  They will assist you in your efforts."
 %E
 %Cc Mon 00030
-You remember the descriptions of %i, given to you by
-the %l.  It is ahead that you will find %n's trail.
+You remember the descriptions of %i, given to you
+by the %l.  It is ahead that you will find %n's trail.
 %E
 %Cp Mon 00031
 Again, you stand before %i.
@@ -1422,8 +1425,8 @@ after all.  Prepare to die, %r!  You shall never regain
 %E
 %Cc Mon 00070
 As you pick up %o, you feel the essence of
-%d fill your soul.  You know now why %n stole it from
-%H, for with it, %ca of %d could
+%d fill your soul.  You know now why %n stole them from
+%H, for with them, %ca of %d could
 easily defeat his plans.
 
 You sense a message from %d.  Though not verbal, you
@@ -1449,7 +1452,7 @@ Congratulations.
 
 "I have been in meditation, and have received direction from
 a minion of %d.  %d commands that you retain
-%o.  With it, you must recover the Amulet
+%o.  With them, you must recover the Amulet
 of Yendor.
 
 "Go forth, and let %d guide your steps."
