@@ -765,9 +765,8 @@ struct monst *mtmp;
 boolean quietly;
 {
     if (!mtmp->mtame) return;
-    mtmp->mpeaceful = 0;
     if ((EDOG(mtmp)->killed_by_u == 1) || (EDOG(mtmp)->abuse > 2)) {
-	mtmp->mtame = 0;
+	mtmp->mpeaceful = mtmp->mtame = 0;
 	if (EDOG(mtmp)->abuse >= 0 && EDOG(mtmp)->abuse < 10)
 		if (!rn2(EDOG(mtmp)->abuse + 1)) mtmp->mpeaceful = 1;
 	if(!quietly && cansee(mtmp->mx, mtmp->my)) {
@@ -786,7 +785,7 @@ boolean quietly;
     } else {
     	/* chance it goes wild anyway - Pet Semetary */
     	if (!rn2(mtmp->mtame)) {
-    		mtmp->mtame = 0;
+    		mtmp->mpeaceful = mtmp->mtame = 0;
     	}
     }
     /* if its still a pet, start a clean pet-slate now */
