@@ -2067,7 +2067,11 @@ floorfood(verb,corpsecheck)	/* get food from floor or pack */
 		}
 	    }
 
-	    if ((gold = g_at(u.ux, u.uy)) != 0) {
+	    if (
+#ifdef STEED
+	    	!u.usteed && 
+#endif
+		(gold = g_at(u.ux, u.uy)) != 0) {
 		if (gold->quan == 1L)
 		    Sprintf(qbuf, "There is 1 gold piece here; eat it?");
 		else
@@ -2083,7 +2087,11 @@ floorfood(verb,corpsecheck)	/* get food from floor or pack */
 	}
 
 	/* Is there some food (probably a heavy corpse) here on the ground? */
-	if (!(Levitation && !Is_airlevel(&u.uz)  && !Is_waterlevel(&u.uz))
+	if (
+#ifdef STEED
+	    !u.usteed && 
+#endif
+	    !(Levitation && !Is_airlevel(&u.uz)  && !Is_waterlevel(&u.uz))
 	    && !u.uswallow) {
 	    for(otmp = level.objects[u.ux][u.uy]; otmp; otmp = otmp->nexthere) {
 		if(corpsecheck ?

@@ -130,7 +130,6 @@ Riding bugs:
 -- Wands or spells zapped in the down direction ought to hit your steed.
 -- Eating a mimic while mounted may conflict with the mimic transformation 
    code in eat.c or render it useless.
--- If you have high enough riding skill you could eat things off the floor.
 -- You can ride an invisible steed even when unable to see
    invisible.  
 -- If you have see invisible and your invisible steed becomes truly 
