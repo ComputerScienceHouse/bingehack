@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)end.c	3.3	1999/12/02	*/
+/*	SCCS Id: @(#)end.c	3.3	2000/01/20	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -724,6 +724,7 @@ die:
 			otmp = mksobj(typ, FALSE, FALSE);
 			makeknown(otmp->otyp);
 			otmp->known = 1;	/* for fake amulets */
+			otmp->dknown = 1;	/* seen it (blindness fix) */
 			otmp->onamelth = 0;
 			otmp->quan = count;
 			Sprintf(pbuf, "%8ld %s (worth %ld zorkmids),",
