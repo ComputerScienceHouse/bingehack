@@ -384,7 +384,7 @@ register struct obj *spellbook;
 				if (ynq(qbuf) != 'y') return(1);
 			    }
 			    /* its up to random luck now */
-			    if (rn2(20) > read_ability) {
+			    if (rnd(20) > read_ability) {
 				too_hard = TRUE;
 			    }
 			}
