@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)dothrow.c	3.3	1999/12/13	*/
+/*	SCCS Id: @(#)dothrow.c	3.3	2000/04/16	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -71,9 +71,9 @@ int shotlimit;
 	/* Multishot calculations
 	 */
 	skill = objects[obj->otyp].oc_skill;
-	if ((ammo_and_launcher(obj, uwep) ||
-			skill == P_DAGGER || skill == P_DART ||
-			skill == P_SHURIKEN) && !Confusion) {
+	if ((ammo_and_launcher(obj, uwep) || skill == P_DAGGER ||
+			skill == -P_DART || skill == -P_SHURIKEN) &&
+		!(Confusion || Stunned)) {
 	    /* Bonus if the player is proficient in this weapon... */
 	    switch (P_SKILL(weapon_type(obj))) {
 	    default:	break; /* No bonus */

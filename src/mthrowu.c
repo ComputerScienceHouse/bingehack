@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mthrowu.c	3.3	1999/08/16	*/
+/*	SCCS Id: @(#)mthrowu.c	3.3	2000/04/16	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -431,12 +431,11 @@ void
 thrwmu(mtmp)	/* monster throws item at you */
 register struct monst *mtmp;
 {
-	struct obj *otmp;
+	struct obj *otmp, *mwep;
 	register xchar x, y;
 	boolean ispole;
 	schar skill;
 	int multishot = 1;
-
 
 	/* Rearranged beginning so monsters can use polearms not in a line */
 	    if (mtmp->weapon_check == NEED_WEAPON || !MON_WEP(mtmp)) {
@@ -450,6 +449,7 @@ register struct monst *mtmp;
 	if (!otmp) return;
 	ispole = is_pole(otmp);
 	skill = objects[otmp->otyp].oc_skill;
+	mwep = MON_WEP(mtmp);		/* wielded weapon */
 
 	if(ispole || lined_up(mtmp)) {
 		/* If you are coming toward the monster, the monster
@@ -498,9 +498,9 @@ register struct monst *mtmp;
 			}
 
 		    /* Multishot calculations */
-		    if (((ammo_and_launcher(otmp, MON_WEP(mtmp)) && skill != -P_SLING) ||
-				skill == P_DAGGER || skill == P_DART ||
-				skill == P_SHURIKEN) && !mtmp->mconf) {
+		    if ((ammo_and_launcher(otmp, mwep) || skill == P_DAGGER ||
+				skill == -P_DART || skill == -P_SHURIKEN) &&
+			    !mtmp->mconf) {
 			/* Assumes lords are skilled, princes are expert */
 			if (is_lord(mtmp->data)) multishot++;
 			if (is_prince(mtmp->data)) multishot += 2;
@@ -513,22 +513,32 @@ register struct monst *mtmp;
 			    if (skill == P_DAGGER) multishot++;
 			    break;
 			case PM_SAMURAI:
-			    if (otmp->otyp == YA && MON_WEP(mtmp) &&
-			    		MON_WEP(mtmp)->otyp == YUMI) multishot++;
+			    if (otmp->otyp == YA && mwep &&
+				    mwep->otyp == YUMI) multishot++;
 			    break;
 			default:
-			    if (is_elf(mtmp->data) && otmp->otyp == ELVEN_ARROW &&
-					MON_WEP(mtmp) && MON_WEP(mtmp)->otyp == ELVEN_BOW)
-				multishot++;
 			    break;
+			}
+			{	/* racial bonus */
+			    if (is_elf(mtmp->data) &&
+				    otmp->otyp == ELVEN_ARROW &&
+				    mwep && mwep->otyp == ELVEN_BOW)
+				multishot++;
+			    else if (is_orc(mtmp->data) &&
+				    otmp->otyp == ORCISH_ARROW &&
+				    mwep && mwep->otyp == ORCISH_BOW)
+				multishot++;
 			}
 		    }
 		    if (otmp->quan < multishot) multishot = (int)otmp->quan;
 		    if (multishot < 1) multishot = 1;
 		    else multishot = rnd(multishot);
 		    while (multishot-- > 0)
-			m_throw(mtmp, mtmp->mx, mtmp->my, sgn(tbx), sgn(tby),
-					distmin(mtmp->mx,mtmp->my,mtmp->mux,mtmp->muy), otmp);
+			m_throw(mtmp, mtmp->mx, mtmp->my,
+				sgn(tbx), sgn(tby),
+				distmin(mtmp->mx, mtmp->my,
+					mtmp->mux, mtmp->muy),
+				otmp);
 		    nomul(0);
 		    return;
 		}
