@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)options.c	3.3	1999/12/01	*/
+/*	SCCS Id: @(#)options.c	3.3	2000/01/04	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -205,7 +205,7 @@ static struct Comp_Opt
 #endif
 	{ "fruit",    "the name of a fruit you enjoy eating", PL_FSIZ },
 	{ "gender",   "your starting gender (male or female)", 8 },
-	{ "horsename", "the name of your (first) horse (e.g., horsename:Trigger)",
+	{ "horsename", "the name of your (first) horse (e.g., horsename:Silver)",
 						PL_PSIZ },
 	{ "menustyle", "user interface for object selection", MENUTYPELEN },
 	{ "menu_deselect_all", "deselect all items in a menu", 4},
@@ -242,7 +242,7 @@ static struct Comp_Opt
 #ifdef MSDOS
 	{ "soundcard", "type of sound card to use", 20 },
 #endif
-	{ "suppress_alert", "suppress alert of new features for version specified and prior", 6},
+	{ "suppress_alert", "suppress alerts about version-specific features", 6},
 	{ "traps",    "the symbols to use in drawing traps", MAXTCHARS+1 },
 #ifdef MAC
 	{"use_stone", "use stone background patterns", 8},
@@ -2002,7 +2002,7 @@ const char *str;
 	int i;
 	char *s;
 
-	if (!buf) buf = (char *)alloc(BUFSZ);
+	if (!buf) *(buf = (char *)alloc(BUFSZ)) = '\0';
 
 	if (!*str) {
 		s = eos(buf);

@@ -5,6 +5,7 @@ autoquiver     when firing with an empty quiver, select some
                suitable inventory weapon to fill the quiver       [FALSE]
 confirm        ask before hitting tame or peaceful monsters       [TRUE]
 DECgraphics    use DEC/VT line-drawing characters for the dungeon [FALSE]
+extmenu        use a menu for selecting extended commands (#)     [FALSE]
 (fe)male       sex of the player (may only be set on startup)     [MALE]
 fixinv         try to retain the same letter for the same object  [TRUE]
 help           print all available info when using the / command  [TRUE]
@@ -18,12 +19,16 @@ null           allow nulls to be sent to your terminal            [TRUE]
                delay code) if moving objects seem to teleport across rooms
 number_pad     use the number keys to move instead of yuhjklbn    [FALSE]
 perm_invent    keep inventory in a permanent window               [FALSE]
+prayconfirm    use confirmation prompt when #pray command issued  [TRUE]
 pushweapon     when wielding a new weapon, put your previously
                wielded weapon into the secondary weapon slot      [FALSE]
 rest_on_space  count the space bar as a rest character            [FALSE]
 safe_pet       prevent you from (knowingly) attacking your pet(s) [TRUE]
 silent         don't use your terminal's bell sound               [TRUE]
 sortpack       group similar kinds of objects in inventory        [TRUE]
+sound          enable messages about what your character hears    [TRUE]
+               (note: this has nothing to do with your computer's audio
+               capabilities, and the game resets it periodically)
 standout       use standout mode for --More-- on messages         [FALSE]
 time           display elapsed game time, in moves                [FALSE]
 tombstone      print tombstone when you die                       [TRUE]
@@ -92,6 +97,11 @@ pickup_types  a list of default symbols for kinds of objects to autopickup
 scores        the parts of the score list you wish to see when the game ends
               You choose a combination of top scores, scores around the top
               scores, and all of your own scores.  [!own/3 top/2 around]
+suppress_alert disable various version-specific warnings about changes
+              in game play or the user interface, such as notification given
+              for the 'Q' command that quitting is now done via #quit
+              (e.g., use suppress_alert:3.3.0 to stop that and any other
+              notifications added in that version or earlier) default: (none)
 
 Compound options which may be set only on startup are:
 
