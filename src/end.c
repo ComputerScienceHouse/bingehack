@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)end.c	3.3	1999/10/31	*/
+/*	SCCS Id: @(#)end.c	3.3	1999/12/02	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -662,14 +662,16 @@ die:
 		putstr(endwin, 0, pbuf);
 	    }
 
-	    for(otmp=invent; otmp; otmp=otmp->nobj) {
-		if (otmp->oartifact && otmp->otyp != AMULET_OF_YENDOR) {
+	    for (otmp = invent; otmp; otmp = otmp->nobj) {
+		if (otmp->oartifact) {
+		    short dummy;
+
 		    makeknown(otmp->otyp);
 		    otmp->known = otmp->bknown = otmp->dknown =
 			otmp->rknown = 1;
 		    /* assumes artifacts don't have quan>1 */
 		    Sprintf(pbuf, "%s (worth %ld zorkmids and %ld points)",
-			artifact_name(xname(otmp), (short *)0),
+			artifact_name(xname(otmp), &dummy),
 			4L * objects[otmp->otyp].oc_cost,
 			40L * objects[otmp->otyp].oc_cost);
 		    putstr(endwin, 0, pbuf);
