@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)bones.c	3.3	2000/01/28	*/
+/*	SCCS Id: @(#)bones.c	3.3	2000/02/25	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985,1993. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -183,9 +183,10 @@ void
 savebones(corpse)
 struct obj *corpse;
 {
-	register int fd, x, y;
-	register struct trap *ttmp;
-	register struct monst *mtmp, *mtmp2;
+	int fd, x, y;
+	struct trap *ttmp;
+	struct monst *mtmp;
+	struct permonst *mptr;
 	struct fruit *f;
 	char c, *bonesid;
 
@@ -207,17 +208,15 @@ struct obj *corpse;
 	}
 
  make_bones:
-	dmonsfree();
 	unleash_all();
 	/* in case these characters are not in their home bases */
-	mtmp2 = fmon;
-	while ((mtmp = mtmp2) != 0) {
-		mtmp2 = mtmp->nmon;
-		if(mtmp->iswiz || mtmp->data == &mons[PM_MEDUSA]
-			|| mtmp->data->msound == MS_NEMESIS
-			|| mtmp->data->msound == MS_LEADER
-			|| mtmp->data == &mons[PM_VLAD_THE_IMPALER])
-		    mongone(mtmp);
+	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+	    if (DEADMONSTER(mtmp)) continue;
+	    mptr = mtmp->data;
+	    if (mtmp->iswiz || mptr == &mons[PM_MEDUSA] ||
+		    mptr->msound == MS_NEMESIS || mptr->msound == MS_LEADER ||
+		    mptr == &mons[PM_VLAD_THE_IMPALER])
+		mongone(mtmp);
 	}
 #ifdef STEED
 	if (u.usteed) {
@@ -225,10 +224,11 @@ struct obj *corpse;
 
 	    /* Move the steed to an adjacent square */
 	    if (enexto(&cc, u.ux, u.uy, u.usteed->data))
-	    	rloc_to(u.usteed, cc.x, cc.y);
+		rloc_to(u.usteed, cc.x, cc.y);
 	    u.usteed = 0;
 	}
 #endif
+	dmonsfree();		/* discard dead or gone monsters */
 
 	/* mark all fruits as nonexistent; when we come to them we'll mark
 	 * them as existing (using goodfruit())
