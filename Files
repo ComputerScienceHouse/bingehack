@@ -48,6 +48,8 @@ wintty.h
 tile2x11.h      winX.h          xwindow.h       xwindowp.h
 (files for Qt versions)
 qt_clust.h      qt_kde0.h       qt_win.h        qt_xpms.h
+(files for Gem versions)
+bitmfile.h      gem_rsc.h       load_img.h      wingem.h
 (files for mactty version)
 mactty.h        mttypriv.h
 
