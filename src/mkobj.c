@@ -1323,7 +1323,12 @@ extract_nexthere(obj, head_ptr)
 }
 
 
-void
+/*
+ * Add obj to mon's inventory.  If obj is able to merge with something already
+ * in the inventory, then the passed obj is deleted and 1 is returned.
+ * Otherwise 0 is returned.
+ */
+int
 add_to_minv(mon, obj)
     struct monst *mon;
     struct obj *obj;
@@ -1336,12 +1341,13 @@ add_to_minv(mon, obj)
     /* merge if possible */
     for (otmp = mon->minvent; otmp; otmp = otmp->nobj)
 	if (merged(&otmp, &obj))
-	    return;
+	    return 1;	/* obj merged and then free'd */
     /* else insert; don't bother forcing it to end of chain */
     obj->where = OBJ_MINVENT;
     obj->ocarry = mon;
     obj->nobj = mon->minvent;
     mon->minvent = obj;
+    return 0;	/* obj on mon's inventory chain */
 }
 
 void

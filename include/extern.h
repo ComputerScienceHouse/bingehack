@@ -995,7 +995,7 @@ E void FDECL(discard_minvent, (struct monst *));
 E void FDECL(obj_extract_self, (struct obj *));
 E void FDECL(extract_nobj, (struct obj *, struct obj **));
 E void FDECL(extract_nexthere, (struct obj *, struct obj **));
-E void FDECL(add_to_minv, (struct monst *, struct obj *));
+E int FDECL(add_to_minv, (struct monst *, struct obj *));
 E void FDECL(add_to_container, (struct obj *, struct obj *));
 E void FDECL(add_to_migration, (struct obj *));
 E void FDECL(add_to_buried, (struct obj *));
@@ -1769,7 +1769,7 @@ E long NDECL(somegold);
 E void FDECL(stealgold, (struct monst *));
 E void FDECL(remove_worn_item, (struct obj *));
 E int FDECL(steal, (struct monst *));
-E void FDECL(mpickobj, (struct monst *,struct obj *));
+E int FDECL(mpickobj, (struct monst *,struct obj *));
 E void FDECL(stealamulet, (struct monst *));
 E void FDECL(relobj, (struct monst *,int,BOOLEAN_P));
 

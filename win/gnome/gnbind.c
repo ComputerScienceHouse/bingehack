@@ -230,10 +230,11 @@ gnome_create_nhwindow(int type)
 /* Return the next available winid
  */
 
-  while (gnome_windowlist[i].win != NULL) {
-    i++;
-  }
-
+  for (i=0; i<MAXWINDOWS; i++)
+      if (gnome_windowlist[i].win == NULL)
+          break;
+  if (i == MAXWINDOWS)
+      g_error ("ERROR:  No windows available...\n");
   gnome_create_nhwindow_by_id( type, i);
   return i;
 }
@@ -330,7 +331,9 @@ void gnome_display_nhwindow(winid wid, BOOLEAN_P block)
 */
 void gnome_destroy_nhwindow(winid wid)
 {
-    if (wid == NHW_MAP || wid == NHW_MESSAGE || NHW_STATUS) {
+    if ((wid == NHW_MAP) || 
+        (wid == NHW_MESSAGE) || 
+        (wid == NHW_STATUS)) {
 	/* no thanks, I'll do these myself */
 	return;
     }
@@ -381,7 +384,9 @@ Attributes
 */
 void gnome_putstr(winid wid, int attr, const char *text)
 {
-    if (gnome_windowlist[wid].win != NULL)
+    if ((wid >= 0) && 
+        (wid < MAXWINDOWS) &&
+        (gnome_windowlist[wid].win != NULL))
     {
       gtk_signal_emit( GTK_OBJECT (gnome_windowlist[wid].win),
 		       ghack_signals[GHSIG_PUTSTR],

@@ -1238,7 +1238,8 @@ final_level()
 					d((int)mtmp->m_lev,10) + 30 + rnd(30);
 		    if ((otmp = select_hwep(mtmp)) == 0) {
 			otmp = mksobj(SILVER_SABER, FALSE, FALSE);
-			mpickobj(mtmp, otmp);
+			if (mpickobj(mtmp, otmp))
+			    panic("merged weapon?");
 		    }
 		    bless(otmp);
 		    if (otmp->spe < 4) otmp->spe += rnd(4);

@@ -131,6 +131,8 @@ use_saddle(otmp)
 	if (rn2(100) < chance) {
 	    You("put the saddle on %s.", mon_nam(mtmp));
 	    freeinv(otmp);
+	    /* mpickobj may free otmp it if merges, but we have already
+	       checked for a saddle above, so no merget should happen */
 	    mpickobj(mtmp, otmp);
 	    mtmp->misc_worn_check |= W_SADDLE;
 	    otmp->owornmask = W_SADDLE;

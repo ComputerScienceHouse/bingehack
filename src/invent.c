@@ -2385,12 +2385,19 @@ int dflags;
 	    youmonst.data = mon->data;
 
 	    if (do_gold) {
-		/* make temporary gold object & insert at head of inventory */
+		/*
+		 * Make temporary gold object and insert at the head of
+		 * the mon's inventory.  We can get away with using a
+		 * stack variable object because monsters don't carry
+		 * gold in thier inventory, so it won't merge.
+		 */
 		m_gold = zeroobj;
 		m_gold.otyp = GOLD_PIECE;  m_gold.oclass = GOLD_CLASS;
 		m_gold.quan = mon->mgold;  m_gold.dknown = 1;
 		m_gold.where = OBJ_FREE;
-		add_to_minv(mon, &m_gold);
+		/* we had better not merge and free this object... */
+		if (add_to_minv(mon, &m_gold))
+		    panic("display_minventory: static object freed.");
 	    }
 
 	    n = query_objlist(tmp, mon->minvent, INVORDER_SORT, &selected,

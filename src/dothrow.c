@@ -860,9 +860,9 @@ long wep_mask;	/* used to re-equip returning boomerang */
 		    if (cansee(bhitpos.x, bhitpos.y))
 			pline("%s snatches up %s.",
 			      Monnam(mon), the(xname(obj)));
-		    mpickobj(mon, obj);
 		    if(*u.ushops)
 			check_shop_obj(obj, bhitpos.x, bhitpos.y, FALSE);
+		    mpickobj(mon, obj);	/* may merge and free obj */
 		    return;
 		}
 		(void) snuff_candle(obj);
@@ -1203,8 +1203,8 @@ register struct obj *obj;
 		}
 	}
 	Strcat(buf,acceptgift);
-	mpickobj(mon, obj);
 	if(*u.ushops) check_shop_obj(obj, mon->mx, mon->my, TRUE);
+	mpickobj(mon, obj);	/* may merge and free obj */
 	ret = 1;
 
 nopick:

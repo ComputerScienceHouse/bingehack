@@ -748,11 +748,12 @@ mpickstuff(mtmp, str)
 			      (distu(mtmp->my, mtmp->my) <= 5) ?
 				doname(otmp) : distant_name(otmp, doname));
 		obj_extract_self(otmp);
-		mpickobj(mtmp, otmp);
-		m_dowear(mtmp, FALSE);
-		newsym(mtmp->mx, mtmp->my);
+		/* unblock point after extract, before pickup */
 		if (otmp->otyp == BOULDER)
 		    unblock_point(otmp->ox,otmp->oy);	/* vision */
+		mpickobj(mtmp, otmp);	/* may merge and free otmp */
+		m_dowear(mtmp, FALSE);
+		newsym(mtmp->mx, mtmp->my);
 		return TRUE;			/* pick only one object */
 	    }
 	}

@@ -37,33 +37,42 @@ boolean
 is_pool(x,y)
 int x,y;
 {
-       register schar ltyp = levl[x][y].typ;
-       if(ltyp == POOL || ltyp == MOAT || ltyp == WATER) return TRUE;
-       if(ltyp == DRAWBRIDGE_UP &&
-	       (levl[x][y].drawbridgemask & DB_UNDER) == DB_MOAT) return TRUE;
-       return FALSE;
+    schar ltyp;
+
+    if (!isok(x,y)) return FALSE;
+    ltyp = levl[x][y].typ;
+    if (ltyp == POOL || ltyp == MOAT || ltyp == WATER) return TRUE;
+    if (ltyp == DRAWBRIDGE_UP &&
+	(levl[x][y].drawbridgemask & DB_UNDER) == DB_MOAT) return TRUE;
+    return FALSE;
 }
 
 boolean
 is_lava(x,y)
 int x,y;
 {
-       register schar ltyp = levl[x][y].typ;
-       if(ltyp == LAVAPOOL ||
-	  (ltyp == DRAWBRIDGE_UP &&
-	   (levl[x][y].drawbridgemask & DB_UNDER) == DB_LAVA)) return TRUE;
-       return FALSE;
+    schar ltyp;
+
+    if (!isok(x,y)) return FALSE;
+    ltyp = levl[x][y].typ;
+    if (ltyp == LAVAPOOL
+	|| (ltyp == DRAWBRIDGE_UP
+	    && (levl[x][y].drawbridgemask & DB_UNDER) == DB_LAVA)) return TRUE;
+    return FALSE;
 }
 
 boolean
 is_ice(x,y)
 int x,y;
 {
-	register schar ltyp = levl[x][y].typ;
-	if (ltyp == ICE ||
-	    (ltyp == DRAWBRIDGE_UP &&
-		(levl[x][y].drawbridgemask & DB_UNDER) == DB_ICE)) return TRUE;
-	return FALSE;
+    schar ltyp;
+
+    if (!isok(x,y)) return FALSE;
+    ltyp = levl[x][y].typ;
+    if (ltyp == ICE
+	|| (ltyp == DRAWBRIDGE_UP
+	    && (levl[x][y].drawbridgemask & DB_UNDER) == DB_ICE)) return TRUE;
+    return FALSE;
 }
 
 #endif /* OVL0 */

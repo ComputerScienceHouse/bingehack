@@ -224,40 +224,40 @@ register boolean special;
 	    }
 
 	    if (weapon != STRANGE_OBJECT) {
-			otmp = mksobj(weapon, TRUE, FALSE);
-	    	otmp->spe = (special ? rn1(5,4) : rn2(4));
-	    	if (!rn2(3)) otmp->oerodeproof = 1;
-	    	else if (!rn2(2)) otmp->greased = 1;
-	    	if (special && rn2(2))
-	    	otmp = mk_artifact(otmp, A_NONE);
-	    	/* mplayers knew better than to overenchant Magicbane */
-	    	if (otmp->oartifact == ART_MAGICBANE)
-	    	otmp->spe = rnd(4);
-	    	mpickobj(mtmp, otmp);
+		otmp = mksobj(weapon, TRUE, FALSE);
+		otmp->spe = (special ? rn1(5,4) : rn2(4));
+		if (!rn2(3)) otmp->oerodeproof = 1;
+		else if (!rn2(2)) otmp->greased = 1;
+		if (special && rn2(2))
+		    otmp = mk_artifact(otmp, A_NONE);
+		/* mplayers knew better than to overenchant Magicbane */
+		if (otmp->oartifact == ART_MAGICBANE)
+		    otmp->spe = rnd(4);
+		mpickobj(mtmp, otmp);
 	    }
 
 	    if(special) {
-	        if (!rn2(10))
+		if (!rn2(10))
 		    (void) mongets(mtmp, rn2(3) ? LUCKSTONE : LOADSTONE);
-		    mk_mplayer_armor(mtmp, armor);
-		    mk_mplayer_armor(mtmp, cloak);
-		    mk_mplayer_armor(mtmp, helm);
-		    mk_mplayer_armor(mtmp, shield);
-	        if (rn2(8))
+		mk_mplayer_armor(mtmp, armor);
+		mk_mplayer_armor(mtmp, cloak);
+		mk_mplayer_armor(mtmp, helm);
+		mk_mplayer_armor(mtmp, shield);
+		if (rn2(8))
 		    mk_mplayer_armor(mtmp, rnd_class(LEATHER_GLOVES,
-				               GAUNTLETS_OF_DEXTERITY));
-	        if (rn2(8))
+					       GAUNTLETS_OF_DEXTERITY));
+		if (rn2(8))
 		    mk_mplayer_armor(mtmp, rnd_class(LOW_BOOTS, LEVITATION_BOOTS));
-	        m_dowear(mtmp, TRUE);
+		m_dowear(mtmp, TRUE);
 
-	        quan = rn2(3) ? rn2(3) : rn2(16);
-	        while(quan--)
+		quan = rn2(3) ? rn2(3) : rn2(16);
+		while(quan--)
 		    (void)mongets(mtmp, rnd_class(DILITHIUM_CRYSTAL, JADE));
-	        /* To get the gold "right" would mean a player can double his */
-	        /* gold supply by killing one mplayer.  Not good. */
-	        mtmp->mgold = rn2(1000);
-	        quan = rn2(10);
-	        while(quan--)
+		/* To get the gold "right" would mean a player can double his */
+		/* gold supply by killing one mplayer.  Not good. */
+		mtmp->mgold = rn2(1000);
+		quan = rn2(10);
+		while(quan--)
 		    mpickobj(mtmp, mkobj(RANDOM_CLASS, FALSE));
 	    }
 	    quan = rnd(3);

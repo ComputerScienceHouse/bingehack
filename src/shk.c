@@ -2555,8 +2555,8 @@ register xchar x, y;
 		    delay_output();
 		    mark_synch();
 		}
-		mpickobj(shkp, obj);
 		subfrombill(obj, shkp);
+		mpickobj(shkp, obj);
 		return(1);
 	}
 	return(0);
@@ -2995,8 +2995,8 @@ register int fall;
 		if(obj->owornmask) continue;
 		if(obj->otyp == LEASH && obj->leashmon) continue;
 		freeinv(obj);
-		add_to_minv(shkp, obj);
 		subfrombill(obj, shkp);
+		add_to_minv(shkp, obj);	/* may free obj */
 	    }
     }
 }
