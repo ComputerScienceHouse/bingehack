@@ -547,7 +547,7 @@
                cation to examine; `:' will show additional  info,  if  any,
                without  asking  for confirmation.  When picking a location,
                pressing the ESC key will terminate this command, or  press-
-               ing `?'  will give a brief reminder about how it works.
+               ing `?' will give a brief reminder about how it works.
 
                Specifying a name rather than a location  always  gives  any
           additional information available about that name.
@@ -1201,7 +1201,7 @@
           Your reactions will get slower and you'll burn  calories  faster,
           requiring  food  more  frequently  to  cope with it.  Eventually,
           you'll be so overloaded that you'll either have to  discard  some
-          of what you're carrying or collapse under it's weight.
+          of what you're carrying or collapse under its weight.
 
                NetHack will tell you how badly have loaded  yourself.   The
           symbols   `Burdened',  `Stressed',  `Strained',  `Overtaxed'  and
@@ -1297,7 +1297,7 @@
 
                The chance that an attack will successfully hit  a  monster,
           and  the  amount  of damage such a hit will do, depends upon many
-          factors.  Among them are:  type of weapon, quality of weapon (en-
+          factors.  Among them are: type of weapon, quality of weapon  (en-
           chantment and/or erosion), experience level, strength, dexterity,
           encumbrance, and proficiency (see below).   The  monster's  armor
           class  - a general defense rating, not necessarily due to wearing
@@ -2249,7 +2249,7 @@
 
 
                or overLoaded), you will be asked if you want  to  continue.
-               (Default `B').
+               (Default `S').
 
           pickup_types
                Specify the object types to be picked up when autopickup  is
@@ -2426,9 +2426,9 @@
           sense of the overall location of items on the screen.
 
                While it is not difficult for experienced users to edit  the
-          NetHack.nh  file  to  accomplish this, novices may find this task
+          defaults.nh  file  to accomplish this, novices may find this task
           somewhat daunting.  Included in  all  official  distributions  of
-          NetHack  is a file called NHAccess.nh.  Replacing NetHack.nh with
+          NetHack is a file called NHAccess.nh.  Replacing defaults.nh with
           this file will cause the game to run in a  manner  accessible  to
           the  blind.  After  you have gained some experience with the game
           and with editing files, you may want to alter settings to  better
@@ -2610,7 +2610,9 @@
           Michael Allison ported NetHack 3.1 to Windows NT.
 
                Dean Luick, with help from David  Cohrs,  developed  NetHack
-          3.1 for X11.
+          3.1  for  X11.   Warwick Allison wrote a tiled version of NetHack
+          for the Atari; he later contributed the tiles to the DevTeam  and
+          tile support was then added to other platforms.
 
                The 3.2 development team, comprised of: Michael Allison; Ken
           Arromdee;  David  Cohrs; Jessie Collet; Steve Creps; Kevin Darcy;
@@ -2632,8 +2634,6 @@
           and made these ``variants'' publicly available:
 
 
-
-
           NetHack 3.3                                      December 2, 1999
 
 
@@ -2649,7 +2649,8 @@
           wrote NetHack Plus.  Tom Proudfoot later merged NetHack Plus  and
           his  own  NetHack--  to  produce  SLASH.  Larry Stewart-Zerba and
           Warwick Allison improved the spell casting system with the Wizard
-          Patch.
+          Patch.   Warwick Allison also ported NetHack to use the Qt inter-
+          face.
 
                Warren Cheung combined SLASH with the Wizard Patch  to  pro-
           duce  Slash'em,  and  with  the  help  of  Kevin Hugo, added more
@@ -2699,7 +2700,6 @@
 
 
 
-
           NetHack 3.3                                      December 2, 1999
 
 
@@ -2710,40 +2710,40 @@
           NetHack Guidebook                                              42
 
 
-                   Andy Church             Janet Walz            Mike Gallop
-                  Andy Swanson       Jean-Christophe Collet    Mike Passaretti
-                  Ari Huttunen           Jochen Erwied         Mike Stephenson
-                  Barton House            John Kallen            Nick Number
-               Benson I. Margulies        John Rupley            Norm Meluch
-                    Bill Dyer             John S. Bien          Olaf Seibert
-                Boudewijn Wayers           Johnny Lee            Pat Rankin
-                 Bruce Holloway            Jon W{tte             Paul Winner
-                 Bruce Mewborne         Jonathan Handler      Pierre Martineau
-                  Carl Schelin          Joshua Delahunty         Ralf Brown
-                   David Cohrs           Keizo Yamamoto        Richard Addison
-                  David Gentzel           Ken Arromdee        Richard P. Hughey
-                 David Hairston            Ken Lorber             Rob Menke
-                   Dean Luick            Ken Washikita         Roland McGrath
-                    Del Lamb              Kevin Darcy            Ross Brown
-                  Deron Meranda            Kevin Hugo          Scott R. Turner
-                   Eric Backus            Kevin Sitze         Stephen Spackman
-                Eric Hendrickson        Kevin Smolkowski        Stephen White
-                  Eric R. Smith           Kevin Sweet            Steve Creps
-                 Eric S. Raymond         Mark Gooderum          Steve Linhart
-                Frederick Roeber          Mark Modrall        Steve VanDevender
-                   Gil Neiger             Matthew Day            Tim Lennan
-                   Greg Laskin            Merlyn LeRoy         Timo Hakulinen
-                   Greg Olson           Michael Allison           Tom Almy
-                 Gregg Wonderly          Michael Hamel            Tom West
-                  Hao-yang Wang         Michael Sokolov        Warwick Allison
-                  Helge Hafting           Mike Engber           Yitzhak Sapir
-                  Izchak Miller
+                   Adam Aronow           Helge Hafting           Mike Engber
+                   Andy Church       Irina Rempt-Drijfhout       Mike Gallop
+                  Andy Swanson           Izchak Miller         Mike Passaretti
+                  Ari Huttunen             Janet Walz          Mike Stephenson
+                  Barton House       Jean-Christophe Collet      Norm Meluch
+               Benson I. Margulies       Jochen Erwied          Olaf Seibert
+                    Bill Dyer             John Kallen            Pat Rankin
+                Boudewijn Waijers         John Rupley            Paul Winner
+                    Bruce Cox             John S. Bien        Pierre Martineau
+                 Bruce Holloway            Johnny Lee            Ralf Brown
+                 Bruce Mewborne            Jon W{tte           Richard Addison
+                  Carl Schelin          Jonathan Handler      Richard P. Hughey
+                   Chris Russo          Joshua Delahunty          Rob Menke
+                   David Cohrs           Keizo Yamamoto        Roland McGrath
+                 David Damerell           Ken Arromdee        Ron Van Iwaarden
+                  David Gentzel            Ken Lorber           Ronnen Miller
+                 David Hairston          Ken Washikita           Ross Brown
+                   Dean Luick             Kevin Darcy          Sascha Wostmann
+                    Del Lamb               Kevin Hugo          Scott R. Turner
+                  Deron Meranda           Kevin Sitze         Stephen Spackman
+                 Dylan O'Donnell        Kevin Smolkowski        Stephen White
+                   Eric Backus            Kevin Sweet            Steve Creps
+                Eric Hendrickson         Mark Gooderum          Steve Linhart
+                  Eric R. Smith           Mark Modrall        Steve VanDevender
+                 Eric S. Raymond          Matthew Day            Tim Lennan
+                Frederick Roeber          Merlyn LeRoy         Timo Hakulinen
+                   Gil Neiger           Michael Allison           Tom Almy
+                   Greg Laskin            Michael Feir            Tom West
+                   Greg Olson            Michael Hamel         Warwick Allison
+                 Gregg Wonderly         Michael Sokolov         Yitzhak Sapir
+                  Hao-yang Wang
 
           Brand and product names are trademarks or  registered  trademarks
           of their respective holders.
-
-
-
 
 
 
