@@ -68,7 +68,7 @@ static long laststattime;
 # ifdef AMS				/* Just a placeholder for AMS */
 #  define MAILPATH "/dev/null"
 # else
-#  ifdef LINUX
+#  if defined(LINUX) || defined(__osf__)
 #   define MAILPATH "/var/spool/mail/"
 #  else
 #   if defined(BSD) || defined(ULTRIX)
