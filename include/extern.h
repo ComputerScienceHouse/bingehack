@@ -339,6 +339,7 @@ E const char *NDECL(roguename);
 #endif
 E struct obj *FDECL(realloc_obj,
 		(struct obj *, int, genericptr_t, int, const char *));
+E char *NDECL(coyotename);
 
 /* ### do_wear.c ### */
 

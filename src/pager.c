@@ -602,7 +602,7 @@ do_look(quick)
 	}
 
 	/*
-	 * If we are looking at the screen, follow multiple posibilities or
+	 * If we are looking at the screen, follow multiple possibilities or
 	 * an ambiguous explanation by something more detailed.
 	 */
 	if (from_screen) {
@@ -613,7 +613,9 @@ do_look(quick)
 		pm = lookat(cc.x, cc.y, look_buf, monbuf);
 		firstmatch = look_buf;
 		if (*firstmatch) {
-		    Sprintf(temp_buf, " (%s)", firstmatch);
+		    Sprintf(temp_buf, " (%s)",
+				(pm == &mons[PM_COYOTE]) ?
+				coyotename() : firstmatch);
 		    (void)strncat(out_str, temp_buf, BUFSZ-strlen(out_str)-1);
 		    found = 1;	/* we have something to look up */
 		}

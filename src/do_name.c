@@ -874,6 +874,30 @@ const char *colorpref;
 	return (Hallucination || !colorpref) ?
 		hcolors[rn2(SIZE(hcolors))] : colorpref;
 }
+
+/* Aliases for road-runner nemesis
+ * See also http://www.geocities.com/EnchantedForest/1141/latin.html
+ */
+static const char *coynames[] = {
+	"Carnivorous Vulgaris","Road-Runnerus Digestus",
+	"Eatibus Anythingus"  ,"Famishus-Famishus",
+	"Eatibus Almost Anythingus","Eatius Birdius",
+	"Famishius Fantasticus","Eternalii Famishiis",
+	"Famishus Vulgarus","Famishius Vulgaris Ingeniusi",
+	"Eatius-Slobbius","Hardheadipus Oedipus",
+	"Carnivorous Slobbius","Hard-Headipus Ravenus",
+	"Evereadii Eatibus","Apetitius Giganticus",
+	"Hungrii Flea-Bagius","Overconfidentii Vulgaris",
+	"Caninus Nervous Rex","Grotesques Appetitus",
+	"Nemesis Riduclii","Canis latrans"
+};
+	
+char *coyotename()
+{
+	static char coybuf[QBUFSZ];
+	Sprintf(coybuf,"coyote - %s", coynames[rn2(SIZE(coynames)-1)]);
+	return coybuf;
+}
 #endif /* OVL2 */
 
 /*do_name.c*/
