@@ -1468,6 +1468,19 @@ glibr()
 			dropx(otmp);
 		}
 	}
+
+	otmp = uswapwep;
+	if (u.twoweap && otmp) {
+		Your("%s %sslips from your %s.",
+			is_sword(otmp) ? c_sword :
+				makesingular(oclass_names[(int)otmp->oclass]),
+			xfl ? "also " : "",
+			makeplural(body_part(HAND)));
+		setuswapwep((struct obj *)0);
+		xfl++;
+		if (otmp->otyp != LOADSTONE || !otmp->cursed)
+			dropx(otmp);
+	}
 	otmp = uwep;
 	if (otmp && !welded(otmp)) {
 		/* changed so cursed weapons don't fall, GAN 10/30/86 */

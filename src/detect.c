@@ -169,7 +169,7 @@ outgoldmap:
 	}
     for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
     	if (DEADMONSTER(mtmp)) continue;	/* probably overkill here */
-	if (mtmp->mgold) {
+	if (mtmp->mgold || monsndx(mtmp->data) == PM_GOLD_GOLEM) {
 	    struct obj gold;
 
 	    gold.otyp = GOLD_PIECE;
