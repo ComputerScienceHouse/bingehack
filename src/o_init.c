@@ -5,9 +5,7 @@
 #include "hack.h"
 #include "lev.h"	/* save & restore info */
 
-extern int n_dgns;		/* from dungeon.c */
-
-STATIC_DCL void NDECL(setgemprobs);
+STATIC_DCL void FDECL(setgemprobs, (d_level*));
 STATIC_DCL void FDECL(shuffle,(int,int,BOOLEAN_P));
 STATIC_DCL void NDECL(shuffle_all);
 STATIC_DCL boolean FDECL(interesting_to_discover,(int));
@@ -44,13 +42,16 @@ shuffle_tiles()
 #endif	/* USE_TILES */
 
 STATIC_OVL void
-setgemprobs()
+setgemprobs(dlev)
+d_level *dlev;
 {
-	register int j, first;
-	int lev = (n_dgns ? ((ledger_no(&u.uz) > maxledgerno())
-				? maxledgerno() : ledger_no(&u.uz))
-			  : 0);
+	int j, first, lev;
 
+	if (dlev)
+	    lev = (ledger_no(dlev) > maxledgerno())
+				? maxledgerno() : ledger_no(dlev);
+	else
+	    lev = 0;
 	first = bases[GEM_CLASS];
 
 	for(j = 0; j < 9-lev/3; j++)
@@ -138,7 +139,7 @@ register char oclass;
 		bases[(int)oclass] = first;
 
 		if (oclass == GEM_CLASS) {
-			setgemprobs();
+			setgemprobs(NULL);
 
 			if (rn2(2)) { /* change turquoise from green to blue? */
 			    COPY_OBJ_DESCR(objects[TURQUOISE],objects[SAPPHIRE]);
@@ -245,7 +246,7 @@ find_skates()
 void
 oinit()			/* level dependent initialization */
 {
-	setgemprobs();
+	setgemprobs(&u.uz);
 }
 
 void
