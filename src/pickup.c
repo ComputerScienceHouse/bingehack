@@ -1223,7 +1223,7 @@ doloot()	/* loot a container on the floor. */
 	register int c = -1;
 	int timepassed = 0;
 	int x,y;
-	boolean underfoot = FALSE;
+	boolean underfoot = TRUE;
 	const char *dont_find_anything = "don't find anything";
 	struct monst *mtmp;
 #ifdef STEED
@@ -1333,7 +1333,8 @@ gotit:
 			underfoot = TRUE;
 			if (container_at(x, y, FALSE))
 				goto lootcont;
-		}
+		} else
+			underfoot = FALSE;
 		if (u.dz < 0) {
 			You("%s to loot on the %s.", dont_find_anything,
 				ceiling(x, y));
@@ -1414,11 +1415,11 @@ gotit:
 			    }
 			} else {
 				You("%s %sthere to loot.", dont_find_anything,
-					got_saddle ? "else " : "");
+					(saddled_there || got_saddle) ? "else " : "");
 				return timepassed;
 			}
 		}
-	} else if (c != 'y') {
+	} else if (c != 'y' && c != 'n') {
 		You("%s %s to loot.", dont_find_anything,
 			underfoot ? "here" : "there");
 	}
