@@ -261,9 +261,14 @@ struct obj *otmp;
 		if (monsndx(mtmp->data) == PM_STONE_GOLEM) {
 		    char *name = Monnam(mtmp);
 		    /* turn into flesh golem */
-		    (void) newcham(mtmp, &mons[PM_FLESH_GOLEM]);
-		    if (cansee(mtmp->mx, mtmp->my))
-			pline("%s turns to flesh!", name);
+		    if (newcham(mtmp, &mons[PM_FLESH_GOLEM])) {
+			if (canseemon(mtmp))
+			    pline("%s turns to flesh!", name);
+		    } else {
+			if (canseemon(mtmp))
+			    pline("%s looks rather fleshy for a moment.",
+				  name);
+		    }
 		} else
 		    wake = FALSE;
 		break;

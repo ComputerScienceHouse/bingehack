@@ -1659,9 +1659,13 @@ mon_to_stone(mtmp)
 	/* it's a golem, and not a stone golem */
 	if(canseemon(mtmp))
 	    pline("%s solidifies...", Monnam(mtmp));
-	(void) newcham(mtmp, &mons[PM_STONE_GOLEM]);
-	if(canseemon(mtmp))
-	    pline("Now it's %s.", an(mtmp->data->mname));
+	if (newcham(mtmp, &mons[PM_STONE_GOLEM])) {
+	    if(canseemon(mtmp))
+		pline("Now it's %s.", an(mtmp->data->mname));
+	} else {
+	    if(canseemon(mtmp))
+		pline("... and returns to normal.");
+	}
     } else
 	impossible("Can't polystone %s!", a_monnam(mtmp));
 }
@@ -2092,9 +2096,10 @@ struct permonst *mdat;
 		   human forms any more */
 		if (is_mplayer(mdat) || (!is_human(mdat) && polyok(mdat)))
 		    break;
-	}
+	    }
 	    if (tryct > 100) return 0;	/* Should never happen */
-	}
+	} else if (mvitals[monsndx(mdat)].mvflags & G_GENOD)
+	    return(0);	/* passed in mdat is genocided */
 
 	if(is_male(mdat)) {
 		if(mtmp->female) mtmp->female = FALSE;
