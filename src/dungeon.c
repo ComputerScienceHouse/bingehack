@@ -641,17 +641,21 @@ init_dungeons()		/* initialize the "dungeon" structs */
 	    char tbuf[BUFSZ];
 	    Sprintf(tbuf, "Cannot open dungeon description - \"%s",
 		DUNGEON_FILE);
-#if defined(DLB)
+#ifdef DLBRSRC /* using a resource from the executable */
+	    Strcat(tbuf, "\" resource!");
+#else /* using a file or DLB file */
+# if defined(DLB)
 	    Strcat(tbuf, "\" from ");
-# ifdef PREFIXES_IN_USE
+#  ifdef PREFIXES_IN_USE
 	    Strcat(tbuf, "\n\"");
 	    if (fqn_prefix[DATAPREFIX]) Strcat(tbuf, fqn_prefix[DATAPREFIX]);
-# else
+#  else
 	    Strcat(tbuf, "\"");
-# endif
+#  endif
 	    Strcat(tbuf, DLBFILE);
-#endif
+# endif
 	    Strcat(tbuf, "\" file!");
+#endif
 	    panic(tbuf);
 	}
 

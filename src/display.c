@@ -1468,18 +1468,20 @@ check_pos(x, y, which)
 
 /* Return TRUE if more than one is non-zero. */
 /*ARGSUSED*/
+#ifdef WA_VERBOSE
 STATIC_OVL boolean
 more_than_one(x, y, a, b, c)
     int x, y, a, b, c;
 {
     if ((a && (b|c)) || (b && (a|c)) || (c && (a|b))) {
-#ifdef WA_VERBOSE
 	error4(x,y,a,b,c,0);
-#endif
 	return TRUE;
     }
     return FALSE;
 }
+#else
+#define more_than_one(x, y, a, b, c) (((a) && ((b)|(c))) || ((b) && ((a)|(c))) || ((c) && ((a)|(b))))
+#endif
 
 /* Return the wall mode for a T wall. */
 STATIC_OVL int

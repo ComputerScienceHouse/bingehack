@@ -264,6 +264,7 @@ finder_file_request(void)
 			}
 		}	
 	}
+#if 0
 #ifdef MAC68K
 	else {
 		short finder_msg, file_count;
@@ -283,6 +284,7 @@ finder_file_request(void)
 		}
 	}
 #endif /* MAC68K */
+#endif /* 0 */
 }
 
 /*macmain.c*/
