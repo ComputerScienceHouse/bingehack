@@ -1188,12 +1188,19 @@ register struct monst *mtmp;
 		} else {
 		    mtmp->mtrapped = 0;
 		}
-	    } else if (trap->ttyp == BEAR_TRAP && metallivorous(mptr)) {
-		if (canseemon(mtmp))
-		    pline("%s eats a bear trap!", Monnam(mtmp));
-		deltrap(trap);
-		mtmp->meating = 5;
-		mtmp->mtrapped = 0;
+	    } else if (metallivorous(mptr)) {
+		if (trap->ttyp == BEAR_TRAP) {
+		    if (canseemon(mtmp))
+			pline("%s eats a bear trap!", Monnam(mtmp));
+		    deltrap(trap);
+		    mtmp->meating = 5;
+		    mtmp->mtrapped = 0;
+		} else if (trap->ttyp == SPIKED_PIT) {
+		    if (canseemon(mtmp))
+			pline("%s munches on some spikes!", Monnam(mtmp));
+		    trap->ttyp = PIT;
+		    mtmp->meating = 5;
+		}
 	    }
 	} else {
 	    register int tt = trap->ttyp;
