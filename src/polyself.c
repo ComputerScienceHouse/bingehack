@@ -98,18 +98,23 @@ const char *fmt, *arg;
 void
 change_sex()
 {
+	/* setting u.umonster for caveman/cavewoman or priest/priestess
+	   swap unintentionally makes `Upolyd' appear to be true */
+	boolean already_polyd = (boolean) Upolyd;
+
 	flags.female = !flags.female;
-	if (Upolyd)	/* poly'd: also change saved sex */
+	if (already_polyd)	/* poly'd: also change saved sex */
 		u.mfemale = !u.mfemale;
-	max_rank_sz();
+	max_rank_sz();		/* [this appears to be superfluous] */
 	if (flags.female && urole.name.f)
 	    Strcpy(pl_character, urole.name.f);
 	else
 	    Strcpy(pl_character, urole.name.m);
 	u.umonster = (flags.female && urole.femalenum != NON_PM) ?
 			urole.femalenum : urole.malenum;
-	if (!Upolyd) u.umonnum = u.umonster;
-	else if (u.umonnum == PM_SUCCUBUS || u.umonnum == PM_INCUBUS) {
+	if (!already_polyd) {
+	    u.umonnum = u.umonster;
+	} else if (u.umonnum == PM_SUCCUBUS || u.umonnum == PM_INCUBUS) {
 	    /* change monster type to match new sex */
 	    u.umonnum = (u.umonnum == PM_SUCCUBUS) ? PM_INCUBUS : PM_SUCCUBUS;
 	    set_uasmon();
