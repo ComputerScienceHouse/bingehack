@@ -1261,8 +1261,6 @@ Your starting alignment (align:lawful, align:neutral,
 or align:chaotic).  You may specify just the first letter.
 The default is to randomly pick an appropriate alignment.
 Cannot be set with the `O' command.
-.lp "amiflush    "
-This option is used to kill type-ahead on the Amiga only.
 .lp "autopickup  "
 Pick up things you move onto by default (default on).
 .lp "autoquiver  "
