@@ -1261,9 +1261,11 @@ Your starting alignment (align:lawful, align:neutral,
 or align:chaotic).  You may specify just the first letter.
 The default is to randomly pick an appropriate alignment.
 Cannot be set with the `O' command.
+.lp "amiflush    "
+This option is used to kill type-ahead on the Amiga only.
 .lp "autopickup  "
 Pick up things you move onto by default (default on).
-.lp autoquiver
+.lp "autoquiver  "
 This option controls what happens when you attempt the `f' (fire)
 command with an empty quiver.  When true, the computer will fill
 your quiver with some suitable weapon.  Note that it will not take
@@ -1300,6 +1302,11 @@ instead of having to define a full graphics set yourself (default off).
 This option also sets up proper handling of graphics
 characters for such terminals, so you should specify it when appropriate
 even if you override the selections with your own graphics strings.
+.lp extmenu
+Changes the extended commands interface to pop-up a menu of available commands.  
+It is keystroke compatible with the traditional interface,
+and is implemented only by the tty port (default off), when the game
+has been compiled to support tty graphics.
 .lp disclose
 Offer to disclose various information when the game ends (default all).
 The possibilities are identifying your inventory ('i'),
@@ -1490,7 +1497,7 @@ gremlin, humanoid, imp or minor demon,
 jelly, kobold, leprechaun,
 mimic, nymph, orc,
 piercer, quadruped, rodent,
-spider, trapper or lurker above, unicorn,
+spider, trapper or lurker above, horse or unicorn,
 vortex, worm, xan or other mythical/fantastic insect,
 light, zruty,
 angelic being, bat, centaur,
