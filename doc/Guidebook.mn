@@ -618,6 +618,9 @@ If your keyboard has a meta key (which, when pressed in combination
 with another key, modifies it by setting the `meta' [8th, or `high']
 bit), you can invoke the extended commands by meta-ing the first
 letter of the command.
+.\" In {\it NT, OS/2, PC\/ {\rm and} ST NetHack},
+.\" the `Alt' key can be used in this fashion;
+.\" on the Amiga set the {\it altmeta\/} option to get this behavior.
 In NT, OS/2, and PC NetHack, the `Alt' key
 can be used in this fashion.
 .lp M-a
