@@ -882,6 +882,7 @@ genericptr_t p2;
 	if (!nonliving(mtmp->data) && !breathless(mtmp->data)) {
 	    if (cansee(mtmp->mx, mtmp->my))
 		pline("%s coughs!", Monnam(mtmp));
+	    setmangry(mtmp);
 	    if (resists_poison(mtmp))
 		return FALSE;
 	    mtmp->mhp -= rnd(dam) + 5;
