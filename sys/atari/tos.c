@@ -240,10 +240,15 @@ get_scr_size()
 # ifdef MINT
 #  include <ioctl.h>
 	struct winsize win;
+	char *tmp;
 
-	LI = atoi(getenv("LINES"));
-	CO = atoi(getenv("COLUMNS"));
-	if (!LI || !CO) {
+	if((tmp=getenv("LINES")))
+		LI = atoi(tmp);
+	else if((tmp=getenv("ROWS")))
+		LI = atoi(tmp);
+	if(tmp && (tmp=getenv("COLUMNS")))
+		CO = atoi(tmp);
+	else {
 	    ioctl(0,TIOCGWINSZ, &win);
 	    LI = win.ws_row;
 	    CO = win.ws_col;

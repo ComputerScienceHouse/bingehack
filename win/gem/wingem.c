@@ -132,6 +132,7 @@ Gem_init_nhwindows(argcp,argv)
 int* argcp;
 char** argv;
 {
+	argv=argv, argcp=argcp;
 	colors_changed=TRUE;
 
 	if(mar_gem_init()==0){
@@ -157,8 +158,8 @@ Gem_player_selection()
 	menu_item *selected=NULL;
 
 	/* Should we randomly pick for the player? */
-	if (flags.initrole < 0 || flags.initrace < 0 || flags.initgend < 0
-		 || flags.initalign < 0) {
+	if (flags.initrole == ROLE_NONE || flags.initrace == ROLE_NONE || 
+		flags.initgend == ROLE_NONE || flags.initalign == ROLE_NONE) {
 		pick4u = yn_function("Shall I pick a character for you? [ynq]",ynqchars,'n');
 		if(pick4u=='q'){
 give_up:		/* Just quit */
@@ -173,8 +174,7 @@ give_up:		/* Just quit */
 	if (flags.initrole < 0) {
 
 		/* Process the choice */
-		switch (pick4u) {
-		case 'y':
+		if(pick4u=='y' || flags.initrole == ROLE_RANDOM) {
 			/* Pick a random role */
 			flags.initrole = pick_role(flags.initrace, flags.initgend,
 							flags.initalign);
@@ -183,9 +183,7 @@ give_up:		/* Just quit */
 				mar_display_nhwindow(WIN_MESSAGE);
 				flags.initrole = randrole();
 			}
-			break;
-
-		case 'n':
+		}else{
 			/* Prompt for a role */
 			win = create_nhwindow(NHW_MENU);
 			start_menu(win);
@@ -221,7 +219,6 @@ give_up:		/* Just quit */
 
 			flags.initrole = selected[0].item.a_int - 1;
 			free((genericptr_t) selected),	selected = 0;
-			break;
 		}
 	}
 
@@ -230,7 +227,7 @@ give_up:		/* Just quit */
 	 * pre-selected gender/alignment */
 	if (flags.initrace < 0 || !validrace(flags.initrole, flags.initrace)) {
 		/* pre-selected race not valid */
-		if (pick4u == 'y') {
+		if (pick4u == 'y' || flags.initrace == ROLE_RANDOM) {
 			flags.initrace = pick_race(flags.initrole, flags.initgend,
 								flags.initalign);
 			if (flags.initrace < 0) {
@@ -300,7 +297,7 @@ give_up:		/* Just quit */
 	if (flags.initgend < 0 || !validgend(flags.initrole, flags.initrace,
 						flags.initgend)) {
 		/* pre-selected gender not valid */
-		if (pick4u == 'y') {
+		if (pick4u == 'y' || flags.initgend == ROLE_RANDOM) {
 			flags.initgend = pick_gend(flags.initrole, flags.initrace,
 							flags.initalign);
 			if (flags.initgend < 0) {
@@ -370,7 +367,7 @@ give_up:		/* Just quit */
 	if (flags.initalign < 0 || !validalign(flags.initrole, flags.initrace,
 							flags.initalign)) {
 		/* pre-selected alignment not valid */
-		if (pick4u == 'y') {
+		if (pick4u == 'y' || flags.initalign == ROLE_RANDOM) {
 			flags.initalign = pick_align(flags.initrole, flags.initrace,
 								flags.initgend);
 			if (flags.initalign < 0) {
@@ -804,10 +801,14 @@ Gem_wait_synch()
 }
 
 #ifdef CLIPPING
+extern void mar_cliparound(void);
 void
 Gem_cliparound(x, y)
 int x, y;
-{}
+{
+	mar_curs(x-1,y);
+	mar_cliparound();
+}
 #endif /* CLIPPING */
 
 /*
@@ -825,6 +826,9 @@ void mar_print_gl_char(winid,xchar,xchar,int);
 extern int mar_set_rogue(int);
 #endif
 
+extern void mar_add_pet_sign(winid,int,int);
+extern int mar_set_tile_mode(int);
+
 void
 Gem_print_glyph(window, x, y, glyph)
     winid window;
@@ -839,7 +843,16 @@ Gem_print_glyph(window, x, y, glyph)
 # endif
 
 	x--;	/* MAR -- because x ranges from 1 to COLNO */
-	mar_print_glyph(window,x,y,glyph2tile[glyph]);
+	if(mar_set_tile_mode(-1)){
+		mar_print_glyph(window,x,y,glyph2tile[glyph]);
+		if(glyph_is_pet(glyph)
+#ifdef TEXTCOLOR
+		&& iflags.hilite_pet
+#endif
+		)
+			mar_add_pet_sign(window,x,y);
+	}else
+		mar_print_gl_char(window,x,y,glyph);
 }
 
 void mar_print_char(winid,xchar,xchar,char,int);
@@ -885,7 +898,8 @@ void mar_print_gl_char(window, x, y, glyph)
     if ((offset = (glyph - GLYPH_WARNING_OFF)) >= 0) { 		/* a warning flash */
 	ch = warnsyms[offset];
 	warn_color(offset);
-    } else if ((offset = (glyph - GLYPH_SWALLOW_OFF)) >= 0) {	/* swallow */
+    } else
+    if ((offset = (glyph - GLYPH_SWALLOW_OFF)) >= 0) {		/* swallow */
 	/* see swallow_to_glyph() in display.c */
 	ch = (uchar) showsyms[S_sw_tl + (offset & 0x7)];
 	mon_color(offset >> 3);
@@ -1009,7 +1023,9 @@ Gem_get_ext_cmd()
 void
 Gem_number_pad(state)
 int state;
-{}
+{
+	state=state;
+}
 
 void
 win_Gem_init()

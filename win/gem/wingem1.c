@@ -39,7 +39,7 @@ typedef signed char	xchar;
 #undef NDECL
 #undef FDECL
 
-static char nullstr[]="",  md[]="Nethack", strCancel[]="Cancel", strOk[]="Ok", strText[]="Text";
+static char nullstr[]="",  md[]="NetHack 3.3.1", strCancel[]="Cancel", strOk[]="Ok", strText[]="Text";
 
 extern winid WIN_MESSAGE, WIN_MAP, WIN_STATUS, WIN_INVEN;
 
@@ -118,10 +118,11 @@ extern int mar_hp_query(void);				/* from wingem.c */
 extern int mar_get_msg_history(void);		/* from wingem.c */
 extern int vdi2dev4[];							/* from load_img.c */
 
-static int tile_graphics=TRUE;
 static int no_glyph;	/* the int indicating there is no glyph */
 IMG_header tile_image, titel_image, rip_image;
-MFDB Tile_bilder, Map_bild, Titel_bild, Rip_bild;
+MFDB Tile_bilder, Map_bild, Titel_bild, Rip_bild, Black_bild, Pet_Mark;
+/* pet_mark Design by Warwick Allison warwick@troll.no */
+static int pet_mark_data[]={0x0000,0x3600,0x7F00,0x7F00,0x3E00,0x1C00,0x0800};
 static short	*normal_palette=NULL;
 
 static struct gw{
@@ -130,18 +131,14 @@ static struct gw{
 	GRECT gw_place;
 } Gem_nhwindow[MAXWIN];
 
-typedef struct {
-	char glyph, color;
-	int img;
-} Gem_glyph;
-
 int Fcw, Fch;
 
 /*struct gemmapdata {*/
 	GRECT dirty_map_area={COLNO,ROWNO,0,0};
 	int map_cursx=0, map_cursy=0, curs_col=WHITE;
+	int draw_cursor=TRUE, map_cell_width=16;
 	SCROLL 	scroll_map;
-	Gem_glyph **map_glyphs=NULL;
+	char **map_glyphs=NULL;
 /*};*/
 
 /*struct gemstatusdata{*/
@@ -286,63 +283,76 @@ int ng;
 
 /****************************** userdef_draw *************************************/
 
-void my_clear_area(GRECT *area){
+void my_color_area(GRECT *area, int col){
 	int pxy[4];
 
-	v_set_fill(WHITE,1,IP_SOLID,0);
+	v_set_fill(col,1,IP_SOLID,0);
 	rc_grect_to_array(area,pxy);
 	v_bar(x_handle,pxy);
 }
 
+void my_clear_area(GRECT *area){
+	my_color_area(area, WHITE);
+}
+
+int mar_set_tile_mode(int);
+
 static void win_draw_map(int first, WIN *win, GRECT *area){
 	int pla[8], w=area->g_w-1, h=area->g_h-1;
-#if 0
-	int i, j, x, y;
-	char glyph[COLNO+1];
-#endif
+	int i, x, y, mode, mch;
+	GRECT back=*area;
 
+	first=first;
 	v_set_mode(MD_REPLACE);
+	mode=S_ONLY;
 
-#if 0
-	if(!tile_graphics){
-		vst_color(off_handle,BLACK);
-		vst_font(off_handle,ibm_font_id);
-		vst_height(off_handle,ibm_font,&i,&i,&i,&i);
-		vst_alignment(off_handle,0,5,&i,&i);
+	if(!mar_set_tile_mode(FAIL)){
+		v_set_text(ibm_font_id,ibm_font,WHITE,0,0,NULL);
+		v_set_mode(MD_TRANS);
+		mode=S_OR_D;
+		mch=Fch-1;
 
-		glyph[COLNO]='\0';
-		for(i=0,x=0,y=0;i<ROWNO;i++,y+=map_cell_height){
-			for(j=0;j<COLNO;j++)
-				glyph[j]=map_glyphs[i][j].glyph;
-			v_gtext(off_handle,x,y,glyph);
+		x=win->work.g_x-scroll_map.px_hpos;
+		y=win->work.g_y-scroll_map.px_vpos;
+		pla[2]=pla[0]=area->g_x-x;
+		pla[3]=pla[1]=0;
+		pla[2]+=w;
+		pla[3]+=mch;	/* MAR -- was 16 */
+		pla[6]=pla[4]=area->g_x;	/* x_wert to */
+		pla[7]=pla[5]=y;	/* y_wert to */
+		pla[6]+=w;
+		pla[7]+=mch;	/* MAR -- was 16 */
+		Vsync();
+		back.g_h=Fch;	/* MAR -- was 16 */
+		for(i=0;i<ROWNO;i++,y+=Fch,pla[1]+=Fch,pla[3]+=Fch,pla[5]+=Fch,pla[7]+=Fch){
+			back.g_y=y;
+			my_color_area(&back,BLACK);
+			v_gtext(x_handle,x,y,map_glyphs[i]);
+			vro_cpyfm(x_handle, mode, pla, &Map_bild, screen);
 		}
-
-		pla[2]=pla[0]=pla[6]=pla[4]=scroll_map.px_hpos+area->g_x-win->work.g_x;
-		pla[3]=pla[1]=pla[7]=pla[5]=scroll_map.px_vpos+area->g_y-win->work.g_y;
+	}else{
+		v_set_mode(MD_REPLACE);
+		mch=15;
+	
+		pla[2]=pla[0]=scroll_map.px_hpos+area->g_x-win->work.g_x;
+		pla[3]=pla[1]=scroll_map.px_vpos+area->g_y-win->work.g_y;
 		pla[2]+=w;
 		pla[3]+=h;
+		pla[6]=pla[4]=area->g_x;	/* x_wert to */
+		pla[7]=pla[5]=area->g_y;	/* y_wert to */
 		pla[6]+=w;
 		pla[7]+=h;
-		vro_cpyfm(off_handle, S_OR_NOTD, pla, &Textfarbe_bild, &Map_bild);
+		vro_cpyfm(x_handle, mode, pla, &Map_bild, screen);
 	}
-#endif /*0*/
 
-	pla[2]=pla[0]=scroll_map.px_hpos+area->g_x-win->work.g_x;
-	pla[3]=pla[1]=scroll_map.px_vpos+area->g_y-win->work.g_y;
-	pla[2]+=(w=area->g_w-1);
-	pla[3]+=(h=area->g_h-1);
-	pla[6]=pla[4]=area->g_x;	/* x_wert to */
-	pla[7]=pla[5]=area->g_y;	/* y_wert to */
-	pla[6]+=w;
-	pla[7]+=h;
-	vro_cpyfm(x_handle, S_ONLY, pla, &Map_bild, screen);
-
-	v_set_line(curs_col,1,1,0,0);
-	pla[0]=pla[2]=win->work.g_x+scroll_map.px_hline*(map_cursx-scroll_map.hpos);
-	pla[1]=pla[3]=win->work.g_y+scroll_map.px_vline*(map_cursy-scroll_map.vpos);
-	pla[2]+=15;
-	pla[3]+=15;
-	v_rect(pla[0],pla[1],pla[2],pla[3]);
+	if(draw_cursor){
+		v_set_line(curs_col,1,1,0,0);
+		pla[0]=pla[2]=win->work.g_x+scroll_map.px_hline*(map_cursx-scroll_map.hpos);
+		pla[1]=pla[3]=win->work.g_y+scroll_map.px_vline*(map_cursy-scroll_map.vpos);
+		pla[2]+=map_cell_width-1;
+		pla[3]+=mch;
+		v_rect(pla[0],pla[1],pla[2],pla[3]);
+	}
 }
 
 static int draw_titel(PARMBLK *pb){
@@ -371,9 +381,8 @@ static int draw_lines(PARMBLK *pb){
 		char **ptr;
 		int x=pb->pb_x,y=pb->pb_y,start_line=(area.g_y-y), chardim[4];
 
-		v_set_mode(MD_TRANS);
+		v_set_mode(MD_REPLACE);
 
-		my_clear_area(&area);
 /* void v_set_text(int font,int height,int color,int effect,int rotate,int out[4])	*/
 		v_set_text(ibm_font_id,ibm_font,BLACK,0,0,chardim);
 
@@ -383,7 +392,11 @@ static int draw_lines(PARMBLK *pb){
 		x-=scroll_menu.px_hpos;
 		ptr=&text_lines[start_line+=scroll_menu.vpos];
 		start_line = min((area.g_y-y+area.g_h+Fch-1)/Fch,Anz_text_lines-start_line);
+		area.g_h=Fch;
+		Vsync();
 		for(;--start_line>=0;y+=Fch){
+			area.g_y=y;
+			my_clear_area(&area);
 			if(**ptr-1){
 				v_set_text(FAIL,0,BLUE,0x01,0,NULL);
 				v_gtext(x_handle,x,y,(*ptr++)+1);
@@ -403,22 +416,24 @@ static int draw_msgline(PARMBLK *pb){
 		int x=pb->pb_x, y=pb->pb_y+2*Fch, foo, i;
 		char **ptr=&message_line[msg_pos];
 
-		if(x%8)	/* Byte alignment speeds output up */
-			x=(x/8+1)*8;
+		x=(x+7) & ~7;	/* Byte alignment speeds output up */
 
 		v_set_mode(MD_REPLACE);
-		my_clear_area(&area);
 
 /* void v_set_text(int font,int height,int color,int effect,int rotate,int out[4])	*/
 		v_set_text(ibm_font_id,ibm_font,FAIL, FAIL,0,NULL);
 		vst_alignment(x_handle,0,5,&foo,&foo);
 		foo=min(msg_pos,3);
+/*		area.g_h=Fch;*/
+		Vsync();
 		for(i=0;i<foo;i++,y-=Fch,ptr--){
+/*			area.g_y=y;
+			my_clear_area(&area);*/
 			if(message_age[msg_pos-i])
 				v_set_text(FAIL,0,BLACK,0,0,NULL);
 			else
 				v_set_text(FAIL,0,LBLACK,4,0,NULL);
-		v_gtext(x_handle,x,y,*ptr);
+			v_gtext(x_handle,x,y,*ptr);
 		}
 	}
 	return(0);
@@ -432,7 +447,7 @@ static int draw_status(PARMBLK *pb){
 		int x=pb->pb_x, y=pb->pb_y, chardim[4], h;
 
 /* void v_set_text(int font,int height,int color,int effect,int rotate,int out[4])	*/
-		v_set_mode(MD_TRANS);
+		v_set_mode(MD_REPLACE);
 		if(max_w/Fcw>=COLNO-1)
 			v_set_text(ibm_font_id,ibm_font,BLACK,0,0,chardim);
 		else
@@ -440,8 +455,9 @@ static int draw_status(PARMBLK *pb){
 		h=chardim[3] ? chardim[3] : 1;
 		x+=2*chardim[2];
 
+		Vsync();
 		my_clear_area(&area);
-		v_gtext(x_handle,x,y,   *(ptr++));
+		v_gtext(x_handle,x,y,  *(ptr++));
 		v_gtext(x_handle,x,y+h,*ptr);
 	}
 	return(0);
@@ -454,8 +470,7 @@ static int draw_inventory(PARMBLK *pb){
 		int gl, i, x=pb->pb_x, y=pb->pb_y,start_line=area.g_y-y;
 		Gem_menu_item *it;
 
-		v_set_mode(MD_TRANS);
-		my_clear_area(&area);
+		v_set_mode(MD_REPLACE);
 		v_set_text(ibm_font_id,ibm_font,BLACK,0,0,NULL);
 
 		start_line /= Fch;
@@ -467,12 +482,17 @@ static int draw_inventory(PARMBLK *pb){
 
 		i = min((area.g_y-y+area.g_h+Fch-1)/Fch,Anz_inv_lines-start_line);
 
+		Vsync();
+		area.g_h=Fch;
+
 		for(;(--i>=0) && it;it=it->Gmi_next,y+=Fch){
 			if(it->Gmi_attr)
 				v_set_text(FAIL,FALSE,BLUE,1,FAIL,NULL);	/* Bold */
 			else
 				v_set_text(FAIL,FALSE,BLACK,0,FAIL,NULL);
 
+			area.g_y=y;
+			my_clear_area(&area);
 			if((gl=it->Gmi_glyph) != no_glyph){
 				int pla[8], h=min(Fch,16)-1;
 
@@ -495,11 +515,42 @@ static int draw_inventory(PARMBLK *pb){
 	return(0);
 }
 
+static int draw_prompt(PARMBLK *pb){
+	GRECT area=*(GRECT *) &pb->pb_x;
+
+	if(rc_intersect((GRECT *)&pb->pb_xc,&area)){
+		char **ptr=(char **)pb->pb_parm;
+		int x=pb->pb_x, y=pb->pb_y, chardim[4], h;
+
+/* void v_set_text(int font,int height,int color,int effect,int rotate,int out[4])	*/
+		v_set_mode(MD_TRANS);
+		v_set_text(ibm_font_id,ibm_font,WHITE,0,0,NULL);
+		Vsync();
+		if(planes<4){
+			int pxy[4];
+		
+			v_set_fill(BLACK,2,4,0);
+			rc_grect_to_array(&area,pxy);
+			v_bar(x_handle,pxy);
+		}else
+			my_color_area(&area,LWHITE);
+		v_gtext(x_handle,x,y,*(ptr++));
+		if(*ptr)
+			v_gtext(x_handle,x,y+Fch,*ptr);
+	}
+	return(0);
+}
+
 static USERBLK ub_lines={draw_lines, 0L}, ub_msg={draw_msgline, 0L},
 					ub_inventory={draw_inventory, 0L}, ub_titel={draw_titel, 0L},
-					ub_status={draw_status, 0L};
+					ub_status={draw_status, 0L}, ub_prompt={draw_prompt, 0L};
 
 /**************************** rsc_funktionen *****************************/
+
+void my_close_dialog(DIAINFO *dialog,boolean shrink_box){
+	close_dialog(dialog,shrink_box);
+	Event_Timer(0,0,TRUE);
+}
 
 void
 mar_get_rsc_tree(obj_number, z_ob_obj)
@@ -516,25 +567,29 @@ void
 img_error(errnumber)
 int errnumber;
 {
+	char buf[BUFSZ];
+
 	switch(errnumber){
 	case ERR_HEADER :
-		form_alert(1,"[1][ Image Header | corrupt. ][ Oops ]");
+		sprintf(buf,"%s","[1][ Image Header | corrupt. ][ Oops ]");
 		break;
 	case ERR_ALLOC :
-		form_alert(1,"[1][ Not enough | memory for | an image. ][ Oops ]");
+		sprintf(buf,"%s","[1][ Not enough | memory for | an image. ][ Oops ]");
 		break;
 	case ERR_FILE :
-		form_alert(1,"[1][ The Image-file | is not available ][ Oops ]");
+		sprintf(buf,"%s","[1][ The Image-file | is not available ][ Oops ]");
 		break;
 	case ERR_DEPACK :
-		form_alert(1,"[1][ The Image-file | is corrupt ][ Oops ]");
+		sprintf(buf,"%s","[1][ The Image-file | is corrupt ][ Oops ]");
 		break;
 	case ERR_COLOR :
-		form_alert(1,"[1][ Number of colors | not supported ][ Oops ]");
+		sprintf(buf,"%s","[1][ Number of colors | not supported ][ Oops ]");
 		break;
 	default:
+		sprintf(buf,"[1][ img_error | strange error | number: %i ][ Hmm ]",errnumber);
 		break;
 	}
+	form_alert(1,buf);
 }
 
 void mar_change_button_char(OBJECT *z_ob, int nr, char ch){
@@ -545,17 +600,17 @@ void mar_change_button_char(OBJECT *z_ob, int nr, char ch){
 void
 mar_set_dir_keys()
 {
-	static int numpad=FAIL;
+	static int mi_numpad=FAIL;
 	char mcmd[]="bjnh.lyku", npcmd[]="123456789", *p_cmd;
 
-	if(numpad!=mar_iflags_numpad()){
+	if(mi_numpad!=mar_iflags_numpad()){
 		OBJECT *z_ob=zz_oblist[DIRECTION];
 		int i;
 	
-		numpad=mar_iflags_numpad();
+		mi_numpad=mar_iflags_numpad();
 		ob_set_hotkey(z_ob,DIRDOWN,'>');
 		ob_set_hotkey(z_ob,DIRUP,'<');
-		p_cmd= numpad ? npcmd : mcmd;
+		p_cmd= mi_numpad ? npcmd : mcmd;
 		for(i=0;i<9;i++)
 			mar_change_button_char(z_ob,DIR1+2*i,p_cmd[i]);
 	}
@@ -629,6 +684,14 @@ mar_gem_init()
 
 	mfdb(&Map_bild,NULL,COLNO*16, ROWNO*16, 0, planes);
 	Map_bild.fd_addr=(int *)m_alloc(mfdb_size(&Map_bild));
+
+	mfdb(&Pet_Mark,pet_mark_data,8, 7, 1, 1);
+	vr_trnfm(x_handle,&Pet_Mark,&Pet_Mark);
+
+	mfdb(&Black_bild,NULL,8, 16, 1, 1);
+	Black_bild.fd_addr=(int *)m_alloc(mfdb_size(&Black_bild));
+	memset(Black_bild.fd_addr,255,mfdb_size(&Black_bild));
+	vr_trnfm(x_handle,&Black_bild,&Black_bild);
 
 	for(i=0;i<MAXWIN;i++){
 		Gem_nhwindow[i].gw_window=NULL;
@@ -739,6 +802,7 @@ void
 mar_about()
 {
 	xdialog(zz_oblist[ABOUT], md, NULL, NULL, DIA_CENTERED, FALSE, DIALOG_MODE);
+	Event_Timer(0,0,TRUE);
 }
 
 /************************* ask_name *******************************/
@@ -762,6 +826,7 @@ mar_ask_name()
 
 	ob_clear_edit(z_ob);
 	xdialog(z_ob,who_are_you, NULL, NULL, DIA_CENTERED, FALSE, DIALOG_MODE);
+	Event_Timer(0,0,TRUE);
 
 	test_free(titel_image.palette);
 	test_free(titel_image.addr);
@@ -792,6 +857,7 @@ K_Init(xev,availiable)
 XEVENT *xev;
 int availiable;
 {
+	xev=xev;
 	return(MU_KEYBD&availiable);
 }
 
@@ -800,6 +866,7 @@ KM_Init(xev,availiable)
 XEVENT *xev;
 int availiable;
 {
+	xev=xev;
 	return((MU_KEYBD|MU_MESAG)&availiable);
 }
 
@@ -808,6 +875,7 @@ M_Init(xev,availiable)
 XEVENT *xev;
 int availiable;
 {
+	xev=xev;
 	return(MU_MESAG&availiable);
 }
 
@@ -846,22 +914,24 @@ void
 mar_more()
 {
 	if(!mar_esc_pressed){
-	OBJECT *z_ob=zz_oblist[PAGER];
+		OBJECT *z_ob=zz_oblist[PAGER];
 		WIN *p_w;
 
-	Event_Handler(More_Init,More_Handler);
-	dial_colors(7,RED,BLACK,RED,RED,BLACK,BLACK,BLACK,BLACK,WHITE,WHITE,WHITE,WHITE,TRUE,TRUE);
+		Event_Handler(More_Init,More_Handler);
+		dial_colors(7,RED,BLACK,RED,RED,BLACK,BLACK,BLACK,BLACK,WHITE,WHITE,WHITE,WHITE,TRUE,TRUE);
 		if(WIN_MESSAGE!=WIN_ERR && (p_w=Gem_nhwindow[WIN_MESSAGE].gw_window)){
 			z_ob->ob_x=p_w->work.g_x;
 			z_ob->ob_y=p_w->curr.g_y+p_w->curr.g_h+Fch;
-	}
+		}
 		xdialog(z_ob,NULL, NULL, NULL, DIA_LASTPOS, FALSE, DIALOG_MODE);
-	Event_Handler(NULL,NULL);
-	if(planes<4)
-		dial_colors(4,BLACK,WHITE,RED,RED,WHITE,BLACK,BLACK,BLACK,FAIL,FAIL,FAIL,FAIL,TRUE,TRUE);
-	else
-		dial_colors(7,LWHITE,BLACK,RED,RED,BLACK,BLACK,BLACK,BLACK,WHITE,WHITE,WHITE,WHITE,TRUE,TRUE);
-}
+		Event_Timer(0,0,TRUE);
+		Event_Handler(NULL,NULL);
+
+		if(planes<4)
+			dial_colors(4,BLACK,WHITE,RED,RED,WHITE,BLACK,BLACK,BLACK,FAIL,FAIL,FAIL,FAIL,TRUE,TRUE);
+		else
+			dial_colors(7,LWHITE,BLACK,RED,RED,BLACK,BLACK,BLACK,BLACK,WHITE,WHITE,WHITE,WHITE,TRUE,TRUE);
+	}
 }
 
 /************************* Gem_start_menu *******************************/
@@ -869,6 +939,7 @@ void
 Gem_start_menu(win)
 winid win;
 {
+	win=win;
 	if(invent_list){
 		Gem_menu_item *curr, *next;
 
@@ -890,6 +961,7 @@ mar_add_menu(win, item)
 winid win;
 Gem_menu_item *item;
 {
+	win=win;
 	item->Gmi_next = invent_list;
 	invent_list = item;
 	Anz_inv_lines++;
@@ -944,6 +1016,7 @@ mar_putstr_text(winid window, int attr, const char *str)
 	int breite;
 	char *ptr;
 
+	window=window;
 	if(!text_lines){
 		text_lines=(char **)m_alloc(12*sizeof(char *));
 		zeilen_frei=12;
@@ -1265,9 +1338,9 @@ XEVENT *xev;
 				it->Gmi_selected=!it->Gmi_selected;
 				it->Gmi_count= count==0L ? -1L : count;
 				count = 0L;
-				if(Inv_how!=PICK_ANY){
-					close_dialog(Inv_dialog,TRUE);
-				}else{
+				if(Inv_how!=PICK_ANY)
+					my_close_dialog(Inv_dialog,TRUE);
+				else{
 					area.g_x+=16+2*Fcw;
 					area.g_w=Fcw;
 					area.g_h=Fch;
@@ -1298,7 +1371,7 @@ XEVENT *xev;
 				count=0L;
 				else{
 					unset_all_on_page(0, (int)scroll_menu.vsize);
-					close_dialog(Inv_dialog,TRUE);
+					my_close_dialog(Inv_dialog,TRUE);
 					return(ev);
 				}
 				break;
@@ -1347,7 +1420,7 @@ XEVENT *xev;
 						if(it->Gmi_identifier && strstr(it->Gmi_str,buf)){
 							it->Gmi_selected=TRUE;
 							if(Inv_how!=PICK_ANY){
-								close_dialog(Inv_dialog,FALSE);
+								my_close_dialog(Inv_dialog,FALSE);
 								break;
 							}
 						}
@@ -1357,15 +1430,14 @@ XEVENT *xev;
 			default:
 			find_acc:
 				if(Inv_how==PICK_NONE)
-					close_dialog(Inv_dialog,TRUE);
+					my_close_dialog(Inv_dialog,TRUE);
 				for(it=invent_list;it;it=it->Gmi_next){
 					if(it->Gmi_identifier && (it->Gmi_accelerator==ch || it->Gmi_groupacc==ch)){
 						it->Gmi_selected=!it->Gmi_selected;
 						it->Gmi_count= count==0L ? -1L : count;
 						count = 0L;
-						if(Inv_how!=PICK_ANY){
-							close_dialog(Inv_dialog,TRUE);
-						}
+						if(Inv_how!=PICK_ANY)
+							my_close_dialog(Inv_dialog,TRUE);
 					}
 				}
 				break;
@@ -1502,7 +1574,7 @@ winid wind;
 {
 	DIAINFO *dlg_info;
 	OBJECT *z_ob;
-	int d_exit=W_ABANDON, i, breite, mar_di_mode;
+	int d_exit=W_ABANDON, i, breite, mar_di_mode, tmp_magx=magx;
 	GRECT g_mapmax, area;
 	char *tmp_button;
 	struct gw *p_Gw;
@@ -1533,7 +1605,7 @@ winid wind;
 			mar_menu_set_slider(ptr_win);
 			WindowItems(ptr_win,SCROLL_KEYS,scroll_keys);
 			if((d_exit=X_Form_Do(NULL))!=W_ABANDON){
-				close_dialog(dlg_info,FALSE);
+				my_close_dialog(dlg_info,FALSE);
 				if(d_exit!=W_CLOSED)
 					ob_undostate(z_ob,d_exit&NO_CLICK,SELECTED);
 			}
@@ -1562,7 +1634,7 @@ winid wind;
 			mar_menu_set_slider(ptr_win);
 			WindowItems(ptr_win,SCROLL_KEYS,scroll_keys);
 			if((d_exit=X_Form_Do(NULL))!=W_ABANDON){
-				close_dialog(Inv_dialog,FALSE);
+				my_close_dialog(Inv_dialog,FALSE);
 				if(d_exit!=W_CLOSED)
 					ob_undostate(z_ob,d_exit&NO_CLICK,SELECTED);
 			}
@@ -1576,6 +1648,7 @@ winid wind;
 			window_border(MAP_GADGETS,0,0,16*COLNO,16*ROWNO, &g_mapmax);
 			p_Gw->gw_window=open_window(md, md, NULL, zz_oblist[NHICON], MAP_GADGETS, TRUE, 128, 128, &g_mapmax, &p_Gw->gw_place, &scroll_map, win_draw_map, NULL, XM_TOP|XM_BOTTOM|XM_SIZE);
 			WindowItems(p_Gw->gw_window,SCROLL_KEYS-1,scroll_keys);	/* ClrHome centers on u */
+			mar_clear_map();
 		}
 		if(p_Gw->gw_dirty){
 			area.g_x=p_Gw->gw_window->work.g_x+scroll_map.px_hline*(dirty_map_area.g_x-scroll_map.hpos);
@@ -1595,8 +1668,9 @@ winid wind;
 		if(p_Gw->gw_window==NULL){
 			calc_std_winplace(NHW_MESSAGE,&p_Gw->gw_place);
 			z_ob=zz_oblist[MSGWIN];
+			magx=0;	/* MAR -- Fake E_GEM to remove Backdropper */
 			p_Gw->gw_window=open_window(NULL, NULL, NULL, NULL, 0, 0, 0, 0, NULL, &p_Gw->gw_place, NULL, mar_draw_window, z_ob, XM_TOP|XM_BOTTOM|XM_SIZE);
-			p_Gw->gw_window->gadgets=0;
+			magx=tmp_magx;
 			window_size(p_Gw->gw_window,&p_Gw->gw_window->curr);
 		}
 
@@ -1618,8 +1692,9 @@ winid wind;
 		if(p_Gw->gw_window==NULL){
 			z_ob=zz_oblist[STATUSLINE];
 			calc_std_winplace(NHW_STATUS,&p_Gw->gw_place);
+			magx=0;	/* MAR -- Fake E_GEM to remove Backdropper */
 			p_Gw->gw_window=open_window(NULL, NULL, NULL, NULL, 0, FALSE, 0, 0, NULL, &p_Gw->gw_place, NULL, mar_draw_window, z_ob, XM_TOP|XM_BOTTOM|XM_SIZE);
-			p_Gw->gw_window->gadgets=0;
+			magx=tmp_magx;
 			/* Because 2*StFch is smaller then e_gem expects the minimum win_height */
 			p_Gw->gw_window->min_h=z_ob[ROOT].ob_height;
 			window_size(p_Gw->gw_window,&p_Gw->gw_place);
@@ -1669,9 +1744,11 @@ int type;
 		}
 		break;
 	case NHW_MAP:
-		map_glyphs=(Gem_glyph **)m_alloc((long)ROWNO*sizeof(Gem_glyph *));
-		for(i=0;i<ROWNO;i++)
-			map_glyphs[i]=(Gem_glyph *)m_alloc((long)COLNO*sizeof(Gem_glyph));
+		map_glyphs=(char **)m_alloc((long)ROWNO*sizeof(char *));
+		for(i=0;i<ROWNO;i++){
+			map_glyphs[i]=(char *)m_alloc((long)(COLNO+1)*sizeof(char));
+			*map_glyphs[i]=map_glyphs[i][COLNO]=0;
+		}
 
 		mar_clear_map();
 		break;
@@ -1701,7 +1778,10 @@ void
 mar_clear_map()
 {
 	static int pla[8]={0,0,16*COLNO-1,16*ROWNO-1,0,0,16*COLNO-1,16*ROWNO-1};
+	int x,y;
 
+	for(y=0;y<ROWNO;y++) for(x=0;x<COLNO;x++)
+		map_glyphs[y][x]=' ';
 	vro_cpyfm(x_handle, ALL_BLACK,pla,&Tile_bilder,&Map_bild);
 	if(WIN_MAP != WIN_ERR && Gem_nhwindow[WIN_MAP].gw_window)
 		redraw_window(Gem_nhwindow[WIN_MAP].gw_window,NULL);
@@ -1737,8 +1817,9 @@ winid window;
 	Gem_nhwindow[window].gw_dirty=FALSE;
 
 	if(window==WIN_MAP){
-		for(i=0;i<ROWNO;i++)
+		for(i=0;i<ROWNO;i++){
 			free(map_glyphs[i]);
+		}
 		null_free(map_glyphs);
 		WIN_MAP=WIN_ERR;
 	}
@@ -1764,22 +1845,24 @@ winid window;
 void
 mar_cliparound()
 {
-	int	breite=max(scroll_map.hpage/4,1), adjust_needed,
-			hoehe=max(scroll_map.vpage/4,1);
-
-	adjust_needed=FALSE;
-	if ((map_cursx < scroll_map.hpos + breite) || (map_cursx >= scroll_map.hpos + scroll_map.hpage - breite)){
-		scroll_map.hpos=map_cursx - 2*breite;
-		adjust_needed=TRUE;
+	if(WIN_MAP!=WIN_ERR && Gem_nhwindow[WIN_MAP].gw_window){
+		int	breite=max(scroll_map.hpage/4,1), adjust_needed,
+				hoehe=max(scroll_map.vpage/4,1);
+	
+		adjust_needed=FALSE;
+		if ((map_cursx < scroll_map.hpos + breite) || (map_cursx >= scroll_map.hpos + scroll_map.hpage - breite)){
+			scroll_map.hpos=map_cursx - 2*breite;
+			adjust_needed=TRUE;
+		}
+	
+		if ((map_cursy < scroll_map.vpos + hoehe) || (map_cursy >= scroll_map.vpos + scroll_map.vpage - hoehe)){
+			scroll_map.vpos=map_cursy - 2*hoehe;
+			adjust_needed=TRUE;
+		}
+	
+		if(adjust_needed)
+			scroll_window(Gem_nhwindow[WIN_MAP].gw_window,WIN_SCROLL,NULL);
 	}
-
-	if ((map_cursy < scroll_map.vpos + hoehe) || (map_cursy >= scroll_map.vpos + scroll_map.vpage - hoehe)){
-		scroll_map.vpos=map_cursy - 2*hoehe;
-		adjust_needed=TRUE;
-	}
-
-	if(adjust_needed && window_output())	/* caller looks if WIN_MAP is valid */
-		scroll_window(Gem_nhwindow[WIN_MAP].gw_window,WIN_SCROLL,NULL);
 }
 
 void
@@ -1790,9 +1873,6 @@ mar_update_value()
 		mar_esc_pressed=FALSE;
 		mar_display_nhwindow(WIN_MESSAGE);
 	}
-
-	if(WIN_MAP!=WIN_ERR)
-		mar_cliparound();
 
 	if(WIN_STATUS!=WIN_ERR){
 		mar_check_hilight_status();
@@ -1839,7 +1919,6 @@ mar_nh_poskey(x, y, mod)
 
 		/* Translate keypad keys */
 		if (iskeypad(scan)) {
-
 			kpad = mar_iflags_numpad()==1 ? numpad : keypad;
 			if (shift & K_SHIFT)
 				ch = kpad[scan - KEYPADLO].shift;
@@ -1848,13 +1927,26 @@ mar_nh_poskey(x, y, mod)
 			else
 				ch = kpad[scan - KEYPADLO].normal;
 		}
-		if(scan!=SCANHOME){
-			ch=ch ? ch : (char)M(tolower(scan_2_ascii(xev.ev_mkreturn,shift)));
+		if(scan==SCANHOME)
+			mar_cliparound();
+		else if(scan == SCANF1)
+			retval='h';
+		else if(scan == SCANF2){
+			mar_set_tile_mode(!mar_set_tile_mode(FAIL));
+			retval=C('l');	/* trigger full-redraw */
+		}else if(scan == SCANF3){
+			draw_cursor=!draw_cursor;
+			mar_curs(map_cursx,map_cursy);
+			mar_display_nhwindow(WIN_MAP);
+		}else if(!ch && shift&K_CTRL && scan==-57){
+			/* MAR -- nothing ignore Ctrl-Alt-Clr/Home == MagiC's restore screen */
+		}else{
+			if(!ch)
+				ch=(char)M(tolower(scan_2_ascii(xev.ev_mkreturn,shift)));
 			if(((int)ch)==-128)
 				ch='\033';
 			retval=ch;
-		}else
-			mar_cliparound();
+		}
 	}
 
 	if(ev&MU_BUTTON1 || ev&MU_BUTTON2){
@@ -1895,8 +1987,21 @@ mar_nh_poskey(x, y, mod)
 				retval=C(str[1]);
 				break;
 			case 'f':	/* Func Key */
-				if(str[1]=='1')
+				switch(str[1]){
+				case '1':
 					retval='h';
+					break;
+				case '2':
+					mar_set_tile_mode(!mar_set_tile_mode(FAIL));
+					retval=C('l');	/* trigger full-redraw */
+					break;
+				case '3':
+					draw_cursor=!draw_cursor;
+					if(WIN_MAP != WIN_ERR && Gem_nhwindow[WIN_MAP].gw_window)
+						redraw_window(Gem_nhwindow[WIN_MAP].gw_window,NULL);
+					break;
+				default:
+				}
 				break;
 			default:
 				mar_about();
@@ -1943,23 +2048,71 @@ Gem_doprev_message()
 
 /************************* print_glyph *******************************/
 
-void
+int mar_set_rogue(int);
+
+int
 mar_set_tile_mode(tiles)
 int tiles;
 {
-	tiles=tiles;
+	static int tile_mode=TRUE;
+	static GRECT prev;
+	WIN *z_w=Gem_nhwindow[WIN_MAP].gw_window;
+
+	if(tiles<0) return(tile_mode);
+	else{
+		GRECT tmp;
+
+		if(tile_mode==tiles || (mar_set_rogue(FAIL) && tiles) || !z_w)
+			return(FAIL);
+
+		tile_mode=tiles;
+		map_cell_width= tiles ? 16 : Fcw;
+		scroll_map.px_hline=map_cell_width;
+		scroll_map.px_vline=tiles ? 16 : Fch;
+		window_border(MAP_GADGETS,0,0,map_cell_width*COLNO,16*ROWNO, &tmp);
+		z_w->max.g_w=tmp.g_w;
+		if(tiles)
+			z_w->curr=prev;
+		else
+			prev=z_w->curr;
+
+		window_reinit(z_w,md,md,NULL,FALSE,FALSE);
+	}
+	return(FAIL);
 }
 
 int
 mar_set_rogue(what)
 int what;
 {
-	static int rogue=FALSE;
+	static int rogue=FALSE, prev_mode=TRUE;
 
 	if(what<0) return(rogue);
-	else rogue=what;
-	if(rogue) mar_set_tile_mode(FALSE);
+	if(what!=rogue){
+		rogue=what;
+		if(rogue){
+			prev_mode=mar_set_tile_mode(FAIL);
+			mar_set_tile_mode(FALSE);
+		}else
+			mar_set_tile_mode(prev_mode);
+	}
 	return(FAIL);
+}
+
+void
+mar_add_pet_sign(window,x,y)
+winid window;
+int x, y;
+{
+	if(window != WIN_ERR && window==WIN_MAP){
+		static int pla[8]={0,0,7,7,0,0,0,0}, colindex[2]={RED,WHITE};
+
+		pla[4]=pla[6]=scroll_map.px_hline*x;
+		pla[5]=pla[7]=scroll_map.px_vline*y;
+		pla[6]+=7;
+		pla[7]+=6;
+		vrt_cpyfm(x_handle,MD_TRANS,pla,&Pet_Mark,&Map_bild,colindex);
+	}
 }
 
 void
@@ -1975,7 +2128,7 @@ int x, y, gl;
 		Max(&dirty_map_area.g_w,x);
 		Max(&dirty_map_area.g_h,y);
 		Gem_nhwindow[window].gw_dirty=TRUE;
-		if(tile_graphics){
+		if(mar_set_tile_mode(FAIL)){
 			pla[2]=pla[0]=(gl%20)*16;
 			pla[3]=pla[1]=(gl/20)*16;
 			pla[2]+=15;
@@ -1993,10 +2146,29 @@ int x, y, gl;
 void
 mar_print_char(window, x, y, ch, col)
 winid window;
-int x, y;
+int x, y; 
 char ch;
 int col;
-{}
+{
+	if(window != WIN_ERR && window==WIN_MAP){
+		static int gem_color[16]={ 9, 2,11,10, 4, 7, 8, 15,0,14, 3, 6, 5, 13,15, 0};
+		int pla[8], colindex[2];
+
+		map_glyphs[y][x]=ch;
+
+		pla[0]=
+		pla[1]=0;
+		pla[2]=Fcw-1;
+		pla[3]=Fch-1;
+		pla[6]=pla[4]=Fcw*x;
+		pla[7]=pla[5]=Fch*y;
+		pla[6]+=Fcw-1;
+		pla[7]+=Fch-1;
+		colindex[0]=gem_color[col];
+		colindex[1]=WHITE;
+		vrt_cpyfm(x_handle,MD_REPLACE,pla,&Black_bild,&Map_bild,colindex);
+	}
+}
 
 /************************* getlin *******************************/
 
@@ -2006,29 +2178,43 @@ const char *ques;
 char *input;
 {
 	OBJECT *z_ob=zz_oblist[LINEGET];
-	int d_exit;
-	char *tmp_prompt, *tmp_reply;
+	int d_exit, length;
+	char *pr[2], *tmp;
 
 	if(WIN_MESSAGE != WIN_ERR && Gem_nhwindow[WIN_MESSAGE].gw_window)
 		mar_display_nhwindow(WIN_MESSAGE);
 
-	tmp_prompt= ob_get_text(z_ob,LGPROMPT,0);
-	tmp_reply=ob_get_text(z_ob,LGREPLY, 0);
-	ob_set_text(z_ob,LGPROMPT,mar_copy_of(ques));
-	ob_set_text(z_ob,LGREPLY, input);
+	z_ob[LGPROMPT].ob_type=G_USERDEF;
+	z_ob[LGPROMPT].ob_spec.userblk=&ub_prompt;
+	z_ob[LGPROMPT].ob_height=2*Fch;
+
+	length=z_ob[LGPROMPT].ob_width/Fcw;
+	if(strlen(ques)>length){
+		tmp=ques+length;
+		while(*tmp!=' ' && tmp>=ques){
+			tmp--;
+		}
+		if(tmp<=ques) tmp=ques+length;	/* Mar -- Oops, what a word :-) */
+		pr[0]=ques;
+		*tmp=0;
+		pr[1]=++tmp;
+	}else{
+		pr[0]=ques;
+		pr[1]=NULL;
+	}
+	ub_prompt.ub_parm=(long)pr;
 
 	ob_clear_edit(z_ob);
 	d_exit=xdialog(z_ob, nullstr, NULL, NULL, mar_ob_mapcenter(z_ob), FALSE, DIALOG_MODE);
-
-	free(ob_get_text(z_ob,LGPROMPT,0));
-	ob_set_text(z_ob,LGPROMPT,tmp_prompt );
-	ob_set_text(z_ob,LGREPLY, tmp_reply);
+	Event_Timer(0,0,TRUE);
 
 	if(d_exit==W_CLOSED || d_exit==W_ABANDON || (d_exit&NO_CLICK)==QLG){
 		*input='\033';
 		input[1]=0;
-	}
+	}else
+		strncpy(input,ob_get_text(z_ob,LGREPLY, 0),length);
 }
+
 /************************* ask_direction *******************************/
 
 #define Dia_Init K_Init
@@ -2053,8 +2239,8 @@ XEVENT *xev;
 			break;
 		case '\033':	/*ESC*/
 			if((w=get_top_window()) && (dinf=(DIAINFO *)w->dialog) && dinf->di_tree==zz_oblist[DIRECTION]){
-				close_dialog(dinf,FALSE);
-			break;
+				my_close_dialog(dinf,FALSE);
+				break;
 			}
 			/* Fall thru */
 		default:
@@ -2074,6 +2260,7 @@ mar_ask_direction()
 	Event_Handler(Dia_Init,Dia_Handler);
 	mar_set_dir_keys();
 	d_exit=xdialog(z_ob, nullstr, NULL, NULL, mar_ob_mapcenter(z_ob), FALSE, DIALOG_MODE);
+	Event_Timer(0,0,TRUE);
 	Event_Handler(NULL,NULL);
 
 	if(d_exit==W_CLOSED || d_exit==W_ABANDON)
@@ -2102,7 +2289,7 @@ XEVENT *xev;
 		int *buf=xev->ev_mmgpbuf;
 
 		if(*buf==OBJC_EDITED)
-			close_dialog(*(DIAINFO **)&buf[4], FALSE);
+			my_close_dialog(*(DIAINFO **)&buf[4], FALSE);
 		else
 			ev &= ~MU_MESAG;
 	}
@@ -2145,7 +2332,7 @@ XEVENT *xev;
 		case '\033':
 			if((w=get_top_window()) && (dinf=(DIAINFO *)w->dialog) && dinf->di_tree==zz_oblist[YNCHOICE]){
 				if(!send_yn_esc(FAIL))
-					close_dialog(dinf,FALSE);
+					my_close_dialog(dinf,FALSE);
 				break;
 			}
 			/* Fall thru */
@@ -2235,6 +2422,7 @@ char def;
 	}
 
 	d_exit=xdialog(z_ob, nullstr, NULL, NULL, mar_ob_mapcenter(z_ob), FALSE, DIALOG_MODE);
+	Event_Timer(0,0,TRUE);
 	Event_Handler(NULL,NULL);
 	/* display of count is missing (through the core too) */
 
@@ -2266,7 +2454,7 @@ mar_copy_of(s)
     return strcpy((char *) m_alloc((unsigned) (strlen(s) + 1)), s);
 }
 
-char *strRP="raw_print", *strRPB="raw_print_bold";
+const char *strRP="raw_print", *strRPB="raw_print_bold";
 
 void
 mar_raw_print(str)
