@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)options.c	3.3	98/03/28	*/
+/*	SCCS Id: @(#)options.c	3.3	1999/12/01	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -734,7 +734,7 @@ char *op;
 		      You_cant("disable new feature alerts for future versions.");
 		      return 0;
 		} else {
-		      Sprintf(buf, "%d.%d.%d", FEATURE_NOTICE_VER_MAJ,
+		      Sprintf(buf, "%lu.%lu.%lu", FEATURE_NOTICE_VER_MAJ,
 				FEATURE_NOTICE_VER_MIN, FEATURE_NOTICE_VER_PATCH);
 		  pline("Feature change alerts disabled for NetHack %s features and prior.",
 			 buf);
@@ -1791,7 +1791,7 @@ doset()
 	doset_add_menu(tmpwin, "windowtype", windowprocs.name, 0);
 
 	/* modifiable compounds */
-	Sprintf(buf, "%d.%d.%d", FEATURE_NOTICE_VER_MAJ, FEATURE_NOTICE_VER_MIN,
+	Sprintf(buf, "%lu.%lu.%lu", FEATURE_NOTICE_VER_MAJ, FEATURE_NOTICE_VER_MIN,
 			FEATURE_NOTICE_VER_PATCH);
 	doset_add_menu(tmpwin, "alerts_off_ver", (flags.alerts_off_ver == 0L) ?
 				"(null)" : buf, boolcount);
