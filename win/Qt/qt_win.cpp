@@ -2363,19 +2363,21 @@ int NetHackQtMenuWindow::SelectMenu(int h, MENU_ITEM_P **menu_list)
     setFocus();
     while (dialog->result()<0) {
 	qApp->enter_loop();
+	// changed the defaults below to the values in wintype.h 000119 - azy
 	if (dialog->result()<0 && !keysource.Empty()) {
 	    char k=keysource.GetAscii();
+	    k=map_menu_cmd(k); /* added 000119 - azy */
 	    if (k=='\033')
 		dialog->Reject();
 	    else if (k=='\r' || k=='\n' || k==' ')
 		dialog->Accept();
-	    else if (k=='/')
+	    else if (k==MENU_SEARCH)
 		Search();
-	    else if (k=='*')
+	    else if (k==MENU_SELECT_ALL)
 		All();
-	    else if (k=='@')
+	    else if (k==MENU_INVERT_ALL)
 		Invert();
-	    else if (k=='%')
+	    else if (k==MENU_UNSELECT_ALL)
 		ChooseNone();
 	    else {
 		for (int i=0; i<itemcount; i++) {
