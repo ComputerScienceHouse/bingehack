@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)steed.c	3.3	2000/01/19	*/
+/*	SCCS Id: @(#)steed.c	3.3	2000/03/05	*/
 /* Copyright (c) Kevin Hugo, 1998-1999. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -394,29 +394,29 @@ dismount_steed(reason)
 	u.ugallop = 0L;
 
 	/* Set player and steed's position.  Try moving the player first */
-	place_monster(mtmp, u.ux, u.uy);
-	if (!u.uswallow && !u.ustuck && enexto(&cc, u.ux, u.uy, youmonst.data)) {
-	    /* The steed may drop into water/lava */
-	    if (mtmp->mhp > 0 && is_pool(u.ux,u.uy) &&
-	    		!is_flyer(mtmp->data) && !is_floater(mtmp->data) &&
-	    		!is_clinger(mtmp->data)) {
-	    	if (!Underwater)
-	    	    pline("%s falls into the %s!", Monnam(mtmp), surface(u.ux,u.uy));
-	    	if (!is_swimmer(mtmp->data) && !amphibious(mtmp->data)) {
-	    	    killed(mtmp);
-	    	    adjalign(-1);
-	    	}
-	    }
-	    if (mtmp->mhp > 0 && is_lava(u.ux,u.uy) &&
-	    		!is_flyer(mtmp->data) && !is_floater(mtmp->data) &&
-	    		!is_clinger(mtmp->data)) {
-	    	pline("%s is pulled into the lava!", Monnam(mtmp));
-	    	if (!likes_lava(mtmp->data)) {
-	    	    killed(mtmp);
-	    	    adjalign(-1);
-	    	}
-	    }
-
+	if (!DEADMONSTER(mtmp)) {
+	    place_monster(mtmp, u.ux, u.uy);
+	    if (!u.uswallow && !u.ustuck && enexto(&cc, u.ux, u.uy, youmonst.data)) {
+		/* The steed may drop into water/lava */
+		if (is_pool(u.ux, u.uy) &&
+		    !is_flyer(mtmp->data) && !is_floater(mtmp->data) &&
+		    !is_clinger(mtmp->data)) {
+		    if (!Underwater)
+			pline("%s falls into the %s!", Monnam(mtmp), surface(u.ux, u.uy));
+		    if (!is_swimmer(mtmp->data) && !amphibious(mtmp->data)) {
+			killed(mtmp);
+			adjalign(-1);
+		    }
+		}
+		if (is_lava(u.ux, u.uy) &&
+		    !is_flyer(mtmp->data) && !is_floater(mtmp->data) &&
+		    !is_clinger(mtmp->data)) {
+		    pline("%s is pulled into the lava!", Monnam(mtmp));
+		    if (!likes_lava(mtmp->data)) {
+			killed(mtmp);
+			adjalign(-1);
+		    }
+		}
 	    /* Steed dismounting consists of two steps: being moved to another
 	     * square, and descending to the floor.  We have functions to do
 	     * each of these activities, but they're normally called
@@ -434,32 +434,34 @@ dismount_steed(reason)
 	     * able to walk onto a square with a hole, and autopickup before
 	     * falling into the hole).
 	     */
-	    /* Keep steed here, move the player to cc; teleds() clears u.utrap */
-	    in_steed_dismounting = TRUE;
-	    teleds(cc.x, cc.y);
-	    in_steed_dismounting = FALSE;
-	    if (reason != DISMOUNT_ENGULFED) /* being swallowed anyway in that case */
-		vision_full_recalc = 1;
+		/* Keep steed here, move the player to cc; teleds() clears u.utrap */
+		in_steed_dismounting = TRUE;
+		teleds(cc.x, cc.y);
+		in_steed_dismounting = FALSE;
 
-	    /* Put your steed in your trap */
-	    if (save_utrap && mtmp->mhp > 0)
-	    	(void) mintrap(mtmp);
+		/* Put your steed in your trap */
+		if (save_utrap)
+		    (void) mintrap(mtmp);
 
-	/* Couldn't... try placing the steed */
-	} else if (enexto(&cc, u.ux, u.uy, mtmp->data))
-	    /* Keep player here, move the steed to cc */
-	    rloc_to(mtmp, cc.x, cc.y);
-	    /* Player stays put */
-	/* Otherwise, kill the steed */
-	else {
-	    killed(mtmp);
-	    adjalign(-1);
+	    /* Couldn't... try placing the steed */
+	    } else if (enexto(&cc, u.ux, u.uy, mtmp->data)) {
+		/* Keep player here, move the steed to cc */
+		rloc_to(mtmp, cc.x, cc.y);
+		/* Player stays put */
+	    /* Otherwise, kill the steed */
+	    } else {
+		killed(mtmp);
+		adjalign(-1);
+	    }
 	}
 
 	/* Return the player to the floor */
 	(void) float_down(0L, W_SADDLE);
 	flags.botl = 1;
-	if (reason != DISMOUNT_ENGULFED) (void)encumber_msg();
+	if (reason != DISMOUNT_ENGULFED) {
+		(void)encumber_msg();
+		vision_full_recalc = 1;
+	}
 	return;
 }
 
@@ -468,7 +470,7 @@ place_monster(mon, x, y)
 struct monst *mon;
 int x, y;
 {
-    if (mon == u.usteed || mon->mhp <= 0) {
+    if (mon == u.usteed || DEADMONSTER(mon)) {
 	impossible("placing %s onto map?",
 		   (mon == u.usteed) ? "steed" : "defunct monster");
 	return;
