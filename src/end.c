@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)end.c	3.3	2000/01/20	*/
+/*	SCCS Id: @(#)end.c	3.3	2000/06/10	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -197,7 +197,7 @@ register struct monst *mtmp;
 		Strcat(buf, "hallucinogen-distorted ");
 
 	if(mtmp->data == &mons[PM_GHOST]) {
-		register char *gn = (char *) mtmp->mextra;
+		char *gn = NAME(mtmp);
 		if (!distorted && !mtmp->minvis && *gn) {
 			Strcat(buf, "the ");
 			killer_format = KILLED_BY;
@@ -212,9 +212,12 @@ register struct monst *mtmp;
 		   it overrides the effect of Hallucination on priestname() */
 		killer = m_monnam(mtmp);
 		Strcat(buf, killer);
-	} else Strcat(buf, mtmp->data->mname);
+	} else {
+		Strcat(buf, mtmp->data->mname);
+		if (mtmp->mnamelth)
+		    Sprintf(eos(buf), " called %s", NAME(mtmp));
+	}
 
-	if (mtmp->mnamelth) Sprintf(eos(buf), " called %s", NAME(mtmp));
 	if (multi) Strcat(buf, ", while helpless");
 	killer = buf;
 	if (mtmp->data->mlet == S_WRAITH)
