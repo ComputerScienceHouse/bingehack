@@ -1286,7 +1286,7 @@ void arti_speak(obj)
 	if (!oart || !(oart->spfx & SPFX_SPEAK))
 		return;
 
-	line = getrumor(obj->blessed ? 1 : obj->cursed ? -1 : 0, buf, TRUE);
+	line = getrumor(bcsign(obj), buf, TRUE);
 	if (!*line)
 		line = "NetHack rumors file closed for renovation.";
 	pline("%s whispers:", The(xname(obj)));

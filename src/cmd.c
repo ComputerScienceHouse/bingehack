@@ -944,8 +944,8 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
  * Courtesy function for non-debug, non-explorer mode players
  * to help refresh them about who/what they are.
  */
-STATIC_OVL
-void minimal_enlightenment()
+STATIC_OVL void
+minimal_enlightenment()
 {
 	winid tmpwin;
 	menu_item *selected;

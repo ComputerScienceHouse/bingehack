@@ -1305,6 +1305,7 @@ register struct obj *obj;
 			      Your_buf, aobjnam(obj, "rust"),
 			      obj->oeroded ? " more" : "what");
 			obj->oeroded++;
+			update_inventory();
 			return TRUE;
 		} else break;
 	    case POTION_CLASS:
@@ -1314,6 +1315,7 @@ register struct obj *obj;
 			pline("It boils vigorously!");
 			losehp(rnd(10), "elementary chemistry", KILLED_BY);
 			makeknown(obj->otyp);
+			update_inventory();
 			return (TRUE);
 		}
 		pline("%s %s%s.", Your_buf, aobjnam(obj,"dilute"),
@@ -1328,6 +1330,7 @@ register struct obj *obj;
 #endif
 			obj->otyp = POT_WATER;
 		} else obj->odiluted++;
+		update_inventory();
 		return TRUE;
 	    case SCROLL_CLASS:
 		if (obj->otyp != SCR_BLANK_PAPER
@@ -1348,6 +1351,7 @@ register struct obj *obj;
 			}
 			obj->otyp = SCR_BLANK_PAPER;
 			obj->spe = 0;
+			update_inventory();
 			return TRUE;
 		} else break;
 	    case SPBOOK_CLASS:
@@ -1368,6 +1372,7 @@ register struct obj *obj;
 			        bill_dummy_object(obj);
 			    }
 			    obj->otyp = SPE_BLANK_PAPER;
+			    update_inventory();
 			}
 			return TRUE;
 		}

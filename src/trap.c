@@ -221,6 +221,7 @@ struct monst *victim;
 	if (!rn2(2)) {
 	    pline_The("grease dissolves.");
 	    otmp->greased = 0;
+	    update_inventory();
 	}
 }
 
