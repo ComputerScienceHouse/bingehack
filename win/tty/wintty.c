@@ -1052,7 +1052,7 @@ struct WinDesc *cw;
 
 	if (!page_start) {
 	    /* new page to be displayed */
-	    if (curr_page < 0 || curr_page >= cw->npages)
+	    if (curr_page < 0 || (cw->npages > 0 && curr_page >= cw->npages))
 		panic("bad menu screen page #%d", curr_page);
 
 	    /* clear screen */
@@ -1064,41 +1064,47 @@ struct WinDesc *cw;
 		    clear_screen();
 	    }
 
-	    /* collect accelerators */
-	    page_start = cw->plist[curr_page];
-	    page_end = cw->plist[curr_page + 1];
 	    rp = resp;
-	    for (page_lines = 0, curr = page_start;
-		    curr != page_end;
-		    page_lines++, curr = curr->next) {
-		if (curr->selector)
-		    *rp++ = curr->selector;
+	    if (cw->npages > 0) {
+		/* collect accelerators */
+		page_start = cw->plist[curr_page];
+		page_end = cw->plist[curr_page + 1];
+		for (page_lines = 0, curr = page_start;
+			curr != page_end;
+			page_lines++, curr = curr->next) {
+		    if (curr->selector)
+			*rp++ = curr->selector;
 
-		tty_curs(window, 1, page_lines);
-		if (cw->offx) cl_end();
+		    tty_curs(window, 1, page_lines);
+		    if (cw->offx) cl_end();
 
-		(void) putchar(' ');
-		++ttyDisplay->curx;
-		/*
-		 * Don't use xputs() because (1) under unix it calls
-		 * tputstr() which will interpret a '*' as some kind
-		 * of padding information and (2) it calls xputc to
-		 * actually output the character.  We're faster doing
-		 * this.
-		 */
-		term_start_attr(curr->attr);
-		for (n = 0, cp = curr->str;
-		      *cp && (int) ++ttyDisplay->curx < (int) ttyDisplay->cols;
-		      cp++, n++)
-		    if (n == 2 && curr->identifier.a_void != 0 &&
-						    curr->selected) {
-			if (curr->count == -1L)
-			    (void) putchar('+'); /* all selected */
-			else
-			    (void) putchar('#'); /* count selected */
-		    } else
-			(void) putchar(*cp);
-		term_end_attr(curr->attr);
+		    (void) putchar(' ');
+		    ++ttyDisplay->curx;
+		    /*
+		     * Don't use xputs() because (1) under unix it calls
+		     * tputstr() which will interpret a '*' as some kind
+		     * of padding information and (2) it calls xputc to
+		     * actually output the character.  We're faster doing
+		     * this.
+		     */
+		    term_start_attr(curr->attr);
+		    for (n = 0, cp = curr->str;
+			  *cp && (int) ++ttyDisplay->curx < (int) ttyDisplay->cols;
+			  cp++, n++)
+			if (n == 2 && curr->identifier.a_void != 0 &&
+							curr->selected) {
+			    if (curr->count == -1L)
+				(void) putchar('+'); /* all selected */
+			    else
+				(void) putchar('#'); /* count selected */
+			} else
+			    (void) putchar(*cp);
+		    term_end_attr(curr->attr);
+		}
+	    } else {
+		page_start = 0;
+		page_end = 0;
+		page_lines = 0;
 	    }
 	    *rp = 0;
 
@@ -1178,26 +1184,26 @@ struct WinDesc *cw;
 		}
 		/* else fall through */
 	    case MENU_NEXT_PAGE:
-		if (curr_page != cw->npages - 1) {
+		if (cw->npages > 0 && curr_page != cw->npages - 1) {
 		    curr_page++;
 		    page_start = 0;
 		} else
 		    finished = TRUE;	/* questionable behavior */
 		break;
 	    case MENU_PREVIOUS_PAGE:
-		if (curr_page != 0) {
+		if (cw->npages > 0 && curr_page != 0) {
 		    --curr_page;
 		    page_start = 0;
 		}
 		break;
 	    case MENU_FIRST_PAGE:
-		if (curr_page != 0) {
+		if (cw->npages > 0 && curr_page != 0) {
 		    page_start = 0;
 		    curr_page = 0;
 		}
 		break;
 	    case MENU_LAST_PAGE:
-		if (curr_page != cw->npages - 1) {
+		if (cw->npages > 0 && curr_page != cw->npages - 1) {
 		    page_start = 0;
 		    curr_page = cw->npages - 1;
 		}
@@ -1393,10 +1399,10 @@ tty_display_nhwindow(window, blocking)
 	} else
 	    tty_clear_nhwindow(WIN_MESSAGE);
 
-	if (cw->mlist)
-	    process_menu_window(window, cw);
-	else
+	if (cw->data)
 	    process_text_window(window, cw);
+	else
+	    process_menu_window(window, cw);
 	break;
     }
     cw->active = 1;
