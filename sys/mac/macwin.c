@@ -3,7 +3,6 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
-#include "dlb.h"
 #include "func_tab.h"
 #include "macwin.h"
 #include "mactty.h"
@@ -78,7 +77,7 @@ static int keyQueueRead = 0,
 	keyQueueWrite = 0,
 	keyQueueCount = 0;
 
-Boolean gClickedToMove = 0;	/* For ObscureCursor */
+static Boolean gClickedToMove = 0;	/* For ObscureCursor */
 
 static Point clicked_pos;	/* For nh_poskey */
 static int clicked_mod;
@@ -89,8 +88,6 @@ static ControlActionUPP MoveScrollUPP;		/* scrolling callback, init'ed in InitMa
 void
 lock_mouse_cursor(Boolean new_cursor_locked) {
 	cursor_locked = new_cursor_locked;
-	if (new_cursor_locked)
-		PostEvent(osEvt, mouseMovedMessage<<24);
 }
 
 
@@ -100,11 +97,11 @@ lock_mouse_cursor(Boolean new_cursor_locked) {
 void
 AddToKeyQueue (unsigned char ch, Boolean force) {
 	if (keyQueueCount < QUEUE_LEN) {
-		keyQueue [keyQueueWrite ++] = ch;
+		keyQueue [keyQueueWrite++] = ch;
 		keyQueueCount++;
 	}
 	else if (force) {
-		keyQueue [keyQueueWrite ++] = ch;
+		keyQueue [keyQueueWrite++] = ch;
 		keyQueueRead++;
 		if (keyQueueRead >= QUEUE_LEN)
 			keyQueueRead = 0;
@@ -155,12 +152,9 @@ Boolean small_screen;
 #endif
 #define NHW_BASE 0
 
-static void FDECL(GeneralKey, (EventRecord *theEvent, WindowPtr theWindow));
-static void FDECL(HandleKey, (EventRecord *theEvent));
-static void FDECL(HandleClick, (EventRecord *theEvent));
-static void FDECL(HandleUpdate, (EventRecord *theEvent));
 static int FDECL(filter_scroll_key,(const int, NhWindow *));
 
+static void FDECL(GeneralKey, (EventRecord *, WindowPtr));
 static void FDECL(macKeyMenu, (EventRecord *, WindowPtr));
 static void FDECL(macKeyText, (EventRecord *, WindowPtr));
 
@@ -185,21 +179,21 @@ typedef short (*CbUpFunc) (EventRecord *, WindowPtr);
 typedef void (*CbCursFunc) (EventRecord *, WindowPtr, RgnHandle);
 
 #define NUM_FUNCS 6
-static CbFunc winKeyFuncs [NUM_FUNCS] = {
+static const CbFunc winKeyFuncs [NUM_FUNCS] = {
 	GeneralKey, GeneralKey, GeneralKey, GeneralKey, macKeyMenu, macKeyText
 };
 
-static CbFunc winClickFuncs [NUM_FUNCS] = {
+static const CbFunc winClickFuncs [NUM_FUNCS] = {
 	(CbFunc)macDoNull, macClickMessage, macClickTerm, macClickTerm, macClickMenu ,
 	macClickText
 };
 
-static CbUpFunc winUpdateFuncs [NUM_FUNCS] = {
+static const CbUpFunc winUpdateFuncs [NUM_FUNCS] = {
 	macDoNull, macUpdateMessage, image_tty, image_tty ,
 	macUpdateMenu, GeneralUpdate
 };
 
-static CbCursFunc winCursorFuncs [NUM_FUNCS] = {
+static const CbCursFunc winCursorFuncs [NUM_FUNCS] = {
 	(CbCursFunc) macDoNull, GeneralCursor, macCursorTerm, macCursorTerm ,
 	GeneralCursor, GeneralCursor
 };
@@ -207,19 +201,19 @@ static CbCursFunc winCursorFuncs [NUM_FUNCS] = {
 
 static NhWindow *
 GetNhWin(WindowPtr mac_win) {
-	NhWindow *aWin = (NhWindow *)GetWRefCon (mac_win);
-	if (aWin >= theWindows && aWin < &theWindows[NUM_MACWINDOWS])
-		return aWin;
+	if (mac_win == _mt_window)	/* term window is still maintained by both systems, and */
+		return theWindows;		/* WRefCon still refers to tty struct, so we have to map it */
+	else {
+		NhWindow *aWin = (NhWindow *)GetWRefCon (mac_win);
+		if (aWin >= theWindows && aWin < &theWindows[NUM_MACWINDOWS])
+			return aWin;
+	}
 	return ((NhWindow *) nil);
 }
 
 
 Boolean CheckNhWin (WindowPtr mac_win) {
-	if (mac_win == _mt_window)
-		return 1;
-	else {
-		return GetNhWin (mac_win) != nil;
-	}
+	return GetNhWin (mac_win) != nil;
 }
 
 
@@ -232,14 +226,12 @@ static pascal OSErr AppleEventHandler (
 # pragma unused(outAEReply,inRefCon)
 #endif
 	Size     actualSize;
-	AEKeyword   keywd;
 	DescType typeCode;
 	AEEventID EventID;
 	OSErr    err;
 
 	/* Get Event ID */
-	err = AEGetAttributePtr (inAppleEvent,
-								keyEventIDAttr,
+	err = AEGetAttributePtr (inAppleEvent, keyEventIDAttr,
 								typeType, &typeCode,
 								&EventID, sizeof (EventID), &actualSize);
 	if (err == noErr) {
@@ -258,6 +250,8 @@ static pascal OSErr AppleEventHandler (
 				break;
 			case kAEOpenDocuments : {
 				FSSpec      fss;
+				FInfo fndrInfo;
+				AEKeyword   keywd;
 				AEDescList  docList;
 				long     index, itemsInList;
 
@@ -272,22 +266,19 @@ static pascal OSErr AppleEventHandler (
 				for(index = 1; index <= itemsInList; index++){
 					err = AEGetNthPtr(&docList, index, typeFSS, &keywd, &typeCode, (Ptr)&fss,
 								sizeof(FSSpec), &actualSize);
-					if(noErr == err) {
-						FInfo fndrInfo;
-
-						err = FSpGetFInfo (&fss, &fndrInfo);
-						if (noErr != err)
-							break;
-
-						if (fndrInfo.fdType != SAVE_TYPE) 
-							continue;	/* only look at save files */
-
-						process_openfile (fss.vRefNum, fss.parID, fss.name, fndrInfo.fdType);
-						if (macFlags.gotOpen)
-							break;	/* got our save file */
-					}
-					else
+					if(noErr != err)
 						break;
+
+					err = FSpGetFInfo (&fss, &fndrInfo);
+					if (noErr != err)
+						break;
+
+					if (fndrInfo.fdType != SAVE_TYPE) 
+						continue;	/* only look at save files */
+
+					process_openfile (fss.vRefNum, fss.parID, fss.name, fndrInfo.fdType);
+					if (macFlags.gotOpen)
+						break;	/* got our save file */
 				}
 				err = AEDisposeDesc(&docList);
 				break;
@@ -297,16 +288,12 @@ static pascal OSErr AppleEventHandler (
 
 	/* Check to see if all required parameters for this type of event are present */
 	if (err == noErr) {
-		err = AEGetAttributePtr (inAppleEvent, 
-								keyMissedKeywordAttr, 
-						  		typeWildCard, &typeCode, 
-								NULL, 0, &actualSize);
+		err = AEGetAttributePtr (inAppleEvent, keyMissedKeywordAttr, 
+						  		typeWildCard, &typeCode, NULL, 0, &actualSize);
 		if (err == errAEDescNotFound)											 
 			err = noErr;		/* got all the required parameters */
-		else if (err == noErr)										 
-		{						/* missed a required parameter */
+		else if (err == noErr)	/* missed a required parameter */
 			err = errAEEventNotHandled;
-		}
 	}
 
 	return err;
@@ -421,8 +408,6 @@ InitMac(void) {
 /*
  * Change default window fonts.
  */
-#define FONTCVT(x) {int length = strlen ((char*)x); new_font[0] = (length > 255 ? 255 : length);\
-					 memcpy ((char*)&new_font[1], x, (size_t)(new_font[0]+1));}
 short
 set_tty_font_name (int window_type, char *font_name) {
 	short fnum;
@@ -431,7 +416,7 @@ set_tty_font_name (int window_type, char *font_name) {
 	if (window_type < NHW_BASE || window_type > NHW_TEXT)
 		return general_failure;
 		
-	FONTCVT(font_name);
+	C2P (font_name, new_font);
 	GetFNum (new_font, &(fnum));
 	if (!fnum)
 		return general_failure;
@@ -1921,7 +1906,7 @@ GeneralCursor (EventRecord *theEvent, WindowPtr theWindow, RgnHandle mouseRgn) {
 }
 
 
-void
+static void
 HandleKey (EventRecord *theEvent) {
 	WindowPtr theWindow = FrontWindow ();
 
@@ -1948,7 +1933,27 @@ dispatchKey :
 }
 
 
-void
+static void
+WindowGoAway (EventRecord *theEvent, WindowPtr theWindow) {
+	NhWindow *aWin = GetNhWin(theWindow);
+
+	if (! theEvent || TrackGoAway (theWindow, theEvent->where)) {
+		if (aWin - theWindows == BASE_WINDOW && ! iflags.window_inited) {
+			AddToKeyQueue ('\033', 1);
+			return;
+		} else {
+			HideWindow (theWindow);
+		}
+		if (inSelect == WIN_ERR || aWin - theWindows != inSelect) {
+			mac_destroy_nhwindow (aWin - theWindows);
+		} else {
+			AddToKeyQueue (CHAR_CR, 1);
+		}
+	}
+}
+
+
+static void
 HandleClick (EventRecord *theEvent) {
 	int code;
 	unsigned long l;
@@ -2020,7 +2025,7 @@ HandleClick (EventRecord *theEvent) {
 }
 
 
-void
+static void
 HandleUpdate (EventRecord *theEvent) {
 	WindowPtr theWindow = (WindowPtr) theEvent->message;
 	NhWindow *aWin = GetNhWin (theWindow);
@@ -2106,26 +2111,6 @@ HandleEvent (EventRecord *theEvent) {
 
 
 void
-WindowGoAway (EventRecord *theEvent, WindowPtr theWindow) {
-	NhWindow *aWin = GetNhWin(theWindow);
-
-	if (! theEvent || TrackGoAway (theWindow, theEvent->where)) {
-		if (aWin - theWindows == BASE_WINDOW && ! iflags.window_inited) {
-			AddToKeyQueue ('\033', 1);
-			return;
-		} else {
-			HideWindow (theWindow);
-		}
-		if (inSelect == WIN_ERR || aWin - theWindows != inSelect) {
-			mac_destroy_nhwindow (aWin - theWindows);
-		} else {
-			AddToKeyQueue (CHAR_CR, 1);
-		}
-	}
-}
-
-
-void
 mac_get_nh_event(void) {
 	EventRecord anEvent;
 
@@ -2144,13 +2129,20 @@ mac_nhgetch(void) {
 	long doDawdle;
 	EventRecord anEvent;
 
-	if (!keyQueueCount) {
+	/* We want to take care of keys in the buffer as fast as
+	 * possible
+	 */
+	if (keyQueueCount)
+		doDawdle = 0L;
+	else {
 		long total, contig;
 		static char warn = 0;
 
+		doDawdle = (in_topl_mode() ? GetCaretTime () : 120L);
+		/* Since we have time, check memory */
 		PurgeSpace (&total, &contig);
 		if (contig < 25000L || total < 50000L) {
-			if (! warn) {
+			if (!warn) {
 				pline ("Low Memory!");
 				warn = 1;
 			}
@@ -2159,21 +2151,13 @@ mac_nhgetch(void) {
 		}
 	}
 
-	/* We want to take care of keys in the buffer as fast as
-	 * possible
-	 */
-	if (keyQueueCount)
-		doDawdle = 0L;
-	else
-		doDawdle = (in_topl_mode() ? GetCaretTime () : 120L);
-
 	do {
 		(void) WaitNextEvent (everyEvent, &anEvent, doDawdle, gMouseRgn);
 		HandleEvent (&anEvent);
 		ch = GetFromKeyQueue ();
-	} while (! ch && ! gClickedToMove);
+	} while (!ch && !gClickedToMove);
 
-	if (! gClickedToMove)
+	if (!gClickedToMove)
 		ObscureCursor ();
 	else
 		gClickedToMove = 0;
@@ -2196,6 +2180,7 @@ mac_delay_output(void) {
 }
 
 
+#ifdef CLIPPING
 static void
 mac_cliparound (int x, int y) {
 #if defined(applec) || defined(__MWERKS__)
@@ -2203,7 +2188,7 @@ mac_cliparound (int x, int y) {
 #endif
 	/* TODO */
 }
-
+#endif
 
 void
 mac_exit_nhwindows (const char *s) {
@@ -2328,7 +2313,6 @@ mac_putstr (winid win, int attr, const char *str) {
 void
 mac_curs (winid win, int x, int y) {
 	NhWindow *aWin = &theWindows [win];
-	int kind = ((WindowPeek)aWin->its_window)->windowKind - WIN_BASE_KIND;
 
 	if (aWin->its_window == _mt_window) {
 		tty_curs(win, x, y);
@@ -2336,8 +2320,7 @@ mac_curs (winid win, int x, int y) {
 	}
 
 	SetPort (aWin->its_window);
-	MoveTo (x * aWin->char_width, (y * aWin->row_height) +
-		aWin->ascent_height);
+	MoveTo (x * aWin->char_width, (y * aWin->row_height) + aWin->ascent_height);
 	aWin->x_curs = x;
 	aWin->y_curs = y;
 }
@@ -2502,20 +2485,19 @@ mac_select_menu (winid win, int how, menu_item **selected_list) {
 	return aWin->miSelLen;
 }
 
+#include "dlb.h"
 
-void
+static void
 mac_display_file (name, complain)
 const char *name;	/* not ANSI prototype because of boolean parameter */
 boolean complain;
 {
-	long l;
 	Ptr buf;
 	int win;
-	dlb *fp;
+	dlb *fp = dlb_fopen(name, "r");
 	
-	fp = dlb_fopen(name, "r");
 	if (fp) {
-		l = dlb_fseek(fp, 0, SEEK_END);
+		long l = dlb_fseek(fp, 0, SEEK_END);
 		(void) dlb_fseek(fp, 0, 0L);
 		buf = NewPtr(l+1);
 		if (buf) {
@@ -2523,7 +2505,7 @@ boolean complain;
 			if (l > 0) {
 				buf[l] = '\0';
 				win = create_nhwindow(NHW_TEXT);
-				if (win == WIN_ERR) {
+				if (WIN_ERR == win) {
 					if (complain) error ("Cannot make window.");
 				} else {
 					putstr(win, 0, buf);
@@ -2543,13 +2525,9 @@ port_help () {
 	display_file (PORT_HELP, TRUE);
 }
 
-void
-mac_player_selection (void) {
-	/* see macmain.c:mac_askname() and macmenu.c:DialogAskName() */
-}
 
-void
-mac_update_inventory (void) {
+static void
+mac_unimplemented (void) {
 }
 
 
@@ -2561,10 +2539,6 @@ mac_suspend_nhwindows (const char *foo) {
 	/*	Can't really do that :-)		*/
 }
 
-void
-mac_resume_nhwindows (void) {
-	/*	Can't really do that :-)		*/
-}
 
 int
 try_key_queue (char *bufp) {
@@ -2586,12 +2560,12 @@ try_key_queue (char *bufp) {
 struct window_procs mac_procs = {
 	"mac",
 	mac_init_nhwindows,
-	mac_player_selection,
+	mac_unimplemented,	/* see macmenu.c:mac_askname() for player selection */
 	mac_askname,
 	mac_get_nh_event,
 	mac_exit_nhwindows,
 	mac_suspend_nhwindows,
-	mac_resume_nhwindows,
+	mac_unimplemented,
 	mac_create_nhwindow,
 	mac_clear_nhwindow,
 	mac_display_nhwindow,
@@ -2604,7 +2578,7 @@ struct window_procs mac_procs = {
 	mac_end_menu,
 	mac_select_menu,
 	genl_message_menu,
-	mac_update_inventory,
+	mac_unimplemented,
 	mac_get_nh_event,
 	mac_get_nh_event,
 #ifdef CLIPPING

@@ -360,8 +360,8 @@ do_question_dialog (char *query, int dlog, int defbut, char *resp) {
 		return c;
 
 	dlogID = dlog;
-	strcpy ((char *) p, query);
-	ParamText (CtoPstr ((char *) p), (uchar *) 0, (uchar *) 0, (uchar *) 0);
+	C2P (query, p);
+	ParamText ((char *)p, (uchar *) 0, (uchar *) 0, (uchar *) 0);
 	dp = mv_get_new_dialog (dlog);
 	if (! dp) {
 		return 0;
@@ -460,13 +460,14 @@ char def;
 	if (def) {
 		com [1] = def;
 	}
-	strcpy ((char *) pQuery, query);
+	strcpy ((char *) &pQuery[1], query);
 	if (resp && *resp) {
-		strcat ((char *) pQuery, " (");
-		strcat ((char *) pQuery, resp);
-		strcat ((char *) pQuery, ")");
+		strcat ((char *) &pQuery[1], " (");
+		strcat ((char *) &pQuery[1], resp);
+		strcat ((char *) &pQuery[1], ")");
 	}
-	ParamText (CtoPstr ((char *) pQuery), (uchar *) 0, (uchar *) 0, (uchar *) 0);
+	pQuery[0] = strlen (&pQuery[1]);
+	ParamText ((char *) pQuery, (uchar *) 0, (uchar *) 0, (uchar *) 0);
 	GetDItem (dp, 4, &k, &h, &r);
 	SetIText (h, com);
 	SelIText (dp, 4, 0, 0x7fff);
@@ -616,8 +617,7 @@ popup_getlin (const char *query, char *bufp) {
 	** Make a copy of the prompt string and convert the copy to a Pascal string.
 	*/
 	
-	strcpy((char *) pasStr, query);
-	CtoPstr((char *) pasStr);
+	C2P(query, pasStr);
 	
 	/*
 	** Set the query line as parameter text.
@@ -646,8 +646,7 @@ popup_getlin (const char *query, char *bufp) {
 		** Convert it to a 'C' string and copy it into the return value.
 		*/
 		
-		PtoCstr(pasStr);
-		strcpy(bufp, (char *) pasStr);
+		P2C (pasStr, bufp);
 	} else {
 		/*
 		** Return a null-terminated string consisting of a single <ESC>.
