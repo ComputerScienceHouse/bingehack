@@ -32,6 +32,8 @@ SYSTEM = Sysunix
 # clone or you'll need to do make depend, etc. by hand. In either case,
 # the line below probably needs changing
 SHELL=/bin/sh
+# for Atari
+# SHELL=E:/GEMINI2/MUPFEL.TTP
 
 # Pick the SYSSRC and SYSOBJ lines corresponding to your desired operating
 # system.
@@ -61,7 +63,7 @@ SYSOBJ = ioctl.o unixmain.o unixtty.o unixunix.o
 #	For Bull DPX/2 systems at B.O.S. 2.0 or higher use the following:
 #
 # CC = gcc -ansi -D_BULL_SOURCE -D_XOPEN_SOURCE -D_POSIX_SOURCE
-# 
+#
 #	If you are using GCC 2.2.2 or higher on a DPX/2, just use:
 #
 # CC = gcc -ansi
@@ -81,9 +83,12 @@ SYSOBJ = ioctl.o unixmain.o unixtty.o unixunix.o
 # CFLAGS = -DDUMB -Ml -I../include
 # LFLAGS = -Ml
 
-# flags for Atari gcc
+# flags for Atari gcc (3.2.1)
 # CFLAGS = -O -I../include
 # LFLAGS = -s
+# flags for Atari gcc (3.3)
+# CFLAGS = -mshort -O2 -fomit-frame-pointer -I../include
+# LFLAGS = -mshort -s
 
 # flags for AIX 3.1 cc on IBM RS/6000 to define
 # a suitable subset of standard libraries
@@ -133,7 +138,7 @@ SYSOBJ = ioctl.o unixmain.o unixtty.o unixunix.o
 # CFLAGS = -g -I../include
 
 CFLAGS = -O -I../include
-LFLAGS = 
+LFLAGS =
 
 # Only used for Qt interface (other interfaces are standard C)
 CXXFLAGS = -g $(CFLAGS) -I. -I$(QTDIR)/include
@@ -165,9 +170,14 @@ WINX11OBJ = Window.o dialogs.o winX.o winmap.o winmenu.o winmesg.o \
 WINQTSRC = ../win/Qt/qt_win.cpp ../win/Qt/qt_clust.cpp
 WINQTOBJ = qt_win.o qt_clust.o tile.o
 # WINQTOBJ = qt_win.o qt_clust.o # tile.o
+#
+# Files for a Gem port
+WINGEMSRC = ../win/gem/wingem.c ../win/gem/wingem1.c ../win/gem/load_img.c \
+	tile.c
+WINGEMOBJ = wingem.o wingem1.o load_img.o tile.o
 
 #
-# 
+#
 WINSRC = $(WINTTYSRC)
 WINOBJ = $(WINTTYOBJ)
 
@@ -200,7 +210,8 @@ WINQTLIB = -L$(QTDIR)/lib -lqt
 # libraries for KDE (with Qt)
 WINKDELIB = -lkdecore -lkdeui -lXext
 #
-#
+# libraries for Gem port
+WINGEMLIB = -le_gem -lgem
 
 WINLIB = $(WINTTYLIB)
 
@@ -230,6 +241,7 @@ LIBS =
 
 # make NetHack
 GAME     = nethack
+# GAME     = nethack.prg
 
 # if you defined RANDOM in unixconf.h/tosconf.h since your system did not come
 # with a reasonable random number generator
@@ -277,7 +289,7 @@ SYSCSRC = ../sys/atari/tos.c ../sys/share/pcmain.c ../sys/share/pcsys.c \
 	../sys/unix/unixunix.c ../sys/be/bemain.c
 
 # all windowing-system-dependent .c (for dependencies and such)
-WINCSRC = $(WINTTYSRC) $(WINX11SRC)
+WINCSRC = $(WINTTYSRC) $(WINX11SRC) $(WINGEMSRC)
 # all windowing-system-dependent .cpp (for dependencies and such)
 WINCXXSRC = $(WINQTSRC)
 
@@ -359,7 +371,7 @@ SysBe: $(HOBJ) Makefile
 	@touch SysBe
 
 DUMB.Setup:	../include/extern.h
-	cp ../include/extern.h ../include/extern.h.BAK 
+	cp ../include/extern.h ../include/extern.h.BAK
 	cat ../include/extern.h | \
 		sed -e '/^E\ int\ /!b' \
 			-e '/[^;/ 	]$$/N' \
@@ -374,8 +386,8 @@ DUMB.Setup:	../include/extern.h
 		sed -e '/^E\ void\ /!b' \
 			-e '/[^;/ 	]$$/N' \
 			-e 's/^\(.*\)$$/\/\* \1 \/\*\*\//' \
-				>../include/extern.DUMB 
-	cp ../include/extern.DUMB ../include/extern.h 
+				>../include/extern.DUMB
+	cp ../include/extern.DUMB ../include/extern.h
 	@touch DUMB.Setup
 
 all:	$(GAME)
@@ -556,6 +568,15 @@ wintext.o: ../win/X11/wintext.c $(HACK_H) ../include/winX.h ../include/xwindow.h
 winval.o: ../win/X11/winval.c $(HACK_H) ../include/winX.h
 	$(CC) $(CFLAGS) -c ../win/X11/winval.c
 tile.o: tile.c $(HACK_H)
+wingem.o: ../win/gem/wingem.c $(HACK_H) ../include/func_tab.h ../include/dlb.h \
+		../include/patchlevel.h ../include/wingem.h
+	$(CC) $(CFLAGS) -c ../win/gem/wingem.c
+wingem1.o: ../win/gem/wingem1.c ../include/gem_rsc.h ../include/load_img.h \
+		../include/wintype.h ../include/wingem.h
+	$(CC) $(CFLAGS) -c ../win/gem/wingem1.c
+load_img.o: ../win/gem/load_img.c ../include/load_img.h
+	$(CC) $(CFLAGS) -c ../win/gem/load_img.c
+tile.o: tile.c $(HACK_H)
 qt_win.o: ../win/Qt/qt_win.cpp $(HACK_H) ../include/func_tab.h \
 		../include/dlb.h ../include/patchlevel.h ../include/qt_win.h \
 		../include/qt_clust.h ../include/qt_kde0.h \
@@ -669,7 +690,7 @@ vision.o: vision.c $(HACK_H) ../include/vis_tab.h
 weapon.o: weapon.c $(HACK_H)
 were.o: were.c $(HACK_H)
 wield.o: wield.c $(HACK_H)
-windows.o: windows.c $(HACK_H)
+windows.o: windows.c $(HACK_H) ../include/wingem.h
 wizard.o: wizard.c $(HACK_H) ../include/qtext.h
 worm.o: worm.c $(HACK_H) ../include/lev.h
 worn.o: worn.c $(HACK_H)

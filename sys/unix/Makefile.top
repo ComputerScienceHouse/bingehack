@@ -16,6 +16,7 @@
 # make NetHack
 PREFIX	 = /usr
 GAME     = nethack
+# GAME     = nethack.prg
 GAMEUID  = games
 GAMEGRP  = bin
 
@@ -40,6 +41,8 @@ SHELLDIR = $(PREFIX)/games
 VARDATND = 
 # VARDATND = x11tiles pet_mark.xbm
 # VARDATND = x11tiles pet_mark.xbm rip.xpm
+# for Atari/Gem
+# VARDATND = nh16.img title.img GEM_RSC.RSC
 
 VARDATD = data oracles options quest.dat rumors
 VARDAT = $(VARDATD) $(VARDATND)
@@ -47,6 +50,8 @@ VARDAT = $(VARDATD) $(VARDATND)
 # Some versions of make use the SHELL environment variable as the shell
 # for running commands.  We need this to be a Bourne shell.
 # SHELL = /bin/sh
+# for Atari
+# SHELL=E:/GEMINI2/MUPFEL.TTP
 
 # Commands for setting the owner and group on files during installation.
 # Some systems fail with one or the other when installing over NFS or for
@@ -119,6 +124,16 @@ pet_mark.xbm:
 
 rip.xpm:
 	( cd dat ; $(MAKE) rip.xpm )
+
+nh16.img:
+	( cd util ; $(MAKE) tile2img.ttp )
+	( cd dat ; $(MAKE) nh16.img )
+
+GEM_RSC.RSC:
+	( cd dat ; $(MAKE) GEM_RSC.RSC )
+
+title.img:
+	( cd dat ; $(MAKE) title.img )
 
 check-dlb:
 	( cd dat; $(MAKE) options )

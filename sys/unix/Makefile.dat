@@ -1,6 +1,9 @@
 #	NetHack Makefile.
 #	SCCS Id: @(#)Makefile.dat	3.3	92/09/18
 
+# for Atari
+# SHELL=E:/GEMINI2/MUPFEL.TTP
+
 VARDAT = data rumors quest.dat oracles options
 
 all:	$(VARDAT) spec_levs quest_levs dungeon
@@ -27,6 +30,19 @@ pet_mark.xbm: ../win/X11/pet_mark.xbm
 
 rip.xpm: ../win/X11/rip.xpm
 	cp ../win/X11/rip.xpm rip.xpm
+
+../util/tile2img.ttp:
+	(cd ../util ; make tile2img.ttp)
+
+nh16.img: ../util/tile2img.ttp ../win/share/monsters.txt \
+				../win/share/objects.txt ../win/share/other.txt
+	../util/tile2img.ttp nh16.img
+
+title.img:
+	cp ../win/gem/title.img title.img
+
+GEM_RSC.RSC:
+	cp ../win/gem/GEM_RSC.RSC GEM_RSC.RSC
 
 
 data:	data.base ../util/makedefs
