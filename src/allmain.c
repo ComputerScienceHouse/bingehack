@@ -485,7 +485,7 @@ newgame()
 	program_state.something_worth_saving++;	/* useful data now exists */
 
 	/* Success! */
-	pline("%s %s, welcome to NetHack! You are a %s %s %s %s.", Hello(), plname,
+	pline("%s %s, welcome to NetHack!  You are a %s %s %s %s.", Hello(), plname,
 	    	aligns[flags.initalign].adj,
 	    	genders[flags.initgend].adj,
 	    	races[flags.initrace].adj,
