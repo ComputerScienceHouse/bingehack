@@ -935,6 +935,7 @@ dosacrifice()
 {
     register struct obj *otmp;
     int value = 0;
+    int pm;
     aligntyp altaralign = a_align(u.ux,u.uy);
 
     if (!on_altar()) {
@@ -1013,8 +1014,8 @@ dosacrifice()
 		    change_luck(altaralign == A_NONE ? -2 : 2);
 		    demonless_msg = "blood coagulates";
 		}
-		if ((dmon = makemon(&mons[dlord(altaralign)],
-						u.ux, u.uy, NO_MM_FLAGS ))) {
+		if ((pm = dlord(altaralign)) != NON_PM &&
+		    (dmon = makemon(&mons[pm], u.ux, u.uy, NO_MM_FLAGS))) {
 		    You("have summoned %s!", a_monnam(dmon));
 		    if (sgn(u.ualign.type) == sgn(dmon->data->maligntyp))
 			dmon->mpeaceful = TRUE;
