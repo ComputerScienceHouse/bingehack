@@ -222,7 +222,9 @@ dosave0()
 		if (!(level_info[ltmp].flags & LFILE_EXISTS)) continue;
 #ifdef MICRO
 		curs(WIN_MAP, 1 + dotcnt++, 2);
-		putstr(WIN_MAP, 0, ".");
+		if (strncmpi("X11", windowprocs.name, 3)){
+		  putstr(WIN_MAP, 0, ".");
+		}
 		mark_synch();
 #endif
 		ofd = open_levelfile(ltmp);
