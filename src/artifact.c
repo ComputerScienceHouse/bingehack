@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)artifact.c 3.3	99/03/22	*/
+/*	SCCS Id: @(#)artifact.c 3.3	1999/11/26	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -625,7 +625,7 @@ winid tmpwin;		/* supplied by dodiscover() */
 	if (i == 0) putstr(tmpwin, ATR_INVERSE, "Artifacts");
 	m = artidisco[i];
 	otyp = artilist[m].otyp;
-	Sprintf(buf, "%s [%s %s]", artiname(m),
+	Sprintf(buf, "  %s [%s %s]", artiname(m),
 		align_str(artilist[m].alignment), OBJ_NAME(objects[otyp]));
 	putstr(tmpwin, 0, buf);
     }
@@ -1270,7 +1270,7 @@ void arti_speak(obj)
 		return;
 
 	/* Get a rumor.  Kludge: do not include rumors that specifically refer
-         * to fortune cookies.  Such rumors are always false rumors, so this
+	 * to fortune cookies.  Such rumors are always false rumors, so this
 	 * problem doesn't happen when, for instance, getting Oracle
 	 * pronouncements.  This is an awful hack because it relies on knowing
 	 * exactly what text is in the cookie files.
