@@ -100,17 +100,6 @@ Warren Cheung combined SLASH with the Wizard Patch to produce Slash'em, and
 with the help of Kevin Hugo, added more features.  Kevin later joined the
 DevTeam and incorporated the best of these ideas in NetHack 3.3.
 
-In addition to the merged features, a number of other notable modifications
-were made to the game:
-
-The character's race was split from his/her/its role in life.  Although
-started, this is preliminary and will likely be enhanced over the course
-of the next few releases.  The elf, dwarf, orc, and gnome races currently
-exist in the game.
-
-Two new classes, or "roles", the Monk and Ranger have been added. As a result
-of the Elf being split off as a race, the Elf class was removed from the game.
-
 The 3.3 development team consisted of Michael Allison, Ken Arromdee,
 David Cohrs, Jessie Collet, Steve Creps, Kevin Darcy, Timo Hakulinen,
 Kevin Hugo, Steve Linhart, Dean Luick, Pat Rankin, Eric Smith, Mike

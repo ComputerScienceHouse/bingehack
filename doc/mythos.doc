@@ -1,4 +1,4 @@
-	    SCCS Id: @(#)mythos.doc	3.1	    94/09/29
+	    SCCS Id: @(#)mythos.doc	3.3	    2000/07/25
 
 
 Part I	    General Mythos
@@ -49,6 +49,8 @@ Background:
    General:
      Ranks:
 
+	    Elf (retired in 3.3.0)
+
     Leader: Earendil/Elwing
       Home: Great Circle of Earendil/Elwing
    Nemesis: Goblin King
@@ -80,14 +82,34 @@ Background: Legend of King Arthur
    General:
      Ranks:
 
+	    Monk (added in 3.3.0)
+    Leader: the Grand Master
+      Home: the Monastery of Chan-Sune
+   Nemesis: Master Kaen
+      Goal: the Monastery of the Earth-Lord
+  Artifact: Eyes of the Overworld
+Background: Militant Chinese cleric (Wu-dang Taoist, Shao-lin Buddhist)
+   General: martial arts, enlightenment, vegetarianism
+     Ranks:
+
 	    Priest
     Leader: Arch Priest
       Home: Great Temple
    Nemesis: Nalzok
       Goal: Temple of Nalzok
   Artifact: Mitre of Holiness
-Background:
-   General:
+Background: As of 3.3.0, more of a Western-style cleric
+   General: holy water, undead turning
+     Ranks:
+
+	    Ranger (replaced Elf in 3.3.0)
+    Leader: Orion
+      Home: Orion's camp
+   Nemesis: Scorpius
+      Goal: the cave of the wumpus
+  Artifact: Longbow of Diana
+Background: Roman version of Orion/Sirius/Scorpius myth
+   General: Locate level is in honor to the "wumpus" game
      Ranks:
 
 	    Rogue
