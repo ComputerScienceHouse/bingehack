@@ -1,4 +1,4 @@
-#	SCCS Id: @(#)Makefile.MSC	      3.3     2000/07/31
+#	SCCS Id: @(#)Makefile.MSC	      3.3     2000/08/02
 #	Copyright (c) NetHack PC Development Team 1997, 2000.
 #	PC NetHack 3.3 Makefile for MSC
 #
@@ -288,36 +288,36 @@ TILE_H	   = $(WSHR)\tile.h $(MSYS)\pctiles.h
 
 
 .c{$(OBJ)}.o:
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
 
 .c.o:
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
 
 {$(SRC)}.c{$(OBJ)}.o:
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
 
 {$(SRC)}.c.o:
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
 
 #
 # Rules for files in sys\share
 #
 
 {$(SYS)}.c{$(OBJ)}.o:
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
 
 {$(SYS)}.c.o:
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
 
 #
 # Rules for files in sys\msdos
 #
 
 {$(MSYS)}.c{$(OBJ)}.o:
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
 
 {$(MSYS)}.c.o:
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
 
 {$(MSYS)}.h{$(INCL)}.h:
 	@copy $< $@
@@ -327,20 +327,20 @@ TILE_H	   = $(WSHR)\tile.h $(MSYS)\pctiles.h
 #
 
 {$(UTIL)}.c{$(OBJ)}.o:
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
 
 {$(UTIL)}.c.o:
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
 
 #
 # Rules for files in win\share
 #
 
 {$(WSHR)}.c.o:
-	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
+	@@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
 
 {$(WSHR)}.c{$(OBJ)}.o:
-	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
+	@@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
 
 {$(WSHR)}.h{$(INCL)}.h:
 	@copy $< $@
@@ -353,10 +353,10 @@ TILE_H	   = $(WSHR)\tile.h $(MSYS)\pctiles.h
 #
 
 {$(WTTY)}.c{$(OBJ)}.o:
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
 
 {$(WTTY)}.c.o:
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $<
 
 
 ! IF ("$(USE_DLB)"=="Y")
@@ -574,7 +574,7 @@ spotless: clean
 
 $(U)makedefs.exe:  $(MAKEOBJS)
         @echo Linking....
-        $(LINK) $(LFLAGS) @<<$(@B).lnk
+        @$(LINK) $(LFLAGS) @<<$(@B).lnk
                 $(MAKEOBJS:^      =+^
                 )
                 $@
@@ -615,7 +615,7 @@ vis_tab.c: $(U)makedefs.exe
 
 $(U)lev_comp.exe:  $(SPLEVOBJS)
 	@echo Linking $@...
-	$(LINK) $(LFLAGS) @<<$(@B).lnk
+	@$(LINK) $(LFLAGS) @<<$(@B).lnk
 		$(SPLEVOBJS:^	=+^
 		)
 		$@
@@ -675,7 +675,7 @@ $(U)lev_$(LEX).c:  $(U)lev_comp.l
 
 $(U)dgn_comp.exe: $(DGNCOMPOBJS)
     @echo Linking $@...
-	$(LINK) $(LFLAGS) @<<$(@B).lnk
+	@$(LINK) $(LFLAGS) @<<$(@B).lnk
 		$(DGNCOMPOBJS:^	=+^
 		)
 		$@
@@ -736,7 +736,7 @@ $(U)dgn_$(LEX).c:  $(U)dgn_comp.l
 
 $(U)recover.exe:   $(RECOVOBJS)
         @echo Linking....
-        $(LINK) $(LFLAGS) @<<$(@B).lnk
+        @$(LINK) $(LFLAGS) @<<$(@B).lnk
                 $(RECOVOBJS:^      =+^
                 )
                 $@
@@ -772,7 +772,7 @@ tile.c: tilemap.exe
 
 tilemap.exe: tilemap.o
         @echo Linking....
-        $(LINK) $(LFLAGS) @<<$(@B).lnk
+        @$(LINK) $(LFLAGS) @<<$(@B).lnk
 		tilemap.o
                 $@
                 $(@B)
@@ -800,13 +800,13 @@ NetHacko.tib: thintile.tag $(TILEFILES2) til2bin2.exe
 	@til2bin2
 
 tile2bin.exe: tile2bin.o $(TEXTIO)
-	$(LINK) $(LFLAGS) tile2bin.o $(TEXTIO),$@,$(@B);
+	@$(LINK) $(LFLAGS) tile2bin.o $(TEXTIO),$@,$(@B);
 
 til2bin2.exe: til2bin2.o $(TEXTIO2)
-	$(LINK) $(LFLAGS) til2bin2.o $(TEXTIO2),$@,$(@B);
+	@$(LINK) $(LFLAGS) til2bin2.o $(TEXTIO2),$@,$(@B);
 
 thintile.exe: thintile.o 
-	$(LINK) $(LFLAGS) thintile.o,$@,$(@B);
+	@$(LINK) $(LFLAGS) thintile.o,$@,$(@B);
 
 thintile.o:  $(HACK_H) $(WSHR)\tile.h $(WSHR)\thintile.c
 
@@ -819,56 +819,56 @@ tile2bin.o:  $(HACK_H) $(WSHR)\tile.h $(MSYS)\pctiles.h $(MSYS)\pcvideo.h \
 
 til2bin2.o:  $(HACK_H) $(WSHR)\tile.h $(MSYS)\pctiles.h $(MSYS)\pcvideo.h \
 	$(MSYS)\tile2bin.c
-	-$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 -DOVERVIEW_FILE /Zg $(MSYS)\tile2bin.c >$(@B).pro
-	$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 -DOVERVIEW_FILE /Fo$@ $(MSYS)\tile2bin.c
+	-@$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 -DOVERVIEW_FILE /Zg $(MSYS)\tile2bin.c >$(@B).pro
+	@$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 -DOVERVIEW_FILE /Fo$@ $(MSYS)\tile2bin.c
 
 tiletext.o:  $(CONFIG_H) $(WSHR)\tile.h $(WSHR)\tiletext.c
 
 tiletex2.o:  $(CONFIG_H) $(WSHR)\tile.h $(WSHR)\tiletext.c
-	-$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 /Zg $(WSHR)\tiletext.c >$(@B).pro
-	$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 /Fo$@ $(WSHR)\tiletext.c
+	-@$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 /Zg $(WSHR)\tiletext.c >$(@B).pro
+	@$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 /Fo$@ $(WSHR)\tiletext.c
 
 tiletxt.o: $(CONFIG_H)	$(WSHR)\tile.h tilemap.c
-	-$(CC) $(CFLAGS) $(SPECOPTS) -DTILETEXT /Zg tilemap.c >$(@B).pro
-	$(CC) $(CFLAGS) $(SPECOPTS) -DTILETEXT /Fo$@ tilemap.c
+	-@$(CC) $(CFLAGS) $(SPECOPTS) -DTILETEXT /Zg tilemap.c >$(@B).pro
+	@$(CC) $(CFLAGS) $(SPECOPTS) -DTILETEXT /Fo$@ tilemap.c
   
 tiletxt2.o: $(CONFIG_H)	$(WSHR)\tile.h tilemap.c
-	-$(CC) $(CFLAGS) $(SPECOPTS) -DTILETEXT /Zg tilemap.c >$(@B).pro
-	$(CC) $(CFLAGS) $(SPECOPTS) -DTILETEXT -DTILE_X=8 /Fo$@ tilemap.c
+	-@$(CC) $(CFLAGS) $(SPECOPTS) -DTILETEXT /Zg tilemap.c >$(@B).pro
+	@$(CC) $(CFLAGS) $(SPECOPTS) -DTILETEXT -DTILE_X=8 /Fo$@ tilemap.c
 #
 # Optional GIF Utilities (for development)
 #
 
 gif2txt.exe: $(GIFREADERS) $(TEXTIO)
-	$(LINK) $(LFLAGS) $(GIFREADERS) $(TEXTIO),$@,$(@B);
+	@$(LINK) $(LFLAGS) $(GIFREADERS) $(TEXTIO),$@,$(@B);
 
 gif2txt2.exe: $(GIFREAD2) $(TEXTIO2)
-	$(LINK) $(LFLAGS) $(GIFREAD2) $(TEXTIO2),$@,$(@B);
+	@$(LINK) $(LFLAGS) $(GIFREAD2) $(TEXTIO2),$@,$(@B);
 
 txt2ppm.exe: $(PPMWRITERS) $(TEXTIO)
-	$(LINK) $(LFLAGS) $(PPMWRITERS) $(TEXTIO),$@,$(@B);
+	@$(LINK) $(LFLAGS) $(PPMWRITERS) $(TEXTIO),$@,$(@B);
 
 txt2ppm2.exe: $(PPMWRIT2) $(TEXTIO2)
-	$(LINK) $(LFLAGS) $(PPMWRIT2) $(TEXTIO2),$@,$(@B);
+	@$(LINK) $(LFLAGS) $(PPMWRIT2) $(TEXTIO2),$@,$(@B);
 
 gifread.o: $(CONFIG_H) $(WSHR)\tile.h
 
 gifread2.o: $(CONFIG_H) $(WSHR)\tile.h $(WSHR)\gifread.c
-	-$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 /Zg gifread.c >$(@B).pro
-	$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 $(WSHR)\gifread.c
+	-@$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 /Zg gifread.c >$(@B).pro
+	@$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 $(WSHR)\gifread.c
 
 ppmwrite.o: $(CONFIG_H)	$(WSHR)\tile.h $(WSHR)\ppmwrite.c
 
 ppmwrit2.o:  $(CONFIG_H) $(WSHR)\tile.h $(WSHR)\ppmwrite.c
-	-$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 /Zg ppmwrite.c >$(@B).pro
-	$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 $(WSHR)\ppmwrite.c
+	-@$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 /Zg ppmwrite.c >$(@B).pro
+	@$(CC) $(CFLAGS) $(SPECOPTS) -DTILE_X=8 $(WSHR)\ppmwrite.c
 
 #
 #  Optional tile viewer (development sources only)
 #
 
 viewtib.exe: viewtib.o
-	$(LINK) $(LFLAGS) -oviewtib.exe viewtib.o $(LIBRARIES)
+	@$(LINK) $(LFLAGS) -oviewtib.exe viewtib.o $(LIBRARIES)
 
 viewtib.o: $(MSYS)\viewtib.c
 
@@ -917,7 +917,6 @@ $(DAT)\dungeon: $(O)utility.tag  $(DAT)\dungeon.def
 #
 # DLB stuff
 #
-#note that dir below assumes bin/dir.exe from djgpp distribution
 #
 nhdat:	$(U)dlb_main.exe $(DAT)\data $(DAT)\oracles $(DAT)\options \
 	$(DAT)\quest.dat $(DAT)\rumors $(DAT)\help $(DAT)\hh $(DAT)\cmdhelp \
@@ -947,53 +946,53 @@ $(U)dlb_main.exe: $(DLBOBJS)
 	link $(LFLAGS) /ST:5120 $(DLBOBJS),$@,$(@B);
 
 dlb_main.o: $(U)dlb_main.c $(INCL)\config.h $(DLB_H)
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(U)dlb_main.c
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(U)dlb_main.c
 
 # Game Dependencies
 
 # sys/share
 main.o: $(SSHR)\pcmain.c $(HACK_H) $(INCL)\dlb.h \
 		#$(INCL)\win32api.h
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(SSHR)\pcmain.c
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(SSHR)\pcmain.c
 sys.o: $(SSHR)\pcsys.c $(HACK_H)
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(SSHR)\pcsys.c
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(SSHR)\pcsys.c
 tty.o: $(SSHR)\pctty.c $(HACK_H)
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(SSHR)\pctty.c
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(SSHR)\pctty.c
 unix.o: $(SSHR)\pcunix.c $(HACK_H)
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(SSHR)\pcunix.c
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(SSHR)\pcunix.c
 random.o: $(SSHR)\random.c $(HACK_H)
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(SSHR)\random.c
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(SSHR)\random.c
 
 # sys/msdos
 msdos.o : $(HACK_H)  $(MSYS)\msdos.c
-	$(CC) $(CFLAGS) $(SPECOPTS) $(NEWALT) /Fo$@ $(MSYS)\msdos.c
+	@$(CC) $(CFLAGS) $(SPECOPTS) $(NEWALT) /Fo$@ $(MSYS)\msdos.c
 pckeys.o : $(HACK_H)  $(MSYS)\pckeys.c
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\pckeys.c
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\pckeys.c
 pctiles.o : $(HACK_H)  $(MSYS)\pctiles.c $(MSYS)\portio.h
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\pctiles.c
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\pctiles.c
 sound.o : $(HACK_H)  $(MSYS)\sound.c $(MSYS)\portio.h
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\sound.c
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\sound.c
 video.o : $(HACK_H)  $(MSYS)\pcvideo.h $(MSYS)\portio.h $(MSYS)\video.c
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\video.c
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\video.c
 vidvga.o : $(HACK_H)  $(MSYS)\pcvideo.h $(MSYS)\portio.h $(TILE_H) \
 	$(MSYS)\vidvga.c
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\vidvga.c
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\vidvga.c
 vidtxt.o : $(HACK_H)  $(MSYS)\pcvideo.h $(MSYS)\portio.h $(TILE_H) \
 	$(MSYS)\vidtxt.c
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\vidtxt.c
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(MSYS)\vidtxt.c
 stubvid.o : $(HACK_H) $(MSYS)\video.c
-	$(CC) $(CFLAGS) $(SPECOPTS) -DSTUBVIDEO /Fo$@ $(MSYS)\video.c
+	@$(CC) $(CFLAGS) $(SPECOPTS) -DSTUBVIDEO /Fo$@ $(MSYS)\video.c
 
 # win/tty
 getline.o: $(WIN)\getline.c $(HACK_H) $(INCL)\func_tab.h
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(WIN)\getline.c
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(WIN)\getline.c
 termcap.o: $(WIN)\termcap.c $(HACK_H) $(INCL)\tcap.h
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(WIN)\termcap.c
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(WIN)\termcap.c
 topl.o: $(WIN)\topl.c $(HACK_H) $(INCL)\tcap.h
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(WIN)\topl.c
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(WIN)\topl.c
 wintty.o: $(WIN)\wintty.c $(HACK_H) $(INCL)\dlb.h \
 		$(INCL)\patchlev.h $(INCL)\tcap.h
-	$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(WIN)\wintty.c
+	@$(CC) $(CFLAGS) $(SPECOPTS) /Fo$@ $(WIN)\wintty.c
 
 # src dependencies
 allmain.o: allmain.c $(HACK_H)
@@ -1063,7 +1062,7 @@ objnam.o: objnam.c $(HACK_H)
 options.o: options.c $(CONFIG_H) $(INCL)\objclass.h $(INCL)\flag.h \
 		$(HACK_H) $(INCL)\tcap.h
 pager.o: pager.c $(HACK_H) $(INCL)\dlb.h
-	$(CC) $(CFLAGS) $(SPECOPTS) /f- /Od /Fo$@ pager.c
+	@$(CC) $(CFLAGS) $(SPECOPTS) /f- /Od /Fo$@ pager.c
 pickup.o: pickup.c $(HACK_H)
 pline.o: pline.c $(HACK_H) $(INCL)\epri.h
 polyself.o: polyself.c $(HACK_H)
