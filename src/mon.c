@@ -1059,15 +1059,22 @@ void
 dmonsfree()
 {
     struct monst **mtmp;
+    int count = 0;
 
     for (mtmp = &fmon; *mtmp;) {
 	if ((*mtmp)->mhp <= 0) {
 	    struct monst *freetmp = *mtmp;
 	    *mtmp = (*mtmp)->nmon;
 	    dealloc_monst(freetmp);
+	    count++;
 	} else
 	    mtmp = &(*mtmp)->nmon;
     }
+
+    if (count != iflags.purge_monsters)
+	impossible("dmonsfree: %d removed doesn't match %d pending",
+		   count, iflags.purge_monsters);
+    iflags.purge_monsters = 0;
 }
 
 #endif /* OVL1 */
@@ -1159,6 +1166,7 @@ struct permonst *mptr;	/* reflects mtmp->data _prior_ to mtmp's death */
 
 	if(mtmp->isshk) shkgone(mtmp);
 	if(mtmp->wormno) wormgone(mtmp);
+	iflags.purge_monsters++;
 }
 
 /* find the worn amulet of life saving which will save a monster */

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)flag.h	3.3	1999/11/26	*/
+/*	SCCS Id: @(#)flag.h	3.3	2000/01/19	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -153,6 +153,7 @@ struct instance_flags {
 	boolean  num_pad;	/* use numbers for movement commands */
 	boolean  news;		/* print news */
 	boolean  window_inited; /* true if init_nhwindows() completed */
+	int      purge_monsters;	/* # of dead monsters still on fmon list */
 
 #ifdef WIZARD
 	boolean  sanity_check;	/* run sanity checks */
