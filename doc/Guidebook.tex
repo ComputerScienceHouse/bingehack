@@ -2108,13 +2108,21 @@ Included in all official distributions of Nethack is a file called
 the game to run in a manner accessible to the blind. After you have gained
 some experience with the game and with editing files, you may want to alter
 settings to better suit your preferences. Instructions on how to do this
-are included in the {\it NetHack.cnf\} file itself. The most crucial settings to
-make the game accessible are:
+are included in the {\it NHAccess.cnf\} file itself. The most crucial
+settings to make the game accessible are:
 %.pg
 \blist{}
 %.lp
 \item[\ib{IBMgraphics}]
 Disable IBMgraphics by commenting out this option.
+%.lp
+\item[\ib{menustyle:traditional}]
+This will assist in the interface to speech synthesizers.
+%.lp
+\item[\ib{\!number_pad}]
+A lot of speech access programs use the number-pad to review the screen.
+If this is the case, turn off the number_pad option and use the traditional
+Rogue-like commands.
 %.lp
 \item[\ib{Character graphics}]
 Make certain that all character graphics sets found near the bottom of the
