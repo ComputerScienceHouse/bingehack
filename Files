@@ -227,7 +227,7 @@ gnglyph.c       gnglyph.h       gnmain.c        gnmain.h        gnmap.c
 gnmap.h         gnmenu.c        gnmenu.h        gnmesg.c        gnmesg.h
 gnomeprv.h      gnopts.c        gnopts.h        gnplayer.c      gnplayer.h
 gnsignal.c      gnsignal.h      gnstatus.c      gnstatus.h      gntext.c
-gntext.h        gnyesno.c       gnyesno.h       mapbg.xpm       xpms.h
+gntext.h        gnyesno.c       gnyesno.h       gn_xpms.h       mapbg.xpm
 
 win/share:
 (files for versions using optional tiles)
