@@ -232,15 +232,16 @@ static const struct pad {
  * scan code table to translate the scan code into a letter, then set the
  * "meta" bit for it.  -3.
  */
-#define SCANLO		0x10
+#define SCANLO		0x02
 
 static const char scanmap[] = { 	/* ... */
+	'1','2','3','4','5','6','7','8','9','0',0,0,0,0,
 	'q','w','e','r','t','y','u','i','o','p','[',']', '\n',
 	0, 'a','s','d','f','g','h','j','k','l',';','\'', '`',
 	0, '\\', 'z','x','c','v','b','n','m',',','.','?'	/* ... */
 };
 
-static const char *extendedlist = "acdefijlmnopqrstuvw?";
+static const char *extendedlist = "acdefijlmnopqrstuvw?2";
 
 #define inmap(x)	(SCANLO <= (x) && (x) < SCANLO + SIZE(scanmap))
 
@@ -290,6 +291,10 @@ boolean *valid;
             }
         }
         else if (altseq) { /* ALT sequence */
+#if 0
+	    pline("Here is the received Scan code in decimal and hex: %d, 0x%03X",
+			scan, scan);
+#endif
             altseq = 0;
             if (!ch && inmap(scan)) ch = scanmap[scan - SCANLO];
             if (index(extendedlist, tolower(ch)) != 0) ch = M(tolower(ch));
