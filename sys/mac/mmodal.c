@@ -2,11 +2,12 @@
 /* Copyright (c) Jon W{tte, Hao-Yang Wang, Jonathan Handler 1992. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <Dialogs.h>
+#if ENABLE_MAC_POPUP
 #include "hack.h"
 #include "mactty.h"
+#endif
 #include "macpopup.h"
-#include <Dialogs.h>
-#include <OSUtils.h>
 
 /* Flash a dialog button when its accelerator key is pressed */
 void

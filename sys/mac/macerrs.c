@@ -7,6 +7,11 @@
 #endif
 
 #include "hack.h"
+#undef red
+#undef green
+#undef blue
+#include <Dialogs.h>
+#include <TextUtils.h>
 #include <Resources.h>
 
 #define stackDepth  1

@@ -14,8 +14,7 @@
 #if 0
 int
 uptodate(int fd)
-{
-#if defined(applec)
+#if defined(applec) || defined(__MWERKS__)
 # pragma unused(fd)
 #endif
 	return(1);

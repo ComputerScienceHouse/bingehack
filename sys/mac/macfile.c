@@ -12,6 +12,7 @@
 #include <errors.h>
 #include <resources.h>
 #include <memory.h>
+#include <TextUtils.h>
 #include <ToolUtils.h>
 #include "dlb.h"
 
@@ -394,6 +395,9 @@ void rsrc_dlb_cleanup(void)
 
 boolean rsrc_dlb_fopen(dlb *dp, const char *name, const char *mode)
 {
+#if defined(applec) || defined(__MWERKS__)
+# pragma unused(mode)
+#endif
 	Str255 pname;
 	
 	C2P(name, pname);

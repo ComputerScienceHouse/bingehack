@@ -4,6 +4,11 @@
 
 #ifndef MACWIN_H
 # define MACWIN_H
+#undef red			/* undef internal color const strings from decl */
+#undef green
+#undef blue
+#include <windows.h>
+#include <dialogs.h>
 
 /* more headers */
 #ifdef THINK_C
@@ -32,6 +37,39 @@ typedef ModalFilterProcPtr ModalFilterUPP;
 # define ResumeProcPtr long		/* for call to InitDialogs */
 #endif
 
+/* working dirs structure */
+typedef struct macdirs {
+	Str32		dataName ;
+	short		dataRefNum ;
+	long		dataDirID ;
+
+	Str32		saveName ;
+	short		saveRefNum ;
+	long		saveDirID ;
+
+	Str32		levelName ;
+	short		levelRefNum ;
+	long		levelDirID ;
+} MacDirs ;
+
+typedef struct macflags {
+	Bitfield ( processes , 1 ) ;
+	Bitfield ( color , 1 ) ;
+	Bitfield ( folders , 1 ) ;
+	Bitfield ( tempMem , 1 ) ;
+	Bitfield ( help , 1 ) ;
+	Bitfield ( fsSpec , 1 ) ;
+	Bitfield ( trueType , 1 ) ;
+	Bitfield ( aux , 1 ) ;
+	Bitfield ( alias , 1 ) ;
+	Bitfield ( standardFile , 1 ) ;
+	Bitfield ( hasDebugger , 1 ) ;
+	Bitfield ( hasAE , 1 ) ;
+	Bitfield ( gotOpen, 1 );
+} MacFlags ;
+
+extern MacDirs theDirs ;		/* used in macfile.c */
+extern MacFlags macFlags ;
 
 /*
  * Mac windows
@@ -158,8 +196,8 @@ extern void FDECL ( process_openfile, (short src_vol, long src_dir, Str255 fName
 
 /* ### macwin.c ### */
 
-extern void AddToKeyQueue(int, Boolean);
-extern int GetFromKeyQueue ( void ) ;
+extern void AddToKeyQueue(unsigned char, Boolean);
+extern unsigned char GetFromKeyQueue ( void ) ;
 void trans_num_keys ( EventRecord * ) ;
 extern void NDECL ( InitMac ) ;
 int FDECL ( try_key_queue , ( char * ) ) ;

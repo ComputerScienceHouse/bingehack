@@ -41,6 +41,10 @@
 
 #ifndef _H_tty_public
 # define _H_tty_public
+#undef red			/* undef internal color const strings from decl */
+#undef green
+#undef blue
+#include <windows.h>
 
 /*
  * Error code returned when it's probably our fault, or

@@ -23,17 +23,17 @@
 /******** Application Defines ********/
 #include "hack.h"
 #include "mactty.h"
-#include "macpopup.h"
 #include "macwin.h"
+#include "macpopup.h"
 #include "patchlevel.h"
 
 /******** Toolbox Defines ********/
 #include <Menus.h>
 #include <Devices.h>
 #include <Resources.h>
+#include <TextUtils.h>
 #include <ToolUtils.h>
 #include <Sound.h>
-#include <LowMem.h>		// for LMGetWindowList
 
 /******** Local Defines ********/
 

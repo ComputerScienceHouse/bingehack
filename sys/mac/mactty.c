@@ -11,9 +11,6 @@
  */
 
 #include "hack.h"	/* to get flags */
-#undef red
-#undef blue
-#undef green
 #include "mttypriv.h"
 #include <Resources.h>
 
@@ -1013,6 +1010,7 @@ RECORD_EXISTS (record);
 short clear_tty (WindowPtr window) {
 RECORD_EXISTS (record);
 
+	record->curs_state = 0;
 	select_offscreen_port (record);
 	erase_rect (record, &(record->its_bits.bounds));
 	select_onscreen_window (record);
@@ -1050,7 +1048,7 @@ short blink_cursor (WindowPtr window, long when) {
  */
 short
 image_tty (EventRecord *theEvent, WindowPtr window) {
-#if defined(applec)
+#if defined(applec) || defined(__MWERKS__)
 # pragma unused(theEvent)
 #endif
 RECORD_EXISTS (record);

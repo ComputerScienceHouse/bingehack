@@ -7,6 +7,7 @@
 #include "macwin.h"
 
 #include <Folders.h>
+#include <TextUtils.h>
 #include <Resources.h>
 
 

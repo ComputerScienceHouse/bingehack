@@ -3,9 +3,9 @@
 /* NetHack may be freely redistributed.  See license for details.	*/
 
 #include "hack.h"
+#include "macwin.h"
 #include "mttypriv.h"
 #include "mactty.h"
-#include "macwin.h"
 #include "wintty.h"
 
 #include <stdarg.h>
@@ -298,7 +298,7 @@ getreturn (char *str) {
 
 int
 has_color (int color) {
-#if defined(applec)
+#if defined(applec) || defined(__MWERKS__)
 # pragma unused(color)
 #endif
 Rect r;
@@ -366,7 +366,7 @@ short err;
 
 void
 term_end_attr (int attr) {
-#if defined(applec)
+#if defined(applec) || defined(__MWERKS__)
 # pragma unused (attr)
 #endif
 	_mt_set_colors (_mt_attrs [0]);
@@ -533,7 +533,7 @@ long flag;
 
 void
 tty_number_pad (int arg) {
-#if defined(applec)
+#if defined(applec) || defined(__MWERKS__)
 # pragma unused(arg)
 #endif
 }
