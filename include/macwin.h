@@ -205,8 +205,7 @@ int FDECL (try_key_queue, (char *));
 void FDECL (enter_topl_mode, (char *));
 void FDECL (leave_topl_mode, (char *));
 void FDECL (topl_set_resp, (char *, char));
-Boolean FDECL (topl_key, (unsigned char));
-Boolean FDECL (topl_ext_key, (unsigned char));
+Boolean FDECL (topl_key, (unsigned char, Boolean));
 E void FDECL(HandleEvent, (EventRecord *));	/* used in mmodal.c */
 extern void NDECL(port_help);
 

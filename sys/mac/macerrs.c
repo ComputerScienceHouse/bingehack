@@ -7,9 +7,7 @@
 #endif
 
 #include "hack.h"
-#undef red
-#undef green
-#undef blue
+#include "macwin.h"
 #include <Dialogs.h>
 #include <TextUtils.h>
 #include <Resources.h>
@@ -18,13 +16,8 @@
 #define errAlertID 129
 #define stdIOErrID 1999
 
-void showerror(char *,const char *);
-Boolean itworked( short );
-void mustwork( short );
-void attemptingto( char *  );
-
 static Str255 gActivities[stackDepth] = {""};
-static short gTopactivity = 1;
+static short gTopactivity = 0;
 
 void showerror(char * errdesc, const char * errcomment)
 {
@@ -33,10 +26,10 @@ void showerror(char * errdesc, const char * errcomment)
 				pascomment;
 				
 	SetCursor(&qd.arrow);
-	if (errcomment == nil) pascomment[0] = '\0';
-	else strcpy((char *)pascomment,(char *)errcomment);
-	strcpy((char *)paserr,(char *)errdesc);
-	ParamText(c2pstr((char *)paserr),c2pstr((char *)pascomment),gActivities[gTopactivity],(StringPtr)"");
+	if (errcomment == nil) errcomment = "";
+	C2P (errcomment, pascomment);
+	C2P (errdesc, paserr);
+	ParamText(paserr,pascomment,gActivities[gTopactivity],(StringPtr)"");
 	itemHit = Alert(errAlertID, (ModalFilterUPP)nil);
 }
 
@@ -62,8 +55,8 @@ Boolean itworked(short errcode)
 			}
 		}
 		if (errdesc[0] == '\0') {  /* No description found, just give the number */
-			sprintf((char *)errdesc,"a %d error occurred",errcode);
-			(void)c2pstr((char *)errdesc);
+			sprintf((char *)&errdesc[1],"a %d error occurred",errcode);
+			errdesc[0] = strlen((char*)&errdesc[1]);
 		}
 		SetCursor(&qd.arrow);
 		ParamText(errdesc,(StringPtr)"",gActivities[gTopactivity],(StringPtr)"");
@@ -109,22 +102,19 @@ void
 error VA_DECL(const char *, line)
 #endif
 /* Do NOT use VA_START and VA_END in here... see above */
+	char pbuf[BUFSZ];
 
-	if(!index(line, '%'))
-		showerror("of an internal error",line);
-	else {
-		char pbuf[BUFSZ];
+	if(index(line, '%')) {
 		Vsprintf(pbuf,line,VA_ARGS);
-		showerror("of an internal error",pbuf);
+		line = pbuf;
 	}
+	showerror("of an internal error",line);
 }
 
 void attemptingto(char * activity)
 /* Say what we are trying to do for subsequent error-handling: will appear as x in an
    alert in the form "Could not x because y" */
-{
-	strcpy((char *)gActivities[gTopactivity],activity);
-	activity = (char *)c2pstr((char *)gActivities[gTopactivity]);
+{	C2P(activity,gActivities[gTopactivity]);
 }
 
 #if 0 /* Apparently unused */
@@ -133,8 +123,9 @@ void comment(char *s, long n)
 	Str255 paserr;
 	short itemHit;
 	
-	sprintf((char *)paserr, "%s - %d",s,n);
-	ParamText(c2pstr((char *)paserr),(StringPtr)"",(StringPtr)"",(StringPtr)"");
+	sprintf((char *)&paserr[1], "%s - %d",s,n);
+	paserr[0] = strlen ((char*)&paserr[1]);
+	ParamText(paserr,(StringPtr)"",(StringPtr)"",(StringPtr)"");
 	itemHit = Alert(128, (ModalFilterUPP)nil);
 }
 

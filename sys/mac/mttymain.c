@@ -8,7 +8,6 @@
 #include "mactty.h"
 #include "wintty.h"
 
-#include <stdarg.h>
 #include <Palettes.h>
 
 #define MT_WINDOW 135
@@ -22,9 +21,6 @@
  * Statics are prefixed _
  * Mac-tty becomes mt_
  */
-
-
-static void _mt_set_colors (long *colors);
 
 static long _mt_attrs [5] [2] = {
 	{ 0x000000, 0xffffff }, /* Normal */
