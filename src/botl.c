@@ -230,6 +230,7 @@ char *buf;
 		Sprintf(buf, "Dlvl:%-2d ", depth(&u.uz));
 		ret = 0;
 	}
+	return ret;
 }
 
 STATIC_OVL void
