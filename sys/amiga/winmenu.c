@@ -230,6 +230,7 @@ DoMenuScroll( win, blocking, how, retmip )
     static char title[ 100 ];
     int dosize = 1;
     struct Screen *scrn = HackScreen;
+    int x1,x2,y1,y2;
 
     if( win == WIN_ERR || ( cw = amii_wins[ win ] ) == NULL )
 	panic(winpanicstr,win,"DoMenuScroll");
@@ -531,10 +532,16 @@ DoMenuScroll( win, blocking, how, retmip )
 	    switch( class )
 	    {
 		case NEWSIZE:
-		    /* Ignore every other newsize, no action needed */
+
+		    /*
+		     * Ignore every other newsize, no action needed,
+		     * except RefreshWindowFrame() in case borders got overwritten
+		     * for some reason. It should not happen, but ...
+		     */
 
 		    if( !dosize )
 		    {
+			RefreshWindowFrame(w);
 			dosize = 1;
 			break;
 		    }
@@ -583,12 +590,33 @@ DoMenuScroll( win, blocking, how, retmip )
 		    if( wheight < 2 )
 			wheight = 2;
 
+		    /*
+		     * Clear the right side & bottom . Parts of letters are not erased by
+		     * amii_cl_end if window shrinks and columns decrease.
+		     */
+
+		    if ( WINVERS_AMII || WINVERS_AMIV ) { /* Don't do tty-mode ... */
+			amii_setfillpens(w, cw->type);
+			SetDrMd(w->RPort, JAM2);
+			x2 = w->Width - w->BorderRight;
+			y2 = w->Height - w->BorderBottom;
+			x1 = x2 - w->IFont->tf_XSize - w->IFont->tf_XSize;
+			y1 = w->BorderTop;
+			if (x1 < w->BorderLeft)
+			    x1 = w->BorderLeft;
+			RectFill(w->RPort, x1, y1, x2, y2);
+			x1 = w->BorderLeft;
+			y1 = y1 - w->IFont->tf_YSize;
+			RectFill(w->RPort, x1, y1, x2, y2);
+			RefreshWindowFrame(w);
+		    }
+
 		    /* Make the prop gadget the right size and place */
 
 		    DisplayData( win, topidx );
 		    SetPropInfo( w, gd, wheight, totalvis, topidx );
 
-		    /* Force the window to a text line boundry <= to
+		    /* Force the window to a text line boundary <= to
 		     * what the user dragged it to.  This eliminates
 		     * having to clean things up on the bottom edge.
 		     */
@@ -962,10 +990,14 @@ FindLine( win, line )
 		    break;
 	    	--len;
 	    }
-	    if( len == 0 )
-		len = strlen(t);
-	    t += len;
-	    col += len;
+	    if( len == 0 ) {
+		while ( *t && *t != ' ') {
+		    t++; col++;
+		}
+	    } else {
+		t += len;
+		col += len;
+	    }
 	    if( *t )
 	    {
 		while( *t == ' ' )
@@ -1025,16 +1057,20 @@ CountLines( win )
 	    len = strlen( t );
 	    if( col + len > cw->cols )
 		len = cw->cols - col;
-	    while( len > 0 && t[len] )
+	    while( len > 0 )
 	    {
-	    	if( t[len] == ' ' )
+	    	if( !t[len] || t[len] == ' ' )
 		    break;
 	    	--len;
 	    }
-	    if( len == 0 )
-		len = strlen(t);
-	    t += len;
-	    col += len;
+	    if( len == 0 ) {
+		while ( *t && *t != ' ') {
+		    t++; col++;
+		}
+	    } else {
+		t += len;
+		col += len;
+	    }
 	    if( *t )
 	    {
 		while( *t == ' ' )
@@ -1114,7 +1150,7 @@ DisplayData( win, start )
     for( disprow = i = start; disprow < wheight + start; i++ )
     {
 	/* Just erase unused lines in the window */
-    	if( i >= cw->maxrow )
+    	if( i > cw->maxrow )
     	{
 	    if (WINVERS_AMIV){
 		if(win == WIN_INVEN){
@@ -1195,30 +1231,35 @@ DisplayData( win, start )
 	while( *t )
 	{
 	    len = strlen( t );
-	    if( len > cw->cols )
-		len = cw->cols;
+	    if( len > (cw->cols - col) )
+		len = cw->cols - col;
 	    while( len > 0 )
 	    {
 	    	if( !t[len] || t[len] == ' ' )
 		    break;
 	    	--len;
 	    }
-	    if( len == 0 )
-		len = strlen(t);
-	    Text( rp, t, len );
-	    t += len;
-	    col += len;
+	    if( len == 0 ) {
+		Text( rp, t, cw->cols - col );
+		while ( *t && *t != ' ') {
+		    t++; col++;
+		}
+	    } else {
+		Text( rp, t, len );
+		t += len;
+		col += len;
+	    }
 	    amii_cl_end( cw, col );
 	    if( *t )
 	    {
 		++disprow;
 		/* Stop at the bottom of the window */
-		if( disprow >= wheight + start )
+		if( disprow > wheight + start )
 		    break;
 		while( *t == ' ' )
 		    ++t;
 		amii_curs( win, 1, disprow - start - 1 );
-		if( mip && win == WIN_INVEN )
+		if( mip && win == WIN_INVEN && WINVERS_AMIV )
 		{
 		    /* Erase any previous glyph drawn here. */
 		    amiga_print_glyph( win, 0, NO_GLYPH );
@@ -1244,10 +1285,11 @@ DisplayData( win, start )
 	    SetAPen( rp, amii_textBPen );
 	    SetBPen( rp, amii_textBPen );
 	}
-	amii_cl_end( cw, col );
+ 	amii_cl_end( cw, col );
 	whichcolor = -1;
 	if( mip ) mip = mip->next;
     }
+    RefreshWindowFrame(w);
     return;
 }
 
@@ -1270,7 +1312,7 @@ void SetPropInfo( win, gad, vis, total, top )
     /* Scale the body position. */
     /* 2 lines overlap */
 
-    if( hidden > 0 && total != 0 )
+    if( hidden > 0 && total > 2)
 	body = (ULONG) ((vis - 2) * MAXBODY) / (total - 2);
     else
 	body = MAXBODY;
