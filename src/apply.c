@@ -813,10 +813,17 @@ register struct obj *obj;
 		wakem = TRUE;
 
 	    } else if (obj->blessed) {
+		int res = 0;
+
 #ifdef	AMIGA
 		amii_speaker( obj, "ahahahDhEhCw", AMII_SOFT_VOLUME );
 #endif
-		switch (openit()) {
+		if (uchain) {
+		    unpunish();
+		    res = 1;
+		}
+		res += openit();
+		switch (res) {
 		  case 0:  pline(nothing_happens); break;
 		  case 1:  pline("%s opens...", Something);
 			   learno = TRUE; break;
