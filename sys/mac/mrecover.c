@@ -49,8 +49,8 @@
 #include <SysEqu.h>
 #endif
 #include <Menus.h>
-
-#include <Desk.h>
+#include <Devices.h>
+#include <Events.h>
 #include <DiskInit.h>
 #include <Notification.h>
 #include <Packages.h>
@@ -243,7 +243,7 @@ static	void note(short, short, unsigned char *);
 static	void adjustGUI(void);
 static	void adjustMemory(void);
 static	void optionMemStats(void);
-static	void MenuEvent(long);
+static	void RecoverMenuEvent(long);
 static	void eventLoop(void);
 static	void cooldown(void);
 
@@ -305,6 +305,7 @@ main()
 	/* normally these routines are never reached from here */
 	cooldown();
 	ExitToShell();
+	return 0;
 }
 
 static void
@@ -712,7 +713,7 @@ optionMemStats()
 }
 
 static void
-MenuEvent(long menuEntry)
+RecoverMenuEvent(long menuEntry)
 {
 	short menuID = HiWord(menuEntry);
 	short menuItem = LoWord(menuEntry);
@@ -830,7 +831,7 @@ eventLoop()
 				switch(FindWindow( wnEvt . where , &whichWindow))
 				{
 				case inMenuBar:
-					MenuEvent(MenuSelect( wnEvt . where ));
+					RecoverMenuEvent(MenuSelect( wnEvt . where ));
 					break;
 
 				case inSysWindow:
@@ -873,7 +874,7 @@ eventLoop()
 						}
 					}
 					else
-						MenuEvent(MenuKey(key));
+						RecoverMenuEvent(MenuKey(key));
 				}
 			}
 			break;

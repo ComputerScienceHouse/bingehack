@@ -46,7 +46,8 @@
 #define Vfprintf (void) vfprintf
 #define Vsprintf (void) vsprintf
 
-typedef long off_t;
+// Uncomment this line if your headers don't already define off_t
+//typedef long off_t;
 
 /*
  * Try and keep the number of files here to an ABSOLUTE minimum !

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)macmenu.c	3.3	99/04/01	*/
+/*	SCCS Id: @(#)macmenu.c	3.3	99/11/24	*/
 /*      Copyright (c) Macintosh NetHack Port Team, 1993.          */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -33,21 +33,7 @@
 #include <Resources.h>
 #include <ToolUtils.h>
 #include <Sound.h>
-
-/* Think/MPW incompatibility from Think.h/Script.h */
-#if !defined(__THINK__) && !defined(__SCRIPT__)
-#define GetMBarHeight()		(* (short *) 0x0BAA)
-#endif
-
-/* Think/MPW incompatibility from LoMem.h/SysEqu.h */
-#if !defined(__LOMEM__) && !defined(__SYSEQU__)
-enum { WindowList = 0x9D6 };
-#endif
-
-/* Think has separated out c2pstr and other pascal odditites */
-#if defined(THINK_C)
-#include <pascal.h>
-#endif
+#include <LowMem.h>		// for LMGetWindowList
 
 /******** Local Defines ********/
 
@@ -278,9 +264,7 @@ static RGBColor
 
 /* Convert a mixed-case C string to a Capitalized Pascal string */
 static void
-ask_restring (cstr, pstr)
-	char		*cstr;
-	Str255		pstr;
+ask_restring (const char *cstr, unsigned char *pstr)
 {
 	int i;
 
@@ -296,10 +280,7 @@ ask_restring (cstr, pstr)
 
 /* Enable the dialog item with the given index */
 static void
-ask_enable (wind, item, enable)
-	WindowPtr	wind;
-	short		item;
-	int			enable;
+ask_enable (WindowPtr wind, short item, int enable)
 {
 	short type;
 	Handle handle;
@@ -317,9 +298,7 @@ ask_enable (wind, item, enable)
 
 
 static pascal void
-ask_redraw (wind, item)
-	WindowPtr	wind;
-	short		item;
+ask_redraw (WindowPtr wind, DialogItemIndex item)
 {
 	short type;
 	Handle handle;
@@ -452,10 +431,7 @@ ask_redraw (wind, item)
 
 
 static pascal Boolean
-ask_filter (wind, event, item)
-	WindowPtr	wind;
-	EventRecord	*event;
-	short		*item;
+ask_filter (WindowPtr wind, EventRecord *event, DialogItemIndex *item)
 {
 	short ch, key;
 
@@ -859,14 +835,13 @@ menuError(short menuErr)
 void
 InitMenuRes()
 {
-static Boolean was_inited = 0 ;
-short			i, j;
-menuListHandle	mlHnd;
-MenuHandle		mHnd;
+	static Boolean was_inited = 0 ;
+	short			i, j;
+	menuListHandle	mlHnd;
+	MenuHandle		mHnd;
 
-	if ( was_inited ) {
-		return ;
-	}
+	if (was_inited)
+		return;
 	was_inited = 1 ;
 
 	mustGetMenuAlerts();
@@ -1116,7 +1091,7 @@ aboutNetHack() {
 	if (theMenubar >= mbarRegular) {
 		(void) doversion();				/* is this necessary? */
 	} else {
-	unsigned char aboutStr[32] = "\pNetHack 3.1.";
+		unsigned char aboutStr[32] = "\pNetHack 3.3.";
 
 		if (PATCHLEVEL > 10) {
 			aboutStr[++aboutStr[0]] = '0'+PATCHLEVEL/10;
@@ -1124,7 +1099,7 @@ aboutNetHack() {
 
 		aboutStr[++aboutStr[0]] = '0' + (PATCHLEVEL % 10);
 
-		ParamText(aboutStr, "\p\rnethack-bugs@linc.cis.upenn.edu", "\p", "\p");
+		ParamText(aboutStr, "\p\rdevteam@www.nethack.org", "\p", "\p");
 		(void) Alert(alrtMenuNote, (ModalFilterUPP) 0L);
 		ResetAlertStage();
 	}
@@ -1133,7 +1108,7 @@ aboutNetHack() {
 static void
 openMap()
 {
-	WindowPeek	peekWindow = *(WindowPeek*) WindowList;
+	WindowPeek	peekWindow = *(WindowPeek*) LMGetWindowList();
 
 	while (peekWindow && (peekWindow->windowKind != WKND_MAP))
 		peekWindow = peekWindow->nextWindow;
