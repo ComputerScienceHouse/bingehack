@@ -1943,8 +1943,6 @@ STATIC_OVL boolean
 zap_steed(obj)
 struct obj *obj;	/* wand or spell */
 {
-	int otyp = obj->otyp;
-	boolean disclose = FALSE, was_unkn = !objects[otyp].oc_name_known;
 	int steedhit = FALSE;
 	
 	switch (obj->otyp) {
