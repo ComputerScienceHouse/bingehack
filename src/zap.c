@@ -1571,6 +1571,7 @@ register struct obj *obj;
 			makewish();
 			break;
 		case WAN_ENLIGHTENMENT:        
+			known = TRUE;
 			You_feel("self-knowledgeable...");
 			display_nhwindow(WIN_MESSAGE, FALSE);
 			enlightenment(FALSE);

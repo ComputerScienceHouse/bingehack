@@ -1831,8 +1831,8 @@ register char *bp;
 		if (!strncmpi(g, "colored ", 8)) g += 8;
 		else if (!strncmpi(g, "coloured ", 9)) g += 9;
 		if (!strcmpi(g, "glass")) {	/* choose random color */
-			/* white, blue, red, yellowish brown, green, violet */
-			typ = LAST_GEM + rnd(6);
+			/* 9 different kinds */
+			typ = LAST_GEM + rnd(9);
 			if (objects[typ].oc_class == GEM_CLASS) goto typfnd;
 			else typ = 0;	/* somebody changed objects[]? punt */
 		} else if (g > bp) {	/* try to construct canonical form */

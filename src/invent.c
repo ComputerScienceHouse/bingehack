@@ -1712,7 +1712,7 @@ char *buf;
 	struct rm *lev = &levl[x][y];
 	int ltyp = lev->typ, cmap = -1;
 	const char *dfeature = 0;
-	char altbuf[BUFSZ];
+	static char altbuf[BUFSZ];
 
 	if (IS_DOOR(ltyp)) {
 	    switch (lev->doormask) {
