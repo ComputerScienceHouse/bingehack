@@ -281,7 +281,6 @@ disallow potion of polymorph / ring of polymorph control starting combo
 disallow starting with blank paper
 tools shouldn't charge beyond 127 charges
 getting money from a fountain should set the looted flag
-players can now ride centaurs
 pole-weapons won't bash and will advance skill when on steed
 blessed genocide of polymorphed unchanging player should kill
 picking up nothing should take no time
@@ -296,6 +295,24 @@ digesting ghosts and shades as a purple worm should be nonvegan but vegetarian
 eating brains as a mind flayer should be nonvegan but vegetarian
 eating eggs should be nonvegan but vegetarian
 eating tripe, meat sticks, chunks of meat should be nonvegetarian
+headstones now implemented through engraving
+luck penalty for the remaining forms of "creative NetHacking" in sokoban
+don't penalize a turn if player cancels #ride direction
+Ranger quest is no longer a rip-off of the old Elf quest
+several Hello() messages were inappropriate for various monsters
+storm giants should talk
+monk leader and guardians should use clerical spells
+monks shouldn't start with scrolls of enchant weapon
+movement rate when saddled was miscalculated
+items under lava shouldn't been seen or picked up
+clicking in status line during `/' shouldn't cause getpos error
+huge chunk of meat should count as dogfood
+ask to name eaten ring of slow digestion only if unknown
+"Pardon me" when moving directly into peaceful monster
+shouldn't glow amulet and save life of digested monsters
+"<monster> gets angry!" only when you can see the square
+"Never hit with a wielded weapon" conduct should only count
+	weapons and weptools
 
 
 Platform- and/or Interface-Specific Fixes
@@ -330,6 +347,8 @@ X11, tty: avoid crashing when displaying empty menus, as from 'i' with
 tty: when given the choice of ANSI color (AF) vs standard color (Sf), choose
 	ANSI since there is some disagreement as to the correct color order
 	for Sf, but no such disagreement for AF.
+tty: add workaround for termcap misfeature in some Linux distributions which
+	affects DECgraphics display
 Amiga: minimal functionality restored
 Amiga: recover created empty (and unused) save.info files
 Amiga: ^P works properly
@@ -378,6 +397,15 @@ introduction of a new method of warning where you sense the danger level of
 	monsters on the level by displaying it at the monster's location
 introduction of a new method of warning for specific monsters the way Sting
 	does for Orcs; you sense their presence anywhere on the current level
+artifacts can belong to specific races and won't be given as gift when "hated"
+Archeologists get a penalty for breaking "historic" statues
+hatching eggs in male player's inventory have chance of "Daddy?"
+steeds affected by more types of wands zapped down
+opening/knock versus steed drops saddle
+unwearing your steed's saddle (e.g. stolen, opening) causes dismount
+yet another funny message when whipping a horse corpse
+yet another funny message when mounting when hallucinating
+Bell, Book, and Candelabrum added to final score like artifacts
 
 
 Platform- and/or Interface-Specific New Features
@@ -387,3 +415,4 @@ X11, tty, Amiga: offer for player selection only choices consistent with those
 	are compatible with specified race)
 tty: eight_bit_tty option
 Amiga: implement menu_* accelerators and counting
+mac: the "record" file is created if it does not exist
