@@ -1047,7 +1047,6 @@ register struct obj *otmp;
 			nomul(0);
 		} else if (rnd(20) < 10+find_mac(mtmp)) {
 			tmp = d(2,12);
-			if(Half_spell_damage) tmp = (tmp+1) / 2;
 			hit("wand", mtmp, exclam(tmp));
 			(void) resist(mtmp, otmp->oclass, tmp, TELL);
 			if (cansee(mtmp->mx, mtmp->my) && zap_oseen)
