@@ -150,14 +150,29 @@
 #define nonliving(ptr)		(is_golem(ptr) || is_undead(ptr))
 
 /* Used for conduct with corpses, tins, and digestion attacks */
+/* G_NOCORPSE monsters might still be swallowed as a purple worm */
+/* Maybe someday this could be in mflags... */
 #define nonvegan(ptr)		((ptr)->mlet != S_BLOB && \
-				 (ptr)->mlet != S_JELLY && \
-				 (ptr)->mlet != S_FUNGUS && \
-				 (ptr) != &mons[PM_BLACK_PUDDING])
+				 (ptr)->mlet != S_JELLY &&            \
+				 (ptr)->mlet != S_FUNGUS &&           \
+				 (ptr)->mlet != S_VORTEX &&           \
+				 (ptr)->mlet != S_LIGHT &&            \
+				((ptr)->mlet != S_ELEMENTAL ||        \
+				 (ptr) == &mons[PM_STALKER]) &&       \
+				((ptr)->mlet != S_GOLEM ||            \
+				 (ptr) == &mons[PM_FLESH_GOLEM] ||    \
+				 (ptr) == &mons[PM_LEATHER_GOLEM]) && \
+				 !noncorporeal(ptr))
 #define nonvegetarian(ptr)		((ptr)->mlet != S_BLOB && \
-				 (ptr)->mlet != S_JELLY && \
-				 (ptr)->mlet != S_FUNGUS && \
-				 (ptr)->mlet != S_PUDDING && \
+				 (ptr)->mlet != S_JELLY &&          \
+				 (ptr)->mlet != S_FUNGUS &&         \
+				 (ptr)->mlet != S_VORTEX &&         \
+				 (ptr)->mlet != S_LIGHT &&          \
+				((ptr)->mlet != S_ELEMENTAL ||      \
+				 (ptr) == &mons[PM_STALKER]) &&     \
+				 (ptr)->mlet != S_PUDDING &&        \
+				((ptr)->mlet != S_GOLEM ||          \
+				 (ptr) == &mons[PM_FLESH_GOLEM]) && \
 				 !noncorporeal(ptr))
 
 #endif /* MONDATA_H */
