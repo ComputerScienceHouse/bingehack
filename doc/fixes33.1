@@ -10,6 +10,9 @@ Platform- and/or Interface-Specific Fixes
 -----------------------------------------
 MSDOS: fix clearlocks() to look for the right file names, and not LEVELS.* (MFLOPPY only)
 MSDOS: remove djgpp stuff from the Microsoft C Makefile
+NT: WIN32 specific code in tty_nh_poskey() was missing the
+	necessary code to clear window flags so after hitting ESC 
+	messages that should have displayed did not
 Linux: set MAILPATH properly
 Qt: remove intermediate files on 'make spotless'
 

@@ -336,6 +336,7 @@ int *x, *y, *mod;
 		altseq=(shiftstate & (LEFT_ALT_PRESSED|RIGHT_ALT_PRESSED) && (ch || inmap(scan)));
 		if (((ir.EventType == KEY_EVENT) && ir.Event.KeyEvent.bKeyDown) &&
 		     (ch || (iskeypad(scan)) || altseq)) {
+		     	*mod = 0;
 			return process_keystroke(&ir, &valid);
 		} else if ((ir.EventType == MOUSE_EVENT &&
 		  (ir.Event.MouseEvent.dwButtonState & MOUSEMASK))) {
@@ -360,7 +361,7 @@ int *x, *y, *mod;
 	    }
 	}
 	/* Not Reached */
-	return 32;
+	return '\032';
 }
 
 int
