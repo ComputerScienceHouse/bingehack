@@ -366,6 +366,58 @@ init_sco_cons()
 #endif	/* _M_UNIX */
 
 
+#ifdef __linux__		/* via Jesse Thilo and Ben Gertzfield */
+# include <sys/vt.h>
+
+int linux_flag_console = 0;
+
+void
+linux_mapon()
+{
+# ifdef TTY_GRAPHICS
+	if (!strcmp(windowprocs.name, "tty") && linux_flag_console) {
+		write(1, "\033(B", 3);
+	}
+# endif
+}
+
+void
+linux_mapoff()
+{
+# ifdef TTY_GRAPHICS
+	if (!strcmp(windowprocs.name, "tty") && linux_flag_console) {
+		write(1, "\033(U", 3);
+	}
+# endif
+}
+
+void
+check_linux_console()
+{
+	struct vt_mode vtm;
+
+	if (isatty(0) && ioctl(0,VT_GETMODE,&vtm) >= 0) {
+		linux_flag_console = 1;
+	}
+}
+
+void
+init_linux_cons()
+{
+# ifdef TTY_GRAPHICS
+	if (!strcmp(windowprocs.name, "tty") && linux_flag_console) {
+		atexit(linux_mapon);
+		linux_mapoff();
+#  ifdef TEXTCOLOR
+		if (has_colors())
+			iflags.use_color = TRUE;
+#  endif
+	}
+# endif
+}
+#endif	/* __linux__ */
+
+
 #ifndef __begui__	/* the Be GUI will define its own error proc */
 /* fatal error */
 /*VARARGS1*/
