@@ -1,0 +1,21 @@
+		      NetHack 3.2 Directory Tree (05/24/96)
+
+                                 Top
+                                  |
+             -------------------------------------------
+             |      |      |      |      |      |      |
+            src  include  dat    doc    sys    win    util
+                                         |      |
+                          ----------------      --------------
+                          |                                  |
+                          |                         -------------------
+                          |                         |     |     |     |
+                          |                       share  tty   X11  win32
+                          |
+  --------------------------------------------------------
+  |     |    |     |      |     |     |      |     |     |
+ unix  vms  mac  amiga  msdos  os2  winnt  atari   be  share
+             |     |      |                              |
+            old    |     old                             |
+                   |                                     |
+                splitter                               sounds
