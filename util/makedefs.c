@@ -730,6 +730,9 @@ static const char *window_opts[] = {
 #ifdef QT_GRAPHICS
 		"Qt",
 #endif
+#ifdef GNOME_GRAPHICS
+		"Gnome",
+#endif
 #ifdef MAC
 		"Mac",
 #endif
