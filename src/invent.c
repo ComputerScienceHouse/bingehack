@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)invent.c	3.3	1999/12/15	*/
+/*	SCCS Id: @(#)invent.c	3.3	2000/04/12	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1930,6 +1930,7 @@ mergable(otmp, obj)	/* returns TRUE if obj  & otmp can be merged */
 #ifdef INVISIBLE_OBJECTS
 		obj->oinvis != otmp->oinvis ||
 #endif
+	    obj->greased != otmp->greased ||
 	    obj->oeroded != otmp->oeroded ||
 	    obj->oeroded2 != otmp->oeroded2)
 	    return(FALSE);
