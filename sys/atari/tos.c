@@ -241,9 +241,13 @@ get_scr_size()
 #  include <ioctl.h>
 	struct winsize win;
 
-	ioctl(0,TIOCGWINSZ, &win);
-	LI = win.ws_row;
-	CO = win.ws_col;
+	LI = atoi(getenv("LINES"));
+	CO = atoi(getenv("COLUMNS"));
+	if (!LI || !CO) {
+	    ioctl(0,TIOCGWINSZ, &win);
+	    LI = win.ws_row;
+	    CO = win.ws_col;
+	}
 # else
 	init_aline();
 	LI = (*((WORD  *)(_a_line + -42L))) + 1;

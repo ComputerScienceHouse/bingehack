@@ -50,7 +50,7 @@
  * Define the default window system.  This should be one that is compiled
  * into your system (see defines above).  Known window systems are:
  *
- *	tty, X11, mac, amii, Qt
+ *	tty, X11, mac, amii, Qt, Gem
  */
 
 /* MAC also means MAC windows */
@@ -64,6 +64,12 @@
 #ifdef AMIGA
 # define AMII_GRAPHICS			/* (optional) */
 # define DEFAULT_WINDOW_SYS "amii"	/* "amii", "amitile" or "tty" */
+#endif
+
+/* Atari supports GEM_GRAPHICS and/or TTY_GRAPHICS */
+#ifdef TOS
+# define GEM_GRAPHICS			/* Atari GEM interface (optional) */
+# define DEFAULT_WINDOW_SYS "Gem"	/* "Gem" or "tty" */
 #endif
 
 #ifdef __BEOS__

@@ -246,9 +246,14 @@ typedef xchar	boolean;		/* 0 or 1 */
 # define EXIT_FAILURE 1
 #endif
 
-#if defined(X11_GRAPHICS) || defined(AMII_GRAPHICS) || defined(QT_GRAPHICS)
+#if defined(X11_GRAPHICS) || defined(QT_GRAPHICS)
 # ifndef USE_TILES
 #  define USE_TILES		/* glyph2tile[] will be available */
+# endif
+#endif
+#if defined(AMII_GRAPHICS) || defined(GEM_GRAPHICS)
+# ifndef USE_TILES
+#  define USE_TILES
 # endif
 #endif
 

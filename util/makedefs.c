@@ -724,11 +724,17 @@ static const char *window_opts[] = {
 #ifdef X11_GRAPHICS
 		"X11",
 #endif
+#ifdef QT_GRAPHICS
+		"Qt",
+#endif
 #ifdef MAC
 		"Mac",
 #endif
 #ifdef AMIGA_INTUITION
 		"Amiga Intuition",
+#endif
+#ifdef GEM_GRAPHICS
+		"Gem",
 #endif
 #ifdef WIN32_GRAPHICS
 		"Win32",
