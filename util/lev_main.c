@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)lev_main.c	3.3	96/06/22	*/
+/*	SCCS Id: @(#)lev_main.c	3.3	2000/01/17	*/
 /*	Copyright (c) 1989 by Jean-Christophe Collet */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -72,7 +72,7 @@ int FDECL(get_floor_type, (CHAR_P));
 int FDECL(get_room_type, (char *));
 int FDECL(get_trap_type, (char *));
 int FDECL(get_monster_id, (char *,CHAR_P));
-int FDECL(get_object_id, (char *));
+int FDECL(get_object_id, (char *,CHAR_P));
 boolean FDECL(check_monster_char, (CHAR_P));
 boolean FDECL(check_object_char, (CHAR_P));
 char FDECL(what_map_char, (CHAR_P));
@@ -95,6 +95,9 @@ static void FDECL(write_objects, (int,char *,object ***));
 static void FDECL(write_engravings, (int,char *,engraving ***));
 static void FDECL(write_maze, (int,specialmaze *));
 static void FDECL(write_rooms, (int,splev *));
+static void NDECL(init_objects);
+
+static int bases[MAXOCLASSES];
 
 static struct {
 	const char *name;
@@ -244,6 +247,8 @@ char **argv;
 	monst_init();
 	objects_init();
 	decl_init();
+	/* this one does something... */
+	init_objects();
 
 	init_yyout(stdout);
 	if (argc == 1) {		/* Read standard input */
@@ -395,19 +400,37 @@ char c;
  * Find the index of an object in the table, knowing its name.
  */
 int
-get_object_id(s)
+get_object_id(s, c)
 char *s;
+char c;		/* class */
 {
-	register int i;
-	register const char *objname;
+	int i, class;
+	const char *objname;
 
 	SpinCursor(3);
-	for (i=0; i<NUM_OBJECTS; i++) {
+	class = (c > 0) ? def_char_to_objclass(c) : 0;
+	for (i = class ? bases[class] : 0; i < NUM_OBJECTS; i++) {
+	    if (class && objects[i].oc_class != class) break;
 	    objname = obj_descr[i].oc_name;
 	    if (objname && !strcmp(s, objname))
 		return i;
 	}
 	return ERR;
+}
+
+static void
+init_objects()
+{
+	int i, class, prev_class;
+
+	prev_class = -1;
+	for (i = 0; i < NUM_OBJECTS; i++) {
+	    class = objects[i].oc_class;
+	    if (class != prev_class) {
+		bases[class] = i;
+		prev_class = class;
+	    }
+	}
 }
 
 /*
