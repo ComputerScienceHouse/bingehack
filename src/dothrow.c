@@ -66,6 +66,13 @@ int shotlimit;
 		You("cannot throw an object at yourself.");
 		return(0);
 	}
+	if (!uarmg && !Stone_resistance && (obj->otyp == CORPSE &&
+		    touch_petrifies(&mons[obj->corpsenm]))) {
+		You("throw the %s corpse with your bare %s.",
+		    mons[obj->corpsenm].mname, body_part(HAND));
+		Sprintf(killer_buf, "%s corpse", an(mons[obj->corpsenm].mname));
+		instapetrify(killer_buf);
+	}
 	u_wipe_engr(2);
 
 	/* Multishot calculations
