@@ -1382,7 +1382,8 @@ not violate any food challenges either.
 .pg
 Vegan, vegetarian, and unchallenged characters are further permitted
 to eat plant products such as fruits and vegetables.
-The corpses and tins of blobs (`b'), jellies (`j'), and fungi (`F')
+The corpses and tins of blobs (`b'), jellies (`j'), fungi (`F'), and
+puddings (`P') other than the black puddings
 are also considered to be vegetable matter.  Certain human
 food is prepared without animal products; namely, lembas wafers, cram
 rations, food rations (gunyoki), K-rations, and C-rations.
@@ -1392,16 +1393,16 @@ into a creature that can digest it is also considered vegan food.
 Note however that eating such items still counts against foodless conduct.
 .pg
 The difference between vegetarian and vegan diets is that a vegan
-diet avoids products derived from animals.  This includes corpses and
-tins of puddings and oozes (`P'), eggs and food made from eggs (fortune
-cookies and pancakes), food made with milk (cream pies and candy bars),
-lumps of royal jelly, and slime molds (or player-defined ``fruits'',
-which could be anything from ``apples'' to ``pork chops'' to the player,
-so we give them the compromise classification).
+diet avoids products derived from animals.  This includes eggs and
+food made from eggs (fortune cookies and pancakes), food made with
+milk (cream pies), and lumps of royal jelly.  Slime molds or
+player-defined ``fruits'', although they could be anything
+from ``apples'' to ``pork chops'', are assumed to be vegan.
 .pg
 Eating any kind of meat violates the vegetarian, vegan, and foodless
-conducts.  This includes tripe rations and the corpses or tins of any
-monsters not mentioned above.  Eating monster brains while polymorphed
+conducts.  This includes tripe rations, the corpses or tins of any
+monsters not mentioned above, and the various other chunks of meat
+found in the dungeon.  Eating monster brains while polymorphed
 into a (master) mind flayer also counts against these challenges.
 .pg
 Regardless of conduct, there will be some items which are indigestible,
