@@ -26,13 +26,13 @@ typedef struct IMG_HEADER{
 #define ERR_DEPACK      4
 #define ERR_COLOR       5
 
-/* Speichert die aktuelle Farbpalette mit col Farben in palette ab */
+/* saves the current colorpalette with col colors in palette */
 void get_colors(int handle, short *palette, int col);
 
-/* Setzt col Farben aus der Farbpalette palette */
+/* sets col colors from palette */
 void img_set_colors(int handle,short *palette, int col);
 
-/* Konvertiert MFDB von Standard in Ger^Äteformat (0 if succeded, else error). */
+/* converts MFDB  of size from standard to deviceformat (0 if succeded, else error). */
 int convert(MFDB *, long );
 
 /* transforms image in VDI-Device format */
