@@ -570,7 +570,7 @@ dokick()
 		}
 #endif
 	} else if (Wounded_legs) {
-		/* note: dojump() has similar code */
+		/* note: jump() has similar code */
 		long wl = (EWounded_legs & BOTH_SIDES);
 		const char *bp = body_part(LEG);
 

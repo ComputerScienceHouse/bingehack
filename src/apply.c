@@ -1191,7 +1191,6 @@ int magic; /* 0=Physical, otherwise skill level */
 		You("lack the strength to jump!");
 		return 0;
 	} else if (Wounded_legs) {
-		/* note: dojump() has similar code */
 		long wl = (Wounded_legs & BOTH_SIDES);
 		const char *bp = body_part(LEG);
 
@@ -1221,8 +1220,8 @@ int magic; /* 0=Physical, otherwise skill level */
 		return 0;	/* user pressed ESC */
 	if (!magic && !(HJumping & ~INTRINSIC) && !EJumping &&
 			distu(cc.x, cc.y) != 5) {
-		/* The Knight jumping restriction still applies when riding a horse.
-		 * After all, what shape is the knight piece in chess?
+		/* The Knight jumping restriction still applies when riding a
+		 * horse.  After all, what shape is the knight piece in chess?
 		 */
 		pline("Illegal move!");
 		return 0;
@@ -1232,16 +1231,13 @@ int magic; /* 0=Physical, otherwise skill level */
 	} else if (!cansee(cc.x, cc.y)) {
 		You("cannot see where to land!");
 		return 0;
-	} else if ((mtmp = m_at(cc.x, cc.y)) != 0) {
-		You("cannot trample %s!", mon_nam(mtmp));
+	} else if (!isok(cc.x, cc.y)) {
+		You("cannot jump there!");
 		return 0;
-	} else if (!isok(cc.x, cc.y) ||
-		   ((IS_ROCK(levl[cc.x][cc.y].typ) ||
-		     sobj_at(BOULDER, cc.x, cc.y) || closed_door(cc.x, cc.y))
-		    && !(Passes_walls && may_passwall(cc.x, cc.y)))) {
-			You("cannot jump there!");
-			return 0;
 	} else {
+	    coord uc;
+	    int range, temp;
+
 	    if(u.utrap)
 		switch(u.utraptype) {
 		case TT_BEARTRAP: {
@@ -1270,9 +1266,25 @@ int magic; /* 0=Physical, otherwise skill level */
 		    return 1;
 		}
 
-		/* A little Sokoban guilt... */
-		if (In_sokoban(&u.uz))
-		    change_luck(-1);
+	    /*
+	     * Check the path from uc to cc, calling hurtle_step at each
+	     * location.  The final position actually reached will be
+	     * in cc.
+	     */
+	    uc.x = u.ux;
+	    uc.y = u.uy;
+	    /* calculate max(abs(dx), abs(dy)) as the range */
+	    range = cc.x - uc.x;
+	    if (range < 0) range = -range;
+	    temp = cc.y - uc.y;
+	    if (temp < 0) temp = -temp;
+	    if (range < temp)
+		range = temp;
+	    walk_path(&uc, &cc, hurtle_step, (genericptr_t)&range);
+
+	    /* A little Sokoban guilt... */
+	    if (In_sokoban(&u.uz))
+		change_luck(-1);
 
 	    teleds(cc.x, cc.y);
 	    nomul(-1);

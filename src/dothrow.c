@@ -296,22 +296,168 @@ register struct obj *obj;
 }
 
 /*
+ * Walk a path from src_cc to dest_cc, calling a proc for each location
+ * except the starting one.  If the proc returns FALSE, stop walking
+ * and return FALSE.  If stopped early, dest_cc will be the location
+ * before the failed callback.
+ */
+boolean
+walk_path(src_cc, dest_cc, check_proc, arg)
+    coord *src_cc;
+    coord *dest_cc;
+    boolean FDECL((*check_proc), (genericptr_t, int, int));
+    genericptr_t arg;
+{
+    int x, y, dx, dy, x_change, y_change, error, i, prev_x, prev_y;
+    boolean keep_going = TRUE;
+
+    /* Use Bresenham's Line Algorithm to walk from src to dest */
+    dx = dest_cc->x - src_cc->x;
+    dy = dest_cc->y - src_cc->y;
+    prev_x = x = src_cc->x;
+    prev_y = y = src_cc->y;
+
+    if (dx < 0) {
+	x_change = -1;
+	dx = -dx;
+    } else
+	x_change = 1;
+    if (dy < 0) {
+	y_change = -1;
+	dy = -dy;
+    } else
+	y_change = 1;
+
+    i = error = 0;
+    if (dx < dy) {
+	while (i++ < dy) {
+	    prev_x = x;
+	    prev_y = y;
+	    y += y_change;
+	    error += dx;
+	    if (error >= dy) {
+		x += x_change;
+		error -= dy;
+	    }
+	/* check for early exit condition */
+	if (!(keep_going = (*check_proc)(arg, x, y)))
+	    break;
+	}
+    } else {
+	while (i++ < dx) {
+	    prev_x = x;
+	    prev_y = y;
+	    x += x_change;
+	    error += dy;
+	    if (error >= dx) {
+		y += y_change;
+		error -= dx;
+	    }
+	/* check for early exit condition */
+	if (!(keep_going = (*check_proc)(arg, x, y)))
+	    break;
+	}
+    }
+
+    if (keep_going)
+	return TRUE;	/* successful */
+
+    dest_cc->x = prev_x;
+    dest_cc->y = prev_y;
+    return FALSE;
+}
+
+/*
+ * Single step for the hero flying through the air from jumping, flying,
+ * etc.  Called from hurtle() and jump() via walk_path().  We expect the
+ * argument to be a pointer to an integer -- the range -- which is
+ * used in the calculation of points off it we hit something.
+ *
+ * Bumping into monsters won't cause damage but will wake them and make
+ * them angry.  Auto-pickup isn't done, since you don't have control over
+ * your movements at the time.
+ *
+ * Possible additions/changes:
+ *	o really attack monster if we hit one
+ *	o set stunned if we hit a wall or door
+ *	o reset nomul when we stop
+ *	o creepy feeling if pass through monster (if ever implemented...)
+ *	o bounce off walls
+ *	o let jumps go over boulders
+ */
+boolean
+hurtle_step(arg, x, y)
+    genericptr_t arg;
+    int x, y;
+{
+    int ox, oy, *range = (int *)arg;
+    struct obj *obj;
+    struct monst *mon;
+    boolean may_pass = TRUE;
+
+    if (!isok(x,y)) {
+	You_feel("the spirits holding you back.");
+	return FALSE;
+    }
+
+    if (!Passes_walls || !(may_pass = may_passwall(x, y))) {
+	if (IS_ROCK(levl[x][y].typ) || closed_door(x,y)) {
+	    pline("Ouch!");
+	    losehp(rnd(2+*range), IS_ROCK(levl[x][y].typ) ?
+		   "bumping into a wall" : "bumping into a door", KILLED_BY);
+	    return FALSE;
+	}
+	if (levl[x][y].typ == IRONBARS) {
+	    You("crash into some iron bars.  Ouch!");
+	    losehp(rnd(2+*range), "crashing into iron bars", KILLED_BY);
+	    return FALSE;
+	}
+	if ((obj = sobj_at(BOULDER,x,y)) != 0) {
+	    You("bump into a %s.  Ouch!", xname(obj));
+	    losehp(rnd(2+*range), "bumping into a boulder", KILLED_BY);
+	    return FALSE;
+	}
+	if (!may_pass) {
+	    /* did we hit a no-dig non-wall position? */
+	    You("smack into something!");
+	    losehp(rnd(2+*range), "touching the edge of the universe", KILLED_BY);
+	    return FALSE;
+	}
+    }
+
+    if ((mon = m_at(x, y)) != 0) {
+	You("bump into %s.", a_monnam(mon));
+	wakeup(mon);
+	return FALSE;
+    }
+
+    ox = u.ux;
+    oy = u.uy;
+    u.ux = x;
+    u.uy = y;
+    newsym(ox, oy);		/* update old position */
+    vision_recalc(1);		/* update for new position */
+    flush_screen(1);
+    if (--*range < 0)		/* make sure our range never goes negative */
+	*range = 0;
+    if (*range != 0)
+	delay_output();
+    return TRUE;
+}
+
+/*
  * The player moves through the air for a few squares as a result of
- * throwing or kicking something.  To simplify matters, bumping into monsters
- * won't cause damage but will wake them and make them angry.
- * Auto-pickup isn't done, since you don't have control over your movements
- * at the time.
+ * throwing or kicking something.
+ *
  * dx and dy should be the direction of the hurtle, not of the original
- * kick or throw.
+ * kick or throw and be only.
  */
 void
-hurtle(dx, dy, range, verbos)
+hurtle(dx, dy, range, verbose)
     int dx, dy, range;
-    boolean verbos;
+    boolean verbose;
 {
-    register struct monst *mon;
-    struct obj *obj;
-    int nx, ny;
+    coord uc, cc;
 
     /* The chain is stretched vertically, so you shouldn't be able to move
      * very far diagonally.  The premise that you should be able to move one
@@ -333,53 +479,27 @@ hurtle(dx, dy, range, verbos)
 	return;
     }
 
+    /* make sure dx and dy are [-1,0,1] */
+    if (dx < 0)
+    	dx = -1;
+    else if (dx > 0)
+    	dx = 1;
+    if (dy < 0)
+	dy = -1;
+    else if (dy > 0)
+	dy = 1;
+
     if(!range || (!dx && !dy) || u.ustuck) return; /* paranoia */
 
     nomul(-range);
-    if (verbos)
+    if (verbose)
 	You("%s in the opposite direction.", range > 1 ? "hurtle" : "float");
-    while(range--) {
-	nx = u.ux + dx;
-	ny = u.uy + dy;
-
-	if(!isok(nx,ny)) break;
-	if(IS_ROCK(levl[nx][ny].typ) || closed_door(nx,ny) ||
-	   (IS_DOOR(levl[nx][ny].typ) && (levl[nx][ny].doormask & D_ISOPEN))) {
-	    pline("Ouch!");
-	    losehp(rnd(2+range), IS_ROCK(levl[nx][ny].typ) ?
-		   "bumping into a wall" : "bumping into a door", KILLED_BY);
-	    break;
-	}
-
-	if ((obj = sobj_at(BOULDER,nx,ny)) != 0) {
-	    You("bump into a %s.  Ouch!", xname(obj));
-	    losehp(rnd(2+range), "bumping into a boulder", KILLED_BY);
-	    break;
-	}
-
-	u.ux = nx;
-	u.uy = ny;
-	newsym(u.ux - dx, u.uy - dy);
-	if ((mon = m_at(u.ux, u.uy)) != 0) {
-	    You("bump into %s.", a_monnam(mon));
-	    wakeup(mon);
-	    if(Is_airlevel(&u.uz))
-		mnexto(mon);
-	    else {
-		/* sorry, not ricochets */
-		u.ux -= dx;
-		u.uy -= dy;
-	    }
-	    range = 0;
-	}
-
-	vision_recalc(1);		/* update for new position */
-
-	if(range) {
-	    flush_screen(1);
-	    delay_output();
-	}
-    }
+    uc.x = u.ux;
+    uc.y = u.uy;
+    /* this setting of cc is only correct if dx and dy are [-1,0,1] only */
+    cc.x = u.ux + (dx * range);
+    cc.y = u.uy + (dy * range);
+    walk_path(&uc, &cc, hurtle_step, (genericptr_t)&range);
 }
 
 STATIC_OVL void
