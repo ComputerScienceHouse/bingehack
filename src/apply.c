@@ -2331,6 +2331,14 @@ do_break_wand(obj)
 	    continue;
 	} else {
 	    if (x == u.ux && y == u.uy) {
+		/* teleport objects first to avoid race with tele control and
+		   autopickup.  Other wand/object effects handled after
+		   possible wand damage is assessed */
+		if (obj->otyp == WAN_TELEPORTATION &&
+		    affects_objects && level.objects[x][y]) {
+		    (void) bhitpile(obj, bhito, x, y);
+		    if (flags.botl) bot();		/* potion effects */
+		}
 		damage = zapyourself(obj, FALSE);
 		if (damage)
 		    losehp(damage,
