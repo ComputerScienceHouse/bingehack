@@ -1506,10 +1506,12 @@ struct monst *victim;
 boolean acid_dmg;
 {
 	register struct obj *otmph = some_armor(victim);
-	int erosion = acid_dmg ? otmph->oeroded2 : otmph->oeroded;
+	int erosion;
 	boolean vismon = (victim != &youmonst) && canseemon(victim);
 
-	if (otmph && otmph != uarmf) {
+	if (!otmph) return;
+	erosion = acid_dmg  ? otmph->oeroded2 : otmph->oeroded;
+	if (otmph != uarmf) {
 	    if (otmph->greased) {
 		grease_protect(otmph,(char *)0,FALSE,victim);
 		return;
