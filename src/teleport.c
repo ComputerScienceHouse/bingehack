@@ -343,7 +343,15 @@ tele()
 	    if (unconscious()) {
 		pline("Being unconscious, you cannot control your teleport.");
 	    } else {
-		    pline("To what position do you want to be teleported?");
+#ifdef STEED
+		    char buf[BUFSZ];
+		    if (u.usteed) Sprintf(buf," and %s", mon_nam(u.usteed));
+#endif
+		    pline("To what position do you%s want to be teleported?",
+#ifdef STEED
+				u.usteed ? buf :
+#endif
+			   "");
 		    cc.x = u.ux;
 		    cc.y = u.uy;
 		    if (getpos(&cc, TRUE, "the desired position") < 0)
