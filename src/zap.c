@@ -256,10 +256,11 @@ struct obj *otmp;
 		break;
 	case SPE_STONE_TO_FLESH:
 		if (monsndx(mtmp->data) == PM_STONE_GOLEM) {
+		    char *name = Monnam(mtmp);
 		    /* turn into flesh golem */
 		    (void) newcham(mtmp, &mons[PM_FLESH_GOLEM]);
 		    if (cansee(mtmp->mx, mtmp->my))
-			pline("%s turns to flesh!", Monnam(mtmp));
+			pline("%s turns to flesh!", name);
 		} else
 		    wake = FALSE;
 		break;
