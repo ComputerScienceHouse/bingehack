@@ -608,14 +608,14 @@ do_look(quick)
 	if (from_screen) {
 	    if (found > 1 || need_to_look) {
 		char monbuf[BUFSZ];
-		char temp_buf[BUFSZ];
+		char temp_buf[BUFSZ], coybuf[QBUFSZ];
 
 		pm = lookat(cc.x, cc.y, look_buf, monbuf);
 		firstmatch = look_buf;
 		if (*firstmatch) {
 		    Sprintf(temp_buf, " (%s)",
 				(pm == &mons[PM_COYOTE]) ?
-				coyotename() : firstmatch);
+				coyotename(coybuf) : firstmatch);
 		    (void)strncat(out_str, temp_buf, BUFSZ-strlen(out_str)-1);
 		    found = 1;	/* we have something to look up */
 		}

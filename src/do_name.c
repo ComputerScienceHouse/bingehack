@@ -892,11 +892,14 @@ static const char *coynames[] = {
 	"Nemesis Riduclii","Canis latrans"
 };
 	
-char *coyotename()
+char *coyotename(buf)
+char *buf;
 {
-	static char coybuf[QBUFSZ];
-	Sprintf(coybuf,"coyote - %s", coynames[rn2(SIZE(coynames)-1)]);
-	return coybuf;
+	if (buf)
+		Sprintf(buf,
+			"coyote - %s",
+			coynames[rn2(SIZE(coynames)-1)]);
+	return buf;
 }
 #endif /* OVL2 */
 
