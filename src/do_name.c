@@ -743,7 +743,7 @@ static const char *bogusmons[] = {
 	"jumbo shrimp", "giant pigmy", "gnu", "killer penguin",
 	"giant cockroach", "giant slug", "maggot", "pterodactyl",
 	"tyrannosaurus rex", "basilisk", "beholder", "nightmare",
-	"efreeti", "marid", "rot grub", "bookworm",
+	"efreeti", "marid", "rot grub", "bookworm", "master lichen",
 	"shadow", "hologram", "jester", "attorney", "sleazoid",
 	"killer tomato", "amazon", "robot", "battlemech",
 	"rhinovirus", "harpy", "lion-dog", "rat-ant",

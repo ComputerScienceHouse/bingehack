@@ -1,4 +1,4 @@
-#	SCCS Id: @(#)data.base	3.3	1999/07/25
+#	SCCS Id: @(#)data.base	3.3	1999/11/15
 #	Copyright (c) 1994, 1995, 1996 by the NetHack Development Team
 #	Copyright (c) 1994 by Boudewijn Wayers
 #	NetHack may be freely redistributed.  See license for details.
@@ -1246,6 +1246,7 @@ horned devil
 	Horned devils lack any real special abilities, though they
 	are quite difficult to kill.
 *horsem*
+rider*
 death
 famine
 pestilence

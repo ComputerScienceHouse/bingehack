@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)objects.c	3.3	99/02/07	*/
+/*	SCCS Id: @(#)objects.c	3.3	1999/11/15	*/
 /* Copyright (c) Mike Threepoint, 1989.				  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -475,7 +475,7 @@ BOOTS("jumping boots", "hiking boots",
 		0, 1,  JUMPING,   12, 2, 20, 50,  9, 0, LEATHER, HI_LEATHER),
 BOOTS("elven boots", "mud boots",
 		0, 1,  STEALTH,   12, 2, 15,  8,  9, 0, LEATHER, HI_LEATHER),
-BOOTS("kicking boots", "steel boots",
+BOOTS("kicking boots", "buckled boots",
 		0, 1,  0,         12, 2, 15,  8,  9, 0, IRON, HI_METAL),
 BOOTS("fumble boots", "riding boots",
 		0, 1,  FUMBLING,  12, 2, 20, 30,  9, 0, LEATHER, HI_LEATHER),

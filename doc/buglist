@@ -104,9 +104,6 @@ which would logically not "use up" the supply of wild monsters.  Monster
 cloning is explicitly such a case; there are some cases that have been
 missed for now.
 
-Object description "steel boots" gets shuffled and can end up being used for 
-the various boots made out of leather.
-
 Reported but unconfirmed bugs:
 -- Strange things happen to items in chests pets carry downstairs.
 -- Several reports of core dumps when monsters resist an effect.
