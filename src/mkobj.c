@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mkobj.c	3.3	1999/02/13	*/
+/*	SCCS Id: @(#)mkobj.c	3.3	2000/02/19	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -398,7 +398,7 @@ boolean artif;
 	case GEM_CLASS:
 		if (otmp->otyp == LOADSTONE) curse(otmp);
 		else if (otmp->otyp == ROCK) otmp->quan = (long) rn1(6,6);
-		else if (otmp->otyp == KELP_FROND) otmp->quan = (long) rnd(4);
+		else if (otmp->otyp == KELP_FROND) otmp->quan = (long) rnd(2);
 		else if (otmp->otyp != LUCKSTONE && !rn2(6)) otmp->quan = 2L;
 		else otmp->quan = 1L;
 		break;
@@ -466,6 +466,7 @@ boolean artif;
 	    }
 	    break;
 	case AMULET_CLASS:
+		if (otmp->otyp == AMULET_OF_YENDOR) flags.made_amulet = TRUE;
 		if(rn2(10) && (otmp->otyp == AMULET_OF_STRANGULATION ||
 		   otmp->otyp == AMULET_OF_CHANGE ||
 		   otmp->otyp == AMULET_OF_RESTFUL_SLEEP)) {

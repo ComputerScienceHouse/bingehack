@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)priest.c	3.3	1999/12/03	*/
+/*	SCCS Id: @(#)priest.c	3.3	2000/02/19	*/
 /* Copyright (c) Izchak Miller, Steve Linhart, 1989.		  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -215,7 +215,6 @@ boolean sanctum;   /* is it the seat of the high priest? */
 		if(sanctum && EPRI(priest)->shralign == A_NONE &&
 		     on_level(&sanctum_level, &u.uz)) {
 			(void) mongets(priest, AMULET_OF_YENDOR);
-			flags.made_amulet = 1;
 		}
 		/* Do NOT put the rest in m_initinv.    */
 		/* Priests created elsewhere than in a  */

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)objnam.c	3.3	2000/01/11	*/
+/*	SCCS Id: @(#)objnam.c	3.3	2000/02/19	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -2082,14 +2082,14 @@ typfnd:
 	if (typ) oclass = objects[typ].oc_class;
 
 	/* check for some objects that are not allowed */
-	if (typ && objects[typ].oc_unique)
+	if (typ && objects[typ].oc_unique) {
+#ifdef WIZARD
+	    if (wizard)
+		;	/* allow unique objects */
+	    else
+#endif
 	    switch (typ) {
 		case AMULET_OF_YENDOR:
-#ifdef WIZARD
-		    if (wizard && !flags.made_amulet)
-			flags.made_amulet = TRUE;
-		    else
-#endif
 			typ = FAKE_AMULET_OF_YENDOR;
 		    break;
 		case CANDELABRUM_OF_INVOCATION:
@@ -2102,6 +2102,7 @@ typfnd:
 		    typ = SPE_BLANK_PAPER;
 		    break;
 	    }
+	}
 
 	/* catch any other non-wishable objects */
 	if (objects[typ].oc_nowish
