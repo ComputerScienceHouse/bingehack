@@ -607,7 +607,8 @@ int alone;
 	if (!alone || cantwield(youmonst.data)) {
 	    struct obj *wep = uwep;
 
-	    if (alone) You("find you must drop your weapon!");
+	    if (alone) You("find you must drop your weapon%s!",
+			   	u.twoweap ? "s" : "");
 	    uwepgone();
 	    if (!wep->cursed || wep->otyp != LOADSTONE)
 		dropx(otmp);
