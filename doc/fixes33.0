@@ -65,6 +65,7 @@ teleporting a Rider will usually bring it near you instead of sending it away
 Riders can open locked doors without a key, just like the Wizard
 Riders, angels, and elves won't avoid stepping on Elbereth/scare monster when
 	deciding where to walk
+Riders and angels will ignore the sanctuary effect of temples
 mind flayers cannot suck out brains by hitting long worm tails
 don't ignore object age when #offering a partially eaten corpse
 inability to pick up is not as general as nolimbs (blobs may pick up with

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)priest.c	3.3	98/06/06	*/
+/*	SCCS Id: @(#)priest.c	3.3	1999/12/03	*/
 /* Copyright (c) Izchak Miller, Steve Linhart, 1989.		  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -553,17 +553,27 @@ register struct monst *roamer;
 }
 
 boolean
-in_your_sanctuary(x, y)
+in_your_sanctuary(mon, x, y)
+struct monst *mon;	/* if non-null, <mx,my> overrides <x,y> */
 xchar x, y;
 {
 	register char roomno;
 	register struct monst *priest;
 
-	if ((u.ualign.record < -5) || !(roomno = temple_occupied(u.urooms)) ||
-	    (roomno != *in_rooms(x, y, TEMPLE)) ||
-	    !(priest = findpriest(roomno)))
-		return(FALSE);
-	return((boolean)(has_shrine(priest) && p_coaligned(priest) && priest->mpeaceful));
+	if (mon) {
+	    if (is_minion(mon->data) || is_rider(mon->data)) return FALSE;
+	    x = mon->mx, y = mon->my;
+	}
+	if (u.ualign.record < -3)		/* sinned or worse */
+	    return FALSE;
+	if ((roomno = temple_occupied(u.urooms)) == 0 ||
+		roomno != *in_rooms(x, y, TEMPLE))
+	    return FALSE;
+	if ((priest = findpriest(roomno)) == 0)
+	    return FALSE;
+	return (boolean)(has_shrine(priest) &&
+			 p_coaligned(priest) &&
+			 priest->mpeaceful);
 }
 
 void

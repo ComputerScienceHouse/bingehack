@@ -1474,7 +1474,7 @@ E void FDECL(priest_talk, (struct monst *));
 E struct monst *FDECL(mk_roamer, (struct permonst *,ALIGNTYP_P,
 				  XCHAR_P,XCHAR_P,BOOLEAN_P));
 E void FDECL(reset_hostility, (struct monst *));
-E boolean FDECL(in_your_sanctuary, (XCHAR_P,XCHAR_P));
+E boolean FDECL(in_your_sanctuary, (struct monst *,XCHAR_P,XCHAR_P));
 E void FDECL(ghod_hitsu, (struct monst *));
 E void NDECL(angry_priest);
 E void NDECL(clearpriests);

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)monmove.c	3.3	98/05/24	*/
+/*	SCCS Id: @(#)monmove.c	3.3	1999/12/03	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -222,7 +222,7 @@ int *inrange, *nearby, *scared;
 	}
 	*scared = (*nearby && (onscary(seescaryx, seescaryy, mtmp) ||
 			       (!mtmp->mpeaceful &&
-				    in_your_sanctuary(mtmp->mx, mtmp->my))));
+				    in_your_sanctuary(mtmp, 0, 0))));
 
 	if(*scared && !mtmp->mflee) {
 		if (!sticks(youmonst.data))
@@ -805,6 +805,7 @@ not_special:
 	if (mtmp->mpeaceful && (!Conflict || resist(mtmp, RING_CLASS, 0, 0)))
 	    flag |= (ALLOW_SANCT | ALLOW_SSM);
 	else flag |= ALLOW_U;
+	if (is_minion(ptr) || is_rider(ptr)) flag |= ALLOW_SANCT;
 	if (is_unicorn(ptr)) flag |= NOTONL;
 	if (passes_walls(ptr)) flag |= (ALLOW_WALL | ALLOW_ROCK);
 	if (can_tunnel) flag |= ALLOW_DIG;

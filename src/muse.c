@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)muse.c	3.3	99/03/31	*/
+/*	SCCS Id: @(#)muse.c	3.3	1999/12/03	*/
 /*	Copyright (C) 1990 by Ken Arromdee			   */
 /* NetHack may be freely redistributed.  See license for details.  */
 
@@ -899,7 +899,7 @@ struct monst *mtmp;
 				mindless(mtmp->data) || nohands(mtmp->data))
 		return FALSE;
 	if (u.uswallow) return FALSE;
-	if (in_your_sanctuary(mtmp->mx, mtmp->my)) return FALSE;
+	if (in_your_sanctuary(mtmp, 0, 0)) return FALSE;
 	if (dmgtype(mtmp->data, AD_HEAL) && !uwep
 #ifdef TOURIST
 	    && !uarmu

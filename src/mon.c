@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mon.c	3.3	1999/10/10	*/
+/*	SCCS Id: @(#)mon.c	3.3	1999/12/03	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -938,7 +938,7 @@ nexttry:	/* eels prefer the water, but if there is no water nearby,
 			if(level.flags.has_temple &&
 			   *in_rooms(nx, ny, TEMPLE) &&
 			   !*in_rooms(x, y, TEMPLE) &&
-			   in_your_sanctuary(nx, ny)){
+			   in_your_sanctuary((struct monst *)0, nx, ny)) {
 				if(!(flag & ALLOW_SANCT)) continue;
 				info[cnt] |= ALLOW_SANCT;
 			}
