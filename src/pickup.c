@@ -28,9 +28,9 @@ STATIC_PTR int FDECL(ck_bag,(struct obj *));
 STATIC_PTR int FDECL(out_container,(struct obj *));
 STATIC_DCL int FDECL(menu_loot, (int, struct obj *, BOOLEAN_P));
 STATIC_DCL int FDECL(in_or_out_menu, (const char *,struct obj *));
-STATIC_OVL int FDECL(container_at, (int, int, BOOLEAN_P));
-STATIC_OVL boolean FDECL(able_to_loot, (int, int));
-STATIC_OVL boolean FDECL(mon_beside, (int, int));
+STATIC_DCL int FDECL(container_at, (int, int, BOOLEAN_P));
+STATIC_DCL boolean FDECL(able_to_loot, (int, int));
+STATIC_DCL boolean FDECL(mon_beside, (int, int));
 
 /* define for query_objlist() and autopickup() */
 #define FOLLOW(curr, flags) \
@@ -1229,7 +1229,6 @@ doloot()	/* loot a container on the floor. */
 #ifdef STEED
 	char qbuf[QBUFSZ];
 	struct obj *otmp;
-	boolean next_to_steed = FALSE;
 	boolean saddled_there = FALSE;
 	boolean got_saddle = FALSE;
 #endif
