@@ -1687,6 +1687,7 @@ dodip()
 					more_than_one ? "" : "s",
 					hcolor(OBJ_DESCR(objects[mixture])));
 		}
+		update_inventory();
 		return(1);
 	}
 
