@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)makemon.c	3.3	1999/12/10	*/
+/*	SCCS Id: @(#)makemon.c	3.3	2000/01/02	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -581,6 +581,13 @@ register struct	monst	*mtmp;
 	    case S_LICH:
 		if (ptr == &mons[PM_MASTER_LICH] && !rn2(13))
 			(void)mongets(mtmp, (rn2(7) ? ATHAME : WAN_NOTHING));
+		else if (ptr == &mons[PM_ARCH_LICH] && !rn2(3)) {
+			otmp = mksobj(rn2(3) ? ATHAME : QUARTERSTAFF,
+				      TRUE, rn2(13) ? FALSE : TRUE);
+			if (otmp->spe < 2) otmp->spe = rnd(3);
+			if (!rn2(4)) otmp->oerodeproof = 1;
+			mpickobj(mtmp, otmp);
+		}
 		break;
 	    case S_MUMMY:
 		if (rn2(7)) (void)mongets(mtmp, MUMMY_WRAPPING);
