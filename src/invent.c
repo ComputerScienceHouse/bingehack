@@ -346,11 +346,13 @@ const char *drop_fmt, *drop_arg, *hold_msg;
 		/* encumbrance only matters if it would now become worse
 		   than max( current_value, stressed ) */
 		if (prev_encumbr < MOD_ENCUMBER) prev_encumbr = MOD_ENCUMBER;
-		/* addinv() may redraw the entire inventory, overwriting
-		 * drop_arg when it comes from something like doname()
-		 */
-		Strcpy(buf, drop_arg);
-		drop_arg = buf;
+		if (drop_arg) {
+			/* addinv() may redraw the entire inventory, overwriting
+			 * drop_arg when it comes from something like doname()
+			 */
+			Strcpy(buf, drop_arg);
+			drop_arg = buf;
+		}
 		obj = addinv(obj);
 		if (inv_cnt() > 52
 		    || ((obj->otyp != LOADSTONE || !obj->cursed)
