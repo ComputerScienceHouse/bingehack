@@ -423,7 +423,15 @@ boolean val_allowed;
 	return (len >= min_length) && !strncmpi(opt_name, user_string, len);
 }
 
-char *nh_getenv(ev)
+/* most environment variables will eventually be printed in an error
+ * message if they don't work, and most error message paths go through
+ * BUFSZ buffers, which could be overflowed by a maliciously long
+ * environment variable.  if a variable can legitimately be long, or
+ * if it's put in a smaller buffer, the responsible code will have to
+ * bounds-check itself.
+ */
+char *
+nh_getenv(ev)
 const char *ev;
 {
 	char *getev = getenv(ev);
@@ -511,15 +519,19 @@ initoptions()
 	objects[SLIME_MOLD].oc_name_idx = SLIME_MOLD;
 	nmcpy(pl_fruit, OBJ_NAME(objects[SLIME_MOLD]), PL_FSIZ);
 #ifndef MAC
-	opts = nh_getenv("NETHACKOPTIONS");
-	if (!opts) opts = nh_getenv("HACKOPTIONS");
+	opts = getenv("NETHACKOPTIONS");
+	if (!opts) opts = getenv("HACKOPTIONS");
 	if (opts) {
 		if (*opts == '/' || *opts == '\\' || *opts == '@') {
 			if (*opts == '@') opts++;	/* @filename */
 			/* looks like a filename */
-			read_config_file(opts);
+			if (strlen(opts) < BUFSZ/2)
+			    read_config_file(opts);
 		} else {
 			read_config_file((char *)0);
+			/* let the total length of options be long;
+			 * parseoptions() will check each individually
+			 */
 			parseoptions(opts, TRUE, FALSE);
 		}
 	} else
@@ -905,6 +917,10 @@ boolean tinitial, tfrom_file;
 	if ((op = index(opts, ',')) != 0) {
 		*op++ = 0;
 		parseoptions(op, initial, from_file);
+	}
+	if (strlen(opts) > BUFSZ/2) {
+		badoption("option too long");
+		return;
 	}
 
 	/* strip leading and trailing white space */

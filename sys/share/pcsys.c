@@ -70,7 +70,7 @@ static const char *COMSPEC =
 "COMSPEC";
 # endif
 
-#define getcomspec() getenv(COMSPEC)
+#define getcomspec() nh_getenv(COMSPEC)
 
 # ifdef SHELL
 int

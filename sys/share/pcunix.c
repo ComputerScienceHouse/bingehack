@@ -49,6 +49,7 @@ char *name;
 
     register char *np, *path;
     char filename[MAXPATHLEN+1], *getenv();
+    int pathlen;
 
     if (index(name, '/') != (char *)0 || (path = getenv("PATH")) == (char *)0)
 	path = "";
@@ -56,22 +57,26 @@ char *name;
     for (;;) {
 	if ((np = index(path, ':')) == (char *)0)
 	    np = path + strlen(path);       /* point to end str */
-	if (np - path <= 1) {		     /* %% */
+	pathlen = np - path;
+	if (pathlen > MAXPATHLEN)
+	    pathlen = MAXPATHLEN;
+	if (pathlen <= 1) {		     /* %% */
 	    (void) strncpy(filename, name, MAXPATHLEN);
-	    filename[MAXPATHLEN] = '\0';
 	} else {
-	    (void) strncpy(filename, path, np - path);
-	    filename[np - path] = '/';
-	    (void) strncpy(filename + (np - path) + 1, name,
-				(MAXPATHLEN - 1) - (np - path));
-	    filename[MAXPATHLEN] = '\0';
+	    (void) strncpy(filename, path, pathlen);
+	    filename[pathlen] = '/';
+	    (void) strncpy(filename + pathlen + 1, name,
+				(MAXPATHLEN - 1) - pathlen);
 	}
+	filename[MAXPATHLEN] = '\0';
 	if (stat(filename, &hbuf) == 0)
 	    return;
 	if (*np == '\0')
 	path = "";
 	path = np + 1;
     }
+    if (strlen(name) > BUFSZ/2)
+	name = name + strlen(name) - BUFSZ/2;
     error("Cannot get status of %s.", (np = rindex(name, '/')) ? np+1 : name);
 # endif /* WANT_GETHDATE */
 }

@@ -132,9 +132,9 @@ char *argv[];
 # endif
 #endif /* !AMIGA && !GNUDOS */
 
-	dir = getenv("NETHACKDIR");
+	dir = nh_getenv("NETHACKDIR");
 	if (dir == (char *)0)
-		dir = getenv("HACKDIR");
+		dir = nh_getenv("HACKDIR");
 #ifdef EXEPATH
 	if (dir == (char *)0)
 		dir = exepath(argv[0]);

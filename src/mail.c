@@ -97,9 +97,10 @@ getmailstatus()
 		} else
 		  return;
 #   else
-		mailbox = (char *) alloc(sizeof(MAILPATH)+8);
+		const char *pw_name = getpwuid(getuid())->pw_name;
+		mailbox = (char *) alloc(sizeof(MAILPATH)+strlen(pw_name));
 		Strcpy(mailbox, MAILPATH);
-		Strcat(mailbox, getpwuid(getuid())->pw_name);
+		Strcat(mailbox, pw_name);
 #  endif /* AMS */
 #  else
 		return;

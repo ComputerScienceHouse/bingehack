@@ -123,7 +123,10 @@ static const char *shktools[] = {
 #endif
 #ifdef AMIGA
     "Falo", "Nosid-da\'r", "Ekim-p", "Rebrol-nek", "Noslo", "Yl-rednow",
-    "Mured-oog",
+    "Mured-oog", "Ivrajimsal",
+#endif
+#ifdef TOS
+    "Nivram",
 #endif
 #ifdef VMS
     "Lez-tneg", "Ytnu-haled", "Niknar",

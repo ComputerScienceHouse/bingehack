@@ -380,6 +380,7 @@ register const char *name, *mode;
 
     /* Try the default directory first.  Then look along PATH.
      */
+    if (strlen(name) >= BUFSIZ) return( NULL );
     strcpy(buf, name);
     if (theLock = Lock(buf, SHARED_LOCK)) {
 	UnLock(theLock);
@@ -395,6 +396,7 @@ register const char *name, *mode;
 	}
 	if (lastch != ':' && lastch != '/' && bp != buf)
 	    *bp++ = '/';
+	if (bp + strlen(name) > buf + BUFSIZ - 1) return( NULL );
 	strcpy(bp, name);
 	if (theLock = Lock(buf, SHARED_LOCK)) {
 	    UnLock(theLock);
