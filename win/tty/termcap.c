@@ -829,8 +829,8 @@ init_hilite()
 	hilites[CLR_GRAY] = hilites[NO_COLOR] = (char *)0;
 
 	if (tgetnum("Co") < 8
-	    || ((setf = tgetstr("Sf", (char **)0)) == (char *)0
-		&& (setf = tgetstr("AF", (char **)0)) == (char *)0))
+	    || ((setf = tgetstr("AF", (char **)0)) == (char *)0
+		 && (setf = tgetstr("Sf", (char **)0)) == (char *)0))
 		return;
 
 	for (c = 0; c < CLR_MAX / 2; c++) {
