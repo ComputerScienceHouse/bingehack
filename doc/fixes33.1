@@ -60,9 +60,11 @@ DEC UNIX: set MAILPATH properly, type lex functions properly, avoid conflict
 Qt: remove intermediate files on 'make spotless'
 Qt: modify makefile to allow use with BSD make and FreeBSD
 X11: fix memory leaks is reading from dialogs
-TTY: when given the choice of ANSI color (AF) vs standard color (Sf), choose
+tty: when given the choice of ANSI color (AF) vs standard color (Sf), choose
 	ANSI since there is some disagreement as to the correct color order
 	for Sf, but no such disagreement for AF.
+tty: avoid crashing when displaying empty menus, as from 'i' with perm_invent
+	and no inventory
 
 
 General New Features
