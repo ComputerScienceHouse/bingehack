@@ -2826,7 +2826,7 @@ P = (108, 145, 182)
   MMMMMMMMMMMMMMMM
   MMMMMMMMMMMMMMMM
 }
-# tile 148 (steel boots / kicking boots)
+# tile 148 (buckled boots / kicking boots)
 {
   MMMMMMMMMMMMMMMM
   MMMMMMMMMMMMMMMM
