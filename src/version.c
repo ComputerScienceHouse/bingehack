@@ -126,11 +126,14 @@ unsigned long
 get_feature_notice_ver(str)
 char *str;
 {
+	char buf[BUFSZ];
 	int ver_maj, ver_min, patch;
 	char *istr[3];
 	int j = 0;
 
 	if (!str) return 0L;
+	strcpy(buf,str);
+	str = buf;
 	istr[j] = str;
 	while (*str) {
 		if (*str == '.') {

@@ -350,7 +350,7 @@ STATIC_DCL void FDECL(bad_negation, (const char *,BOOLEAN_P));
 STATIC_DCL int FDECL(change_inv_order, (char *));
 STATIC_DCL void FDECL(oc_to_str, (char *, char *));
 STATIC_DCL void FDECL(graphics_opts, (char *,const char *,int,int));
-STATIC_DCL int FDECL(feature_alert_opts, (char *));
+STATIC_DCL int FDECL(feature_alert_opts, (char *, const char *));
 
 /* check whether a user-supplied option string is a proper leading
    substring of a particular option name; option string might have
@@ -718,8 +718,9 @@ int maxlen, offset;
 }
 
 STATIC_OVL int
-feature_alert_opts(op)
+feature_alert_opts(op, optn)
 char *op;
+const char *optn;
 {
 	char buf[BUFSZ];
 	boolean rejectver = FALSE;
@@ -729,16 +730,22 @@ char *op;
 		rejectver = TRUE;
 	else
 		flags.suppress_alert = fnv;
-	if (!initial) {
-		if (rejectver) {
-		      You_cant("disable new feature alerts for future versions.");
-		      return 0;
-		} else {
-		      Sprintf(buf, "%lu.%lu.%lu", FEATURE_NOTICE_VER_MAJ,
-				FEATURE_NOTICE_VER_MIN, FEATURE_NOTICE_VER_PATCH);
-		  pline("Feature change alerts disabled for NetHack %s features and prior.",
-			 buf);
+	if (rejectver) {
+		if (!initial)
+			You_cant("disable new feature alerts for future versions.");
+		else {
+			Sprintf(buf,
+				"\n%s=%s Invalid reference to a future version ignored",
+				optn, op);
+			badoption(buf);
 		}
+		return 0;
+	}
+	if (!initial) {
+		Sprintf(buf, "%lu.%lu.%lu", FEATURE_NOTICE_VER_MAJ,
+			FEATURE_NOTICE_VER_MIN, FEATURE_NOTICE_VER_PATCH);
+		pline("Feature change alerts disabled for NetHack %s features and prior.",
+			buf);
 	}
 	return 1;
 }
@@ -1343,7 +1350,7 @@ goodfruit:
 	if (match_optname(opts, fullname, 4, TRUE)) {
 		op = string_for_opt(opts, negated);
 		if (negated) bad_negation(fullname, FALSE);
-		else if (op) (void) feature_alert_opts(op);
+		else if (op) (void) feature_alert_opts(op,fullname);
 		return;
 	}
 	
