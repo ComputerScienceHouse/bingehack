@@ -415,6 +415,7 @@ coord *cc;
 	if (mtmp2) {
 		/* save_mtraits() validated mtmp2->mnum */
 		mtmp2->data = &mons[mtmp2->mnum];
+		if (mtmp2->mhpmax <= 0) return mtmp;
 		mtmp = makemon(mtmp2->data,
 				cc->x, cc->y, NO_MINVENT|MM_NOWAIT);
 		if (!mtmp) return mtmp;
