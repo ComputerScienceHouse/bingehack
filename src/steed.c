@@ -259,7 +259,9 @@ mount_steed(mtmp, force)
 	}
 	if (!force && uarm && is_metallic(uarm) &&
 			greatest_erosion(uarm)) {
-	    Your("armor is too %s.", uarm->oeroded ? "rusty" : "corroded");
+	    Your("%s armor is too stiff to be able to mount %s.",
+			uarm->oeroded ? "rusty" : "corroded",
+			mon_nam(mtmp));
 	    return (FALSE);
 	}
 	if (!force && (Confusion || Fumbling || Glib || Wounded_legs ||
