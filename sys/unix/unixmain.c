@@ -69,8 +69,8 @@ char *argv[];
 	 * The environment variable HACKDIR is overridden by a
 	 *  -d command line option (must be the first option given)
 	 */
-	dir = getenv("NETHACKDIR");
-	if (!dir) dir = getenv("HACKDIR");
+	dir = nh_getenv("NETHACKDIR");
+	if (!dir) dir = nh_getenv("HACKDIR");
 #endif
 	if(argc > 1) {
 #ifdef CHDIR
@@ -149,7 +149,7 @@ char *argv[];
 	process_options(argc, argv);	/* command line options */
 
 #ifdef DEF_PAGER
-	if(!(catmore = getenv("HACKPAGER")) && !(catmore = getenv("PAGER")))
+	if(!(catmore = nh_getenv("HACKPAGER")) && !(catmore = nh_getenv("PAGER")))
 		catmore = DEF_PAGER;
 #endif
 #ifdef MAIL
@@ -296,7 +296,7 @@ char *argv[];
 			      if (pw && (pw->pw_uid != uid)) pw = 0;
 			  }
 			  if (pw == 0) {
-			      user = getenv("USER");
+			      user = nh_getenv("USER");
 			      if (user) {
 				  pw = getpwnam(user);
 				  if (pw && (pw->pw_uid != uid)) pw = 0;
@@ -453,9 +453,9 @@ whoami() {
 	register char *s;
 
 	if (*plname) return FALSE;
-	if(/* !*plname && */ (s = getenv("USER")))
+	if(/* !*plname && */ (s = nh_getenv("USER")))
 		(void) strncpy(plname, s, sizeof(plname)-1);
-	if(!*plname && (s = getenv("LOGNAME")))
+	if(!*plname && (s = nh_getenv("LOGNAME")))
 		(void) strncpy(plname, s, sizeof(plname)-1);
 	if(!*plname && (s = getlogin()))
 		(void) strncpy(plname, s, sizeof(plname)-1);

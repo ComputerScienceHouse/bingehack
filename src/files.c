@@ -1061,6 +1061,7 @@ const char *filename;
 	FILE *fp;
 #if defined(UNIX) || defined(VMS)
 	char	tmp_config[BUFSZ];
+	char *envp;
 #endif
 
 	/* "filename" is an environment variable, so it should hang around */
@@ -1115,11 +1116,20 @@ const char *filename;
 		configfile = "nethack.ini";
 		return(fp);
 	}
-	Sprintf(tmp_config, "%s%s", nh_getenv("HOME"), "NetHack.cnf");
+
+	envp = nh_getenv("HOME");
+	if (!envp)
+		Strcpy(tmp_config, "NetHack.cnf");
+	else
+		Sprintf(tmp_config, "%s%s", envp, "NetHack.cnf");
 	if ((fp = fopenp(tmp_config, "r")) != (FILE *)0)
 		return(fp);
 # else	/* should be only UNIX left */
-	Sprintf(tmp_config, "%s/%s", nh_getenv("HOME"), ".nethackrc");
+	envp = nh_getenv("HOME");
+	if (!envp)
+		Strcpy(tmp_config, ".nethackrc");
+	else
+		Sprintf(tmp_config, "%s/%s", envp, ".nethackrc");
 	if ((fp = fopenp(tmp_config, "r")) != (FILE *)0)
 		return(fp);
 	else if (errno != ENOENT) {
@@ -1562,9 +1572,12 @@ const char *dir;
 # ifdef OS2_CODEVIEW   /* explicit path on opening for OS/2 */
 	/* how does this work when there isn't an explicit path or fopenp
 	 * for later access to the file via fopen_datafile? ? */
-	Strcpy(tmp, dir);
-	append_slash(tmp);
-	Strcat(tmp, RECORD);
+	(void) strncpy(tmp, dir, PATHLEN - 1);
+	tmp[PATHLEN-1] = '\0';
+	if ((strlen(tmp) + 1 + strlen(RECORD)) < (PATHLEN - 1)) {
+		append_slash(tmp);
+		Strcat(tmp, RECORD);
+	}
 	fq_record = tmp;
 # else
 	Strcpy(tmp, RECORD);

@@ -242,11 +242,11 @@ get_scr_size()
 	struct winsize win;
 	char *tmp;
 
-	if((tmp=getenv("LINES")))
+	if((tmp=nh_getenv("LINES")))
 		LI = atoi(tmp);
-	else if((tmp=getenv("ROWS")))
+	else if((tmp=nh_getenv("ROWS")))
 		LI = atoi(tmp);
-	if(tmp && (tmp=getenv("COLUMNS")))
+	if(tmp && (tmp=nh_getenv("COLUMNS")))
 		CO = atoi(tmp);
 	else {
 	    ioctl(0,TIOCGWINSZ, &win);

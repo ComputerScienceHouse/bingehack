@@ -60,8 +60,8 @@ char *argv[];
 	 * The logical name HACKDIR is overridden by a
 	 *  -d command line option (must be the first option given)
 	 */
-	dir = getenv("NETHACKDIR");
-	if (!dir) dir = getenv("HACKDIR");
+	dir = nh_getenv("NETHACKDIR");
+	if (!dir) dir = nh_getenv("HACKDIR");
 #endif
 	if(argc > 1) {
 #ifdef CHDIR
@@ -246,7 +246,7 @@ char *argv[];
 		switch(argv[0][1]){
 		case 'D':
 #ifdef WIZARD
-			if(!strcmpi(getenv("USER"), WIZARD_NAME)) {
+			if(!strcmpi(nh_getenv("USER"), WIZARD_NAME)) {
 				wizard = TRUE;
 				break;
 			}
@@ -366,7 +366,7 @@ whoami()
 	 */
 	register char *s;
 
-	if (!*plname && (s = getenv("USER")))
+	if (!*plname && (s = nh_getenv("USER")))
 		(void) lcase(strncpy(plname, s, sizeof(plname)-1));
 }
 

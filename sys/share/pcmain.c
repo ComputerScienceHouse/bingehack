@@ -140,7 +140,8 @@ char *argv[];
 		dir = exepath(argv[0]);
 #endif
 	if (dir != (char *)0) {
-		Strcpy(hackdir, dir);
+		(void) strncpy(hackdir, dir, PATHLEN - 1);
+		hackdir[PATHLEN-1] = '\0';
 #ifdef NOCWD_ASSUMPTIONS
 		{
 		    int prefcnt;

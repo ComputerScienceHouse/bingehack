@@ -54,12 +54,14 @@ gethdate(name)
 	for (;;) {
 		if ((np = index(path, ':')) == (char *)0)
 			np = path + strlen(path);	/* point to end str */
-		if (np - path <= 1)			/* %% */
-			Strcpy(filename, name);
-		else {
+		if (np - path <= 1) {			/* %% */
+			(void) strncpy(filename, name, MAXPATHLEN);
+			filename[MAXPATHLEN] = '\0';
+		} else {
 			(void) strncpy(filename, path, np - path);
 			filename[np - path] = '/';
-			Strcpy(filename + (np - path) + 1, name);
+			(void) strncpy(filename + (np - path) + 1, name,
+					(MAXPATHLEN - 1) - (np - path));
 		}
 		if (stat(filename, &hbuf) == 0)
 			return;
