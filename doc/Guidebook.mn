@@ -2159,15 +2159,14 @@ well as supporting ports on the different platforms that NetHack runs on:
 \fBMichael Allison\fP maintained NetHack 3.3 for the MS-DOS platform.  \fBPaul Winner\fP
 and \fBYitzhak Sapir\fP provided encouragement.
 .pg
-\fBElvis\fP was seen playing NetHack on an Amiga.  That is to say, like Elvis, it
-it might come back, but don't hold your breath.
-.pg
 \fBDean Luick\fP, \fBMark Modrall\fP, and \fBKevin Hugo\fP maintained and enhanced the
 Macintosh port of 3.3.
 .pg
 \fBMichael Allison\fP maintained and enhanced 3.3 for the Microsoft Windows NT platform.
 .pg
 \fBRon Van Iwaarden\fP took over responsibility for the OS/2 port.
+.pg
+The Amiga port of NetHack was resurrected for 3.3.1 by \fBJanne Salmijarvi\fP.
 .pg
 The Atari port of NetHack was resurrected for 3.3.1 by \fBChristian ``Marvin''
 Bressler\fP.
@@ -2184,9 +2183,9 @@ in this, the list of Dungeoneers:
 center;
 c c c.
 .\"TABLE_START
-Adam Aronow	Irina Rempt-Drijfhout	Mike Gallop
-Andy Church	Izchak Miller	Mike Passaretti
-Andy Swanson	Janet Walz	Mike Stephenson
+Adam Aronow	Izchak Miller	Mike Gallop
+Andy Church	Janet Walz	Mike Passaretti
+Andy Swanson	Janne Salmijarvi	Mike Stephenson
 Ari Huttunen	Jean-Christophe Collet	Norm Meluch
 Barton House	Jochen Erwied	Olaf Seibert
 Benson I. Margulies	John Kallen	Pat Rankin
@@ -2216,6 +2215,7 @@ Greg Olson	Michael Feir	Tom West
 Gregg Wonderly	Michael Hamel	Warren Cheung
 Hao-yang Wang	Michael Sokolov	Warwick Allison
 Helge Hafting	Mike Engber	Yitzhak Sapir
+Irina Rempt-Drijfhout
 .\"TABLE_END  Do not delete this line.
 .TE
 .ed

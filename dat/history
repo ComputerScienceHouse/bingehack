@@ -124,15 +124,14 @@ Pat Rankin maintained 3.3 for VMS.
 Michael Allison ported NetHack 3.3 for the MS-DOS platform.  Paul Winner
 and Yitzhak Sapir provided encouragement.
 
-Elvis was seen playing NetHack on an Amiga.  That is to say, like Elvis, it
-it might come back, but don't hold your breath.
-
 Dean Luick, Mark Modrall, and Kevin Hugo maintained and enhanced the
 Macintosh port of 3.3.
 
 Michael Allison ported 3.3 for the Microsoft Windows NT platform.
 
 Ron Van Iwaarden took over responsibility for the OS/2 port.
+
+The Amiga port of NetHack was resurrected for 3.3.1 by Janne Salmijarvi.
 
 The Atari port of NetHack was resurrected for 3.3.1 by Christian "Marvin"
 Bressler.
@@ -144,9 +143,9 @@ particularly intriguing modification to help out with the game.  The Gods of
 the Dungeon sometimes make note of the names of the worst of these miscreants
 in this, the list of Dungeoneers:
 
-    Adam Aronow               Irina Rempt-Drijfhout     Mike Gallop
-    Andy Church               Izchak Miller             Mike Passaretti
-    Andy Swanson              Janet Walz                Mike Stephenson
+    Adam Aronow               Izchak Miller             Mike Gallop
+    Andy Church               Janet Walz                Mike Passaretti
+    Andy Swanson              Janne Salmijarvi          Mike Stephenson
     Ari Huttunen              Jean-Christophe Collet    Norm Meluch
     Barton House              Jochen Erwied             Olaf Seibert
     Benson I. Margulies       John Kallen               Pat Rankin
@@ -176,3 +175,4 @@ in this, the list of Dungeoneers:
     Gregg Wonderly            Michael Hamel             Warren Cheung
     Hao-yang Wang             Michael Sokolov           Warwick Allison
     Helge Hafting             Mike Engber               Yitzhak Sapir
+    Irina Rempt-Drijfhout

@@ -40,19 +40,19 @@
 /*****************************************************************************/
 /* Version 3.3.1 */
 
-/*  Patch 1, March ??, 2000
- *  Over 160 general bug fixes
+/*  Patch 1, May ??, 2000
+ *  Many, many general fixes, including a number for riding, twoweapon,
+ *	and invisible monsters.
+ *  Redo Ranger quest.
  *  Introduction of differentiation between different causes of blindness
- *  Amiga: minimal functionality restored to port
- *  Atari: functionality restored to port
- *  Mac: several interface fixes
- *  win32: Fixed bug that caused messages to stop displaying after escape
+ *  Functionality restored to Amiga (courtesy Janne Salmijarvi) and Atari
+ *	(courtesy Christian "Marvin" Bressler) ports
+ *  Mac: multiple interface fixes
+ *  win32: fixed bug that caused messages to stop displaying after escape
  *  tty: use ANSI color (AF) over standard color (Sf) when given the choice
- *  tty: avoid crashing on empty menus with perm_invent set and nothing in inventory
- *  tty: introduction of eight_bit_tty option
- *  X11, tty: offer for player selection only choices consistent with those 
- *            already made by config file/command line (e.g., only offer roles
- *            that are compatible with specified race)
+ *  several ports: offer for player selection only choices consistent with
+ *	those already made by config file/command line (e.g., only offer roles
+ *	that are compatible with specified race)
  */
 
 /*
