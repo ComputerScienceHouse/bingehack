@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)allmain.c	3.3	1999/10/10	*/
+/*	SCCS Id: @(#)allmain.c	3.3	1999/11/19	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -485,7 +485,7 @@ newgame()
 	program_state.something_worth_saving++;	/* useful data now exists */
 
 	/* Success! */
-	pline("%s %s, the %s %s %s %s, welcome to NetHack!", Hello(), plname,
+	pline("%s %s, welcome to NetHack! You are a %s %s %s %s.", Hello(), plname,
 	    	aligns[flags.initalign].adj,
 	    	genders[flags.initgend].adj,
 	    	races[flags.initrace].adj,
