@@ -525,6 +525,7 @@ Amulet_on()
 		    Slimed = 0;
 		    flags.botl = 1;
 		}
+		break;
 	case AMULET_OF_CHANGE:
 		if (Unchanging) break;
 		makeknown(AMULET_OF_CHANGE);
