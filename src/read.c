@@ -1459,8 +1459,9 @@ do_class_genocide()
 
 		for (i = LOW_PM; i < NUMMONS; i++) {
 		    if(mons[i].mlet == class) {
-			const char *n = makeplural(mons[i].mname);
+			char nam[BUFSZ];
 
+			Strcpy(nam, makeplural(mons[i].mname));
 			if (Your_Own_Role(i) || Your_Own_Race(i) ||
 				((mons[i].geno & G_GENO)
 				&& !(mvitals[i].mvflags & G_GENOD))) {
@@ -1471,7 +1472,7 @@ do_class_genocide()
 			    reset_rndmonst(i);
 			    kill_genocided_monsters();
 			    update_inventory();		/* eggs & tins */
-			    pline("Wiped out all %s.", n);
+			    pline("Wiped out all %s.", nam);
 			    if (Upolyd && i == u.umonnum && !Unchanging) rehumanize();
 			    /* Self-genocide if it matches either your race or role */
 			    /* Assumption: male and female forms share the same letter */
@@ -1486,7 +1487,7 @@ do_class_genocide()
 			    }
 			} else if (mvitals[i].mvflags & G_GENOD) {
 			    if (!gameover)
-				pline("All %s are already nonexistent.", n);
+				pline("All %s are already nonexistent.", nam);
 			} else if (!gameover) {
 			  /* suppress feedback about quest beings except
 			     for those applicable to our own role */
@@ -1508,7 +1509,7 @@ do_class_genocide()
 
 				You("aren't permitted to genocide %s%s.",
 				    (uniq && !named) ? "the " : "",
-				    (uniq || named) ? mons[i].mname : n);
+				    (uniq || named) ? mons[i].mname : nam);
 			    }
 			}
 		    }
