@@ -494,7 +494,15 @@ spotless: clean
 	if exist sp_lev.tag	   del sp_lev.tag
 	if exist $(PLANAR_TIB)	   del $(PLANAR_TIB)
 	if exist $(OVERVIEW_TIB)   del $(OVERVIEW_TIB)
-
+	if exist thintile.tag	   del thintile.tag
+	if exist thintile.exe	   del thintile.exe
+	if exist til2bin2.exe	   del til2bin2.exe
+	if exist $(INCL)\dgn_comp.h del $(INCL)\dgn_comp.h
+	if exist $(INCL)\lev_comp.h del $(INCL)\lev_comp.h
+	if exist $(DAT)\dungeon.pdf del $(DAT)\dungeon.pdf
+	if exist $(WSHR)\monthin.txt del $(WSHR)\monthin.txt
+	if exist $(WSHR)\objthin.txt del $(WSHR)\objthin.txt
+	if exist $(WSHR)\oththin.txt del $(WSHR)\oththin.txt
 
 #
 #  Secondary Targets.
@@ -562,7 +570,7 @@ lev_$(LEX).o:  $(HACK_H)   $(SP_LEV_H)	  $(INCL)\lev_comp.h \
 lev_main.c:  $(UTIL)\lev_main.c
 	copy $(UTIL)\lev_main.c .
 
-lev_main.o:  $(HACK_H) lev_main.c
+lev_main.o:  $(HACK_H) $(INCL)\sp_lev.h $(INCL)\date.h lev_main.c
 
 $(INCL)\lev_comp.h: lev_yacc.c
 
