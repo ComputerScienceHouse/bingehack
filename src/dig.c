@@ -734,6 +734,7 @@ dig_up_grave()
 	    break;
 	}
 	levl[u.ux][u.uy].typ = ROOM;
+	del_engr_at(u.ux, u.uy);
 	newsym(u.ux,u.uy);
 	return;
 }

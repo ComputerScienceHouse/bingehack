@@ -17,7 +17,8 @@ struct engr {
 #define BURN	  3
 #define MARK	  4
 #define BLOOD	  5
-#define N_ENGRAVE 5
+#define HEADSTONE 6
+#define N_ENGRAVE 6
 };
 
 #define newengr(lth) (struct engr *)alloc((unsigned)(lth) + sizeof(struct engr))

@@ -562,6 +562,7 @@ E void FDECL(save_engravings, (int,int));
 E void FDECL(rest_engravings, (int));
 E void FDECL(del_engr, (struct engr *));
 E void FDECL(rloc_engr, (struct engr *));
+E void FDECL(make_grave, (int,int,const char *));
 
 /* ### exper.c ### */
 

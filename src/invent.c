@@ -1774,7 +1774,7 @@ char *buf;
 	    cmap = S_vodbridge;			/* "lowered drawbridge" */
 	else if (ltyp == DBWALL)
 	    cmap = S_vcdbridge;			/* "raised drawbridge" */
-	else if (ltyp == GRAVE)
+	else if (IS_GRAVE(ltyp))
 	    cmap = S_grave;				/* "grave" */
 	else if (ltyp == TREE)
 	    cmap = S_tree;				/* "tree" */
@@ -1805,7 +1805,6 @@ boolean picked_some;
 		You("%s no objects here.", verb);
 		return(!!Blind);
 	}
-	read_engr_at(u.ux, u.uy); /* Eric Backus */
 	if (!skip_objects && (trap = t_at(u.ux,u.uy)) && trap->tseen)
 		pline("There is %s here.",
 			an(defsyms[trap_to_defsym(trap->ttyp)].explanation));
@@ -1833,6 +1832,7 @@ boolean picked_some;
 
 	if (!otmp || (is_pool(u.ux,u.uy) && !Underwater)) {
 		if (dfeature) pline(fbuf);
+		read_engr_at(u.ux, u.uy); /* Eric Backus */
 		if (!skip_objects && (Blind || !dfeature))
 		    You("%s no objects here.", verb);
 		return(!!Blind);
@@ -1841,12 +1841,14 @@ boolean picked_some;
 
 	if (skip_objects) {
 	    if (dfeature) pline(fbuf);
+	    read_engr_at(u.ux, u.uy); /* Eric Backus */
 	    pline("There are %s%s objects here.",
 		  (obj_cnt <= 10) ? "several" : "many",
 		  picked_some ? " more" : "");
 	} else if (!otmp->nexthere) {
 	    /* only one object */
 	    if (dfeature) pline(fbuf);
+	    read_engr_at(u.ux, u.uy); /* Eric Backus */
 #ifdef INVISIBLE_OBJECTS
 	    if (otmp->oinvis && !See_invisible) verb = "feel";
 #endif
@@ -1866,6 +1868,7 @@ boolean picked_some;
 	    }
 	    display_nhwindow(tmpwin, TRUE);
 	    destroy_nhwindow(tmpwin);
+	    read_engr_at(u.ux, u.uy); /* Eric Backus */
 	}
 	return(!!Blind);
 }

@@ -2143,7 +2143,7 @@ struct obj *obj;	/* wand or spell */
 	    (void) bhitpile(obj, bhito, x, y);
 
 	    /* subset of engraving effects; none sets `disclose' */
-	    if ((e = engr_at(x, y)) != 0) {
+	    if ((e = engr_at(x, y)) != 0 && e->engr_type != HEADSTONE) {
 		switch (obj->otyp) {
 		case WAN_POLYMORPH:
 		case SPE_POLYMORPH:

@@ -1376,6 +1376,7 @@ struct mkroom *croom;
 	coord m;
 	register int tryct = 0;
 	register struct obj *otmp;
+	boolean dobell = !rn2(10);
 
 
 	if(croom->rtype != OROOM) return;
@@ -1387,7 +1388,7 @@ struct mkroom *croom;
 	} while (occupied(m.x, m.y) || bydoor(m.x, m.y));
 
 	/* Put a grave at m.x, m.y */
-	levl[m.x][m.y].typ = GRAVE;
+	make_grave(m.x, m.y, dobell ? "Saved by the bell!" : (char *) 0);
 
 	/* Possibly fill it with objects */
 	if (!rn2(3)) (void) mkgold(0L, m.x, m.y);
@@ -1401,7 +1402,7 @@ struct mkroom *croom;
 	}
 
 	/* Leave a bell, in case we accidentally buried someone alive */
-	if (!rn2(25)) (void) mksobj_at(BELL, m.x, m.y, TRUE);
+	if (dobell) (void) mksobj_at(BELL, m.x, m.y, TRUE);
 	return;
 }
 

@@ -79,6 +79,8 @@ static NEARDATA const char *ends[] = {		/* "when you..." */
 	"quit", "escaped", "ascended"
 };
 
+extern const char *killed_by_prefix[];
+
 
 /*ARGSUSED*/
 void
@@ -557,9 +559,15 @@ die:
 		u.ugrave_arise = (NON_PM - 2);	/* leave no corpse */
 	    else if (how == STONING)
 		u.ugrave_arise = (NON_PM - 1);	/* statue instead of corpse */
-	    else if (u.ugrave_arise == NON_PM)
+	    else if (u.ugrave_arise == NON_PM) {
 		(void) mk_named_object(CORPSE, &mons[u.umonnum],
 				       u.ux, u.uy, plname);
+		Sprintf(pbuf, "%s, %s%s", plname,
+			killer_format == NO_KILLER_PREFIX ? "" :
+			killed_by_prefix[how],
+			killer_format == KILLED_BY_AN ? an(killer) : killer);
+		make_grave(u.ux, u.uy, pbuf);
+	    }
 	}
 
 	if (how == QUIT) {

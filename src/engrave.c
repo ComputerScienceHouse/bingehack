@@ -165,6 +165,8 @@ register int x, y;
 	    return "bridge";
 	else if(IS_ALTAR(levl[x][y].typ))
 	    return "altar";
+	else if(IS_GRAVE(levl[x][y].typ))
+	    return "headstone";
 	else if ((IS_ROOM(lev->typ) && !Is_earthlevel(&u.uz)) ||
 		 IS_WALL(lev->typ) || IS_DOOR(lev->typ) || lev->typ == SDOOR)
 	    return "floor";
@@ -216,8 +218,10 @@ xchar x, y;
 }
 
 #ifdef ELBERETH
-/* decide whether a particular string is engraved at a specified location;
-   a case-insensitive substring match used */
+/* Decide whether a particular string is engraved at a specified
+ * location; a case-insensitive substring match used.
+ * Ignore headstones, in case the player names herself "Elbereth".
+ */
 int
 sengr_at(s, x, y)
 	const char *s;
@@ -225,7 +229,8 @@ sengr_at(s, x, y)
 {
 	register struct engr *ep = engr_at(x,y);
 
-	return (ep && ep->engr_time <= moves && strstri(ep->engr_txt, s) != 0);
+	return (ep && ep->engr_type != HEADSTONE &&
+		ep->engr_time <= moves && strstri(ep->engr_txt, s) != 0);
 }
 #endif /* ELBERETH */
 
@@ -249,7 +254,8 @@ register xchar x,y,cnt;
 {
 	register struct engr *ep = engr_at(x,y);
 
-	if(ep){
+	/* Headstones are indelible */
+	if(ep && ep->engr_type != HEADSTONE){
 	    if(ep->engr_type != BURN || is_ice(x,y)) {
 		if(ep->engr_type != DUST && ep->engr_type != BLOOD) {
 			cnt = rn2(1 + 50/(cnt+1)) ? 0 : 1;
@@ -285,6 +291,7 @@ register int x,y;
 		}
 		break;
 	    case ENGRAVE:
+	    case HEADSTONE:
 		if (!Blind || can_reach_floor()) {
 			sensed = 1;
 			pline("%s is engraved here on the %s.",
@@ -353,7 +360,7 @@ register xchar e_type;
 	Strcpy(ep->engr_txt, s);
 	if(strcmp(s, "Elbereth")) exercise(A_WIS, TRUE);
 	ep->engr_time = e_time;
-	ep->engr_type = e_type > 0 ? e_type : rnd(N_ENGRAVE);
+	ep->engr_type = e_type > 0 ? e_type : rnd(N_ENGRAVE-1);
 	ep->engr_lth = strlen(s) + 1;
 }
 
@@ -510,6 +517,12 @@ doengrave()
 	if (IS_ALTAR(levl[u.ux][u.uy].typ)) {
 		You("make a motion towards the altar with your %s.", writer);
 		altar_wrath(u.ux, u.uy);
+		return(0);
+	}
+	if (IS_GRAVE(levl[u.ux][u.uy].typ)) {
+		You("disturb the undead!");
+		(void) makemon(&mons[PM_GHOUL], u.ux, u.uy, NO_MM_FLAGS);
+		exercise(A_WIS, FALSE);
 		return(0);
 	}
 
@@ -1133,6 +1146,62 @@ struct engr *ep;
 	ep->engr_x = tx;
 	ep->engr_y = ty;
 }
+
+
+/* Epitaphs for random headstones */
+static const char *epitaphs[] = {
+	"Rest in peace",
+	"R.I.P.",
+	"Rest In Pieces",
+	"Note -- there are NO valuable items in this grave",
+	"1994-1995. The Longest-Lived Hacker Ever",
+	"The Grave of the Unknown Hacker",
+	"We weren't sure who this was, but we buried him here anyway",
+	"Sparky -- he was a very good dog",
+	"Beware of Electric Third Rail",
+	"Made in Taiwan",
+	"Og friend. Og good dude. Og died. Og now food",
+	"Beetlejuice Beetlejuice Beetlejuice",
+	"Look out below!",
+	"Please don't dig me up. I'm perfectly happy down here. -- Resident",
+	"Postman, please note forwarding address: Gehennom, Asmodeus's Fortress, fifth lemure on the left",
+	"Mary had a little lamb/Its fleece was white as snow/When Mary was in trouble/The lamb was first to go",
+	"Be careful, or this could happen to you!",
+	"Soon you'll join this fellow in hell! -- the Wizard of Yendor",
+	"Caution! This grave contains toxic waste",
+	"Sum quod eris",
+	"Here lies an Atheist, all dressed up and no place to go",
+	"Here lies Ezekiel, age 102.  The good die young.",
+	"Here lies my wife: Here let her lie! Now she's at rest and so am I.",
+	"Here lies Johnny Yeast. Pardon me for not rising.",
+	"He always lied while on the earth and now he's lying in it",
+	"I made an ash of myself",
+	"Soon ripe. Soon rotten. Soon gone. But not forgotten.",
+	"Here lies the body of Jonathan Blake. Stepped on the gas instead of the brake.",
+	"Go away!"
+};
+
+/* Create a headstone at the given location.
+ * The caller is responsible for newsym(x, y).
+ */
+void
+make_grave(x, y, str)
+int x, y;
+const char *str;
+{
+	/* Can we put a grave here? */
+	if (levl[x][y].typ != ROOM && levl[x][y].typ != GRAVE) return;
+
+	/* Make the grave */
+	levl[x][y].typ = GRAVE;
+
+	/* Engrave the headstone */
+	if (!str) str = epitaphs[rn2(SIZE(epitaphs))];
+	del_engr_at(x, y);
+	make_engr_at(x, y, str, 0, HEADSTONE);
+	return;
+}
+
 
 #endif /* OVLB */
 

@@ -259,9 +259,6 @@ savebones()
 		in_mklev = FALSE;
 		if (!mtmp) return;
 		Strcpy((char *) mtmp->mextra, plname);
-		/* Leave a headstone */
-		if (levl[u.ux][u.uy].typ == ROOM && !t_at(u.ux, u.uy))
-		    levl[u.ux][u.uy].typ = GRAVE;
 	} else {
 		/* give your possessions to the monster you become */
 		in_mklev = TRUE;

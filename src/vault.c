@@ -728,7 +728,7 @@ paygd()
 	    Sprintf(buf,
 		"To Croesus: here's the gold recovered from %s the %s.",
 		plname, mons[u.umonster].mname);
-	    make_engr_at(gx, gy, buf, 0L, ENGRAVE);
+	    make_grave(gx, gy, buf);
 	}
 	place_object(gold = mkgoldobj(u.ugold), gx, gy);
 	stackobj(gold);
