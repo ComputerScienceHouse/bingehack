@@ -144,6 +144,7 @@ makedog()
 	if (pettype == PM_PONY && !!(otmp = mksobj(SADDLE, TRUE, FALSE))) {
 	    mpickobj(mtmp, otmp);
 	    mtmp->misc_worn_check |= W_SADDLE;
+	    otmp->dknown = otmp->bknown = otmp->rknown = 1;
 	    otmp->owornmask = W_SADDLE;
 	    otmp->leashmon = mtmp->m_id;
 	    update_mon_intrinsics(mtmp, otmp, TRUE);
