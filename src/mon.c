@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mon.c	3.3	1999/12/12	*/
+/*	SCCS Id: @(#)mon.c	3.3	1999/12/28	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -600,6 +600,7 @@ meatobj(mtmp)		/* for gelatinous cubes */
 	int poly, grow, heal, count = 0, ecount = 0;
 	char buf[BUFSZ];
 
+	buf[0] = '\0';
 	/* If a pet, eating is handled separately, in dog.c */
 	if (mtmp->mtame) return 0;
 
@@ -662,7 +663,7 @@ meatobj(mtmp)		/* for gelatinous cubes */
 			Sprintf(buf, "%s engulfs %s.", Monnam(mtmp),
 			    distant_name(otmp,doname));
 		    } else if (ecount == 2)
-			pline("%s engulfs several objects.", Monnam(mtmp));
+			Sprintf(buf, "%s engulfs several objects.", Monnam(mtmp));
 		}
 		obj_extract_self(otmp);
 		mpickobj(mtmp, otmp);	/* slurp */
@@ -670,7 +671,7 @@ meatobj(mtmp)		/* for gelatinous cubes */
 	    /* Engulf & devour is instant, so don't set meating */
 	    if (mtmp->minvis) newsym(mtmp->mx, mtmp->my);
 	}
-	if (ecount == 1) pline(buf);
+	if (buf[0]) pline(buf);
 	return (count > 0) ? 1 : 0;
 }
 
