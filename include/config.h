@@ -130,12 +130,6 @@
 
 /* #define STUPID */	/* avoid some complicated expressions if
 			   your C compiler chokes on them */
-#define TERMINFO	/* uses terminfo rather than termcap */
-			/* Should be defined for most SYSV, SVR4 (including
-			   Solaris 2) and HPUX systems.  In particular, it
-			   should NOT be defined for the UNIXPC unless you
-			   remove the use of the shared library in the
-			   Makefile */
 /* #define MINIMAL_TERM */
 			/* if a terminal handles highlighting or tabs poorly,
 			   try this define, used in pager.c and termcap.c */

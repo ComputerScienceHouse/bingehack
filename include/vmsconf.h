@@ -26,9 +26,6 @@
 #ifdef UNIX
 # undef UNIX
 #endif
-#ifdef TERMINFO
-# undef TERMINFO
-#endif
 #ifdef HACKDIR
 # undef HACKDIR
 #endif

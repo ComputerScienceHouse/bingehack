@@ -108,7 +108,7 @@ Notes:
     zapping, etc., it is likely that you have linked the source to the wrong
     library or mistakenly defined/undefined TERMINFO.  A number of systems,
     such as Xenix, support both the termcap and terminfo terminal capability
-    libraries.  In such cases, the TERMINFO definition in config.h and the
+    libraries.  In such cases, the TERMINFO definition in unixconf.h and the
     WINTTYLIB definition in the source Makefile must correspond.
 
     If your terminal library does not provide suitable delays, NetHack will
@@ -221,8 +221,8 @@ Notes:
     Solaris is basically a SVR4 system, not a BSD system.  Therefore, you
     configure config.h and unixconf.h as per a SVR4 system:
 
-	config.h: UNIX, TERMINFO, TTY_GRAPHICS
-	unixconf.h: SYSV, SVR4, POSIX_JOB_CONTROL, POSIX_TYPES
+	config.h: UNIX, TTY_GRAPHICS
+	unixconf.h: SYSV, SVR4, TERMINFO, POSIX_JOB_CONTROL, POSIX_TYPES
 
     X11_GRAPHICS does work.  Do not define OPENWINBUG.  You may safely define
     NETWORK, TEXTCOLOR if desired.  Other #defines in these files may be

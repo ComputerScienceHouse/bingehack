@@ -33,7 +33,7 @@
 
 /* define any of the following that are appropriate */
 #define SVR4		/* use in addition to SYSV for System V Release 4 */
-			/* including Solaris 2 */
+			/* including Solaris 2+ */
 #define NETWORK		/* if running on a networked system */
 			/* e.g. Suns sharing a playground through NFS */
 /* #define SUNOS4 */	/* SunOS 4.x */
@@ -45,6 +45,12 @@
 /* #define AIX_31 */	/* In AIX 3.1 (IBM RS/6000) use BSD ioctl's to gain
 			 * job control (note that AIX is SYSV otherwise)
 			 * Also define this for AIX 3.2 */
+#define TERMINFO	/* uses terminfo rather than termcap */
+			/* Should be defined for most SYSV, SVR4 (including
+			 * Solaris 2+) and HPUX systems.  In particular, it
+			 * should NOT be defined for the UNIXPC unless you
+			 * remove the use of the shared library in the
+			 * Makefile */
 #define TEXTCOLOR	/* Use System V r3.2 terminfo color support */
 			/* and/or ANSI color support on termcap systems */
 			/* and/or X11 color */
