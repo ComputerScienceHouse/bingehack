@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)hack.c	3.3	2000/02/11	*/
+/*	SCCS Id: @(#)hack.c	3.3	2000/04/22	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -765,7 +765,9 @@ domove()
 			clear_nhwindow(WIN_MESSAGE);
 			You("free your %s.", body_part(LEG));
 		    } else if (!(--u.utrap)) {
-			You("crawl to the edge of the pit.");
+			You("%s to the edge of the pit.",
+				(In_sokoban(&u.uz) && Levitation) ?
+				"struggle against the air currents and float" : "crawl");
 			fill_pit(u.ux, u.uy);
 			vision_full_recalc = 1;	/* vision limits change */
 		    } else if (flags.verbose)

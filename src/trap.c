@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)trap.c	3.3	2000/01/22	*/
+/*	SCCS Id: @(#)trap.c	3.3	2000/04/22	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -326,11 +326,13 @@ boolean td;	/* td == TRUE : trap door or hole */
 	} while(!rn2(4) && newlevel < dunlevs_in_dungeon(&u.uz));
 
 	if(td) {
-		struct trap *t=t_at(u.ux,u.uy);
+	    struct trap *t=t_at(u.ux,u.uy);
+	    if (!In_sokoban(&u.uz)) {
 		if (t->ttyp == TRAPDOOR)
 			pline("A trap door opens up under you!");
-		else
+		else 
 			pline("There's a gaping hole under you!");
+	    }
 	} else pline_The("%s opens up under you!", surface(u.ux,u.uy));
 
 	if (In_sokoban(&u.uz) && Can_fall_thru(&u.uz))
@@ -493,7 +495,7 @@ register struct trap *trap;
 	register int ttype = trap->ttyp;
 	register struct obj *otmp;
 	boolean already_seen = trap->tseen;
-
+	
 	nomul(0);
 
 	/* KMH -- You can't escape the Sokoban level traps */
@@ -505,7 +507,8 @@ register struct trap *trap;
 	     * reason why the player cannot escape the trap with a dexterity
 	     * check, clinging to the ceiling, etc.
 	     */
-	    pline("Air currents pull you down into the %s!",
+	    pline("Air currents pull you down into %s %s!",
+	    	a_your[trap->madeby_u],
 	    	defsyms[trap_to_defsym(ttype)].explanation);
 	    /* then proceed to normal trap effect */
 	} else if (already_seen) {
@@ -732,7 +735,8 @@ glovecheck:		(void) rust_dmg(uarmg, "gauntlets", 1, TRUE, &youmonst);
 		    }
 		    break;
 		}
-		You("fall into %s pit!", a_your[trap->madeby_u]);
+		if (!In_sokoban(&u.uz))
+			You("fall into %s pit!", a_your[trap->madeby_u]);
 		if (ttype == SPIKED_PIT)
 		    You("land on a set of sharp iron spikes!");
 		if (!Passes_walls)
