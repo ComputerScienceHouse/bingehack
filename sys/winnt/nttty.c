@@ -417,12 +417,18 @@ get_scr_size()
 {
 	if (GetConsoleScreenBufferInfo(hConOut,&csbi))
 	{
-	    int tmpx, tmpy;
+	    int tmpx, tmpy, ccnt;
 	    COORD newcoord;
 	    
+	    newcoord.X = 0;
+	    newcoord.Y = 0;
+	    FillConsoleOutputCharacter(hConOut,' ',
+			csbi.dwSize.X * csbi.dwSize.Y,
+			newcoord, &ccnt);
+
 	    tmpy = csbi.dwSize.Y;
 	    tmpx = csbi.dwSize.X;
-	    if (tmpy < 25 || tmpx < 80) {
+	    if ((tmpy > 25) || (tmpx > 80)) {
 	    	newcoord.Y = 25;
 	    	newcoord.X = 80;
 	    	SetConsoleScreenBufferSize(hConOut, newcoord);
@@ -458,6 +464,21 @@ void
 tty_end_screen()
 {
 	clear_screen();
+	if (GetConsoleScreenBufferInfo(hConOut,&csbi))
+	{
+	    int ccnt;
+	    COORD newcoord;
+	    
+	    newcoord.X = 0;
+	    newcoord.Y = 0;
+	    FillConsoleOutputAttribute(hConOut,
+	    		FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE,
+	    		csbi.dwSize.X * csbi.dwSize.Y,
+	    		newcoord, &ccnt);
+	    FillConsoleOutputCharacter(hConOut,' ',
+			csbi.dwSize.X * csbi.dwSize.Y,
+			newcoord, &ccnt);
+	}
 }
 
 void
