@@ -22,9 +22,7 @@
 uchar oc_syms[MAXOCLASSES] = DUMMY; /* the current object  display symbols */
 uchar showsyms[MAXPCHARS]  = DUMMY; /* the current feature display symbols */
 uchar monsyms[MAXMCLASSES] = DUMMY; /* the current monster display symbols */
-#ifdef NEW_WARNING
 uchar warnsyms[WARNCOUNT]  = DUMMY;  /* the current warning display symbols */
-#endif
 
 /* Default object class symbols.  See objclass.h. */
 const char def_oc_syms[MAXOCLASSES] = {
@@ -190,7 +188,6 @@ const char *monexplain[MAXMCLASSES] = {
     "long worm tail",		"mimic"
 };
 
-#ifdef NEW_WARNING
 const struct symdef def_warnsyms[WARNCOUNT] = {
 	{'0', "unknown creature causing you worry", C(CLR_WHITE)},  	/* white warning  */
 	{'1', "unknown creature causing you concern", C(CLR_RED)},	/* pink warning   */
@@ -201,7 +198,6 @@ const struct symdef def_warnsyms[WARNCOUNT] = {
 	{'5', "unknown creature causing you dread",
 						C(CLR_BRIGHT_MAGENTA)}	/* black warning  */
 };
-#endif
 
 /*
  *  Default screen symbols with explanations and colors.

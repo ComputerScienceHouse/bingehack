@@ -1300,9 +1300,7 @@ E int FDECL(fruitadd, (char *));
 E int FDECL(choose_classes_menu, (const char *,int,BOOLEAN_P,char *,char *));
 E void FDECL(add_menu_cmd_alias, (CHAR_P, CHAR_P));
 E char FDECL(map_menu_cmd, (CHAR_P));
-#ifdef NEW_WARNING
 E void FDECL(assign_warnings, (uchar *));
-#endif
 
 /* ### pager.c ### */
 

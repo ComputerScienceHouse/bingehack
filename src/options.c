@@ -293,7 +293,7 @@ static struct Comp_Opt
 	{ "videoshades", "gray shades to map to black/gray/white",
 						32, DISP_IN_GAME },
 #endif
-#ifdef NEW_WARNING
+#if 0
 	{ "warnlevel", "minimum monster level to trigger warning", 4, SET_IN_GAME },
 #endif
 	{ "windowtype", "windowing system to use", WINTYPELEN, DISP_IN_GAME },
@@ -395,8 +395,8 @@ STATIC_DCL void FDECL(graphics_opts, (char *,const char *,int,int));
 STATIC_DCL int FDECL(feature_alert_opts, (char *, const char *));
 STATIC_DCL char *FDECL(get_compopt_value, (const char *, char *));
 STATIC_DCL boolean FDECL(special_handling, (const char *, BOOLEAN_P, BOOLEAN_P));
-#ifdef NEW_WARNING
 STATIC_DCL void FDECL(warning_opts, (char *,const char *));
+#if 0
 STATIC_DCL int FDECL(warnlevel_opts, (char *, const char *));
 #endif
 
@@ -453,12 +453,10 @@ initoptions()
 		oc_syms[i] = (uchar) def_oc_syms[i];
 	for (i = 0; i < MAXMCLASSES; i++)
 		monsyms[i] = (uchar) def_monsyms[i];
-#ifdef NEW_WARNING
 	for (i = 0; i < WARNCOUNT; i++)
 		warnsyms[i] = def_warnsyms[i].sym;
 	flags.warnlevel = 1;
 	flags.warntype = 0L;
-#endif
 
      /* assert( sizeof flags.inv_order == sizeof def_inv_order ); */
 	(void)memcpy((genericptr_t)flags.inv_order,
@@ -775,7 +773,6 @@ int maxlen, offset;
 	assign_graphics(translate, length, maxlen, offset);
 }
 
-#ifdef NEW_WARNING
 STATIC_OVL void
 warning_opts(opts, optype)
 register char *opts;
@@ -806,6 +803,8 @@ register uchar *graph_chars;
 	    warnsyms[i] = graph_chars[i];
 }
 
+#if 0
+/* warnlevel is unnecessary with the new warning introduced in 3.3.1 */
 STATIC_OVL int
 warnlevel_opts(op, optn)
 char *op;
@@ -844,7 +843,7 @@ const char *optn;
 	}
 	return 1;
 }
-#endif /* NEW_WARNING */
+#endif
 
 STATIC_OVL int
 feature_alert_opts(op, optn)
@@ -1234,14 +1233,13 @@ goodfruit:
 		    monsyms[i+1] = (uchar) opts[i];
 		return;
 	}
-#ifdef NEW_WARNING
 	fullname = "warnings";
 	if (match_optname(opts, fullname, 5, TRUE)) {
 		if (negated) bad_negation(fullname, FALSE);
 		else warning_opts(opts, fullname);
 		return;
 	}
-
+#if 0
 	fullname = "warnlevel";
 	if (match_optname(opts, fullname, 5, TRUE)) {
 	    op = string_for_opt(opts, negated);
@@ -2176,7 +2174,7 @@ char *buf;
 			ttycolors[CLR_BRIGHT_MAGENTA],
 			ttycolors[CLR_BRIGHT_CYAN]);
 #endif /* VIDEOSHADES */
-#ifdef NEW_WARNING
+#if 0
 	else if (!strcmp(optname, "warnlevel"))
 		Sprintf(buf, "%d", flags.warnlevel);
 #endif

@@ -142,10 +142,9 @@ lookat(x, y, buf, monbuf)
 		    ways_seen++;
 		if (Detect_monsters)
 		    ways_seen++;
-#ifdef NEW_WARNING
 		if (MATCH_WARN_OF_MON(mtmp))
 		    ways_seen++;
-#endif
+
 		if (ways_seen > 1 || !normal) {
 		    if (normal) {
 			Strcat(monbuf, "normal vision");
@@ -175,14 +174,12 @@ lookat(x, y, buf, monbuf)
 			Strcat(monbuf, "monster detection");
 			if (ways_seen-- > 1) Strcat(monbuf, ", ");
 		    }
-#ifdef NEW_WARNING
 		    if (MATCH_WARN_OF_MON(mtmp)) {
 		    	char wbuf[BUFSZ];
 		    	Sprintf(wbuf, "warned of %s", makeplural(mtmp->data->mname));
 		    	Strcat(monbuf, wbuf);
 		    	if (ways_seen-- > 1) Strcat(monbuf, ", ");
 		    }
-#endif
 		}
 	    }
 	}
@@ -495,11 +492,9 @@ do_look(quick)
 		sym = showsyms[glyph_to_swallow(glyph)+S_sw_tl];
 	    } else if (glyph_is_invisible(glyph)) {
 		sym = DEF_INVISIBLE;
-#ifdef NEW_WARNING
 	    } else if (glyph_is_warning(glyph)) {
 		sym = glyph_to_warning(glyph);
 	    	sym = warnsyms[sym];
-#endif
 	    } else {
 		impossible("do_look:  bad glyph %d at (%d,%d)",
 						glyph, (int)cc.x, (int)cc.y);
@@ -610,7 +605,6 @@ do_look(quick)
 	    }
 	}
 
-#ifdef NEW_WARNING
 	/* Now check for warning symbols */
 	for (i = 0; i < WARNCOUNT; i++) {
 	    x_str = def_warnsyms[i].explanation;
@@ -626,7 +620,6 @@ do_look(quick)
 		break;	/* out of for loop*/
 	    }
 	}
-#endif /* NEW_WARNING */
     
 	/* if we ignored venom and list turned out to be short, put it back */
 	if (skipped_venom && found < 2) {

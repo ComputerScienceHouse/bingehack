@@ -112,9 +112,7 @@ X11_print_glyph(window, x, y, glyph)
 #define mon_color(n)  color = mons[n].mcolor
 #define invis_color(n) color = NO_COLOR
 #define pet_color(n)  color = mons[n].mcolor
-# ifdef NEW_WARNING
 #define warn_color(n) color = iflags.use_color ? def_warnsyms[n].color : NO_COLOR
-# endif
 # else /* no text color */
 
 #define zap_color(n)
@@ -123,9 +121,7 @@ X11_print_glyph(window, x, y, glyph)
 #define mon_color(n)
 #define invis_color(n)
 #define pet_color(n)
-# ifdef NEW_WARNING
 #define warn_color(n)
-# endif
 
 #endif
 
@@ -135,13 +131,10 @@ X11_print_glyph(window, x, y, glyph)
 	 *  Warning:  For speed, this makes an assumption on the order of
 	 *            offsets.  The order is set in display.h.
 	 */
-#ifdef NEW_WARNING
 	if ((offset = (glyph - GLYPH_WARNING_OFF)) >= 0) { 	/* a warning flash */
 		ch = warnsyms[offset];
 		warn_color(offset);
-	} else
-#endif
-	if ((offset = (glyph - GLYPH_SWALLOW_OFF)) >= 0) {	/* swallow */
+	} else if ((offset = (glyph - GLYPH_SWALLOW_OFF)) >= 0) {	/* swallow */
 	    /* see swallow_to_glyph() in display.c */
 	    ch = (uchar) showsyms[S_sw_tl + (offset & 0x7)];
 	    mon_color(offset >> 3);

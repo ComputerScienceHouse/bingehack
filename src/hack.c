@@ -745,12 +745,6 @@ domove()
 	    unmap_object(x, y);
 	    newsym(x, y);
 	}
-#ifdef NEW_WARNING
-	if (glyph_is_warning(levl[x][y].glyph)) {
-	    unmap_object(x, y);
-	    newsym(x, y);
-	}
-#endif
 	/* not attacking an animal, so we try to move */
 #ifdef STEED
 	if (u.usteed && !u.usteed->mcanmove && (u.dx || u.dy)) {

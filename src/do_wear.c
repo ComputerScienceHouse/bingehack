@@ -642,9 +642,7 @@ register struct obj *obj;
 	case MEAT_RING:
 		break;
 	case RIN_WARNING:
-#ifdef NEW_WARNING
 		see_monsters();
-#endif
 		break;
 	case RIN_SEE_INVISIBLE:
 		/* can now see invisible monsters */
@@ -759,9 +757,7 @@ boolean gone;
 	case MEAT_RING:
 		break;
 	case RIN_WARNING:
-#ifdef NEW_WARNING
 		see_monsters();
-#endif
 		break;
 	case RIN_SEE_INVISIBLE:
 		/* Make invisible monsters go away */

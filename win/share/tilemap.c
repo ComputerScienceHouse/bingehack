@@ -88,14 +88,6 @@ struct conditionals {
 #ifndef MAIL
 	{ OBJ_GLYPH, SCR_STINKING_CLOUD+4, "stamped / mail" },
 #endif
-#ifndef NEW_WARNING
-	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 2), "warning 0" },
-	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 2), "warning 1" },
-	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 2), "warning 2" },
-	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 2), "warning 3" },
-	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 2), "warning 4" },
-	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 2), "warning 5" },
-#endif
 	{ 0, 0, 0}
 };
 
@@ -279,7 +271,7 @@ int lastmontile, lastobjtile, lastothtile;
  * with entries for all supported compilation options
  *
  * "other" contains cmap and zaps (the swallow sets are a repeated portion
- * of cmap), as well as the "flash" glyphs for the optional NEW_WARNING system
+ * of cmap), as well as the "flash" glyphs for the new warning system
  * introduced in 3.3.1.
  */
 void
@@ -371,12 +363,11 @@ init_tilemap()
 		}
 	}
 
-#ifdef NEW_WARNING
 	for (i = 0; i < WARNCOUNT; i++) {
 		tilemap[GLYPH_WARNING_OFF+i] = tilenum;
 		tilenum++;
 	}
-#endif
+
 	lastothtile = tilenum - 1;
 }
 

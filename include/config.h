@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)config.h	3.3	2000/07/16	*/
+/*	SCCS Id: @(#)config.h	3.3	2000/07/20	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -302,7 +302,6 @@ typedef unsigned char	uchar;
 /* dungeon levels */
 #define WALLIFIED_MAZE	/* Fancy mazes - Jean-Christophe Collet */
 #define REINCARNATION	/* Special Rogue-like levels */
-#define NEW_WARNING	/* Less intrusive way of implementing warning - MJA */
 /* monsters & objects */
 #define KOPS		/* Keystone Kops by Scott R. Turner */
 #define SEDUCE		/* Succubi/incubi seduction, by KAA, suggested by IM */

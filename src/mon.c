@@ -21,6 +21,8 @@ STATIC_DCL int FDECL(select_newcham_form, (struct monst *));
 STATIC_DCL void FDECL(kill_eggs, (struct obj *));
 #endif
 
+#if 0
+/* part of the original warning code which was replaced in 3.3.1 */
 #ifdef OVL1
 #define warnDelay 10
 long lastwarntime;
@@ -31,9 +33,8 @@ const char *warnings[] = {
 };
 
 STATIC_DCL void NDECL(warn_effects);
-
 #endif /* OVL1 */
-
+#endif /* 0 */
 
 #ifndef OVLB
 STATIC_VAR short cham_to_pm[];
@@ -254,6 +255,8 @@ register struct monst *mtmp;
 #endif /* OVLB */
 #ifdef OVL1
 
+#if 0
+/* part of the original warning code which was replaced in 3.3.1 */
 STATIC_OVL void
 warn_effects()
 {
@@ -273,7 +276,6 @@ warn_effects()
 	warnlevel = SIZE(warnings)-1;
     if (!Blind &&
 	    (warnlevel > lastwarnlev || moves > lastwarntime + warnDelay)) {
-#ifndef NEW_WARNING
 	const char *which, *what, *how;
 	long rings = (EWarning & (LEFT_RING|RIGHT_RING));
 
@@ -297,12 +299,12 @@ warn_effects()
 		You_feel("apprehensive as you sense a %s flash.",
 		    warnings[warnlevel]);
 	}
-#endif /*NEW_WARNING*/
 
 	lastwarntime = moves;
 	lastwarnlev = warnlevel;
     }
 }
+#endif /* 0 */
 
 /* check mtmp and water for compatibility, 0 (survived), 1 (drowned) */
 int
@@ -423,8 +425,10 @@ movemon()
 {
     register struct monst *mtmp, *nmtmp;
     register boolean somebody_can_move = FALSE;
-
+#if 0
+    /* part of the original warning code which was replaced in 3.3.1 */
     warnlevel = 0;
+#endif
 
     /*
     Some of you may remember the former assertion here that
@@ -491,8 +495,11 @@ movemon()
 	if(dochugw(mtmp))		/* otherwise just move the monster */
 	    continue;
     }
+#if 0
+    /* part of the original warning code which was replaced in 3.3.1 */
     if(warnlevel > 0)
 	warn_effects();
+#endif
 
     if (any_light_source())
 	vision_full_recalc = 1;	/* in case a mon moved with a light source */

@@ -407,7 +407,6 @@ long wp_mask;
 	    else ETeleport_control &= ~wp_mask;
 	}
 	if (spfx & SPFX_WARN) {
-#ifdef NEW_WARNING
 	    if (spec_m2(otmp)) {
 	    	if (on) {
 			EWarn_of_mon |= wp_mask;
@@ -421,10 +420,6 @@ long wp_mask;
 		if (on) EWarning |= wp_mask;
 	    	else EWarning &= ~wp_mask;
 	    }
-#else
-	    if (on) EWarning |= wp_mask;
-	    else EWarning &= ~wp_mask;
-#endif
 	}
 	if (spfx & SPFX_EREGEN) {
 	    if (on) EEnergy_regeneration |= wp_mask;
@@ -582,7 +577,6 @@ struct monst *mtmp;
 	return(0);
 }
 
-#ifdef NEW_WARNING
 /* return the index of monster that an artifact's special attacks apply against */
 long
 spec_m2(otmp)
@@ -593,7 +587,6 @@ struct obj *otmp;
 		return artifact->mtype;
 	return 0L;
 }
-#endif
 
 /* special attack bonus */
 int

@@ -120,9 +120,7 @@
 
 STATIC_DCL void FDECL(display_monster,(XCHAR_P,XCHAR_P,struct monst *,int,XCHAR_P));
 STATIC_DCL int FDECL(swallow_to_glyph, (int, int));
-#ifdef NEW_WARNING
 STATIC_DCL void FDECL(display_warning,(struct monst *));
-#endif
 
 STATIC_DCL int FDECL(check_pos, (int, int, int));
 #ifdef WA_VERBOSE
@@ -435,7 +433,6 @@ display_monster(x, y, mon, in_sight, worm_tail)
     }
 }
 
-#ifdef NEW_WARNING
 /*
  * display_warning()
  *
@@ -464,7 +461,6 @@ display_warning(mon)
     }
     show_glyph(x, y, glyph);
 }
-#endif
 
 /*
  * feel_location()
@@ -688,12 +684,11 @@ newsym(x,y)
 	    /* This also gets rid of any invisibility glyph */
 	    display_monster(x,y,mon,0,0);
 	}
-#ifdef NEW_WARNING
 	else if ((mon = m_at(x,y)) && mon_warning(mon) &&
 		 !((x != mon->mx) || (y != mon->my))) {
 	        display_warning(mon);
 	}		
-#endif
+
 	/*
 	 * If the location is remembered as being both dark (waslit is false)
 	 * and lit (glyph is a lit room or lit corridor) then it was either:
@@ -1146,14 +1141,12 @@ show_glyph(x,y,glyph)
 	 *  This assumes an ordering of the offsets.  See display.h for
 	 *  the definition.
 	 */
-#ifdef NEW_WARNING
+
 	if (glyph >= GLYPH_WARNING_OFF) {	/* a warning */
 	    text = "warning";		offset = glyph - GLYPH_WARNING_OFF;
-	} else
-#endif
-	if (glyph >= GLYPH_SWALLOW_OFF) {		/* swallow border */
+	} else if (glyph >= GLYPH_SWALLOW_OFF) {	/* swallow border */
 	    text = "swallow border";	offset = glyph - GLYPH_SWALLOW_OFF;
-	}else if (glyph >= GLYPH_ZAP_OFF) {		/* zap beam */
+	} else if (glyph >= GLYPH_ZAP_OFF) {		/* zap beam */
 	    text = "zap beam";		offset = glyph - GLYPH_ZAP_OFF;
 	} else if (glyph >= GLYPH_CMAP_OFF) {		/* cmap */
 	    text = "cmap_index";	offset = glyph - GLYPH_CMAP_OFF;
