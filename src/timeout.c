@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)timeout.c	3.3	2000/02/20	*/
+/*	SCCS Id: @(#)timeout.c	3.3	2000/05/26	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -158,8 +158,12 @@ nh_timeout()
 	register struct prop *upp;
 	int sleeptime;
 	int m_idx;
+	int baseluck = (flags.moonphase == FULL_MOON) ? 1 : 0;
 
-	if(u.uluck && moves % (u.uhave.amulet || u.ugangr ? 300 : 600) == 0) {
+	if (flags.friday13) baseluck -= 1;
+
+	if (u.uluck != baseluck &&
+		moves % (u.uhave.amulet || u.ugangr ? 300 : 600) == 0) {
 	/* Cursed luckstones stop bad luck from timing out; blessed luckstones
 	 * stop good luck from timing out; normal luckstones stop both;
 	 * neither is stopped if you don't have a luckstone.
@@ -167,9 +171,6 @@ nh_timeout()
 	 */
 	    register int time_luck = stone_luck(FALSE);
 	    boolean nostone = !carrying(LUCKSTONE) && !stone_luck(TRUE);
-	    int baseluck = (flags.moonphase == FULL_MOON) ? 1 : 0;
-
-	    baseluck -= (flags.friday13 ? 1 : 0);
 
 	    if(u.uluck > baseluck && (nostone || time_luck < 0))
 		u.uluck--;
