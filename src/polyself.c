@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)polyself.c	3.3	2000/04/19	*/
+/*	SCCS Id: @(#)polyself.c	3.3	2000/05/26	*/
 /*	Copyright (C) 1987, 1988, 1989 by Ken Arromdee */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -264,8 +264,11 @@ polyself()
 			else
 				mntmp = PM_VAMPIRE;
 		}
-		if (polymon(mntmp))
-			goto made_change;
+		/* if polymon fails, "you feel" message has been given
+		   so don't follow up with another polymon or newman */
+		if (mntmp == PM_HUMAN) newman();	/* werecritter */
+		else (void) polymon(mntmp);
+		goto made_change;    /* maybe not, but this is right anyway */
 	}
 
 	if (mntmp < LOW_PM) {
