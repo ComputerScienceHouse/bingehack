@@ -89,12 +89,12 @@ struct conditionals {
 	{ OBJ_GLYPH, SCR_STINKING_CLOUD+4, "stamped / mail" },
 #endif
 #ifndef NEW_WARNING
-	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 8), "warning 0" },
-	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 8), "warning 1" },
-	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 8), "warning 2" },
-	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 8), "warning 3" },
-	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 8), "warning 4" },
-	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 8), "warning 5" },
+	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 2), "warning 0" },
+	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 2), "warning 1" },
+	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 2), "warning 2" },
+	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 2), "warning 3" },
+	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 2), "warning 4" },
+	{ OTH_GLYPH, S_explode9 + (NUM_ZAP << 2), "warning 5" },
 #endif
 	{ 0, 0, 0}
 };
@@ -364,6 +364,11 @@ init_tilemap()
 	for (i = 0; i < NUM_ZAP << 2; i++) {
 		tilemap[GLYPH_ZAP_OFF+i] = tilenum;
 		tilenum++;
+		while (conditionals[condnum].sequence == OTH_GLYPH &&
+			conditionals[condnum].predecessor == (i + MAXPCHARS)) {
+			condnum++;
+			tilenum++;
+		}
 	}
 
 #ifdef NEW_WARNING
