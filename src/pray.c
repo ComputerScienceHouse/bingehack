@@ -136,7 +136,7 @@ in_trouble()
 		(uleft && uleft->otyp==RIN_LEVITATION && uleft->cursed) ||
 		(uright && uright->otyp==RIN_LEVITATION && uright->cursed))
 		return(TROUBLE_CURSED_LEVITATION);
-	if(ublindf && ublindf->cursed) return(TROUBLE_CURSED_BLINDFOLD);
+	if(Blindfolded && ublindf->cursed) return(TROUBLE_CURSED_BLINDFOLD);
 
 	if(Punished) return(TROUBLE_PUNISHED);
 	for(otmp=invent; otmp; otmp=otmp->nobj)
