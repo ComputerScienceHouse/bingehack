@@ -281,6 +281,7 @@ static int NDECL(input);
 
 %% YY_RULE_SETUP definition goes here
 
+int NDECL(yylex);
 int yylex()
 	{
 	register yy_state_type yy_current_state;
