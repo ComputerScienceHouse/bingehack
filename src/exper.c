@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)exper.c	3.3	97/01/29	*/
+/*	SCCS Id: @(#)exper.c	3.3	2000/07/23	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -132,25 +132,25 @@ const char *drainer;	/* cause of death, if drain should be fatal */
 		u.uexp = 0;
 	}
 	num = newhp();
-	u.uhp -= num;
-	if (u.uhp < 1)
-		u.uhp = 1;
 	u.uhpmax -= num;
-	if (u.uhpmax < 1)
-		u.uhpmax = 1;
+	if (u.uhpmax < 1) u.uhpmax = 1;
+	u.uhp -= num;
+	if (u.uhp < 1) u.uhp = 1;
+	else if (u.uhp > u.uhpmax) u.uhp = u.uhpmax;
+
 	if (u.ulevel < urole.xlev)
 	    num = rn1(u.ulevel/2 + urole.enadv.lornd + urace.enadv.lornd,
-	    		urole.enadv.lofix + urace.enadv.lofix);
+			urole.enadv.lofix + urace.enadv.lofix);
 	else
 	    num = rn1(u.ulevel/2 + urole.enadv.hirnd + urace.enadv.hirnd,
-	    		urole.enadv.hifix + urace.enadv.hifix);
+			urole.enadv.hifix + urace.enadv.hifix);
 	num = enermod(num);		/* M. Stephenson */
-	u.uen -= num;
-	if (u.uen < 0)
-		u.uen = 0;
 	u.uenmax -= num;
-	if (u.uenmax < 0)
-		u.uenmax = 0;
+	if (u.uenmax < 0) u.uenmax = 0;
+	u.uen -= num;
+	if (u.uen < 0) u.uen = 0;
+	else if (u.uen > u.uenmax) u.uen = u.uenmax;
+
 	if (u.uexp > 0)
 		u.uexp = newuexp(u.ulevel) - 1;
 	flags.botl = 1;
