@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)teleport.c	3.3	99/03/27	*/
+/*	SCCS Id: @(#)teleport.c	3.3	1999/11/27	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -640,6 +640,9 @@ level_tele()
 	    get_level(&newlevel, newlev);
 	}
 	schedule_goto(&newlevel, FALSE, FALSE, 0, (char *)0, (char *)0);
+	/* in case player just read a scroll and is about to be asked to
+	   call it something, we can't defer until the end of the turn */
+	if (u.utotype && !flags.mon_moving) deferred_goto();
 }
 
 void
