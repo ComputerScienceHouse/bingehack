@@ -1261,7 +1261,8 @@ boolean in_view;
 			if (!in_view)
 			    You_hear("%s shatter!", something);
 			else
-			    pline("%s shatters%s!", Doname2(obj), to_pieces);
+			    pline("%s shatter%s%s!", Doname2(obj),
+				(obj->quan==1) ? "s" : "", to_pieces);
 			break;
 		case EGG:
 			pline("Splat!");
