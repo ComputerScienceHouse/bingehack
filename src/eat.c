@@ -54,6 +54,9 @@ char msgbuf[BUFSZ];
 #define FAINTED		5
 #define STARVED		6
 
+/* also used to see if you're allowed to eat cats and dogs */
+#define CANNIBAL_ALLOWED() (Role_if(PM_CAVEMAN) || Race_if(PM_ORC))
+
 #ifndef OVLB
 
 STATIC_DCL NEARDATA const char comestibles[];
@@ -421,7 +424,7 @@ STATIC_OVL void
 cprefx(pm)
 register int pm;
 {
-	if (your_race(&mons[pm])) {
+	if (!CANNIBAL_ALLOWED() && your_race(&mons[pm])) {
 		if (Upolyd)
 			You("have a bad feeling deep inside.");
 		You("cannibal!  You will regret this!");
@@ -451,8 +454,10 @@ register int pm;
 	    case PM_KITTEN:
 	    case PM_HOUSECAT:
 	    case PM_LARGE_CAT:
-		You_feel("that eating the %s was a bad idea.", mons[pm].mname);
-		HAggravate_monster |= FROMOUTSIDE;
+		if (!CANNIBAL_ALLOWED()) {
+		    You_feel("that eating the %s was a bad idea.", mons[pm].mname);
+		    HAggravate_monster |= FROMOUTSIDE;
+		}
 		break;
 	    case PM_LIZARD:
 		if (Stoned) fix_petrification();
