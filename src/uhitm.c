@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)uhitm.c	3.3	1999/08/16	*/
+/*	SCCS Id: @(#)uhitm.c	3.3	1999/12/20	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -548,7 +548,7 @@ int thrown;
 			  obj->oclass == WEAPON_CLASS &&
 			  (bimanual(obj) ||
 			    (Role_if(PM_SAMURAI) && obj->otyp == KATANA && !uarms)) &&
-			  ((wtype = weapon_type(obj)) != P_NONE &&
+			  ((wtype = uwep_skill_type()) != P_NONE &&
 			    P_SKILL(wtype) >= P_SKILLED) &&
 			  ((monwep = MON_WEP(mon)) != 0 &&
 			    weapon_type(monwep) != P_WHIP &&
@@ -819,7 +819,9 @@ int thrown;
 	    /* to be valid a projectile must have had the correct projector */
 	    wep = PROJECTILE(obj) ? uwep : obj;
 	    tmp += weapon_dam_bonus(wep);
-	    use_skill(weapon_type(wep), 1);
+	    /* [this assumes that `!thrown' implies wielded...] */
+	    wtype = thrown ? weapon_type(wep) : uwep_skill_type();
+	    use_skill(wtype, 1);
 	}
 
 	if (ispoisoned) {

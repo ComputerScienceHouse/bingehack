@@ -2098,6 +2098,7 @@ use_pole (obj)
 	    if (!wield_tool(obj)) return(0);
 	    else res = 1;
 	}
+     /* assert(obj == uwep); */
 
 	/* Prompt for a location */
 	pline(where_to_hit);
@@ -2107,7 +2108,7 @@ use_pole (obj)
 	    return 0;	/* user pressed ESC */
 
 	/* Calculate range */
-	typ = weapon_type(obj);
+	typ = uwep_skill_type();
 	if (typ == P_NONE || P_SKILL(typ) <= P_BASIC) max_range = 4;
 	else if (P_SKILL(typ) == P_SKILLED) max_range = 5;
 	else max_range = 8;
@@ -2124,7 +2125,7 @@ use_pole (obj)
 
 	/* Attack the monster there */
 	if ((mtmp = m_at(cc.x, cc.y)) != (struct monst *)0)
-	    (void) thitmonst(mtmp, obj);
+	    (void) thitmonst(mtmp, uwep);
 	else
 	    /* Now you know that nothing is there... */
 	    pline(nothing_happens);
@@ -2141,7 +2142,6 @@ use_grapple (obj)
 	struct monst *mtmp;
 	struct obj *otmp;
 
-
 	/* Are you allowed to use the hook? */
 	if (u.uswallow) {
 	    pline(not_enough_room);
@@ -2151,6 +2151,7 @@ use_grapple (obj)
 	    if (!wield_tool(obj)) return(0);
 	    else res = 1;
 	}
+     /* assert(obj == uwep); */
 
 	/* Prompt for a location */
 	pline(where_to_hit);
@@ -2160,7 +2161,7 @@ use_grapple (obj)
 	    return 0;	/* user pressed ESC */
 
 	/* Calculate range */
-	typ = weapon_type(obj);
+	typ = uwep_skill_type();
 	if (typ == P_NONE || P_SKILL(typ) <= P_BASIC) max_range = 4;
 	else if (P_SKILL(typ) == P_SKILLED) max_range = 5;
 	else max_range = 8;
@@ -2179,39 +2180,38 @@ use_grapple (obj)
 	    /* FIXME -- untrap needs to deal with non-adjacent traps */
 	    break;
 	case 1:	/* Object */
-	    if ((otmp = level.objects[cc.x][cc.y]) !=
-	    		(struct obj *)0) {
-	    	You("snag an object from the %s!", surface(cc.x, cc.y));
-	    	(void) pickup_object(otmp, 1L, FALSE);
-	    	/* If pickup fails, leave it alone */
-	    	newsym(cc.x, cc.y);
-	    	return (1);
+	    if ((otmp = level.objects[cc.x][cc.y]) != 0) {
+		You("snag an object from the %s!", surface(cc.x, cc.y));
+		(void) pickup_object(otmp, 1L, FALSE);
+		/* If pickup fails, leave it alone */
+		newsym(cc.x, cc.y);
+		return (1);
 	    }
 	    break;
 	case 2:	/* Monster */
 	    if ((mtmp = m_at(cc.x, cc.y)) == (struct monst *)0) break;
 	    if (verysmall(mtmp->data) && !rn2(4) &&
-	    		enexto(&cc, u.ux, u.uy, (struct permonst *)0)) {
-	    	You("pull in %s!", mon_nam(mtmp));
-	    	mtmp->mundetected = 0;
-	    	rloc_to(mtmp, cc.x, cc.y);
-	    	return (1);
+			enexto(&cc, u.ux, u.uy, (struct permonst *)0)) {
+		You("pull in %s!", mon_nam(mtmp));
+		mtmp->mundetected = 0;
+		rloc_to(mtmp, cc.x, cc.y);
+		return (1);
 	    } else if ((!bigmonst(mtmp->data) && !strongmonst(mtmp->data)) ||
 		       rn2(4)) {
-	    	(void) thitmonst(mtmp, obj);
-	    	return (1);
+		(void) thitmonst(mtmp, uwep);
+		return (1);
 	    }
 	    /* FALL THROUGH */
 	case 3:	/* Surface */
 	    You("are yanked toward the %s!",
-	    		surface(cc.x, cc.y));
+			surface(cc.x, cc.y));
 	    hurtle(sgn(cc.x-u.ux), sgn(cc.y-u.uy), 1, FALSE);
 	    return (1);
 	default:	/* Yourself (oops!) */
 	    if (P_SKILL(typ) <= P_BASIC) {
-	    	You("hook yourself!");
-	    	losehp(rn1(10,10), "a grappling hook", KILLED_BY);
-	    	return (1);
+		You("hook yourself!");
+		losehp(rn1(10,10), "a grappling hook", KILLED_BY);
+		return (1);
 	    }
 	    break;
 	}

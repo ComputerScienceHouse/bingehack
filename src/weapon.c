@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)weapon.c	3.3	1999/11/29	*/
+/*	SCCS Id: @(#)weapon.c	3.3	1999/12/20	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -950,20 +950,25 @@ weapon_type(obj)
 struct obj *obj;
 {
 	/* KMH -- now uses the object table */
-    int type;
-
+	int type;
 
 	if (!obj)
 		/* Not using a weapon */
 		return (P_BARE_HANDED_COMBAT);
-	if (u.twoweap)
-		return (P_TWO_WEAPON_COMBAT);
 	if (obj->oclass != WEAPON_CLASS && obj->oclass != TOOL_CLASS &&
 	    obj->oclass != GEM_CLASS)
 		/* Not a weapon, weapon-tool, or ammo */
 		return (P_NONE);
 	type = objects[obj->otyp].oc_skill;
 	return ((type < 0) ? -type : type);
+}
+
+int
+uwep_skill_type()
+{
+	if (u.twoweap)
+		return P_TWO_WEAPON_COMBAT;
+	return weapon_type(uwep);
 }
 
 /*
