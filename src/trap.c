@@ -2189,11 +2189,17 @@ drown()
 		if (Amphibious) {
 			if (flags.verbose)
 				pline("But you aren't drowning.");
-			if (!Is_waterlevel(&u.uz))
+			if (!Is_waterlevel(&u.uz)) {
 				if (Hallucination)
 					Your("keel hits the bottom.");
 				else
 					You("touch bottom.");
+			}
+			if (u.umonnum == PM_IRON_GOLEM) {
+				You("are covered with rust!");
+				rehumanize();
+				return(!is_pool(u.ux,u.uy));
+			}
 		}
 		if (Punished) {
 			unplacebc();

@@ -375,10 +375,15 @@ peffects(otmp)
 		break;
 	case POT_WATER:
 		if(!otmp->blessed && !otmp->cursed) {
-			pline("This tastes like water.");
+		    pline("This tastes like water.");
+		    if (u.umonnum == PM_IRON_GOLEM) {
+			You("rust from the inside out!");
+			rehumanize();
+		    } else {
 			u.uhunger += rnd(10);
 			newuhs(FALSE);
-			break;
+		    }
+		    break;
 		}
 		unkn++;
 		if(is_undead(youmonst.data) || is_demon(youmonst.data) ||
@@ -419,6 +424,11 @@ peffects(otmp)
 			if (u.ulycn >= LOW_PM && !Upolyd) you_were();
 			exercise(A_CON, FALSE);
 		    }
+		}
+		if (u.umonnum == PM_IRON_GOLEM) {
+		    You("rust from the inside out!");
+		    rehumanize();
+		    unkn--;	/* undo unkn; it must be water */
 		}
 		break;
 	case POT_BOOZE:
@@ -981,6 +991,12 @@ boolean your_fault;
 		} else if(mon->data == &mons[PM_GREMLIN]) {
 		    angermon = FALSE;
 		    (void)split_mon(mon, (struct monst *)0);
+		} else if(mon->data == &mons[PM_IRON_GOLEM]) {
+		    if (canseemon(mon))
+			pline("%s rusts.", Monnam(mon));
+		    mon->mhp -= d(2,6);
+		    /* should only be by you */
+		    if (mon->mhp < 1) killed(mon);
 		}
 		break;
 	case POT_OIL:

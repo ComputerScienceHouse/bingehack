@@ -335,10 +335,15 @@ register struct monst *mtmp;
 	 * water damage to dead monsters' inventory, but survivors need to
 	 * be handled here.  Swimmers are able to protect their stuff...
 	 */
-	if (!is_clinger(mtmp->data)
-	    && !is_swimmer(mtmp->data) && !amphibious(mtmp->data)) {
-	    if (cansee(mtmp->mx,mtmp->my))
-		pline("%s drowns.", Monnam(mtmp));
+	if ((!is_clinger(mtmp->data)
+	     && !is_swimmer(mtmp->data) && !amphibious(mtmp->data))
+	    || (mtmp->data == &mons[PM_IRON_GOLEM])) {
+	    if (cansee(mtmp->mx,mtmp->my)) {
+		if (mtmp->data == &mons[PM_IRON_GOLEM])
+		    pline("%s falls to pieces!", Monnam(mtmp));
+		else
+		    pline("%s drowns.", Monnam(mtmp));
+	    }
 	    mondead(mtmp);
 	    if (mtmp->mhp > 0) {
 		rloc(mtmp);
