@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)artifact.c 3.3	2000/01/11	*/
+/*	SCCS Id: @(#)artifact.c 3.3	2000/08/13	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -60,7 +60,7 @@ hack_artifacts()
 
 	/* Excalibur can be used by any lawful character, not just knights */
 	if (!Role_if(PM_KNIGHT))
-	    artilist[ART_EXCALIBUR].role = 0;		/****FIXME****/
+	    artilist[ART_EXCALIBUR].role = NON_PM;
 
 	/* Fix up the quest artifact */
 	if (urole.questarti) {
