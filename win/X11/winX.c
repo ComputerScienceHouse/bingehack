@@ -1123,6 +1123,7 @@ askname_done(w, client_data, call_data)
 
     (void) strncpy(plname, s, len);
     plname[len] = '\0';
+    XtFree(s);
 
     nh_XtPopdown(XtParent(dialog));
     exit_x_event = TRUE;
@@ -1179,6 +1180,7 @@ done_button(w, client_data, call_data)
 
     s = (char *) GetDialogResponse(dialog);
     Strcpy(getline_input, s);
+    XtFree(s);
     nh_XtPopdown(XtParent(dialog));
     exit_x_event = TRUE;
 }

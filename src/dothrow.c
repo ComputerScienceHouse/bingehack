@@ -670,9 +670,11 @@ register struct obj *obj;
 		(void) snuff_candle(obj);
 		notonhead = (bhitpos.x != mon->mx || bhitpos.y != mon->my);
 		obj_gone = thitmonst(mon, obj);
+		/* Monster may have been tamed; this frees old mon */
+		mon = m_at(bhitpos.x, bhitpos.y);
 
 		/* [perhaps this should be moved into thitmonst or hmon] */
-		if (mon->isshk &&
+		if (mon && mon->isshk &&
 			(!inside_shop(u.ux, u.uy) ||
 			 !index(in_rooms(mon->mx, mon->my, SHOPBASE), *u.ushops)))
 		    hot_pursuit(mon);

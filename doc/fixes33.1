@@ -25,6 +25,7 @@ W command would list entire inventory if you answered '?' to the "what do
 	you want to wear?" prompt when all unworn armor couldn't be worn
 #looting and applying containers with menustyle != traditional would do bad
 	things if you split a merged stack in quiver or secondary weapon slot
+save/restore while mounted or stuck could cause a game crash or other errors
 
 
 Platform- and/or Interface-Specific Fixes
@@ -37,6 +38,7 @@ NT: WIN32 specific code in tty_nh_poskey() was missing the
 Linux: set MAILPATH properly
 Qt: remove intermediate files on 'make spotless'
 Qt: modify makefile to allow use with BSD make and FreeBSD
+X11: fix memory leaks is reading from dialogs
 
 
 General New Features

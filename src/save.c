@@ -53,6 +53,9 @@ static long nulls[10];
 # endif
 #endif
 
+/* need to preserve these during save to avoid accessing freed memory */
+static unsigned ustuck_id = 0, usteed_id = 0;
+
 int
 dosave()
 {
@@ -198,6 +201,10 @@ dosave0()
 #endif /* MFLOPPY */
 
 	store_version(fd);
+	ustuck_id = (u.ustuck ? u.ustuck->m_id : 0);
+#ifdef STEED
+	usteed_id = (u.usteed ? u.usteed->m_id : 0);
+#endif
 	savelev(fd, ledger_no(&u.uz), WRITE_SAVE | FREE_SAVE);
 	savegamestate(fd, WRITE_SAVE | FREE_SAVE);
 
@@ -284,11 +291,11 @@ register int fd, mode;
 				sizeof(struct spell) * (MAXSPELL + 1));
 	save_artifacts(fd);
 	save_oracles(fd, mode);
-	if(u.ustuck)
-	    bwrite(fd, (genericptr_t) &(u.ustuck->m_id), sizeof u.ustuck->m_id);
+	if(ustuck_id)
+	    bwrite(fd, (genericptr_t) &ustuck_id, sizeof ustuck_id);
 #ifdef STEED
-	if(u.usteed)
-		bwrite(fd, (genericptr_t) &(u.usteed->m_id), sizeof u.usteed->m_id);
+	if(usteed_id)
+	    bwrite(fd, (genericptr_t) &usteed_id, sizeof usteed_id);
 #endif
 	bwrite(fd, (genericptr_t) pl_character, sizeof pl_character);
 	bwrite(fd, (genericptr_t) pl_fruit, sizeof pl_fruit);
@@ -352,6 +359,10 @@ savestateinlock()
 		    (void) write(fd, (genericptr_t) &currlev, sizeof(currlev));
 		    save_savefile_name(fd);
 		    store_version(fd);
+		    ustuck_id = (u.ustuck ? u.ustuck->m_id : 0);
+#ifdef STEED
+		    usteed_id = (u.usteed ? u.usteed->m_id : 0);
+#endif
 		    savegamestate(fd, WRITE_SAVE);
 		}
 		bclose(fd);
