@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)nttty.c	3.3	96/10/21
+/*	SCCS Id: @(#)nttty.c	3.3	2000/08/02
 /* Copyright (c) NetHack PC Development Team 1993    */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -291,10 +291,6 @@ boolean *valid;
             }
         }
         else if (altseq) { /* ALT sequence */
-#if 0
-	    pline("Here is the received Scan code in decimal and hex: %d, 0x%03X",
-			scan, scan);
-#endif
             altseq = 0;
             if (!ch && inmap(scan)) ch = scanmap[scan - SCANLO];
             if (index(extendedlist, tolower(ch)) != 0) ch = M(tolower(ch));
@@ -428,7 +424,7 @@ get_scr_size()
 
 	    tmpy = csbi.dwSize.Y;
 	    tmpx = csbi.dwSize.X;
-	    if ((tmpy > 25) || (tmpx > 80)) {
+	    if ((tmpy < 25) || (tmpx < 80)) {
 	    	newcoord.Y = 25;
 	    	newcoord.X = 80;
 	    	SetConsoleScreenBufferSize(hConOut, newcoord);
