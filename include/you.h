@@ -190,7 +190,6 @@ extern struct Race urace;
 #define Race_if(X)	(urace.malenum == (X))
 #define Race_switch	(urace.malenum)
 
-
 /*** Unified structure specifying gender information ***/
 struct Gender {
 	const char *adj;	/* male/female/neuter */
@@ -259,23 +258,6 @@ struct you {
 #define SICK_VOMITABLE 0x01
 #define SICK_NONVOMITABLE 0x02
 #define SICK_ALL 0x03
-
-/* For messages referring to hands, eyes, feet, etc... when polymorphed */
-#define ARM 0
-#define EYE 1
-#define FACE 2
-#define FINGER 3
-#define FINGERTIP 4
-#define FOOT 5
-#define HAND 6
-#define HANDED 7
-#define HEAD 8
-#define LEG 9
-#define LIGHT_HEADED 10
-#define NECK 11
-#define SPINE 12
-#define TOE 13
-#define HAIR 14
 
 	/* These ranges can never be more than MAX_RANGE (vision.h). */
 	int nv_range;		/* current night vision range */

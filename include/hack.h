@@ -159,6 +159,24 @@ NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
 #define ROLL	1
 #define FLING	2
 
+/* Macros for messages referring to hands, eyes, feet, etc... */
+#define ARM 0
+#define EYE 1
+#define FACE 2
+#define FINGER 3
+#define FINGERTIP 4
+#define FOOT 5
+#define HAND 6
+#define HANDED 7
+#define HEAD 8
+#define LEG 9
+#define LIGHT_HEADED 10
+#define NECK 11
+#define SPINE 12
+#define TOE 13
+#define HAIR 14
+#define BLOOD 15
+
 /* Flags to control menus */
 #define MENUTYPELEN sizeof("traditional ")
 #define MENU_TRADITIONAL 0

@@ -257,7 +257,7 @@ register xchar x,y,cnt;
 	/* Headstones are indelible */
 	if(ep && ep->engr_type != HEADSTONE){
 	    if(ep->engr_type != BURN || is_ice(x,y)) {
-		if(ep->engr_type != DUST && ep->engr_type != BLOOD) {
+		if(ep->engr_type != DUST && ep->engr_type != ENGR_BLOOD) {
 			cnt = rn2(1 + 50/(cnt+1)) ? 0 : 1;
 		}
 		wipeout_text(ep->engr_txt, (int)cnt, 0);
@@ -314,7 +314,7 @@ register int x,y;
 				surface(x,y));
 		}
 		break;
-	    case BLOOD:
+	    case ENGR_BLOOD:
 		/* "It's a message!  Scrawled in blood!"
 		 * "What's it say?"
 		 * "It says... `See you next Wednesday.'" -- Thriller
@@ -457,7 +457,7 @@ doengrave()
 	post_engr_text[0] = (char)0;
 	maxelen = BUFSZ - 1;
 	if (is_demon(youmonst.data) || youmonst.data->mlet == S_VAMPIRE)
-	    type = BLOOD;
+	    type = ENGR_BLOOD;
 
 	/* Can the adventurer engrave at all? */
 
@@ -731,7 +731,7 @@ doengrave()
 			break;
 
 		    /* type = MARK wands */
-		    /* type = BLOOD wands */
+		    /* type = ENGR_BLOOD wands */
 		    }
 		} else /* end if zappable */
 		    if (!can_reach_floor()) {
@@ -766,7 +766,7 @@ doengrave()
 			ptext = FALSE;
 			if (oep)
 			    if ((oep->engr_type == DUST ) ||
-				(oep->engr_type == BLOOD) ||
+				(oep->engr_type == ENGR_BLOOD) ||
 				(oep->engr_type == MARK )) {
 				if (!Blind)
 				    You("wipe out the message here.");
@@ -860,12 +860,12 @@ doengrave()
 
 	    if (c == 'n' || Blind) {
 
-		if( (oep->engr_type == DUST) || (oep->engr_type == BLOOD) ||
+		if( (oep->engr_type == DUST) || (oep->engr_type == ENGR_BLOOD) ||
 		    (oep->engr_type == MARK) ) {
 		    if (!Blind) {
 			You("wipe out the message that was %s here.",
 			    ((oep->engr_type == DUST)  ? "written in the dust" :
-			    ((oep->engr_type == BLOOD) ? "scrawled in blood"   :
+			    ((oep->engr_type == ENGR_BLOOD) ? "scrawled in blood"   :
 							 "written")));
 			del_engr(oep);
 			oep = (struct engr *)0;
@@ -873,7 +873,7 @@ doengrave()
 		   /* Don't delete engr until after we *know* we're engraving */
 			eow = TRUE;
 		} else
-		    if ( (type == DUST) || (type == MARK) || (type == BLOOD) ) {
+		    if ( (type == DUST) || (type == MARK) || (type == ENGR_BLOOD) ) {
 			You(
 			 "cannot wipe out the message that is %s the %s here.",
 			 oep->engr_type == BURN ?
@@ -914,7 +914,7 @@ doengrave()
 		everb = (oep && !eow ? "add to the graffiti on" :
 				       "scribble on");
 		break;
-	    case BLOOD:
+	    case ENGR_BLOOD:
 		everb = (oep && !eow ? "add to the scrawl on" :
 				       "scrawl on");
 		break;
@@ -934,7 +934,7 @@ doengrave()
 	/* Mix up engraving if surface or state of mind is unsound.  */
 	/* Original kludge by stewr 870708.  modified by njm 910722. */
 	for (sp = ebuf; *sp; sp++)
-	    if ( ((type == DUST || type == BLOOD) && !rn2(25)) ||
+	    if ( ((type == DUST || type == ENGR_BLOOD) && !rn2(25)) ||
 		 (Blind   && !rn2(9)) || (Confusion     && !rn2(12)) ||
 		 (Stunned && !rn2(4)) || (Hallucination && !rn2(1)) )
 		 *sp = '!' + rn2(93); /* ASCII-code only */
@@ -1026,7 +1026,7 @@ doengrave()
 		}
 		if (multi) nomovemsg = "You finish defacing the dungeon.";
 		break;
-	    case BLOOD:
+	    case ENGR_BLOOD:
 		multi = -(len/10);
 		if (multi) nomovemsg = "You finish scrawling.";
 		break;

@@ -414,6 +414,7 @@ register struct monst *mtmp;
     register const char *pline_msg = 0,	/* Monnam(mtmp) will be prepended */
 			*verbl_msg = 0;	/* verbalize() */
     struct permonst *ptr = mtmp->data;
+    char verbuf[BUFSZ];
 
     /* presumably nearness and sleep checks have already been made */
     if (!flags.soundok) return(0);
@@ -440,10 +441,69 @@ register struct monst *mtmp;
 	    shk_chat(mtmp);
 	    break;
 	case MS_VAMPIRE:
-	    if (mtmp->mpeaceful)
-	    	verbl_msg = "I only drink... potions.";
-	    else
-	    	verbl_msg = "I vant to suck your blood!";
+	    {
+	    /* vampire messages are varied by tameness, peacefulness, and time of night */
+		boolean isnight = night();
+		boolean kindred =    (Upolyd && (u.umonnum == PM_VAMPIRE ||
+				       u.umonnum == PM_VAMPIRE_LORD));
+		boolean nightchild = (Upolyd && (u.umonnum == PM_WOLF ||
+				       u.umonnum == PM_WINTER_WOLF ||
+	    			       u.umonnum == PM_WINTER_WOLF_CUB));
+		const char *racenoun = (flags.female && urace.individual.f) ?
+					urace.individual.f : (urace.individual.m) ?
+					urace.individual.m : urace.noun;
+
+		if (mtmp->mtame) {
+			if (kindred) {
+				Sprintf(verbuf, "Good %s to you Master%s",
+					isnight ? "evening" : "day",
+					isnight ? "!" : ".  Why do we not rest?");
+				verbl_msg = verbuf;
+		    	} else {
+		    	    Sprintf(verbuf,"%s%s",
+				nightchild ? "Child of the night, " : "",
+				midnight() ?
+					"I can stand this craving no longer!" :
+				isnight ?
+					"I beg you, help me satisfy this growing craving!" :
+					"I find myself growing a little weary.");
+				verbl_msg = verbuf;
+			}
+		} else if (mtmp->mpeaceful) {
+			if (kindred && isnight) {
+				Sprintf(verbuf, "Good feeding %s!",
+	    				flags.female ? "sister" : "brother");
+				verbl_msg = verbuf;
+ 			} else if (nightchild && isnight) {
+				Sprintf(verbuf,
+				    "How nice to hear you, child of the night!");
+				verbl_msg = verbuf;
+	    		} else
+		    		verbl_msg = "I only drink... potions.";
+    	        } else {
+			int vampindex;
+	    		char *vampmsg[] = {
+			       /* These first two (0 and 1) are specially handled below */
+	    			"I vant to suck your %s!",
+	    			"I vill come after %s without regret!",
+		    	       /* other famous vampire quotes can follow here if desired */
+	    		};
+			if (kindred)
+			    verbl_msg = "This is my hunting ground that you dare to prowl!";
+			else {
+			    vampindex = rn2(SIZE(vampmsg));
+			    if (vampindex == 0) {
+				Sprintf(verbuf, vampmsg[vampindex], body_part(BLOOD));
+	    			verbl_msg = verbuf;
+			    } else if (vampindex == 1) {
+				Sprintf(verbuf, vampmsg[vampindex],
+					Upolyd ? an(mons[u.umonnum].mname) : an(racenoun));
+	    			verbl_msg = verbuf;
+		    	    } else
+			    	verbl_msg = vampmsg[vampindex];
+			}
+	        }
+	    }
 	    break;
 	case MS_WERE:
 	    if (flags.moonphase == FULL_MOON && (night() ^ !rn2(13))) {
