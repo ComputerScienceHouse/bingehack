@@ -99,10 +99,6 @@ int FDECL(parse_config_line, (FILE *,char *,char *,char *));
 extern void NDECL(dircheck);
 #endif
 
-#ifdef MAC
-extern void FDECL(C2P,(const char *c, unsigned char *p));
-#endif
-
 
 /* fopen a file, with OS-dependent bells and whistles */
 /* NOTE: a simpler version of this routine also exists in util/dlb_main.c */
@@ -774,11 +770,12 @@ boolean uncomp;
 void
 compress(filename)
 const char *filename;
-#ifdef applec
+{
+#ifndef COMPRESS
+#if defined(applec) || defined(__MWERKS__)
 # pragma unused(filename)
 #endif
-{
-#ifdef COMPRESS
+#else
 	docompress_file(filename, FALSE);
 #endif
 }
@@ -788,11 +785,12 @@ const char *filename;
 void
 uncompress(filename)
 const char *filename;
-#ifdef applec
+{
+#ifndef COMPRESS
+#if defined(applec) || defined(__MWERKS__)
 # pragma unused(filename)
 #endif
-{
-#ifdef COMPRESS
+#else
 	docompress_file(filename, TRUE);
 #endif
 }
@@ -815,7 +813,10 @@ make_lockname(filename, lockname)
 const char *filename;
 char *lockname;
 {
-#if defined(UNIX) || defined(VMS) || defined(AMIGA) || defined(WIN32) || defined(MSDOS)
+#if defined(applec) || defined(__MWERKS__)
+# pragma unused(filename,lockname)
+	return (char*)0;
+#elif defined(UNIX) || defined(VMS) || defined(AMIGA) || defined(WIN32) || defined(MSDOS)
 # ifdef NO_FILE_LINKS
 	Strcpy(lockname, LOCKDIR);
 	Strcat(lockname, "/");
@@ -845,10 +846,10 @@ boolean
 lock_file(filename, retryct)
 const char *filename;
 int retryct;
-#ifdef applec
+{
+#if defined(applec) || defined(__MWERKS__)
 # pragma unused(filename, retryct)
 #endif
-{
 	char *lockname, locknambuf[BUFSZ];
 
 #ifdef WIN32
@@ -1164,10 +1165,10 @@ FILE		*fp;
 char		*buf;
 char		*tmp_ramdisk;
 char		*tmp_levels;
-#if defined(applec)
+{
+#if defined(applec) || defined(__MWERKS__)
 # pragma unused(tmp_ramdisk,tmp_levels)
 #endif
-{
 	char		*bufp, *altp;
 	uchar   translate[MAXPCHARS];
 	int   len;
@@ -1445,10 +1446,10 @@ const char *filename;
 void
 check_recordfile(dir)
 const char *dir;
-#if defined(applec)
+{
+#if defined(applec) || defined(__MWERKS__)
 # pragma unused(dir)
 #endif
-{
 #if defined(UNIX) || defined(VMS)
 	int fd = open(RECORD, O_RDWR, 0);
 
@@ -1507,13 +1508,9 @@ const char *dir;
 #else /* MICRO */
 
 # ifdef MAC
-	Str255 filename;
-	FInfo info;
-
 	/* Create the "record" file, if necessary */
-	C2P(RECORD, filename);
-	if (HGetFInfo(theDirs.dataRefNum, theDirs.dataDirID, filename, &info) != noErr)
-	    HCreate(theDirs.dataRefNum, theDirs.dataDirID, filename, 'ttxt', 'TEXT');
+	int fd = macopen (RECORD, O_RDWR | O_CREAT, TEXT_TYPE);
+	if (fd != -1) macclose (fd);
 # endif /* MAC */
 
 #endif /* MICRO */
