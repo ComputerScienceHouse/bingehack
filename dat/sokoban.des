@@ -9,16 +9,16 @@
 # The following actions are currently permitted without penalty:
 #   Carrying or throwing a boulder already in inventory
 #     (player or nonplayer).
+#   Teleporting boulders.
+#   Digging in the floor.
 # The following actions are permitted, but with a luck penalty:
-#   Breaking boulders (including by other monsters).
+#   Breaking boulders.
 #   Stone-to-fleshing boulders.
 #   Creating new boulders (e.g., with a scroll of earth).
-#   Teleporting boulders.
 #   Jumping.
 #   Being pulled by a thrown iron ball.
 #   Hurtling through the air from Newton's 3rd law.
 #   Squeezing past boulders when naked or as a giant.
-#   Digging in the floor.
 # These actions are not permitted:
 #   Moving diagonally between two boulders and/or walls.
 #   Pushing a boulder diagonally.
