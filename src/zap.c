@@ -1417,17 +1417,7 @@ struct obj *obj, *otmp;
 			} else if (obj->otyp == STATUE) {
 			    xchar oox, ooy;
 
-			    switch(obj->where) {
-				case OBJ_MINVENT: oox = obj->ocarry->mx;
-				    ooy = obj->ocarry->my;
-				    break;
-				case OBJ_INVENT: oox = u.ux; ooy = u.uy; break;
-				default: impossible("where was %d?",
-				    obj->where);
-				    /* fall through */
-				case OBJ_FLOOR: oox = obj->ox; ooy = obj->oy;
-				    break;
-			    }
+			    get_obj_location(obj, &oox, &ooy, 0);
 			    if (!animate_statue(obj, oox, ooy,
 						ANIMATE_SPELL, (int *)0)) {
 makecorpse:			if (mvitals[obj->corpsenm].mvflags & (G_NOCORPSE|G_UNIQ)) {
@@ -1454,17 +1444,7 @@ makecorpse:			if (mvitals[obj->corpsenm].mvflags & (G_NOCORPSE|G_UNIQ)) {
 			    res = 0;
 			    break;
 			}
-			switch(obj->where) {
-			    case OBJ_MINVENT: oox = obj->ocarry->mx;
-				ooy = obj->ocarry->my;
-				break;
-			    case OBJ_INVENT: oox = u.ux; ooy = u.uy; break;
-			    default: impossible("where was %d?",
-				obj->where);
-				/* fall through */
-			    case OBJ_FLOOR: oox = obj->ox; ooy = obj->oy;
-				break;
-			}
+			get_obj_location(obj, &oox, &ooy, 0);
 			mon = makemon(&mons[obj->corpsenm],
 				      oox, ooy, NO_MM_FLAGS);
 			if (mon) {
