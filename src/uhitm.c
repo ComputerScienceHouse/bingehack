@@ -1546,6 +1546,7 @@ register struct attack *mattk;
 			     * if his See_invisible wears off
 			     */
 			    You("digest %s.", mon_nam(mdef));
+			    if (Slow_digestion) tmp *= 2;
 			    nomul(-tmp);
 			    nomovemsg = msgbuf;
 			} else pline(msgbuf);

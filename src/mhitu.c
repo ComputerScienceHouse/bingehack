@@ -1634,7 +1634,7 @@ gulpmu(mtmp, mattk)	/* monster swallows you, or damage if u.uswallow */
 		expels(mtmp, mtmp->data, FALSE);
 	} else if (!u.uswldtim || youmonst.data->msize >= MZ_HUGE) {
 	    You("get %s!", is_animal(mtmp->data)? "regurgitated" : "expelled");
-	    if (flags.verbose && (is_animal(mtmp->data) || Slow_digestion))
+	    if (flags.verbose && (is_animal(mtmp->data) || (dmgtype(mtmp->data, AD_DGST) && Slow_digestion)))
 		    pline("Obviously %s doesn't like your taste.",
 			   mon_nam(mtmp));
 	    expels(mtmp, mtmp->data, FALSE);
