@@ -47,7 +47,7 @@ extern WindowPtr _mt_window;
 
 /* Some useful #defines for the scroll bar width and height */
 #define		SBARWIDTH	15
-#define		SBARHEIGHT	13
+#define		SBARHEIGHT	15
 
 /*
  * We put a TE on the message window for the "top line" queries.
@@ -448,9 +448,9 @@ short val, lin, win_height;
 	}
 	if ((*aWin->scrollBar)->contrlRect.bottom != r.bottom - SBARHEIGHT ||
 		 (*aWin->scrollBar)->contrlRect.right != r.right + 1) {
-		SizeControl (aWin->scrollBar, SBARWIDTH+1, win_height - SBARHEIGHT + 1);
+		SizeControl (aWin->scrollBar, SBARWIDTH+1, win_height - SBARHEIGHT + 2);
 	}
-	vis = ((r.bottom - r.top) > (50 + SBARHEIGHT + 1));
+	vis = (win_height > (50 + SBARHEIGHT));
 	if (vis != (*aWin->scrollBar)->contrlVis) {
 		/* current status != control */
 		if (vis)/* if visible, show */
@@ -461,7 +461,7 @@ short val, lin, win_height;
 	lin = aWin->y_size;
 	if (aWin == theWindows + WIN_MESSAGE) {
 		/* calculate how big scroll bar is for message window */
-		lin -= (win_height - SBARHEIGHT + 1) / aWin->row_height;
+		lin -= (win_height - SBARHEIGHT) / aWin->row_height;
 		if (lin < 0)
 			lin = 0;		
 		val = 0;			/* always have message scrollbar active */
@@ -758,7 +758,7 @@ mac_clear_nhwindow (winid win) {
 	case NHW_MESSAGE :
 		if (aWin->scrollPos == aWin->y_size - 1)	/* if no change since last clear */
 			return;					/* don't bother with redraw */
-		r.bottom -= SBARHEIGHT + 1;
+		r.bottom -= SBARHEIGHT;
 		for (l = 0; aWin->y_size > iflags.msg_history;) {
 			const char cr = CHAR_CR;
 			l = Munger(aWin->windowText, l, &cr, 1, nil, 0) + 1;
@@ -814,7 +814,7 @@ ClosingWindowChar(const int c) {
 
 #define BTN_IND 2
 #define BTN_W	40
-#define BTN_H	(SBARHEIGHT-2)
+#define BTN_H	(SBARHEIGHT-3)
 
 static Boolean
 in_topl_mode(void) {
@@ -1417,7 +1417,7 @@ MoveScrollBar (ControlHandle theBar, int amtToScroll) {
 	r = winToScroll->its_window->portRect;
 	r.right -= SBARWIDTH;
 	if (winToScroll == theWindows + WIN_MESSAGE)
-		r.bottom -= SBARHEIGHT + 1;
+		r.bottom -= SBARHEIGHT;
 	ScrollRect (&r, 0, -amtToScroll *winToScroll->row_height, rgn);
 	if (rgn) {
 		InvalRgn (rgn);
@@ -1728,7 +1728,7 @@ macUpdateMessage (EventRecord *theEvent, WindowPtr theWindow) {
 	}
 
 	r.right -= SBARWIDTH;
-	r.bottom -= SBARHEIGHT + 1;
+	r.bottom -= SBARHEIGHT;
 	/* Clip to the portrect - scrollbar/growicon *before* adjusting the rect
 		to be larger than the size of the window (!) */
 	RectRgn(clip, &r);
@@ -1977,7 +1977,7 @@ HandleClick (EventRecord *theEvent) {
 			SetCursor(&qd.arrow);
 			SetRect (&r, 80, 2 * aWin->row_height + 1, r.right, r.bottom);
 			if (aWin == theWindows + WIN_MESSAGE)
-				r.top += SBARHEIGHT + 1;
+				r.top += SBARHEIGHT;
 			l = GrowWindow (theWindow, theEvent->where, &r);
 			SizeWindow (theWindow, l & 0xffff, l >> 16, FALSE);
 			SaveWindowSize (theWindow);
@@ -2240,7 +2240,7 @@ mac_putstr (winid win, int attr, const char *str) {
 	r = aWin->its_window->portRect;
 	if (win && win == WIN_MESSAGE) {
 		r.right  -= SBARWIDTH;
-		r.bottom -= SBARHEIGHT + 1;
+		r.bottom -= SBARHEIGHT;
 		if (flags.page_wait && 
 			aWin->last_more_lin <= aWin->y_size - (r.bottom - r.top) / aWin->row_height) {
 			aWin->last_more_lin = aWin->y_size;
@@ -2269,7 +2269,7 @@ mac_putstr (winid win, int attr, const char *str) {
 	dst = *(aWin->windowText) + len;
 	sline = src = (char *)str;
 	maxWidth = newWidth = 0;
-	while ((ch = *src)) {
+	for (ch = *src; ch; ch = *src) {
 		if (ch == CHAR_LF)
 			ch = CHAR_CR;
 		*dst++ = ch;
@@ -2520,7 +2520,8 @@ boolean complain;
 	int win;
 	dlb *fp;
 	
-	if (fp = dlb_fopen(name, "r")) {
+	fp = dlb_fopen(name, "r");
+	if (fp) {
 		l = dlb_fseek(fp, 0, SEEK_END);
 		(void) dlb_fseek(fp, 0, 0L);
 		win = create_nhwindow(NHW_TEXT);
