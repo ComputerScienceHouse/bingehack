@@ -1552,7 +1552,7 @@ register struct attack *mattk;
 				if (Slow_digestion) tmp *= 2;
 				nomul(-tmp);
 				nomovemsg = msgbuf;
-			    } else pline(msgbuf);
+			    } else pline("%s", msgbuf);
 			    exercise(A_CON, TRUE);
 			}
 			end_engulf();

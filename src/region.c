@@ -784,7 +784,7 @@ genericptr_t p2;
     } else {
 	mtmp = (struct monst *) p2;
 	if (canseemon(mtmp))
-	    pline("%s bumps into something!", Monnam(mtmp));
+	    pline("%s bumps into %s!", Monnam(mtmp), something);
     }
     return FALSE;
 }
@@ -869,7 +869,7 @@ genericptr_t p2;
 	if (!Blind)
 	    make_blinded(1L, FALSE);
 	if (!Poison_resistance) {
-	    pline("Something is burning your lungs!");
+	    pline("%s is burning your lungs!", Something);
 	    You("cough and spit blood!");
 	    losehp(rnd(dam) + 5, "gas cloud", KILLED_BY_AN);
 	    return FALSE;

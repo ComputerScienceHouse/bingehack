@@ -855,7 +855,7 @@ boolean atme;
 		break;
 	case SPE_JUMPING:
 		if (!jump(role_skill))
-			pline("Nothing happens.");
+			pline(nothing_happens);
 		break;
 	default:
 		impossible("Unknown spell %d attempted.", spell);

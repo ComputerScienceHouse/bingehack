@@ -164,7 +164,7 @@ getlock()
 
 	if(iflags.window_inited) { 
 	  pline("There is already a game in progress under your name.");
-	  pline(tbuf,"You may be able to use \"recover %s\" to get it back.\n",lock);
+	  pline("You may be able to use \"recover %s\" to get it back.\n",tbuf);
 	  c = yn("Do you want to destroy the old game?");
 	} else {
 # if defined(MSDOS) && defined(NO_TERMS)

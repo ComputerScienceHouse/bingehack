@@ -996,7 +996,7 @@ register struct obj	*sobj;
 		known = TRUE;
 	case SPE_MAGIC_MAPPING:
 		if (level.flags.nommap) {
-		    Your("%s spins as something blocks the spell!", body_part(HEAD));
+		    Your("%s spins as %s blocks the spell!", body_part(HEAD), something);
 		    make_confused(HConfusion + rnd(30), FALSE);
 		    break;
 		}

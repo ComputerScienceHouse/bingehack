@@ -2137,7 +2137,7 @@ const char *mesg;
 {
     /* "menu" without selection; use ordinary pline, no more() */
     if (how == PICK_NONE) {
-	pline(mesg);
+	pline("%s", mesg);
 	return 0;
     }
 

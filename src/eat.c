@@ -2013,9 +2013,9 @@ boolean incr;
 		switch(newhs){
 		case HUNGRY:
 			if (Hallucination) {
-			    pline((!incr) ?
-				"You now have a lesser case of the munchies." :
-				"You are getting the munchies.");
+			    You((!incr) ?
+				"now have a lesser case of the munchies." :
+				"are getting the munchies.");
 			} else
 			    You((!incr) ? "only feel hungry now." :
 				  (u.uhunger < 145) ? "feel hungry." :

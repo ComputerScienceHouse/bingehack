@@ -1077,7 +1077,7 @@ arti_invoke(obj)
 	if(obj->otyp == CRYSTAL_BALL)
 	    use_crystal_ball(obj);
 	else
-	    pline("Nothing happens.");
+	    pline(nothing_happens);
 	return 1;
     }
 

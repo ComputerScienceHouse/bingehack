@@ -1417,9 +1417,9 @@ obj_sanity_check()
 	}
 	/* shouldn't be a full container on the bill */
 	if (obj->cobj) {
-	    pline("%s obj %s contains something! %s\n", mesg,
+	    pline("%s obj %s contains %s! %s\n", mesg,
 		fmt_ptr((genericptr_t)obj, obj_address),
-		doname(obj));
+		something, doname(obj));
 	}
     }
 

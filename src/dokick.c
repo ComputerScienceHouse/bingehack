@@ -1308,7 +1308,7 @@ long num;
 	    else
 		Sprintf(eos(obuf), " and fall%s %s.",
 			otmp->quan == 1L ? "s" : "", gate_str);
-	    pline(obuf);
+	    pline("%s", obuf);
 	} else if(!nodrop)
 	    pline("%s fall%s %s.", obuf,
 		  otmp->quan == 1L ? "s" : "", gate_str);

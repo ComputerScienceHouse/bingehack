@@ -1084,7 +1084,7 @@ register struct obj *obj;
 	ret = 1;
 
 nopick:
-	if(!Blind) pline(buf);
+	if(!Blind) pline("%s", buf);
 	rloc(mon);
 	return(ret);
 }
