@@ -155,7 +155,8 @@ static NEARDATA struct {
 static NEARDATA struct {
 	struct	obj *piece;	/* the thing being eaten, or last thing that
 				 * was partially eaten, unless that thing was
-				 * a tin, which uses the tin structure above */
+				 * a tin, which uses the tin structure above,
+				 * in which case this should be 0 */
 	/* doeat() initializes these when piece is valid */
 	int	usedtime,	/* turns spent eating */
 		reqtime;	/* turns required to eat */
@@ -445,7 +446,8 @@ register int pm;
 		killer = kbuf;
 		You("turn to stone.");
 		done(STONING);
-		victual.eating = FALSE;
+		if (victual.piece)
+		    victual.eating = FALSE;
 		return; /* lifesaved */
 	    }
 	}
