@@ -1139,8 +1139,8 @@ spell points they require.  The `Z' (cast) command casts a spell.
 .hn 2
 Tools (`(')
 .pg
-Tools are miscellaneous objects with various purposes.  Some tools,
-like wands, have a limited number of uses.  For example, lamps burn
+Tools are miscellaneous objects with various purposes.  Some tools
+have a limited number of uses, akin to wand charges.  For example, lamps burn
 out after a while.  Other tools are containers, which objects can
 be placed into or taken out of.
 .pg
@@ -1195,8 +1195,7 @@ as weapons.
 Gold (`$')
 .pg
 Gold adds to your score, and you can buy things in shops with it.
-Your version of NetHack may display how much gold you have on the
-status line.  If not, the `$' command will count it.  There are a number
+There are a number
 of monsters in the dungeon that may be influenced by the amount of gold
 you are carrying (shopkeepers aside).
 
@@ -1888,7 +1887,7 @@ The Atari port of NetHack was discontinued.
 .pg
 \fBMichael Allison\fP ported 3.3 for the Microsoft Windows NT platform.
 .pg
-\fBTimo Hakulinen\fP continues to be responsible for the OS/2 port.
+\fBRon Van Iwaarden\fP took over responsibility for the OS/2 port.
 			   - - - - - - - - - -
 .pg
 From time to time, some depraved individual out there in netland sends a
