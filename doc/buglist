@@ -119,6 +119,28 @@ wearing". Present in 3.2.2 and still there in 3.3.0 beta. Either
 the menu should not appear or dropping something in second
 instance should entail taking it off (if you can).
 
+Some of the new monsters (especially water monsters) never appear at random.
+
+"The combat suddenly awakens you" printed when player was asleep from a
+sleeping gas trap and woke up.  No combat was present.
+
+The region code displays a fog cloud glyph for clouds, but '/' identifies it
+as a vortex.
+
+Various problems with stinking cloud scrolls, which have been commented out
+until the next version.
+
+Various problems with race:
+-- asking the game to choose a _character_ from the 
+   opening screen ignores commandline race requests, -@ ignores 
+   them but at least gives you the option of race to choose. (Dylan)
+-- "I still think there should be an 'I wanna be a dwarf, don't 
+   care which kind'"
+-- The game should choose or let you choose only 
+   from the classes that your chosen race/alignment can be, 
+   the way it lets you choose only from the races/alignments 
+   that your chosen class can be. (Irina)
+
 Reported but unconfirmed bugs:
 -- Strange things happen to items in chests pets carry downstairs.
 -- Several reports of core dumps when monsters resist an effect.
@@ -135,6 +157,10 @@ Reported but unconfirmed bugs:
    wasn't following me around anymore. It appeared to be hanging around
    somewhere near an outer wall of a food shop, on the other side of which
    was lying a tripe ration and would not move. [Boudewijn Waijers]
+-- Monsters were displayed as 'I' (unseen monster) but were referred to by
+   name.  [Irina]
+-- A wand of secret door detection self-identified while engraving even
+   though it didn't find anything.  [Irina]
 
 Riding bugs:
 -- Wands or spells zapped in the down direction ought to hit your steed.
@@ -163,6 +189,7 @@ Riding bugs:
 -- Because wounded leg damage is unconditionally cleared when dismounting,
    it is possible to abuse that and heal leg damage by going on and off
    your steed.
+-- Fumbling when riding causes *you* to trip and fall.
 
 Platform specific bugs:
 -----------------------

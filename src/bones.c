@@ -34,6 +34,11 @@ d_level *lev;
 		);
 }
 
+/* Call this function for each fruit object saved in the bones level: it marks
+ * that particular type of fruit as existing (the marker is that that type's
+ * ID is positive instead of negative).  This way, when we later save the
+ * chain of fruit types, we know to only save the types that exist.
+ */
 STATIC_OVL void
 goodfruit(id)
 int id;
