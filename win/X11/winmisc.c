@@ -265,7 +265,8 @@ X11_player_selection()
 	i, availcount, availindex;
     Widget popup, player_form;
     const char **choices;
-    char *namep, qbuf[QBUFSZ];
+    const char *namep;
+    char qbuf[QBUFSZ];
 
     while (flags.initrole < 0) {
 	/* select a role */

@@ -5,7 +5,7 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #define MAKEDEFS_C	/* use to conditionally include file sections */
-/* #define DEBUG /* uncomment for debugging info */
+/* #define DEBUG */	/* uncomment for debugging info */
 
 #include "config.h"
 #include "permonst.h"

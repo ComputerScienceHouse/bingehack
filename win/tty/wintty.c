@@ -305,7 +305,7 @@ char** argv;
 void
 tty_player_selection()
 {
-	int i, j, k, n;
+	int i, k, n;
 	char pick4u = 'n', thisch, lastch = 0;
 	char pbuf[QBUFSZ];
 	winid win;

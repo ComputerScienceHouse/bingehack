@@ -463,8 +463,8 @@ touch_artifact(obj,mon)
     self_willed = ((oart->spfx & SPFX_INTEL) != 0);
     if (yours || !(mon->data->mflags3 & M3_WANTSALL)) {
 	badclass = (self_willed && (!yours ||
-			oart->role != NON_PM && !Role_if(oart->role) ||
-			oart->race != NON_PM && !Race_if(oart->race)));
+			(oart->role != NON_PM && !Role_if(oart->role)) ||
+			(oart->race != NON_PM && !Race_if(oart->race))));
 	badalign = (oart->spfx & SPFX_RESTR) &&
 		   oart->alignment != A_NONE &&
 	    ((oart->alignment !=

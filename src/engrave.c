@@ -945,7 +945,7 @@ doengrave()
 	len -= spct;
 
 	/* A single `x' is the traditional signature of an illiterate person */
-	if (len != 1 || !index(ebuf, 'x') && !index(ebuf, 'X'))
+	if (len != 1 || (!index(ebuf, 'x') && !index(ebuf, 'X')))
 	    u.uconduct.literate++;
 
 	/* Previous engraving is overwritten */
