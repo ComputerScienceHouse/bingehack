@@ -951,7 +951,7 @@ void minimal_enlightenment()
 	menu_item *selected;
 	anything any;
 	char buf[BUFSZ], buf2[BUFSZ];
-	char fmtstr[] = "%-15s: %-12s";
+	static char fmtstr[] = "%-15s: %-12s";
 	boolean currentgend = Upolyd ? u.mfemale : flags.female;
 
 	any.a_void = 0;

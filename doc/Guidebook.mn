@@ -579,7 +579,7 @@ the exchange still takes place.
 .lp X
 Enter explore (discovery) mode, explained in its own section later.
 .lp ^X
-Display your name, role, race, gender, and alignment as well 
+Display your name, role, race, gender, and alignment as well as
 the various deities in your game.
 .lp z
 Zap a wand.  To aim at yourself, use `.' for the direction.
