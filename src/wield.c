@@ -118,25 +118,24 @@ ready_weapon(wep)
 struct obj *wep;
 {
 	/* Separated function so swapping works easily */
-	register int res = 0;
-
+	int res = 0;
 
 	if (!wep) {
-		/* No weapon */
-		if (uwep) {
+	    /* No weapon */
+	    if (uwep) {
 		You("are empty %s.", body_part(HANDED));
 		setuwep((struct obj *) 0);
 		res++;
-		} else
+	    } else
 		You("are already empty %s.", body_part(HANDED));
+	} else if (!uarmg && !Stone_resistance && wep->otyp == CORPSE
+				&& touch_petrifies(&mons[wep->corpsenm])) {
 	    /* Prevent wielding cockatrice when not wearing gloves --KAA */
-	} else if (!uarmg && !Stone_resistance && wep->otyp == CORPSE &&                   
-			touch_petrifies(&mons[wep->corpsenm])) {
             char kbuf[BUFSZ];
 
             You("wield the %s corpse in your bare %s.",
                 mons[wep->corpsenm].mname, makeplural(body_part(HAND)));
-            Sprintf(kbuf, "%s corpse", an(mons[wep->corpsenm].mname));            
+            Sprintf(kbuf, "%s corpse", an(mons[wep->corpsenm].mname));
             instapetrify(kbuf);
 	} else if (uarms && bimanual(wep))
 	    You("cannot wield a two-handed %s while wearing a shield.",
@@ -145,17 +144,18 @@ struct obj *wep;
 	else if (wep->oartifact && !touch_artifact(wep, &youmonst)) {
 	    res++;	/* takes a turn even though it doesn't get wielded */
 	} else {
-		/* Weapon WILL be wielded after this point */
+	    /* Weapon WILL be wielded after this point */
 	    res++;
 	    if (will_weld(wep)) {
 		const char *tmp = xname(wep), *thestr = "The ";
 		if (strncmp(tmp, thestr, 4) && !strncmp(The(tmp),thestr,4))
 		    tmp = thestr;
 		else tmp = "";
-		pline("%s%s %s to your %s!",
-		      tmp, aobjnam(wep, "weld"),
-		      (wep->quan == 1L) ? "itself" : "themselves", /* a3 */
-		      body_part(HAND));
+		pline("%s%s %s to your %s!", tmp, aobjnam(wep, "weld"),
+			(wep->quan == 1L) ? "itself" : "themselves", /* a3 */
+			bimanual(wep) ?
+				(const char *)makeplural(body_part(HAND))
+				: body_part(HAND));
 		wep->bknown = TRUE;
 	    } else {
 		/* The message must be printed before setuwep (since
@@ -171,15 +171,15 @@ struct obj *wep;
 	    }
 	    setuwep(wep);
 
-		/* KMH -- Talking artifacts are finally implemented */
-		arti_speak(wep);
+	    /* KMH -- Talking artifacts are finally implemented */
+	    arti_speak(wep);
 
-		if (Race_if(PM_ELF) && !wep->oartifact &&
-				objects[wep->otyp].oc_material == IRON) {
-		    /* Elves are averse to wielding cold iron */
-		    You("have an uneasy feeling about wielding cold iron.");
-		    change_luck(-1);
-		}
+	    if (Race_if(PM_ELF) && !wep->oartifact &&
+			    objects[wep->otyp].oc_material == IRON) {
+		/* Elves are averse to wielding cold iron */
+		You("have an uneasy feeling about wielding cold iron.");
+		change_luck(-1);
+	    }
 
 	    if (wep->unpaid) {
 		struct monst *this_shkp;
