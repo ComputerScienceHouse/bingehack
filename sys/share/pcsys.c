@@ -388,17 +388,11 @@ msmsg VA_DECL(const char *, fmt)
 	VA_START(fmt);
 	VA_INIT(fmt, const char *);
 # if defined(MSDOS)
-	if (iflags.grmode) {
-		char buf[BUFSZ];
-
-		Vsprintf(buf,fmt, VA_ARGS);
-		pline(buf);
-	} else
+	if (iflags.grmode)
+		gr_finish();
 # endif
-	{
-	  Vprintf(fmt, VA_ARGS);
-	  flushout();
-	}
+	Vprintf(fmt, VA_ARGS);
+	flushout();
 	VA_END();
 	return;
 }
