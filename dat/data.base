@@ -366,7 +366,28 @@ blind io
 	own.  Several were currently hovering above the table.
 	    [ The Colour of Magic, by Terry Pratchett ]
 * blob
-	Animated protoplasm.
+gelatinous cube
+ooze
+* ooze
+*pudding
+* slime
+	These giant amoeboid creatures look like nothing more than
+	puddles of slime, but they both live and move, feeding on
+	metal or wood as well as the occasional dungeon explorer to
+	supplement their diet.
+
+	But we were not on a station platform.  We were on the track ahead
+	as the nightmare, plastic column of fetid black iridescence oozed
+	tightly onward through its fifteen-foot sinus, gathering unholy
+	speed and driving before it a spiral, re-thickening cloud of the
+	pallid abyss vapor.  It was a terrible, indescribable thing vaster
+	than any subway train -- a shapeless congeries of protoplasmic
+	bubbles, faintly self-luminous, and with myriads of temporary eyes
+	forming and unforming as pustules of greenish light all over the
+	tunnel-filling front that bore down upon us, crushing the frantic
+	penguins and slithering over the glistening floor that it and its
+	kind had swept so evilly free of all litter.	
+		[ At the Mountains of Madness, by H.P. Lovecraft ]
 bone devil
 	Bone devils attack with weapons and with a great hooked tail
 	which causes a loss of strength to those they sting.
@@ -399,8 +420,9 @@ boulder
 	ears the sea-sound of Poseidon.  Then I knew this time I
 	would do it; and so I did.
 		[ The King Must Die, by Mary Renault ]
-~crossbow
-*bow
+~*longbow of diana
+bow
+* bow
 	"Stand to it, my hearts of gold," said the old bowman as he
 	passed from knot to knot.  "By my hilt! we are in luck this
 	journey.  Bear in mind the old saying of the Company."
@@ -1083,6 +1105,22 @@ fog cloud
 	on silent haunches
 	and then moves on.
 	     [ Fog, by Carl Sandburg ]
+fountain
+	Rest! This little Fountain runs
+	Thus for aye: -- It never stays
+	For the look of summer suns,
+	Nor the cold of winter days.
+	Whose'er shall wander near,
+	When the Syrian heat is worst,
+	Let him hither come, nor fear
+	Lest he may not slake his thirst:
+	He will find this little river
+	Running still, as bright as ever.
+	Let him drink, and onward hie,
+	Bearing but in thought, that I,
+	Erotas, bade the Naiad fall,
+	And thank the great god Pan for all!
+		[ For a Fountain, by Bryan Waller Procter ]
 fox
 	One hot summer's day a Fox was strolling through an orchard
 	till he came to a bunch of Grapes just ripening on a vine
@@ -1233,6 +1271,18 @@ zorkmid
 	coin and jewelry.
 	     [ Webster's New International Dictionary
 		  of the English Language, Second Edition ]
+gold golem
+	The bellows he set away from the fire, and gathered all the tools
+	wherewith he wrought into a silver chest; and with a sponge wiped
+	he his face and his two hands withal, and his mighty neck and
+	shaggy breast, and put upon him a tunic, and grasped a stout staff,
+	and went forth halting; but there moved swiftly to support their
+	lord handmaidens wrought of gold in the semblance of living maids.
+	In them is understanding in their hearts, and in them speech and
+	strength, and they know cunning handiwork by gift of the immortal
+	gods.
+		[ The Iliad, by Homer ]
+~gold golem
 ~flesh golem
 *golem
 	"The original story harks back, so they say, to the sixteenth
@@ -1620,12 +1670,13 @@ izchak
 	MIT and Stanford, and who also worked, for a period of time, at
 	Xerox PARC.  Izchak was the first "librarian" of the NetHack project,
 	and was a founding member of the DevTeam, joining in 1986 while he
-	was working at the University of Pennsylvania (hence our mailing
-	list address).  Until the 3.1.3 release, Izchak carefully kept all
-	of the code synchronized and arbitrated disputes between members of
-	the development teams.  Izchak Miller passed away at the age of 58,
-	in the early morning hours of April 1, 1994 from complications due
-	to cancer.  We then dedicated NetHack 3.2 in his memory.
+	was working at the University of Pennsylvania (hence our former
+	mailing list address).  Until the 3.1.3 release, Izchak carefully
+	kept all of the code synchronized and arbitrated disputes between
+	members of the development teams.  Izchak Miller passed away at the
+	age of 58, in the early morning hours of April 1, 1994 from
+	complications due to cancer.  We then dedicated NetHack 3.2 in his
+	memory.
 			[ Mike Stephenson, for the NetHack DevTeam ]
 jabberwock
 vorpal*
@@ -1870,7 +1921,8 @@ lance
 	his lance into shivers, carrying him and his horse after it,
 	and finally tumbled him a good way off from it on the field in
 	evil plight.
-		[ Don Quixote, by Miguel de Cervantes ]
+		[ Don Quixote of La Mancha by Miquel de
+		  Cervantes Saavedra ]
 leash
 	They had splendid heads, fine shoulders, strong legs, and
 	straight tails.  The spots on their bodies were jet-black and
@@ -1989,6 +2041,9 @@ loki
 	Odin's horse Sleipnir.  He also allegedly sired the serpent
 	Midgard, the mistress of the netherworld, Hel, and the wolf
 	Fenrir, who will devour the sun at Ragnarok.
+*longbow of diana
+	This legendary bow grants ESP when carried and can reflect magical
+	attacks when wielded.  When invoked it provides a supply of arrows.
 # long worm -- see "worm"
 looking glass
 mirror
@@ -2159,6 +2214,13 @@ mastodon
 	conical projections on the molar teeth.
 		[ Webster's Encyclopedic Unabridged Dictionary
 			of the English Language]
+meat*
+huge chunk of meat
+	Some hae meat and canna eat,
+	And some would eat that want it;
+	But we hae meat, and we can eat,
+	Sae let the Lord be thankit.
+		[ Grace Before Meat, by Robert Burns ]
 medusa
 	Medusa, one of the three Gorgons or Graeae, is the only one
 	of her sisters to have assumed mortal form and inhabited the
@@ -2501,13 +2563,6 @@ olog-hai
 	Twilight they could endure the Sun....  They spoke little,
 	and the only tongue they knew was the Black Speech of Barad-dur.
 		[ The Return of the King, by J.R.R. Tolkien ]
-ooze
-* ooze
-*pudding
-	These giant amoeboid creatures look like nothing more than
-	puddles of slime, but they both live and move, feeding on
-	metal or wood as well as the occasional dungeon explorer to
-	supplement their diet.
 oracle
 delphi
 p*thia
@@ -2860,6 +2915,16 @@ rust monster
 	Not the six hundred.
 		[ The Charge of the Light Brigade,
 		  by Alfred, Lord Tennyson ]
+saddle
+	The horseman serves the horse,
+	The neat-herd serves the neat,
+	The merchant serves the purse,
+	The eater serves his meat;
+	'Tis the day of the chattel,
+	Web to weave, and corn to grind,
+	Things are in the saddle,
+	And ride mankind.
+		[ Ode, by Ralph Waldo Emerson ]
 sake
 	Japanese rice wine.
 salamander
@@ -2934,6 +2999,26 @@ scorpio*
 	ends in a long, jointed tail tapering to a poisonous stinger.
 	They have eight legs and pincers.
 		[ Van Dale's Groot Woordenboek der Nederlandse Taal ]
+*scroll
+scroll of *
+	And I was gazing on the surges prone,
+	With many a scalding tear and many a groan,
+	When at my feet emerg'd an old man's hand,
+	Grasping this scroll, and this same slender wand.
+	I knelt with pain--reached out my hand--had grasp'd
+	Those treasures--touch'd the knuckles--they unclasp'd--
+	I caught a finger: but the downward weight
+	O'erpowered me--it sank. Then 'gan abate
+	The storm, and through chill aguish gloom outburst
+	The comfortable sun. I was athirst
+	To search the book, and in the warming air
+	Parted its dripping leaves with eager care.
+	Strange matters did it treat of, and drew on
+	My soul page after page, till well-nigh won
+	Into forgetfulness; when, stupefied,
+	I read these words, and read again, and tried
+	My eyes against the heavens, and read again.
+		[ Endymion, by John Keats ]
 shad*
 	Shades are undead creatures.  They differ from zombies in
 	that a zombie is an undead animation of a corpse, while a
@@ -3608,6 +3693,18 @@ war*hammer
 	while men of both armies scrambled in the swirling waters for
 	rubies knocked free of his armor.
 		[ A Game of Thrones, by George R.R. Martin ]
+water
+	Day after day, day after day,
+	We stuck, nor breath nor motion;
+	As idle as a painted ship
+	Upon a painted ocean.
+
+	Water, water, everywhere,
+	And all the boards did shrink;
+	Water, water, everywhere
+	Nor any drop to drink.
+		[ The Rime of the Ancient Mariner, by Samuel Taylor
+		  Coleridge ]
 web
 	Oh what a tangled web we weave,
 	When first we practise to deceive!
