@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mon.c	3.3	1999/12/03	*/
+/*	SCCS Id: @(#)mon.c	3.3	1999/12/12	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1087,6 +1087,9 @@ register struct monst *mtmp, *mtmp2;
     relmon(mtmp);
 
     /* finish adding its replacement */
+#ifdef STEED
+    if (mtmp == u.usteed) ; else	/* don't place steed onto the map */
+#endif
     place_monster(mtmp2, mtmp2->mx, mtmp2->my);
     if (mtmp2->wormno)	    /* update level.monsters[wseg->wx][wseg->wy] */
 	place_wsegs(mtmp2); /* locations to mtmp2 not mtmp. */
