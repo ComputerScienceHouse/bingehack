@@ -449,8 +449,8 @@ and may be replaced completely by other window ports.
 
 VII.  Implementation and Multi-window support
 
-NetHack 3.2 supports multiple window systems in the same binary.  When
-writing a new window-port, you need to follow the following guidelines:
+NetHack 3.2 and higher support multiple window systems in the same binary.
+When writing a new window-port, you need to follow the following guidelines:
 
 1) Pick a unique prefix to identify your window-port.  For example, the tty
    window port uses "tty"; the X11 window-port uses "X11".

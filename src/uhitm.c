@@ -404,14 +404,16 @@ struct attack *uattk;
 	    if (malive && u.twoweap) malive = hmon(mon, uswapwep, 0);
 	    if (malive) {
 		/* monster still alive */
-		if(!rn2(25) && mon->mhp < mon->mhpmax/2) {
-			mon->mflee = 1;
-			if(!rn2(3)) {
-				mon->mfleetim = rnd(100);
-				if (!Blind) pline("%s turns to flee!", (Monnam(mon)));
-			}
-			if(u.ustuck == mon && !u.uswallow && !sticks(youmonst.data))
-				u.ustuck = 0;
+		if(!rn2(25) && mon->mhp < mon->mhpmax/2
+			    && !(u.uswallow && mon == u.ustuck)) {
+		    /* maybe should regurgitate if swallowed? */
+		    mon->mflee = 1;
+		    if(!rn2(3)) {
+			mon->mfleetim = rnd(100);
+			if (!Blind) pline("%s turns to flee!", (Monnam(mon)));
+		    }
+		    if(u.ustuck == mon && !u.uswallow && !sticks(youmonst.data))
+			u.ustuck = 0;
 		}
 		/* Vorpal Blade hit converted to miss */
 		/* could be headless monster or worm tail */

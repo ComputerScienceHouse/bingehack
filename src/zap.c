@@ -2973,8 +2973,8 @@ register int dx,dy;
     while(range-- > 0) {
 	lsx = sx; sx += dx;
 	lsy = sy; sy += dy;
-	mon = m_at(sx, sy);
 	if(isok(sx,sy) && (lev = &levl[sx][sy])->typ) {
+	    mon = m_at(sx, sy);
 	    if(cansee(sx,sy)) {
 		/* reveal/unreveal invisible monsters before tmp_at() */
 		if (mon && !canspotmon(mon))
