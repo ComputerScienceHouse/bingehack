@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)decl.h	3.3	99/07/02	*/
+/*	SCCS Id: @(#)decl.h	3.3	2000/06/12	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -142,7 +142,8 @@ E NEARDATA char tune[6];
 E struct linfo level_info[MAXLINFO];
 
 E NEARDATA struct sinfo {
-	int stopprint;		/* game over, inhibit further disclosure */
+	int gameover;		/* self explanatory? */
+	int stopprint;		/* inhibit further end of game disclosure */
 #if defined(UNIX) || defined(VMS) || defined (__EMX__)
 	int done_hup;		/* SIGHUP or moral equivalent received
 				 * -- no more screen output */

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)do_name.c	3.3	2000/01/11	*/
+/*	SCCS Id: @(#)do_name.c	3.3	2000/06/12	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -580,12 +580,15 @@ boolean called;
 	boolean do_hallu, do_invis, do_it, do_saddle;
 	boolean name_at_start, has_adjectives;
 
+	if (program_state.gameover)
+	    suppress |= SUPPRESS_HALLUCINATION;
 	if (article == ARTICLE_YOUR && !mtmp->mtame)
 	    article = ARTICLE_THE;
 
 	do_hallu = Hallucination && !(suppress & SUPPRESS_HALLUCINATION);
 	do_invis = mtmp->minvis && !(suppress & SUPPRESS_INVISIBLE);
-	do_it = !canspotmon(mtmp) && article != ARTICLE_YOUR && !killer &&
+	do_it = !canspotmon(mtmp) && article != ARTICLE_YOUR &&
+	    !program_state.gameover &&
 #ifdef STEED
 	    mtmp != u.usteed &&
 #endif
@@ -829,7 +832,7 @@ static const char *bogusmons[] = {
 	"efreeti", "marid", "rot grub", "bookworm", "master lichen",
 	"shadow", "hologram", "jester", "attorney", "sleazoid",
 	"killer tomato", "amazon", "robot", "battlemech",
-	"rhinovirus", "harpy", "lion-dog", "rat-ant",
+	"rhinovirus", "harpy", "lion-dog", "rat-ant", "Y2K bug",
 						/* misc. */
 	"grue", "Christmas-tree monster", "luck sucker", "paskald",
 	"brogmoid", "dornbeast",		/* Quendor (Zork, &c.) */
