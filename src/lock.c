@@ -494,6 +494,11 @@ doopen()		/* try to open a door */
 	register struct rm *door;
 	struct monst *mtmp;
 
+	if (nohands(youmonst.data)) {
+	    You_cant("open anything -- you have no hands!");
+	    return 0;
+	}
+
 	if (u.utrap && u.utraptype == TT_PIT) {
 	    You_cant("reach over the edge of the pit.");
 	    return 0;
@@ -594,6 +599,11 @@ doclose()		/* try to close a door */
 	register int x, y;
 	register struct rm *door;
 	struct monst *mtmp;
+
+	if (nohands(youmonst.data)) {
+	    You_cant("close anything -- you have no hands!");
+	    return 0;
+	}
 
 	if (u.utrap && u.utraptype == TT_PIT) {
 	    You_cant("reach over the edge of the pit.");
