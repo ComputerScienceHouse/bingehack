@@ -246,6 +246,7 @@ fix obscure worm bug which did not consider the tail tip to be visible.  Bug
 water prayer: treat already blessed potions as `other' rather than as `water'
 water prayer: potions being blessed glow light blue rather than amber;
 	hallucination affects the color seen when changed potions glow
+fix Death/Sandman #9 joke (should be 8) and make sure the message can be seen
 
 
 Platform- and/or Interface-Specific Fixes

@@ -705,8 +705,8 @@ register struct monst *mtmp;
 	    }
 	    break;
 	case MS_RIDER:
-	    if (ptr == &mons[PM_DEATH] && mtmp->mpeaceful)
-		pline_msg = "is busy reading a copy of Sandman #9.";
+	    if (ptr == &mons[PM_DEATH] && !rn2(10))
+		pline_msg = "is busy reading a copy of Sandman #8.";
 	    else verbl_msg = "Who do you think you are, War?";
 	    break;
     }
