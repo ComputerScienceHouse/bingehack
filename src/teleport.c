@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)teleport.c	3.3	2000/02/19	*/
+/*	SCCS Id: @(#)teleport.c	3.3	2000/03/03	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1013,6 +1013,10 @@ register struct obj *obj;
 	register xchar tx, ty, otx, oty;
 	boolean restricted_fall;
 	int try_limit = 4000;
+
+	if (obj->otyp == CORPSE && is_rider(&mons[obj->corpsenm])) {
+	    if (revive_corpse(obj)) return;
+	}
 
 	obj_extract_self(obj);
 	otx = obj->ox;
