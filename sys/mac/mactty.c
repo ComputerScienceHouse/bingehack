@@ -1060,6 +1060,7 @@ RECORD_EXISTS (record);
 		update_tty (window);
 	} else
 		select_onscreen_window (record);
+	return noErr;
 }
 
 
