@@ -128,17 +128,17 @@ int shotlimit;
 			else
 				setuswapwep((struct obj *)0);
 		} else if (obj == uwep) {
-	    if(welded(obj)) {
-		weldmsg(obj);
-		return(1);
-	    }
-	    if(obj->quan > 1L)
-				setworn(otmp = splitobj(obj, 1L), W_WEP);
-		/* not setuwep; do not change unweapon */
-	    else {
-		setuwep((struct obj *)0);
-		if (uwep) return(1); /* unwielded, died, rewielded */
-	    }
+		    if (welded(obj)) {
+			weldmsg(obj);
+			return(1);
+		    }
+		    if (obj->quan > 1L)
+			setworn(otmp = splitobj(obj, 1L), W_WEP);
+			/* not setuwep; do not change unweapon */
+		    else {
+			setuwep((struct obj *)0);
+			if (uwep) return(1); /* unwielded, died, rewielded */
+		    }
 		} else if(obj->quan > 1L)
 			otmp = splitobj(obj, 1L);
 		freeinv(obj);

@@ -677,6 +677,7 @@ public slots:
 protected:
 	virtual void resizeEvent(QResizeEvent*);
 	virtual void keyPressEvent(QKeyEvent*);
+	virtual void closeEvent(QCloseEvent*);
 
 private slots:
 	void layout();

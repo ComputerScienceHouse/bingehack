@@ -2933,7 +2933,7 @@ void NetHackQtInvUsageWindow::paintEvent(QPaintEvent*)
 {
     //  012
     //
-    //0  hB   
+    //0 WhB   
     //1 s"w   
     //2 gCg   
     //3 =A=   
@@ -2944,7 +2944,6 @@ void NetHackQtInvUsageWindow::paintEvent(QPaintEvent*)
     painter.begin(this);
 
     // Blanks
-    drawWorn(painter,0,0,0,FALSE);
     drawWorn(painter,0,0,4,FALSE);
     drawWorn(painter,0,0,5,FALSE);
     drawWorn(painter,0,2,4,FALSE);
@@ -2967,6 +2966,7 @@ void NetHackQtInvUsageWindow::paintEvent(QPaintEvent*)
     drawWorn(painter,uright,2,3); // RingR
 
     drawWorn(painter,uwep,2,1); // Weapon
+    drawWorn(painter,uswapwep,0,0); // Secondary weapon
     drawWorn(painter,uamul,1,1); // Amulet
     drawWorn(painter,ublindf,2,0); // Blindfold
 
@@ -3025,6 +3025,7 @@ NetHackQtMainWindow::NetHackQtMainWindow(NetHackQtKeyBuffer& ks) :
 	{ apparel,	0, 0 },
 	{ apparel,	"Wield weapon\tw",      "w" },
 	{ apparel,	"Exchange weapons\tx",      "x" },
+	{ apparel,	"Two weapon combat\t#two",      "#tw" },
 	{ apparel,	0, 0 },
 	{ apparel,	"Wear armour\tShift-W",       "W" },
 	{ apparel,	"Take off armour\tShift-T",   "T" },
@@ -3271,6 +3272,32 @@ void NetHackQtMainWindow::keyPressEvent(QKeyEvent* event)
 	if (message) message->Scroll(0,+1);
     break; default:
 	event->ignore();
+    }
+}
+
+void NetHackQtMainWindow::closeEvent(QCloseEvent* e)
+{
+    if ( program_state.something_worth_saving ) {
+	switch ( QMessageBox::information( this, "NetHack",
+	    "This will end your NetHack session",
+	    "&Save", "&Quit", "&Cancel", 0, 2 ) )
+	{
+	    case 0:
+		// See dosave() function
+		if (dosave0()) {
+		    u.uhp = -1;
+		    terminate(EXIT_SUCCESS);
+		}
+		break;
+	    case 1:
+		u.uhp = -1;
+		terminate(EXIT_SUCCESS);
+		break;
+	    case 2:
+		break; // ignore the event
+	}
+    } else {
+	e->accept();
     }
 }
 
@@ -3928,7 +3955,7 @@ char NetHackQtBind::qt_yn_function(const char *question, const char *choices, CH
 	}
 
 	if (strcmp (choices,"yn") == 0) {
-	    switch (QMessageBox::information(0,"Slashem",question,"&Yes", "&No",0,1))
+	    switch (QMessageBox::information(0,"NetHack",question,"&Yes", "&No",0,1))
 	    {
 	      case 0: return 'y';
 	      case 1: return 'n'; 
