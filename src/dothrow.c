@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)dothrow.c	3.3	1999/08/16	*/
+/*	SCCS Id: @(#)dothrow.c	3.3	1999/12/02	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -6,7 +6,7 @@
 
 #include "hack.h"
 
-STATIC_DCL int FDECL(throw_obj, (struct obj *));
+STATIC_DCL int FDECL(throw_obj, (struct obj *,int));
 STATIC_DCL void NDECL(autoquiver);
 STATIC_DCL int FDECL(gem_accept, (struct monst *, struct obj *));
 STATIC_DCL int FDECL(throw_gold, (struct obj *));
@@ -29,13 +29,13 @@ extern boolean notonhead;	/* for long worms */
 
 /* Throw the selected object, asking for direction */
 STATIC_OVL int
-throw_obj (obj)
-	register struct obj *obj;
+throw_obj(obj, shotlimit)
+struct obj *obj;
+int shotlimit;
 {
 	struct obj *otmp;
 	int multishot = 1;
 	schar skill;
-
 
 	/* ask "in what direction?" */
 	if (!getdir((char *)0)) {
@@ -107,8 +107,9 @@ throw_obj (obj)
 	}
 
 	if (obj->quan < multishot) multishot = (int)obj->quan;
-	if (multishot < 1) multishot = 1;
-	else multishot = rnd(multishot);
+	multishot = rnd(multishot);
+	if (shotlimit > 0 && multishot > shotlimit) multishot = shotlimit;
+
 	while (obj && multishot-- > 0) {
 		/* Split this object off from its slot */
 		otmp = (struct obj *)0;
@@ -152,6 +153,20 @@ int
 dothrow()
 {
 	register struct obj *obj;
+	int shotlimit;
+
+	/*
+	 * Since some characters shoot multiple missiles at one time,
+	 * allow user to specify a count prefix for 'f' or 't' to limit
+	 * number of items thrown (to avoid possibly hitting something
+	 * behind target after killing it, or perhaps to conserve ammo).
+	 *
+	 * Prior to 3.3.0, command ``3t'' meant ``t(shoot) t(shoot) t(shoot)''
+	 * and took 3 turns.  Now it means ``t(shoot at most 3 missiles)''.
+	 */
+	/* kludge to work around parse()'s pre-decrement of `multi' */
+	shotlimit = (multi || save_cm) ? multi + 1 : 0;
+	multi = 0;		/* reset; it's been used up */
 
 	if(check_capacity((char *)0)) return(0);
 	obj = getobj(uwep && uwep->otyp==SLING ? bullets : toss_objs, "throw");
@@ -159,7 +174,7 @@ dothrow()
 	/* (or jewels, or iron balls... ) */
 
 	if (!obj) return(0);
-	return (throw_obj(obj));
+	return throw_obj(obj, shotlimit);
 }
 
 
@@ -209,6 +224,8 @@ autoquiver ()
 int
 dofire()
 {
+	int shotlimit;
+
 	if(check_capacity((char *)0)) return(0);
 	if (!uquiver) {
 		if (!flags.autoquiver) {
@@ -226,7 +243,21 @@ dofire()
 		}
 	}
 
-	return(throw_obj(uquiver));
+	/*
+	 * Since some characters shoot multiple missiles at one time,
+	 * allow user to specify a count prefix for 'f' or 't' to limit
+	 * number of items thrown (to avoid possibly hitting something
+	 * behind target after killing it, or perhaps to conserve ammo).
+	 *
+	 * The number specified can never increase the number of missiles.
+	 * Using ``5f'' when the shooting skill (plus RNG) dictates launch
+	 * of 3 projectiles will result in 3 being shot, not 5.
+	 */
+	/* kludge to work around parse()'s pre-decrement of `multi' */
+	shotlimit = (multi || save_cm) ? multi + 1 : 0;
+	multi = 0;		/* reset; it's been used up */
+
+	return throw_obj(uquiver, shotlimit);
 }
 
 
@@ -294,7 +325,7 @@ hurtle(dx, dy, range, verbos)
 
     nomul(-range);
     if (verbos)
-        You("%s in the opposite direction.", range > 1 ? "hurtle" : "float");
+	You("%s in the opposite direction.", range > 1 ? "hurtle" : "float");
     while(range--) {
 	nx = u.ux + dx;
 	ny = u.uy + dy;
