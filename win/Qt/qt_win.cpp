@@ -3570,7 +3570,6 @@ NetHackQtBind::NetHackQtBind(int& argc, char** argv) :
     QApplication(argc,argv)
 #endif
 {
-    QApplication::setFont(QFont("Helvetica",12));
     main = new NetHackQtMainWindow(keybuffer);
     setMainWidget(main);
     qt_settings=new NetHackQtSettings(main->width(),main->height());
@@ -3611,13 +3610,19 @@ int NetHackQtBind::qt_kbhit()
     return !keybuffer.Empty();
 }
 
+static bool have_asked = FALSE;
+
 void NetHackQtBind::qt_player_selection()
 {
+    if ( !have_asked )
+	qt_askname();
 }
 
 void NetHackQtBind::qt_askname()
 {
-    // We do it all here, and nothing in player selection.
+    have_asked = TRUE;
+
+    // We do it all here, and nothing in askname
 
     NetHackQtPlayerSelector selector(keybuffer);
 

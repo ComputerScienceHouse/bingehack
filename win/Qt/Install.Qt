@@ -3,7 +3,7 @@ Installing NetHack with a Qt or KDE interface
 
 This document describes the installation of NetHack with a Qt interface
 on X11.  The Qt interface is an alternative to the Athena-widgets interface
-found in ../win/X11.  You can download Qt for UNIX from http://www.troll.no.
+found in ../X11.  You can download Qt for UNIX from http://www.troll.no.
 You need Qt 2.0 or later to use this code.
 
 There are no explicit UNIX dependencies in this code, but we only regularly
@@ -11,7 +11,7 @@ test it under UNIX.  If you have Qt for Windows, that should also work.
 
 To use this code:
 
-   1. follow the directions for the UNIX installation (in ../sys/unix)
+   1. follow the directions for the UNIX installation (in ../../sys/unix)
       to create the Makefiles.
 
    2. ../../include/config.h
@@ -22,6 +22,9 @@ To use this code:
         libraries etc. required for that interface).
 
    3. ../../src/Makefile
+
+	ensure CXX and LD are set to the compiler and linker you need
+	for compiling and linking C++ software (e.g., set both to g++).
 
         add $(WINQTSRC), $(WINQTOBJ), and $(WINQTLIB) to WINSRC, WINOBJ,
         and WINLIB respectively, and compile.  This will give you an
