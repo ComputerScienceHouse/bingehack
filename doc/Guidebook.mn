@@ -4,7 +4,7 @@
 .ds vr "NetHack 3.3
 .ds f0 "\*(vr
 .ds f1
-.ds f2 "June 28, 2000
+.ds f2 "August 2, 2000
 .mt
 A Guide to the Mazes of Menace
 (Guidebook for NetHack 3.3)
@@ -322,7 +322,7 @@ Stairs down: a way to the next level.
 .lp <
 Stairs up: a way to the previous level.
 .lp +
-A closed door, or a spellbook containing a spell you can learn.
+A closed door, or a spellbook containing a spell you may be able to learn.
 .lp @
 Your character or a human.
 .lp $
@@ -656,7 +656,7 @@ List which challenges you have adhered to.
 .lp #dip
 Dip an object into something.
 .lp #enhance
-Advance or check weapons skills.
+Advance or check weapons and spell skills.
 .lp #force
 Force a lock.
 .lp #invoke
@@ -943,7 +943,7 @@ will get slower and you'll burn calories faster, requiring food more frequently
 to cope with it.  Eventually, you'll be so overloaded that you'll either have
 to discard some of what you're carrying or collapse under its weight.
 .pg
-NetHack will tell you how badly have loaded yourself.  The symbols
+NetHack will tell you how badly you have loaded yourself.  The symbols
 `Burdened', `Stressed', `Strained', `Overtaxed' and `Overloaded' are
 displayed on the bottom line display to indicate your condition.
 .pg
@@ -987,7 +987,7 @@ There are magical means of bestowing or removing curses upon objects,
 so even if you are stuck with one, you can still have the curse
 lifted and the item removed.  Priests and Priestesses have an innate
 sensitivity to this property in any object, so they can more easily avoid
-cursed objects than other character classes.
+cursed objects than other character roles.
 .pg
 An item with unknown status will be reported in your inventory with no prefix.
 An item which you know the state of will be distinguished in your inventory
@@ -1178,7 +1178,7 @@ pieces of armor usually have negative enchantments (minuses) in
 addition to being unremovable.
 .pg
 Many types of armor are subject to some kind of damage like rust.  Such
-damage can be repaired.  Some types or armor may inhibit spell casting.
+damage can be repaired.  Some types of armor may inhibit spell casting.
 .pg
 The commands to use armor are `W' (wear) and `T' (take off).
 The `A' command can also be used to take off armor as well as other
@@ -1197,9 +1197,9 @@ When you kill monsters, they usually leave corpses which are also
 special powers when you eat them.  A good rule of thumb is ``you are
 what you eat.''
 .pg
-Some classes and some monsters are vegetarian.  Vegetarian monsters will
-typically never eat animal corpses, while vegetarian players can, but with
-some rather unpleasant side-effects.
+Some character roles and some monsters are vegetarian.  Vegetarian monsters
+will typically never eat animal corpses, while vegetarian players can,
+but with some rather unpleasant side-effects.
 .pg
 You can name one food item after something you like to eat with the
 .op fruit
@@ -1296,13 +1296,14 @@ The commands to use rings are `P' (put on) and `R' (remove).
 Spellbooks (`+')
 .pg
 Spellbooks are tomes of mighty magic.  When studied with the `r' (read)
-command, they bestow the knowledge of a spell\(emunless the attempt
-backfires.
+command, they transfer to the reader the knowledge of a spell (and
+therefore eventually become unreadable) \(em unless the attempt backfires.
 Reading a cursed spellbook or one with mystic runes beyond
 your ken can be harmful to your health!
 .pg
 A spell (even when learned) can also backfire when you cast it.  If you
-attempt to cast a spell well above your experience level, or cast it at
+attempt to cast a spell well above your experience level, or if you have
+little skill with the appropriate spell type, or cast it at
 a time when your luck is particularly bad, you can end up wasting both the
 energy and the time required in casting.
 .pg
@@ -1311,6 +1312,13 @@ your naked mind.  Releasing the magical energy releases some of your
 memory of the spell with it.  Each time you cast a spell, your
 familiarity with it will dwindle, until you eventually forget the
 details completely and must relearn it.
+.pg
+Just as weapons are divided into groups in which a character can become
+proficient (to varying degrees), spells are similarly grouped.
+Successfully casting a spell exercises the skill group; sufficient skill
+may increase the potency of the spell and reduce the risk of spell failure.
+Skill slots are shared with weapons skills.  (See also the section on
+``Weapon proficiency''.)
 .pg
 Casting a spell also requires flexible movement, and wearing various types
 of armor may interfere with that.
