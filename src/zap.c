@@ -1836,7 +1836,7 @@ boolean ordinary;
 		    /* have to test before changing HInvis but must change
 		     * HInvis before doing newsym().
 		     */
-		    int msg = !Invisible && !Blind && !BInvis;
+		    int msg = !Invis && !Blind && !BInvis;
 
 		    if (BInvis && uarmc->otyp == MUMMY_WRAPPING) {
 			/* A mummy wrapping absorbs it and protects you */

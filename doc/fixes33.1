@@ -37,8 +37,8 @@ dying from a failed saddle attempt should name the monster without using
 spurious "Bummer, you've hit the ground" when hallucinating and dismounting
 constitution of <3 and >18 (possible in 3.3 because the ring of gain
 	constitution was added) was not handled properly
-potion of invisibility should not print message if you are already invisible,
-	even if you can see invisible
+potion and wand of invisibility (on yourself) should not print message if you
+	are already invisible, even if you can see invisible
 reviving tame monsters ended up tame but not peaceful and would attack you
 wishing for "rotproof" item is recognized as synonym for erodeproof
 your pair of boots "are" not affected when kicking rust monster should be "is"
@@ -167,7 +167,7 @@ rust traps should affect scrolls
 lev_comp returns error if level cannot be fully written out
 blank scrolls/spellbooks don't count as reading material
 fix seduction attacks to treat characters polymorphed into golems as neuter
-chaotic sacrificing on a chaotic alter may crash if demon creation fails
+chaotic sacrificing on a chaotic altar may crash if demon creation fails
 avoid possible crash when casting fireball spell while engulfed or near the
 	edge of the map
 prevent observation of dust clouds in rogue level doorways when blind
@@ -186,6 +186,7 @@ Mac: backgrounds set too early on game startup
 Mac: tty window positions not remembered after move
 Mac: tty window turned B&W when moved to bottom of screen
 Mac: tty quit command fixed
+Mac: remnants of previous hunger status now cleared
 MFLOPPY: add checkspace option to avoid problems with >2GB free space
 MSDOS: fix clearlocks() to look for the right file names, 
 	and not LEVELS.* (MFLOPPY only)
@@ -228,7 +229,8 @@ differentiate between light/gaze-induced blindness and other causes of blindness
 yellow dragon scale mail provides acid resistance
 polymorphed player digests engulf victims more slowly if Slow_digestion
 Conflict now affects steed's desire to keep its rider
-undead turning of bones level player corpse causes ghost to reunit with the corpse
+undead turning of bones level player corpse causes ghost to reunite with
+	the corpse
 
 
 Platform- and/or Interface-Specific New Features
