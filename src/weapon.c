@@ -377,7 +377,13 @@ register struct monst *mtmp;
 	    Oselect(BOULDER);
 
 	/* Select polearms first; they do more damage and aren't expendable */
-	for (i = 0; i < SIZE(pwep); i++) {
+	/* The limit of 13 here is based on the monster polearm range limit
+	 * (defined as 5 in mthrowu.c).  5 corresponds to a distance of 2 in
+	 * one direction and 1 in another; one space beyond that would be 3 in
+	 * one direction and 2 in another; 3^2+2^2=13.
+	 */
+	if (dist2(mtmp->mx, mtmp->my, mtmp->mux, mtmp->muy) <= 13 && couldsee(mtmp->mx, mtmp->my)) {
+	    for (i = 0; i < SIZE(pwep); i++) {
 		/* Only strong monsters can wield big (esp. long) weapons.
 		 * Big weapon is basically the same as bimanual.
 		 * All monsters can wield the remaining weapons.
@@ -385,8 +391,13 @@ register struct monst *mtmp;
 		if (((strongmonst(mtmp->data) && (mtmp->misc_worn_check & W_ARMS) == 0)
 			|| !objects[pwep[i]].oc_bimanual) &&
 		    (objects[pwep[i]].oc_material != SILVER
-			|| !hates_silver(mtmp->data)))
-			Oselect(pwep[i]);
+			|| !hates_silver(mtmp->data))) {
+		    if ((otmp = oselect(mtmp, pwep[i])) != 0) {
+			propellor = otmp; /* force the monster to wield it */
+			return otmp;
+		    }
+		}
+	    }
 	}
 
 	/*
@@ -546,7 +557,8 @@ register struct monst *mon;
 	 * choice of weapons.  This has no parallel for players.  It can
 	 * be handled by waiting until mon_wield_item is actually called.
 	 * Though the monster still wields the wrong weapon until then,
-	 * this is OK since the player can't see it.
+	 * this is OK since the player can't see it.  (FIXME: Not okay since
+	 * probing can reveal it.)
 	 * Note that if there is no change, setting the check to NEED_WEAPON
 	 * is harmless.
 	 * Possible problem: big monster with big cursed weapon gets

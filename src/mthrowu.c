@@ -438,14 +438,14 @@ register struct monst *mtmp;
 	int multishot = 1;
 
 	/* Rearranged beginning so monsters can use polearms not in a line */
-	    if (mtmp->weapon_check == NEED_WEAPON || !MON_WEP(mtmp)) {
-		mtmp->weapon_check = NEED_RANGED_WEAPON;
-		/* mon_wield_item resets weapon_check as appropriate */
-		if(mon_wield_item(mtmp) != 0) return;
-	    }
+	if (mtmp->weapon_check == NEED_WEAPON || !MON_WEP(mtmp)) {
+	    mtmp->weapon_check = NEED_RANGED_WEAPON;
+	    /* mon_wield_item resets weapon_check as appropriate */
+	    if(mon_wield_item(mtmp) != 0) return;
+	}
 
 	/* Pick a weapon */
-	    otmp = select_rwep(mtmp);
+	otmp = select_rwep(mtmp);
 	if (!otmp) return;
 	ispole = is_pole(otmp);
 	skill = objects[otmp->otyp].oc_skill;
@@ -469,12 +469,12 @@ register struct monst *mtmp;
 			|| otmp->otyp == ORCISH_ARROW
 			|| otmp->otyp == YA
 			|| otmp->otyp == CROSSBOW_BOLT) verb = "shoots";
-			if (ispole) {
-				if (dist2(mtmp->mx, mtmp->my, mtmp->mux, mtmp->muy) <=
-						POLE_LIM && couldsee(mtmp->mx, mtmp->my))
-					verb = "thrusts";
-				else return; /* Out of range, or intervening wall */
-			}
+		    if (ispole) {
+			if (dist2(mtmp->mx, mtmp->my, mtmp->mux, mtmp->muy) <=
+				POLE_LIM && couldsee(mtmp->mx, mtmp->my))
+			    verb = "thrusts";
+			else return; /* Out of range, or intervening wall */
+		    }
 
 		    if (canseemon(mtmp)) {
 			pline("%s %s %s!", Monnam(mtmp), verb,
