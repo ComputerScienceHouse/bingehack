@@ -279,7 +279,8 @@ register int x,y;
 {
 	register struct engr *ep = engr_at(x,y);
 	register int	sensed = 0;
-
+	char buf[BUFSZ];
+	
 	/* Sensing an engraving does not require sight,
 	 * nor does it necessarily imply comprehension (literacy).
 	 */
@@ -332,8 +333,15 @@ register int x,y;
 		sensed = 1;
 	    }
 	    if (sensed) {
+	    	char *et;
+	    	unsigned maxelen = BUFSZ - sizeof("You feel the words: \"\". ");
+	    	if (strlen(ep->engr_txt) > maxelen) {
+	    		strncpy(buf,  ep->engr_txt, maxelen);
+			et = buf;
+		} else
+			et = ep->engr_txt;
 		You("%s: \"%s\".",
-		      (Blind) ? "feel the words" : "read",  ep->engr_txt);
+		      (Blind) ? "feel the words" : "read",  et);
 		if(flags.run > 1) nomul(0);
 	    }
 	}
