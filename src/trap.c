@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)trap.c	3.3	2000/04/22	*/
+/*	SCCS Id: @(#)trap.c	3.3	2000/04/29	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1794,7 +1794,7 @@ long hmask, emask;     /* might cancel timeout */
 		 * into" message below.  Thus, we want to avoid printing
 		 * confusing, duplicate or out-of-order messages.
 		 * Use knowledge of the two routines as a hack -- this
-		 * should really handled differently -dlc
+		 * should really be handled differently -dlc
 		 */
 		if(is_pool(u.ux,u.uy) && !Wwalking && !Swimming && !u.uinwater)
 			no_msg = drown();
@@ -1805,6 +1805,7 @@ long hmask, emask;     /* might cancel timeout */
 		}
 	}
 	if (!trap) {
+		trap = t_at(u.ux,u.uy);
 		if(Is_airlevel(&u.uz))
 			You("begin to tumble in place.");
 		else if (Is_waterlevel(&u.uz) && !no_msg)
@@ -1815,16 +1816,34 @@ long hmask, emask;     /* might cancel timeout */
 		    if (!(emask & W_SADDLE))
 #endif
 		    {
+			boolean sokoban_trap = (In_sokoban(&u.uz) && trap);
 			if (Hallucination)
 				pline("Bummer!  You've %s.",
 				      is_pool(u.ux,u.uy) ?
-					"splashed down" : "hit the ground");
-			else
-				You("float gently to the %s.",
-				    surface(u.ux, u.uy));
+					"splashed down" : sokoban_trap ? "crashed" :
+					"hit the ground");
+			else {
+				if (!sokoban_trap)
+					You("float gently to the %s.",
+					    surface(u.ux, u.uy));
+				else {
+					/* Justification elsewhere for Sokoban traps
+					 * is based on air currents. This is
+					 * consistent with that.
+					 * The unexpected additional force of the
+					 * air currents once leviation
+					 * ceases knocks you off your feet.
+					 */
+					You("fall over.");
+		    			losehp(rnd(2), "wind swept", KILLED_BY);
+#ifdef STEED
+		    			if (u.usteed) dismount_steed(DISMOUNT_FELL);
+#endif
+					selftouch("As you fall, you");
+				}
+			}
 		    }
 		}
-		trap = t_at(u.ux,u.uy);
 	}
 
 	/* can't rely on u.uz0 for detecting trap door-induced level change;
