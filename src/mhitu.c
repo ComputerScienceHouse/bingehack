@@ -1049,12 +1049,7 @@ dopois:
 	    case AD_DRLI:
 		hitmsg(mtmp, mattk);
 		if (uncancelled && !rn2(3) && !Drain_resistance) {
-		    losexp();
-		    if (u.uhp <= 0) {
-			killer_format = KILLED_BY;
-			killer = "life drainage";
-			done(DIED);
-		    }
+		    losexp("life drainage");
 		}
 		break;
 	    case AD_LEGS:
@@ -2114,12 +2109,7 @@ register struct monst *mon;
 			case 3:
 				if (!resists_drli(&youmonst)) {
 				    You_feel("out of shape.");
-				    losexp();
-				    if (u.uhp <= 0) {
-					killer_format = KILLED_BY;
-					killer = "overexertion";
-					done(DIED);
-				    }
+				    losexp("overexertion");
 				} else {
 				    You("have a curious feeling...");
 				}

@@ -481,14 +481,7 @@ aligntyp resp_god;
 			      youmonst.data->mlet == S_HUMAN ? "mortal" : "creature");
 			verbalize("Thou must relearn thy lessons!");
 			(void) adjattrib(A_WIS, -1, FALSE);
-			if (u.ulevel > 1) {
-			    losexp();
-			    if(u.uhp < 1) u.uhp = 1;
-			    if(u.uhpmax < 1) u.uhpmax = 1;
-			} else  {
-			    u.uexp = 0;
-			    flags.botl = 1;
-			}
+			losexp((char *)0);
 			break;
 	    case 6:	if (!Punished) {
 			    gods_angry(resp_god);

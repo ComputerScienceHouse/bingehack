@@ -560,7 +560,7 @@ E void FDECL(make_grave, (int,int,const char *));
 
 E int FDECL(experience, (struct monst *,int));
 E void FDECL(more_experienced, (int,int));
-E void NDECL(losexp);
+E void FDECL(losexp, (const char *));
 E void NDECL(newexplevel);
 E void FDECL(pluslvl, (BOOLEAN_P));
 E long NDECL(rndexp);

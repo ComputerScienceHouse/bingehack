@@ -110,22 +110,34 @@ more_experienced(exp, rexp)
 }
 
 void
-losexp()		/* hit by drain life attack */
+losexp(drainer)		/* e.g., hit by drain life attack */
+const char *drainer;	/* cause of death, if drain should be fatal */
 {
 	register int num;
 
 	if (resists_drli(&youmonst)) return;
 
-	if(u.ulevel > 1) {
+	if (u.ulevel > 1) {
 		pline("%s level %d.", Goodbye(), u.ulevel--);
 		/* remove intrinsic abilities */
 		adjabil(u.ulevel + 1, u.ulevel);
 		reset_rndmonst(NON_PM);	/* new monster selection */
-	} else
-		u.uhp = -1;
+	} else {
+		if (drainer) {
+			killer_format = KILLED_BY;
+			killer = drainer;
+			done(DIED);
+		}
+		/* no drainer or lifesaved */
+		u.uexp = 0;
+	}
 	num = newhp();
 	u.uhp -= num;
+	if (u.uhp < 1)
+		u.uhp = 1;
 	u.uhpmax -= num;
+	if (u.uhpmax < 1)
+		u.uhpmax = 1;
 	if (u.ulevel < urole.xlev)
 	    num = rn1(u.ulevel/2 + urole.enadv.lornd + urace.enadv.lornd,
 	    		urole.enadv.lofix + urace.enadv.lofix);
@@ -134,10 +146,13 @@ losexp()		/* hit by drain life attack */
 	    		urole.enadv.hifix + urace.enadv.hifix);
 	num = enermod(num);		/* M. Stephenson */
 	u.uen -= num;
-	if (u.uen < 0)		u.uen = 0;
+	if (u.uen < 0)
+		u.uen = 0;
 	u.uenmax -= num;
-	if (u.uenmax < 0)	u.uenmax = 0;
-	u.uexp = newuexp(u.ulevel) - 1;
+	if (u.uenmax < 0)
+		u.uenmax = 0;
+	if (u.uexp > 0)
+		u.uexp = newuexp(u.ulevel) - 1;
 	flags.botl = 1;
 }
 
