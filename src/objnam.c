@@ -1678,6 +1678,7 @@ register char *bp;
 	if (strncmp(bp, "samurai sword", 13)) /* not the "samurai" monster! */
 	if (strncmp(bp, "wizard lock", 11)) /* not the "wizard" monster! */
 	if (strncmp(bp, "ninja-to", 8)) /* not the "ninja" rank */
+	if (strncmp(bp, "master key", 10)) /* not the "master" rank */
 	if (mntmp < LOW_PM && strlen(bp) > 2 &&
 	    (mntmp = name_to_mon(bp)) >= LOW_PM) {
 		int mntmptoo, mntmplen;	/* double check for rank title */
