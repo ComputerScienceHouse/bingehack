@@ -122,4 +122,36 @@ int fd;
 const char amiga_version_string[] = AMIGA_VERSION_STRING;
 #endif
 
+unsigned long get_feature_notice_ver(str)
+char *str;
+{
+	int maj, min, patch;
+	char *istr[3];
+	int j = 0;
+
+	if (!str) return 0L;
+	istr[j] = str;
+	while (*str) {
+		if (*str == '.') {
+			*str++ = '\0';
+			j++;
+			istr[j] = str;
+			if (j == 2) break;
+		} else if (index("0123456789", *str) != 0) {
+			str++;
+		} else 
+			return 0L;
+	}
+	if (j != 2) return 0L;
+	maj = atoi(istr[0]);
+	min = atoi(istr[1]);
+	patch = atoi(istr[2]);
+	return FEATURE_NOTICE_VER(maj,min,patch);	/* macro from include/hack.h */
+}
+
+unsigned long get_current_feature_ver()
+{
+	return FEATURE_NOTICE_VER(VERSION_MAJOR,VERSION_MINOR,PATCHLEVEL);
+}
+
 /*version.c*/

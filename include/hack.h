@@ -169,6 +169,15 @@ NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
 #define MENU_SELECTED	TRUE
 #define MENU_UNSELECTED FALSE
 
+#define FEATURE_NOTICE_VER(major,minor,patch) (((unsigned long)major << 24) | \
+	((unsigned long)minor << 16) | \
+	((unsigned long)patch << 8) | \
+	((unsigned long)0))
+
+#define FEATURE_NOTICE_VER_MAJ	  (flags.alerts_off_ver >> 24)
+#define FEATURE_NOTICE_VER_MIN	  (((unsigned long)(0x0000000000FF0000L & flags.alerts_off_ver)) >> 16)
+#define FEATURE_NOTICE_VER_PATCH  (((unsigned long)(0x000000000000FF00L & flags.alerts_off_ver)) >>  8)
+
 #ifndef max
 #define max(a,b) ((a) > (b) ? (a) : (b))
 #endif

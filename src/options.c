@@ -184,6 +184,7 @@ static struct Comp_Opt
 			 * typing when game maintains information in
 			 * a different format */
 } compopt[] = {
+	{ "alerts_off_ver", "suppress alert of new features for version specified and prior", 6},
 	{ "align",    "your starting alignment (lawful, neutral, or chaotic)", 8 },
 #ifdef MAC
 	{ "background", "the color of the background (black or white),", 6 },
@@ -349,6 +350,7 @@ STATIC_DCL void FDECL(bad_negation, (const char *,BOOLEAN_P));
 STATIC_DCL int FDECL(change_inv_order, (char *));
 STATIC_DCL void FDECL(oc_to_str, (char *, char *));
 STATIC_DCL void FDECL(graphics_opts, (char *,const char *,int,int));
+STATIC_DCL int FDECL(feature_alert_opts, (char *));
 
 /* check whether a user-supplied option string is a proper leading
    substring of a particular option name; option string might have
@@ -715,6 +717,32 @@ int maxlen, offset;
 	assign_graphics(translate, length, maxlen, offset);
 }
 
+STATIC_OVL int
+feature_alert_opts(op)
+char *op;
+{
+	char buf[BUFSZ];
+	boolean rejectver = FALSE;
+	unsigned long fnv = get_feature_notice_ver(op);		/* version.c */
+	if (fnv == 0L) return 0;
+	if (fnv > get_current_feature_ver())
+		rejectver = TRUE;
+	else
+		flags.alerts_off_ver = fnv;
+	if (!initial) {
+		if (rejectver) {
+		      You_cant("disable new feature alerts for future versions.");
+		      return 0;
+		} else {
+		      Sprintf(buf, "%d.%d.%d", FEATURE_NOTICE_VER_MAJ,
+				FEATURE_NOTICE_VER_MIN, FEATURE_NOTICE_VER_PATCH);
+		  pline("Feature change alerts disabled for NetHack %s features and prior.",
+			 buf);
+		}
+	}
+	return 1;
+}
+
 void
 parseoptions(opts, tinitial, tfrom_file)
 register char *opts;
@@ -778,6 +806,14 @@ boolean tinitial, tfrom_file;
 
 	/* compound options */
 
+	fullname = "alerts_off_ver";
+	if (match_optname(opts, fullname, 4, TRUE)) {
+		op = string_for_opt(opts, negated);
+		if (negated) bad_negation(fullname, FALSE);
+		else if (op) (void) feature_alert_opts(op);
+		return;
+	}
+	
 	fullname = "pettype";
 	if (match_optname(opts, fullname, 3, TRUE)) {
 		if ((op = string_for_env_opt(fullname, opts, negated)) != 0) {
@@ -1674,7 +1710,7 @@ doset_add_menu(win, option, value, indexoffset)
     }
 
     /* "    " replaces "a - " -- assumes menus follow that style */
-    Sprintf(buf, "%s%-13s [%s]", (any.a_int ? "" : "    "), option, value);
+    Sprintf(buf, "%s%-14s [%s]", (any.a_int ? "" : "    "), option, value);
     add_menu(win, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, MENU_UNSELECTED);
 }
 
@@ -1753,7 +1789,12 @@ doset()
 	doset_add_menu(tmpwin, "videocolors", buf, 0);
 #endif /* VIDEOSHADES */
 	doset_add_menu(tmpwin, "windowtype", windowprocs.name, 0);
+
 	/* modifiable compounds */
+	Sprintf(buf, "%d.%d.%d", FEATURE_NOTICE_VER_MAJ, FEATURE_NOTICE_VER_MIN,
+			FEATURE_NOTICE_VER_PATCH);
+	doset_add_menu(tmpwin, "alerts_off_ver", (flags.alerts_off_ver == 0L) ?
+				"(null)" : buf, boolcount);
 	doset_add_menu(tmpwin, "disclose",
 		       flags.end_disclose[0] ? flags.end_disclose : "all",
 		       boolcount);
