@@ -344,6 +344,7 @@ ustatusline()
 		}
 	}
 	if (Stoned)		Strcat(info, ", solidifying");
+	if (Slimed)		Strcat(info, ", becoming slimy");
 	if (Strangled)		Strcat(info, ", being strangled");
 	if (Vomiting)		Strcat(info, ", nauseated"); /* !"nauseous" */
 	if (Confusion)		Strcat(info, ", confused");
@@ -399,7 +400,8 @@ ustatusline()
 		info);
 }
 
-void self_invis_message()
+void
+self_invis_message()
 {
 	pline("%s %s.",
 	    Hallucination ? "Far out, man!  You" : "Gee!  All of a sudden, you",
