@@ -40,12 +40,29 @@
 /*****************************************************************************/
 /* Version 3.3.0 */
 
+/*
+ *  NetHack 3.3.0, November 30, 1999
+ *  
+ *  Implement the differentiation of character class or role from the
+ *  character race.
+ *  Removal of the Elf class, in perference to the Elf as a race.
+ *  Introduction of Dwarves, Elves, Gnomes and Orcs as distinct races in
+ *  addition to the Human "norm".
+ *  Addition of the Monk and Ranger classes.
+ *  Integrate features of several branch versions of the game, notably,
+ *  NetHack++, NetHack--, SLASH, and Slash'em.
+ *  Improved spellcasting system.
+ *  Support for the Qt widget set.
+ *  Y2K fix: use 4 digit year values for the dates in the score file
+ *  updated COPYRIGHT_BANNER_A to reflect year of release.
+ *  Dozens of other bug fixes, and minor improvements.
+ */
 /* Version 3.3 */
 
 /*****************************************************************************/
 /* Version 3.2.3 */
 
-/*  Patch 3, November 20, 1999
+/*  Patch 3, November 30, 1999
  *  Released simultaneously with 3.3.0 for the benefit of
  *  ports and platforms that were unable to get working
  *  versions of 3.3.0 ready prior to the year 2000. It
