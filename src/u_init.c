@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)u_init.c	3.3	1999/11/26	*/
+/*	SCCS Id: @(#)u_init.c	3.3	1999/12/05	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -192,6 +192,10 @@ static struct trobj Instrument[] = {
 	{ WOODEN_FLUTE, 0, TOOL_CLASS, 1, 0 },
 	{ 0, 0, 0, 0, 0 }
 };
+static struct trobj Xtra_food[] = {
+	{ UNDEF_TYP, UNDEF_SPE, FOOD_CLASS, 2, 0 },
+	{ 0, 0, 0, 0, 0 }
+};
 #ifdef TOURIST
 static struct trobj Leash[] = {
 	{ LEASH, 0, TOOL_CLASS, 1, 0 },
@@ -205,6 +209,37 @@ static struct trobj Towel[] = {
 static struct trobj Wishing[] = {
 	{ WAN_WISHING, 3, WAND_CLASS, 1, 0 },
 	{ 0, 0, 0, 0, 0 }
+};
+
+/* race-based substitutions for initial inventory;
+   the weaker cloak for elven rangers is intentional--they shoot better */
+static struct inv_sub { short race_pm, item_otyp, subs_otyp; } inv_subs[] = {
+    { PM_ELF,	DAGGER,			ELVEN_DAGGER	      },
+    { PM_ELF,	SPEAR,			ELVEN_SPEAR	      },
+    { PM_ELF,	SHORT_SWORD,		ELVEN_SHORT_SWORD     },
+    { PM_ELF,	BOW,			ELVEN_BOW	      },
+    { PM_ELF,	ARROW,			ELVEN_ARROW	      },
+    { PM_ELF,	HELMET,			ELVEN_LEATHER_HELM    },
+ /* { PM_ELF,	SMALL_SHIELD,		ELVEN_SHIELD	      }, */
+    { PM_ELF,	CLOAK_OF_DISPLACEMENT,	ELVEN_CLOAK	      },
+    { PM_ELF,	CRAM_RATION,		LEMBAS_WAFER	      },
+    { PM_ORC,	DAGGER,			ORCISH_DAGGER	      },
+    { PM_ORC,	SPEAR,			ORCISH_SPEAR	      },
+    { PM_ORC,	SHORT_SWORD,		ORCISH_SHORT_SWORD    },
+    { PM_ORC,	BOW,			ORCISH_BOW	      },
+    { PM_ORC,	ARROW,			ORCISH_ARROW	      },
+    { PM_ORC,	HELMET,			ORCISH_HELM	      },
+    { PM_ORC,	SMALL_SHIELD,		ORCISH_SHIELD	      },
+    { PM_ORC,	RING_MAIL,		ORCISH_RING_MAIL      },
+    { PM_ORC,	CHAIN_MAIL,		ORCISH_CHAIN_MAIL     },
+    { PM_DWARF, SPEAR,			DWARVISH_SPEAR	      },
+    { PM_DWARF, SHORT_SWORD,		DWARVISH_SHORT_SWORD  },
+    { PM_DWARF, HELMET,			DWARVISH_IRON_HELM    },
+ /* { PM_DWARF, SMALL_SHIELD,		DWARVISH_ROUNDSHIELD  }, */
+ /* { PM_DWARF, PICK_AXE,		DWARVISH_MATTOCK      }, */
+    { PM_GNOME, BOW,			CROSSBOW	      },
+    { PM_GNOME, ARROW,			CROSSBOW_BOLT	      },
+    { NON_PM,	STRANGE_OBJECT,		STRANGE_OBJECT	      }
 };
 
 static struct def_skill Skill_A[] = {
@@ -630,26 +665,27 @@ u_init()
 		 */
 		break;
 	case PM_RANGER:
+#if 0		/* superseded by inv_subs[] */
 		switch (rn2(100) / 20) {
 		case 0:	/* Special racial bow */
 		case 1:
 		case 2:
 		    switch (Race_switch) {
 		    case PM_ELF:
-		    	Ranger[RAN_BOW].trotyp = ELVEN_BOW;
-		    	Ranger[RAN_TWO_ARROWS].trotyp =
-		    	Ranger[RAN_ZERO_ARROWS].trotyp = ELVEN_ARROW;
-		    	break;
+			Ranger[RAN_BOW].trotyp = ELVEN_BOW;
+			Ranger[RAN_TWO_ARROWS].trotyp =
+			Ranger[RAN_ZERO_ARROWS].trotyp = ELVEN_ARROW;
+			break;
 		    case PM_GNOME:
-		    	Ranger[RAN_BOW].trotyp = CROSSBOW;
-		    	Ranger[RAN_TWO_ARROWS].trotyp =
-		    	Ranger[RAN_ZERO_ARROWS].trotyp = CROSSBOW_BOLT;
-		    	break;
+			Ranger[RAN_BOW].trotyp = CROSSBOW;
+			Ranger[RAN_TWO_ARROWS].trotyp =
+			Ranger[RAN_ZERO_ARROWS].trotyp = CROSSBOW_BOLT;
+			break;
 		    case PM_ORC:
-		    	Ranger[RAN_BOW].trotyp = ORCISH_BOW;
-		    	Ranger[RAN_TWO_ARROWS].trotyp =
-		    	Ranger[RAN_ZERO_ARROWS].trotyp = ORCISH_ARROW;
-		    	break;
+			Ranger[RAN_BOW].trotyp = ORCISH_BOW;
+			Ranger[RAN_TWO_ARROWS].trotyp =
+			Ranger[RAN_ZERO_ARROWS].trotyp = ORCISH_ARROW;
+			break;
 		    default: break;	/* Use default bow + arrow */
 		    }
 		    break;
@@ -660,6 +696,7 @@ u_init()
 		    break;
 		default: break;	/* Use default bow + arrow */
 		}
+#endif	/*0*/
 		Ranger[RAN_TWO_ARROWS].trquan = rn1(10, 50);
 		Ranger[RAN_ZERO_ARROWS].trquan = rn1(10, 30);
 		ini_inv(Ranger);
@@ -763,6 +800,9 @@ u_init()
 	    break;
 
 	case PM_ORC:
+	    /* compensate for generally inferior equipment */
+	    if (!Role_if(PM_WIZARD))
+		ini_inv(Xtra_food);
 	    /* Orcs can recognize all orcish objects */
 	    knows_object(ORCISH_SHORT_SWORD);
 	    knows_object(ORCISH_ARROW);
@@ -811,14 +851,27 @@ ini_inv(trop)
 register struct trobj *trop;
 {
 	struct obj *obj;
-	while(trop->trclass) {
-		boolean undefined = (trop->trotyp == UNDEF_TYP);
+	int otyp, i;
 
-		if (!undefined)
-			obj = mksobj((int)trop->trotyp, TRUE, FALSE);
-		else obj = mkobj(trop->trclass,FALSE);
-
-		/* For random objects, do not create certain overly powerful
+	while (trop->trclass) {
+		if (trop->trotyp != UNDEF_TYP) {
+			otyp = (int)trop->trotyp;
+			if (urace.malenum != PM_HUMAN) {
+			    /* substitute specific items for generic ones */
+			    for (i = 0; inv_subs[i].race_pm != NON_PM; ++i)
+				if (inv_subs[i].race_pm == urace.malenum &&
+					otyp == inv_subs[i].item_otyp) {
+				    otyp = inv_subs[i].subs_otyp;
+				    break;
+				}
+			}
+			obj = mksobj(otyp, TRUE, FALSE);
+		} else {	/* UNDEF_TYP */
+			static NEARDATA short nocreate = STRANGE_OBJECT;
+			static NEARDATA short nocreate2 = STRANGE_OBJECT;
+			static NEARDATA short nocreate3 = STRANGE_OBJECT;
+		/*
+		 * For random objects, do not create certain overly powerful
 		 * items: wand of wishing, ring of levitation, or the
 		 * polymorph/polymorph control combination.  Specific objects,
 		 * i.e. the discovery wishing, are still OK.
@@ -827,11 +880,7 @@ register struct trobj *trop;
 		 * one will immediately read it and use the iron ball as a
 		 * weapon.)
 		 */
-		if (undefined) {
-			static NEARDATA short nocreate = STRANGE_OBJECT;
-			static NEARDATA short nocreate2 = STRANGE_OBJECT;
-			static NEARDATA short nocreate3 = STRANGE_OBJECT;
-
+			obj = mkobj(trop->trclass, FALSE);
 			while(obj->otyp == WAN_WISHING
 				|| obj->otyp == nocreate
 				|| obj->otyp == nocreate2
