@@ -744,7 +744,8 @@ struct mkroom *r;
 	mread(fd, (genericptr_t) r, sizeof(struct mkroom));
 	for(i=0; i<r->nsubrooms; i++) {
 		r->sbrooms[i] = &subrooms[nsubroom];
-		rest_room(fd, &subrooms[nsubroom++]);
+		rest_room(fd, &subrooms[nsubroom]);
+		subrooms[nsubroom++].resident = (struct monst *)0;
 	}
 }
 
