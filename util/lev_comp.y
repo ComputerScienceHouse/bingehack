@@ -196,7 +196,7 @@ maze_level	: maze_def flags lev_init messages regions
 				for(i=0;i<npart;i++)
 				    maze.parts[i] = tmppart[i];
 				if (!write_level_file($1, (splev *)0, &maze)) {
-					yyerror("Can't open output file!!");
+					yyerror("Can't write output file!!");
 					exit(EXIT_FAILURE);
 				}
 				npart = 0;
@@ -230,7 +230,7 @@ room_level	: level_def flags lev_init messages rreg_init rooms corridors_def
 				if (check_subrooms()) {
 				    if (!write_level_file($1, &special_lev,
 							  (specialmaze *)0)) {
-					yyerror("Can't open output file!!");
+					yyerror("Can't write output file!!");
 					exit(EXIT_FAILURE);
 				    }
 				}

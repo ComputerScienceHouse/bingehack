@@ -1785,8 +1785,8 @@ parse()
 	}
 	in_line[0] = foo;
 	in_line[1] = '\0';
-	if (foo == 'g' || foo == 'G' || (iflags.num_pad && foo == '5') ||
-	    foo == 'm' || foo == 'M' || foo == 'F') {
+	if (foo == 'g' || foo == 'G' || foo == 'm' || foo == 'M' ||
+	    foo == 'F' || (iflags.num_pad && (foo == '5' || foo == '-'))) {
 	    foo = readchar();
 #ifdef REDO
 	    savech((char)foo);
