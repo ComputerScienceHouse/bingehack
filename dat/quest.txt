@@ -1701,7 +1701,7 @@ life, but I hope to at %ds feet."
 You arrive in familiar surroundings.  In the distance, you %x the
 great stone Circle, the place of worship to %d.
 
-Something is wrong, though.  Surrounding the circle are orcs!
+Something is wrong, though.  Surrounding the circle are centaurs!
 And they've noticed you!
 %E
 %Cp Ran 00002
@@ -1766,7 +1766,7 @@ invaded and enslaved the orcish tribes in this area.  The local
 orcish leader is now only a figurehead, and serves %n.
 
 "During our last gathering of worship here, we were beset by hordes of
-orcs and goblins, as you witnessed.  In the first onslaught a group,
+hostile centaurs, as you witnessed.  In the first onslaught a group,
 headed by %n himself, managed to breach the circle and
 steal %o.
 
@@ -1782,10 +1782,11 @@ underground castle of %n.  He has always coveted
 the circle of %d be safe."
 %E
 %Cp Ran 00020
-"It is rumored that the Uruk-hai have a pact with the Hill Ogres."
+"It is rumored that the Forest and Mountain Centaurs have resolved
+their ancient feud and now band together against us."
 %E
 %Cp Ran 00021
-"%nC is strong, but not very smart."
+"%nC is strong, and very smart."
 %E
 %Cp Ran 00022
 "Use %o, when you find it.  It will help you survive
@@ -1816,7 +1817,7 @@ hated us."
 %E
 %Cc Ran 00030
 You descend into the outer regions of %i.  You can hear
-scuffling sounds in the corridors, and vague mumblings in the distance.
+clattering sounds in the corridors, and vague mumblings in the distance.
 
 You remember that %ga once told you that there were many secret
 passageways in this complex.
@@ -1829,7 +1830,8 @@ You descend into a weird place, in which roughly cut cave-like walls
 join with smooth, finished ones, as if someone was in the midst of
 finishing off the construction of a subterranean complex.
 
-Off in the distance, you hear the sounds of a large, raucous gathering.
+Off in the distance, you hear a sound like the clattering of many
+hoves on rock.
 %E
 %Cp Ran 00041
 Once again, you enter the distorted castle of %n.
@@ -1898,7 +1900,7 @@ on your speed.
 
 "Your aura proclaims that you possess %o!
 
-"I fear, now, that the Uruk-hai will select yet another %nt.
+"I fear, now, that the Centaurs will select yet another %nt.
 This will take some time, but if you can recover the Amulet of Yendor
 for %d before that happens, we will be eternally safe.
 
