@@ -153,10 +153,11 @@ eraseoldlocks()
 	for(i = 1; i <= MAXDUNGEON*MAXLEVEL + 1; i++) {
 		/* try to remove all */
 		set_levelfile_name(lock, i);
-		(void) unlink(lock);
+		(void) unlink(fqname(lock, LEVELPREFIX, 0));
 	}
 	set_levelfile_name(lock, 0);
-	if(unlink(lock)) return(0);			/* cannot remove it */
+	if (unlink(fqname(lock, LEVELPREFIX, 0)))
+		return(0);				/* cannot remove it */
 	return(1);					/* success! */
 }
 
@@ -165,6 +166,7 @@ getlock()
 {
 	extern int errno;
 	register int i = 0, fd, c;
+	const char *fq_lock;
 
 #ifdef TTY_GRAPHICS
 	/* idea from rpick%ucqais@uccba.uc.edu
@@ -193,12 +195,13 @@ getlock()
 
 		do {
 			lock[0] = 'a' + i++;
+			fq_lock = fqname(lock, LEVELPREFIX, 0);
 
-			if((fd = open(lock, 0)) == -1) {
+			if((fd = open(fq_lock, 0)) == -1) {
 			    if(errno == ENOENT) goto gotlock; /* no such file */
-			    perror(lock);
+			    perror(fq_lock);
 			    unlock_file(HLOCK);
-			    error("Cannot open %s", lock);
+			    error("Cannot open %s", fq_lock);
 			}
 
 			if(veryold(fd) /* closes fd if true */
@@ -210,11 +213,12 @@ getlock()
 		unlock_file(HLOCK);
 		error("Too many hacks running now.");
 	} else {
-		if((fd = open(lock, 0)) == -1) {
+		fq_lock = fqname(lock, LEVELPREFIX, 0);
+		if((fd = open(fq_lock, 0)) == -1) {
 			if(errno == ENOENT) goto gotlock;    /* no such file */
-			perror(lock);
+			perror(fq_lock);
 			unlock_file(HLOCK);
-			error("Cannot open %s", lock);
+			error("Cannot open %s", fq_lock);
 		}
 
 		if(veryold(fd) /* closes fd if true */ && eraseoldlocks())
@@ -246,17 +250,17 @@ getlock()
 	}
 
 gotlock:
-	fd = creat(lock, FCMASK);
+	fd = creat(fq_lock, FCMASK);
 	unlock_file(HLOCK);
 	if(fd == -1) {
-		error("cannot creat lock file.");
+		error("cannot creat lock file (%s).", fq_lock);
 	} else {
 		if(write(fd, (genericptr_t) &hackpid, sizeof(hackpid))
 		    != sizeof(hackpid)){
-			error("cannot write lock");
+			error("cannot write lock (%s)", fq_lock);
 		}
 		if(close(fd) == -1) {
-			error("cannot close lock");
+			error("cannot close lock (%s)", fq_lock);
 		}
 	}
 }

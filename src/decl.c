@@ -233,6 +233,15 @@ char toplines[TBUFSZ];
 /* Windowing stuff that's really tty oriented, but present for all ports */
 struct tc_gbl_data tc_gbl_data = { 0,0, 0,0 };	/* AS,AE, LI,CO */
 
+char *fqn_prefix[PREFIX_COUNT] = { (char *)0, (char *)0, (char *)0, (char *)0,
+				(char *)0, (char *)0, (char *)0, (char *)0 };
+
+#ifdef PREFIXES_IN_USE
+char *fqn_prefix_names[PREFIX_COUNT] = { "hackdir", "leveldir", "savedir",
+					"bonesdir", "datadir", "scoredir",
+					"lockdir", "configdir" };
+#endif
+			
 /* dummy routine used to force linkage */
 void
 decl_init()

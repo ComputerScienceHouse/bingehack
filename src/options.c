@@ -1849,6 +1849,13 @@ doset()
 				doset_add_menu(tmpwin, compopt[i].name,
 					(pass == DISP_IN_GAME) ? 0 : indexoffset);
 		}
+#ifdef PREFIXES_IN_USE
+	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, "", MENU_UNSELECTED);
+	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE,
+		 "Variable playground locations:", MENU_UNSELECTED);
+	for (i = 0; i < PREFIX_COUNT; i++)
+		doset_add_menu(tmpwin, fqn_prefix_names[i], 0);
+#endif
 	end_menu(tmpwin, "Set what options?");
 	need_redraw = FALSE;
 	if ((pick_cnt = select_menu(tmpwin, PICK_ANY, &pick_list)) > 0) {
@@ -1958,6 +1965,9 @@ char *buf;
 	char ocl[MAXOCLASSES+1];
 	const char *none = "(none)";
 	const char *to_be_done = "(to be done)";
+#ifdef PREFIXES_IN_USE
+	int i;
+#endif
 
 	buf[0] = '\0';
 	if (!strcmp(optname,"align"))
@@ -2072,6 +2082,13 @@ char *buf;
 #endif /* VIDEOSHADES */
 	else if (!strcmp(optname, "windowtype"))
 		Sprintf(buf, "%s", windowprocs.name);
+#ifdef PREFIXES_IN_USE
+	else {
+	    for (i = 0; i < PREFIX_COUNT; ++i)
+	    	if (!strcmp(optname, fqn_prefix_names[i]) && fqn_prefix[i])
+			Sprintf(buf, "%s", fqn_prefix[i]);
+	}
+#endif
 
 	if (buf[0]) return buf;
 	else return "unknown";

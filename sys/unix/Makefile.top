@@ -28,6 +28,7 @@ EXEPERM  = 0755
 DIRPERM  = 0755
 
 # GAMEDIR also appears in config.h as "HACKDIR".
+# VARDIR may also appear in unixconf.h as "VAR_PLAYGROUND" else GAMEDIR
 #
 # note that 'make install' believes in creating a nice tidy GAMEDIR for
 # installation, free of debris from previous NetHack versions --
@@ -35,6 +36,7 @@ DIRPERM  = 0755
 # (if there is, you'll have to do the installation by hand or modify the
 # instructions)
 GAMEDIR  = $(PREFIX)/games/lib/$(GAME)dir
+VARDIR  = $(GAMEDIR)
 SHELLDIR = $(PREFIX)/games
 
 # per discussion in Install.X11 and Install.Qt
@@ -197,9 +199,9 @@ update: $(GAME) $(VARDAT) dungeon spec_levs
 # set up new versions of the game files
 	( $(MAKE) dofiles )
 # touch time-sensitive files
-	-touch -c $(GAMEDIR)/bones* $(GAMEDIR)/?lock* $(GAMEDIR)/wizard*
-	-touch -c $(GAMEDIR)/save/*
-	touch $(GAMEDIR)/perm $(GAMEDIR)/record
+	-touch -c $(VARDIR)/bones* $(VARDIR)/?lock* $(VARDIR)/wizard*
+	-touch -c $(VARDIR)/save/*
+	touch $(VARDIR)/perm $(VARDIR)/record
 # and a reminder
 	@echo You may also want to install the man pages via the doc Makefile.
 
@@ -207,17 +209,17 @@ install: $(GAME) $(VARDAT) dungeon spec_levs
 # set up the directories
 # not all mkdirs have -p; those that don't will create a -p directory
 	-mkdir -p $(SHELLDIR)
-	-rm -rf $(GAMEDIR)
-	-mkdir -p $(GAMEDIR) $(GAMEDIR)/save
+	-rm -rf $(GAMEDIR) $(VARDIR)
+	-mkdir -p $(GAMEDIR) $(VARDIR) $(VARDIR)/save
 	-rmdir ./-p
-	-$(CHOWN) $(GAMEUID) $(GAMEDIR) $(GAMEDIR)/save
-	$(CHGRP) $(GAMEGRP) $(GAMEDIR) $(GAMEDIR)/save
-	chmod $(DIRPERM) $(GAMEDIR) $(GAMEDIR)/save
+	-$(CHOWN) $(GAMEUID) $(GAMEDIR) $(VARDIR) $(VARDIR)/save
+	$(CHGRP) $(GAMEGRP) $(GAMEDIR) $(VARDIR) $(VARDIR)/save
+	chmod $(DIRPERM) $(GAMEDIR) $(VARDIR) $(VARDIR)/save
 # set up the game files
 	( $(MAKE) dofiles )
 # set up some additional files
-	touch $(GAMEDIR)/perm $(GAMEDIR)/record $(GAMEDIR)/logfile
-	-( cd $(GAMEDIR) ; $(CHOWN) $(GAMEUID) perm record logfile ; \
+	touch $(VARDIR)/perm $(VARDIR)/record $(VARDIR)/logfile
+	-( cd $(VARDIR) ; $(CHOWN) $(GAMEUID) perm record logfile ; \
 			$(CHGRP) $(GAMEGRP) perm record logfile ; \
 			chmod $(FILEPERM) perm record logfile )
 # and a reminder

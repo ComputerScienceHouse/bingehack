@@ -705,6 +705,9 @@ static const char *build_opts[] = {
 #ifdef TOURIST
 		"tourists",
 #endif
+#ifdef PREFIXES_IN_USE
+		"variable playground",
+#endif
 #ifdef VISION_TABLES
 		"vision tables",
 #endif

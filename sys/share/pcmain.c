@@ -141,6 +141,17 @@ char *argv[];
 #endif
 	if (dir != (char *)0) {
 		Strcpy(hackdir, dir);
+#ifdef NOCWD_ASSUMPTIONS
+		{
+		    int prefcnt;
+
+		    fqn_prefix[0] = (char *)alloc(strlen(hackdir)+2);
+		    Strcpy(fqn_prefix[0], hackdir);
+		    append_slash(fqn_prefix[0]);
+		    for (prefcnt = 1; prefcnt < PREFIX_COUNT; prefcnt++)
+			fqn_prefix[prefcnt] = fqn_prefix[0];
+		}
+#endif
 #ifdef CHDIR
 		chdirx (dir, 1);
 #endif

@@ -333,7 +333,7 @@ int how;
 
 #ifdef LOGFILE		/* used for debugging (who dies of what, where) */
 	if (lock_file(LOGFILE, 10)) {
-	    if(!(lfile = fopen_datafile(LOGFILE,"a"))) {
+	    if(!(lfile = fopen_datafile(LOGFILE, "a", TRUE))) {
 		HUP raw_print("Cannot open log file!");
 	    } else {
 		writeentry(lfile, t0);
@@ -359,9 +359,9 @@ int how;
 		goto destroywin;
 
 #ifdef UPDATE_RECORD_IN_PLACE
-	rfile = fopen_datafile(RECORD, "r+");
+	rfile = fopen_datafile(RECORD, "r+", TRUE);
 #else
-	rfile = fopen_datafile(RECORD, "r");
+	rfile = fopen_datafile(RECORD, "r", TRUE);
 #endif
 
 	if (!rfile) {
@@ -438,7 +438,7 @@ int how;
 				     t0->fpos : final_fpos), SEEK_SET);
 #else
 		(void) fclose(rfile);
-		if(!(rfile = fopen_datafile(RECORD,"w"))){
+		if(!(rfile = fopen_datafile(RECORD, "w", TRUE))){
 			HUP raw_print("Cannot write record file");
 			unlock_file(RECORD);
 			free_ttlist(tt_head);
@@ -746,7 +746,7 @@ char **argv;
 		return;
 	}
 
-	rfile = fopen_datafile(RECORD, "r");
+	rfile = fopen_datafile(RECORD, "r", TRUE);
 	if (!rfile) {
 		raw_print("Cannot open record file!");
 		return;
@@ -896,7 +896,7 @@ struct obj *otmp;
 
 	if (!otmp) return((struct obj *) 0);
 
-	rfile = fopen_datafile(RECORD, "r");
+	rfile = fopen_datafile(RECORD, "r", TRUE);
 	if (!rfile) {
 		impossible("Cannot open record file!");
 		return (struct obj *)0;

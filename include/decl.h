@@ -321,6 +321,37 @@ E struct tc_gbl_data {	/* also declared in tcap.h */
 /* xxxexplain[] is in drawing.c */
 E const char *monexplain[], *invisexplain, *objexplain[], *oclass_names[];
 
+/* Some systems want to use full pathnames for some subsets of file names,
+ * rather than assuming that they're all in the current directory.  This
+ * provides all the subclasses that seem reasonable, and sets up for all
+ * prefixes being null.  Port code can set those that it wants.
+ */
+#define HACKPREFIX	0
+#define LEVELPREFIX	1
+#define SAVEPREFIX	2
+#define BONESPREFIX	3
+#define DATAPREFIX	4
+#define SCOREPREFIX	5
+#define LOCKPREFIX	6
+#define CONFIGPREFIX	7
+#define PREFIX_COUNT	8
+/* used in files.c; xxconf.h can override if needed */
+# ifndef FQN_MAX_FILENAME
+#define FQN_MAX_FILENAME 512
+# endif
+
+#if defined(NOCWD_ASSUMPTIONS) || defined(VAR_PLAYGROUND)
+/* the bare-bones stuff is unconditional above to simplify coding; for
+ * ports that actually use prefixes, add some more localized things
+ */
+#define PREFIXES_IN_USE
+#endif
+
+E char *fqn_prefix[PREFIX_COUNT];
+#ifdef PREFIXES_IN_USE
+E char *fqn_prefix_names[PREFIX_COUNT];
+#endif
+
 #undef E
 
 #endif /* DECL_H */

@@ -305,7 +305,7 @@ record_exists()
 {
 	FILE *fp;
 
-	fp = fopen_datafile(RECORD, "r");
+	fp = fopen_datafile(RECORD, "r", TRUE);
 	if (fp) {
 		fclose(fp);
 		return TRUE;

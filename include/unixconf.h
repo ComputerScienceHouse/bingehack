@@ -96,6 +96,12 @@
 /* #define NO_FILE_LINKS */	/* if no hard links */
 /* #define LOCKDIR "/usr/games/lib/nethackdir" */	/* where to put locks */
 
+/*
+ * If you want the static parts of your playground on a read-only file
+ * system, define VAR_PLAYGROUND to be where the variable parts are kept.
+ */
+/* #define VAR_PLAYGROUND "/var/lib/games/nethack" */
+
 
 /*
  * Define DEF_PAGER as your default pager, e.g. "/bin/cat" or "/usr/ucb/more"

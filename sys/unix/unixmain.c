@@ -117,6 +117,22 @@ char *argv[];
 	 * Change directories before we initialize the window system so
 	 * we can find the tile file.
 	 */
+#ifdef VAR_PLAYGROUND
+	{
+	    int len = strlen(VAR_PLAYGROUND);
+
+	    fqn_prefix[LEVELPREFIX] = (char *)alloc(len+2);
+	    Strcpy(fqn_prefix[LEVELPREFIX], VAR_PLAYGROUND);
+	    if (fqn_prefix[LEVELPREFIX][len-1] != '/') {
+		fqn_prefix[LEVELPREFIX][len] = '/';
+		fqn_prefix[LEVELPREFIX][len+1] = '\0';
+	    }
+	    fqn_prefix[SAVEPREFIX] = fqn_prefix[LEVELPREFIX];
+	    fqn_prefix[BONESPREFIX] = fqn_prefix[LEVELPREFIX];
+	    fqn_prefix[SCOREPREFIX] = fqn_prefix[LEVELPREFIX];
+	    fqn_prefix[LOCKPREFIX] = fqn_prefix[LEVELPREFIX];
+	}
+#endif
 #ifdef CHDIR
 	chdirx(dir,1);
 #endif
