@@ -419,7 +419,15 @@ toofar:
 	if((!mtmp->mpeaceful || Conflict) && inrange &&
 	   dist2(mtmp->mx, mtmp->my, mtmp->mux, mtmp->muy) <= 8
 	   && attacktype(mdat, AT_WEAP)) {
-	    if (mtmp->weapon_check == NEED_WEAPON || !MON_WEP(mtmp)) {
+	    struct obj *mw_tmp;
+
+	    /* The scared check is necessary.  Otherwise a monster that is
+	     * one square near the player but fleeing into a wall would keep	
+	     * switching between pick-axe and weapon.
+	     */
+	    mw_tmp = MON_WEP(mtmp);
+	    if (!(scared && mw_tmp && is_pick(mw_tmp)) &&
+		    mtmp->weapon_check == NEED_WEAPON) {
 		mtmp->weapon_check = NEED_HTH_WEAPON;
 		if (mon_wield_item(mtmp) != 0) return(0);
 	    }
@@ -554,7 +562,7 @@ register int after;
 		!Is_rogue_level(&u.uz) &&
 #endif
 		(!needspick(ptr) || m_carrying(mtmp, PICK_AXE) ||
-		m_carrying(mtmp, DWARVISH_MATTOCK));
+		(m_carrying(mtmp, DWARVISH_MATTOCK) && !which_armor(mtmp, W_ARMS)));
 	can_open = !(nohands(ptr) || verysmall(ptr));
 	can_unlock = ((can_open && m_carrying(mtmp, SKELETON_KEY)) ||
 		      mtmp->iswiz || is_rider(ptr));
@@ -791,14 +799,9 @@ not_special:
       }
 
 	if (can_tunnel && needspick(ptr) &&
-		(mw_tmp = MON_WEP(mtmp)) != 0 && !is_pick(mw_tmp)) {
-	    /* not wielding its pick-axe yet; if its current weapon
-	       is cursed, then it can't switch; when approaching,
-	       it won't switch if the desired destination can be reached
-	       without digging [to inhibit repeated pick/weapon flip-flop] */
-	    if (mw_tmp->cursed || (appr > 0 && m_cansee(mtmp, gx, gy)))
-		can_tunnel = FALSE;
-	}
+		(mw_tmp = MON_WEP(mtmp)) != 0 && !is_pick(mw_tmp) &&
+		mw_tmp->cursed && mtmp->weapon_check == NO_WEAPON_WANTED)
+	    can_tunnel = FALSE;
 
 	nix = omx;
 	niy = omy;
@@ -864,10 +867,12 @@ not_special:
 	    if (mmoved==1 && (u.ux != nix || u.uy != niy) && itsstuck(mtmp))
 		return(3);
 
-	    if (mmoved==1 && can_tunnel && needspick(ptr) &&
-		(!(mw_tmp = MON_WEP(mtmp)) || !is_pick(mw_tmp))) {
+	    if(IS_ROCK(levl[nix][niy].typ) && may_dig(nix,niy) &&
+		    mmoved==1 && can_tunnel && needspick(ptr) &&
+		    (!(mw_tmp = MON_WEP(mtmp)) || !is_pick(mw_tmp))) {
 		mtmp->weapon_check = NEED_PICK_AXE;
-		(void)mon_wield_item(mtmp);
+		if (mon_wield_item(mtmp))
+		    return(3);
 	    }
 	    /* If ALLOW_U is set, either it's trying to attack you, or it
 	     * thinks it is.  In either case, attack this spot in preference to

@@ -30,7 +30,7 @@ register struct monst *mon;
 	if (!tunnels(mon->data) || !needspick(mon->data))
 		item1 = TRUE;
 	for(obj = mon->minvent; obj; obj = obj->nobj) {
-		if (!item1 && is_pick(obj)) {
+		if (!item1 && is_pick(obj) && (obj->otyp != DWARVISH_MATTOCK || !which_armor(mon, W_ARMS))) {
 			item1 = TRUE;
 			continue;
 		}
@@ -296,8 +296,8 @@ int udist;
 		    return dog_eat(mtmp, obj, omx, omy, FALSE);
 
 		if(can_carry(mtmp, obj) && !obj->cursed &&
-			!is_pool(mtmp->mx,mtmp->my))
-		    if(rn2(20) < edog->apport+3)
+			!is_pool(mtmp->mx,mtmp->my)) {
+		    if(rn2(20) < edog->apport+3) {
 			if (rn2(udist) || !rn2(edog->apport)) {
 			    if (cansee(omx, omy) && flags.verbose)
 				pline("%s picks up %s.", Monnam(mtmp),
@@ -305,11 +305,14 @@ int udist;
 			    obj_extract_self(obj);
 			    newsym(omx,omy);
 			    mpickobj(mtmp,obj);
-			    if (attacktype(mtmp->data, AT_WEAP)) {
+			    if (attacktype(mtmp->data, AT_WEAP) && mtmp->weapon_check == NEED_WEAPON) {
 				mtmp->weapon_check = NEED_HTH_WEAPON;
 				(void) mon_wield_item(mtmp);
 			    }
+			    m_dowear(mtmp, FALSE);
 			}
+		    }
+		}
 	    }
 	}
 	return 0;
@@ -556,7 +559,7 @@ register int after;	/* this is extra fast monster movement */
 		if (m_carrying(mtmp, SKELETON_KEY)) allowflags |= BUSTDOOR;
 	}
 	if (is_giant(mtmp->data)) allowflags |= BUSTDOOR;
-	if (tunnels(mtmp->data) && !needspick(mtmp->data))
+	if (tunnels(mtmp->data) && (!needspick(mtmp->data) || m_carrying(mtmp, PICK_AXE) || m_carrying(mtmp, DWARVISH_MATTOCK)))
 		allowflags |= ALLOW_DIG;
 	cnt = mfndpos(mtmp, poss, info, allowflags);
 
@@ -690,6 +693,8 @@ register int after;	/* this is extra fast monster movement */
 	}
 newdogpos:
 	if (nix != omx || niy != omy) {
+		struct obj *mw_tmp;
+
 		if (info[chi] & ALLOW_U) {
 			if (mtmp->mleashed) { /* play it safe */
 				pline("%s breaks loose of %s leash!",
@@ -701,6 +706,14 @@ newdogpos:
 		}
 		if (!m_in_out_region(mtmp, nix, niy))
 		    return 1;
+		if(IS_ROCK(levl[nix][niy].typ) && may_dig(nix,niy) &&
+		    mtmp->weapon_check != NO_WEAPON_WANTED &&
+		    tunnels(mtmp->data) && needspick(mtmp->data) &&
+			(!(mw_tmp = MON_WEP(mtmp)) || !is_pick(mw_tmp))) {
+		    mtmp->weapon_check = NEED_PICK_AXE;
+		    if (mon_wield_item(mtmp))
+			return 0;
+		}
 		/* insert a worm_move() if worms ever begin to eat things */
 		remove_monster(omx, omy);
 		place_monster(mtmp, nix, niy);
