@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)uhitm.c	3.3	1999/12/20	*/
+/*	SCCS Id: @(#)uhitm.c	3.3	2000/01/22	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -236,10 +236,10 @@ register struct monst *mtmp;
 	    tmp++;
 	if(Role_if(PM_MONK) && !Upolyd) {
 	    if (uarm) {
-	    	Your("armor is rather cumbersome...");
-	    	tmp -= urole.spelarmr;
+		Your("armor is rather cumbersome...");
+		tmp -= urole.spelarmr;
 	    } else if (!uwep)
-	    	tmp += (u.ulevel / 3) + 2;
+		tmp += (u.ulevel / 3) + 2;
 	}
 
 /*	with a lot of luggage, your agility diminishes */
@@ -1876,7 +1876,7 @@ uchar aatyp;
 		    if (uarmf)
 			(void) rust_dmg(uarmf, xname(uarmf), 3, TRUE, &youmonst);
 		} else if (aatyp == AT_WEAP || aatyp == AT_CLAW || aatyp == AT_MAGC || aatyp == AT_TUCH)
-		    erode_weapon(&youmonst, TRUE);
+		    erode_weapon(uwep, TRUE);
 	    }
 	    exercise(A_STR, FALSE);
 	    break;
@@ -1905,7 +1905,7 @@ uchar aatyp;
 		    (void) rust_dmg(uarmf, xname(uarmf), 1, TRUE, &youmonst);
 	      } else if (aatyp == AT_WEAP || aatyp == AT_CLAW ||
 			aatyp == AT_MAGC || aatyp == AT_TUCH)
-		erode_weapon(&youmonst, FALSE);
+		erode_weapon(uwep, FALSE);
 	    break;
 	  case AD_CORRODE:
 	    if(mhit && !mon->mcan)
@@ -1914,7 +1914,7 @@ uchar aatyp;
 		    (void) rust_dmg(uarmf, xname(uarmf), 3, TRUE, &youmonst);
 	      } else if (aatyp == AT_WEAP || aatyp == AT_CLAW ||
 			aatyp == AT_MAGC || aatyp == AT_TUCH)
-		erode_weapon(&youmonst, TRUE);
+		erode_weapon(uwep, TRUE);
 	    break;
 	  case AD_MAGM:
 	    /* wrath of gods for attacking Oracle */

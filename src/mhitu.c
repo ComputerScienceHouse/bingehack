@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mhitu.c	3.3	1999/10/20	*/
+/*	SCCS Id: @(#)mhitu.c	3.3	2000/01/22	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -2259,8 +2259,8 @@ register struct attack *mattk;
 			tmp = 0;
 		    }
 		} else tmp = 0;
-		if(!rn2(30)) erode_armor(mtmp, TRUE);
-		if(!rn2(6)) erode_weapon(mtmp, TRUE);
+		if (!rn2(30)) erode_armor(mtmp, TRUE);
+		if (!rn2(6)) erode_weapon(MON_WEP(mtmp), TRUE);
 		goto assess_dmg;
 	    case AD_STON: /* cockatrice */
 		if (!resists_ston(mtmp) &&

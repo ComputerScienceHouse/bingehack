@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)wield.c	3.3	2000/01/04	*/
+/*	SCCS Id: @(#)wield.c	3.3	2000/01/22	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -504,17 +504,20 @@ untwoweapon()
 
 /* Maybe rust weapon, or corrode it if acid damage is called for */
 void
-erode_weapon(victim, acid_dmg)
-struct monst *victim;
+erode_weapon(target, acid_dmg)
+struct obj *target;
 boolean acid_dmg;
 {
 	int erosion;
-	struct obj *target;
-	boolean vismon = (victim != &youmonst) && canseemon(victim);
+	struct monst *victim;
+	boolean vismon;
 
-	target = (victim == &youmonst) ? uwep : MON_WEP(victim);
 	if (!target)
 	    return;
+	if (target->where != OBJ_INVENT && target->where != OBJ_MINVENT)
+	    panic("erode whose weapon? (%d)", (int)target->where);
+	victim = (target->where == OBJ_INVENT) ? &youmonst : target->ocarry;
+	vismon = (victim != &youmonst) && canseemon(victim);
 
 	erosion = acid_dmg ? target->oeroded2 : target->oeroded;
 

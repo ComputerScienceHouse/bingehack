@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)extern.h	3.3	1999/12/06	*/
+/*	SCCS Id: @(#)extern.h	3.3	2000/01/22	*/
 /* Copyright (c) Steve Creps, 1988.				  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -2103,7 +2103,7 @@ E void NDECL(untwoweapon);
 E void NDECL(uwepgone);
 E void NDECL(uswapwepgone);
 E void NDECL(uqwepgone);
-E void FDECL(erode_weapon, (struct monst *,BOOLEAN_P));
+E void FDECL(erode_weapon, (struct obj *,BOOLEAN_P));
 E int FDECL(chwepon, (struct obj *,int));
 E int FDECL(welded, (struct obj *));
 E void FDECL(weldmsg, (struct obj *));

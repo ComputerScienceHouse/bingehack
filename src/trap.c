@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)trap.c	3.3	1999/12/05	*/
+/*	SCCS Id: @(#)trap.c	3.3	2000/01/22	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -668,9 +668,8 @@ register struct trap *trap;
 				    body_part(ARM));
 			if (rust_dmg(uarms, "shield", 1, TRUE, &youmonst))
 			    break;
-			if (uwep && bimanual(uwep))
-			    goto two_hand;
-			/* Two goto statements in a row--aaarrrgggh! */
+			if (u.twoweap || (uwep && bimanual(uwep)))
+			    erode_weapon(u.twoweap ? uswapwep : uwep, FALSE);
 glovecheck:		(void) rust_dmg(uarmg, "gauntlets", 1, TRUE, &youmonst);
 			/* Not "metal gauntlets" since it gets called
 			 * even if it's leather for the message
@@ -679,7 +678,7 @@ glovecheck:		(void) rust_dmg(uarmg, "gauntlets", 1, TRUE, &youmonst);
 		    case 2:
 			pline("%s your right %s!", A_gush_of_water_hits,
 				    body_part(ARM));
-two_hand:		erode_weapon(&youmonst, FALSE);
+			erode_weapon(uwep, FALSE);
 			goto glovecheck;
 		    default:
 			pline("%s you!", A_gush_of_water_hits);
@@ -1301,7 +1300,7 @@ register struct monst *mtmp;
 				break;
 			    target = MON_WEP(mtmp);
 			    if (target && bimanual(target))
-				goto two_hand;
+				erode_weapon(target, FALSE);
 glovecheck:		    target = which_armor(mtmp, W_ARMG);
 			    (void) rust_dmg(target, "gauntlets", 1, TRUE, mtmp);
 			    break;
@@ -1309,7 +1308,7 @@ glovecheck:		    target = which_armor(mtmp, W_ARMG);
 			    if (in_sight)
 				pline("%s %s's right %s!", A_gush_of_water_hits,
 				    mon_nam(mtmp), mbodypart(mtmp, ARM));
-two_hand:		    erode_weapon(mtmp, FALSE);
+			    erode_weapon(MON_WEP(mtmp), FALSE);
 			    goto glovecheck;
 			default:
 			    if (in_sight)

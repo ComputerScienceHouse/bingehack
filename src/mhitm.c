@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mhitm.c	3.3	98/08/15	*/
+/*	SCCS Id: @(#)mhitm.c	3.3	2000/01/22	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -672,8 +672,8 @@ mdamagem(magr, mdef, mattk)
 		    pline("%s is covered in acid!", Monnam(mdef));
 		    pline("It burns %s!", mon_nam(mdef));
 		}
-		if(!rn2(30)) erode_armor(mdef, TRUE);
-		if(!rn2(6)) erode_weapon(mdef, TRUE);
+		if (!rn2(30)) erode_armor(mdef, TRUE);
+		if (!rn2(6)) erode_weapon(MON_WEP(mdef), TRUE);
 		break;
 	    case AD_RUST:
 		if (!magr->mcan && pd == &mons[PM_IRON_GOLEM]) {
