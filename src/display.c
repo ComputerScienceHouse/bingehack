@@ -2083,7 +2083,7 @@ struct monst *mon;
 	if (mon && Warn_of_mon && flags.warntype && (flags.warntype & mon->data->mflags2))
 		return mon_to_glyph(mon);
 	if (mon && Warning && !mon->mpeaceful &&
-	   ((int) (mon->m_lev / 4) >= flags.warnlevel) && (distu(mon->mx, mon->my < 100))) 
+	   ((int) (mon->m_lev / 4) >= flags.warnlevel) && (distu(mon->mx, mon->my) < 100)) 
 		return warnmon_to_glyph(mon);
     }
     return 0;
