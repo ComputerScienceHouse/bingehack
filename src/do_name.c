@@ -70,7 +70,6 @@ const char *goal;
 #endif
     for (;;) {
 	c = nh_poskey(&tx, &ty, &sidx);
-	if (!isok(tx, ty)) continue;
 	if (c == '\033') {
 	    cx = cy = -10;
 	    msg_given = TRUE;	/* force clear */
