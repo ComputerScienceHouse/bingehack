@@ -43,16 +43,16 @@
 #define TLWALL		10
 #define TRWALL		11
 #define DBWALL		12
-#define SDOOR		13
-#define SCORR		14
-#define POOL		15
-#define MOAT		16	/* pool that doesn't boil, adjust messages */
-#define WATER		17
-#define DRAWBRIDGE_UP	18
-#define LAVAPOOL	19
-#define IRONBARS	20	/* KMH */
-#define DOOR		21
-#define TREE		22	/* KMH */
+#define TREE		13	/* KMH */
+#define SDOOR		14
+#define SCORR		15
+#define POOL		16
+#define MOAT		17	/* pool that doesn't boil, adjust messages */
+#define WATER		18
+#define DRAWBRIDGE_UP	19
+#define LAVAPOOL	20
+#define IRONBARS	21	/* KMH */
+#define DOOR		22
 #define CORR		23
 #define ROOM		24
 #define STAIRS		25
