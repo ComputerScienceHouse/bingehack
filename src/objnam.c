@@ -701,7 +701,8 @@ ring:
 	if (!strncmp(prefix, "a ", 2) &&
 			index(vowels, *(prefix+2) ? *(prefix+2) : *bp)
 			&& (*(prefix+2) || (strncmp(bp, "uranium", 7)
-				&& strncmp(bp, "unicorn", 7)))) {
+				&& strncmp(bp, "unicorn", 7)
+				&& strncmp(bp, "eucalyptus", 10)))) {
 		Strcpy(tmpbuf, prefix);
 		Strcpy(prefix, "an ");
 		Strcpy(prefix+3, tmpbuf+2);
@@ -800,7 +801,8 @@ register const char *str;
 		if (index(vowels, *str) &&
 		    strncmp(str, "useful", 6) &&
 		    strncmp(str, "unicorn", 7) &&
-		    strncmp(str, "uranium", 7))
+		    strncmp(str, "uranium", 7) &&
+		    strncmp(str, "eucalyptus", 10))
 			Strcpy(buf, "an ");
 		else
 			Strcpy(buf, "a ");
