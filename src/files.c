@@ -932,8 +932,27 @@ const char *configfile =
 # if defined(MAC) || defined(__BEOS__)
 			"NetHack Defaults";
 # else
+#  ifdef WIN32
+			"Defaults.NetHack-settings";
+#  else
+#   ifdef MSDOS
+			"defaults.nh";
+#   else
 			"NetHack.cnf";
+#   endif
+#  endif
 # endif
+#endif
+
+#ifdef MSDOS
+/* conflict with speed-dial under windows
+ * for XXX.cnf file so support of NetHack.cnf
+ * is for backward compatibility only.
+ * Preferred name (and first tried) is now defaults.nh but
+ * the game will try the old name if there
+ * is no defaults.nh.
+ */
+const char *backward_compat_configfile = "nethack.cnf"; 
 #endif
 
 #ifndef MFLOPPY
@@ -974,6 +993,10 @@ const char *filename;
 #if defined(MICRO) || defined(MAC) || defined(__BEOS__)
 	if ((fp = fopenp(configfile, "r")) != (FILE *)0)
 		return(fp);
+# ifdef MSDOS
+	else if ((fp = fopenp(backward_compat_configfile, "r")) != (FILE *)0)
+		return(fp);
+# endif
 #else
 # ifdef VMS
 	if ((fp = fopenp("nethackini", "r")) != (FILE *)0) {
