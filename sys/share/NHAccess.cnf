@@ -102,18 +102,19 @@ SAVE=;n
 #
 # Note to blind players:
 #
-# Do not use any of the character graphics sets.
+# You very probably do not want to use these character graphics.
 #
-# If you merely set the IBMgraphics option as above, NetHack will use IBM
+# If you merely set the IBMgraphics option, NetHack will use IBM
 # extended ASCII for dungeon characters.  If you don't like the selections,
 # you can make up your own via these graphics options, but you should still
 # set IBMgraphics if you are using IBM graphics characters to get the correct
 # processing.
 #
 #DUNGEON=  032 124 045 124 124 124 124 045 045 045 \
-#          124 124 046 045 124 043 043 046 035 035 \
-#          060 062 060 062 095 092 035 126 126 126 \
-#          126 042 042 035 035 032 035 126
+#          124 124 046 045 124 043 043 035 035 046 \
+#          035 035 060 062 060 062 095 124 092 035 \
+#          126 126 126 126 042 042 035 035 032 035 \
+#          126
 #
 #TRAPS=    094 094 094 094 094 094 094 094 094 094 \
 #          094 094 094 094 094 094 094 094 094 094 \
