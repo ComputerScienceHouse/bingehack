@@ -463,9 +463,16 @@ newgame()
 		mvitals[i].mvflags = mons[i].geno & G_NOCORPSE;
 
 	init_objects();		/* must be before u_init() */
+
+	flags.pantheon = -1;	/* role_init() will reset this */
+	role_init();		/* must be before init_dungeons(), u_init(),
+				 * and init_artifacts() */
+
+	init_dungeons();	/* must be before u_init() to avoid rndmonst()
+				 * creating odd monsters for initial tins and
+				 * eggs */
 	u_init();
-	init_dungeons();	/* must be after u_init() */
-	init_artifacts();	/* must be after u_init() */
+	init_artifacts();
 
 #ifndef NO_SIGNAL
 	(void) signal(SIGINT, (SIG_RET_TYPE) done1);

@@ -511,9 +511,6 @@ u_init()
 {
 	register int i;
 
-	flags.pantheon = -1;		/* role_init() will reset this */
-	/* Initialize the role, race, gender, and alignment */
-	role_init();
 	flags.female = flags.initgend;
 	flags.beginner = 1;
 
@@ -578,10 +575,6 @@ u_init()
 	u.ualignbase[A_CURRENT] = u.ualignbase[A_ORIGINAL] = u.ualign.type =
 			aligns[flags.initalign].value;
 	u.ulycn = NON_PM;
-
-	/* necessary to avoid problems with rndmonst() creating odd monsters
-	   for initial tins and eggs */
-	init_dungeons();
 
 #ifdef BSD
 	(void) time((long *)&u.ubirthday);
