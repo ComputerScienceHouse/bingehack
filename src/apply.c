@@ -1146,7 +1146,6 @@ jump(magic)
 int magic; /* 0=Physical, otherwise skill level */
 {
 	coord cc;
-	struct monst *mtmp;
 
 	if (!magic && (nolimbs(youmonst.data) || slithy(youmonst.data))) {
 		/* normally (nolimbs || slithy) implies !Jumping,
