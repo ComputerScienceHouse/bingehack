@@ -1,4 +1,4 @@
-This is a listing of all files in a full NetHack 3.2 distribution, organized
+This is a listing of all files in a full NetHack 3.3 distribution, organized
 in their standard manner on a UNIX system.  It indicates which files are
 necessary for which versions, so that you can tell which files may be deleted
 from or not transferred to your system if you wish.
@@ -218,6 +218,10 @@ nh_icon.xpm     pet_mark.xbm    rip.xpm         tile2x11.c      winX.c
 winmap.c        winmenu.c       winmesg.c       winmisc.c       winstat.c
 wintext.c       winval.c
 
+/win/Qt:
+(files for Qt versions)
+Install.Qt      knethack.lnk    knh-mini.xpm     knh.xpm        qt_clust.cpp
+qt_win.cpp      tileedit.cpp    tileedit.h
 
 
 This is a list of files produced by auxiliary programs.  They can all be
