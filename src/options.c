@@ -1890,15 +1890,12 @@ doset()
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE,
 		 "Booleans (selecting will toggle value):", MENU_UNSELECTED);
 	any.a_int = 0;
-	/* list male/female first, since it's formatted uniquely */
-	Sprintf(buf, "%s%s", "    ", flags.female ? "female" : "male");
-	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, MENU_UNSELECTED);
-	/* next list any other non-modifiable booleans, then modifiable ones */
+	/* first list any other non-modifiable booleans, then modifiable ones */
 	for (pass = 0; pass <= 1; pass++)
 	    for (i = 0; boolopt[i].name; i++)
 		if ((bool_p = boolopt[i].addr) != 0 &&
 			(boolopt_only_initial(i) ^ pass)) {
-		    if (bool_p == &flags.female) continue;  /* already done */
+		    if (bool_p == &flags.female) continue;  /* obsolete */
 #ifdef WIZARD
 		    if (bool_p == &iflags.sanity_check && !wizard) continue;
 #endif
