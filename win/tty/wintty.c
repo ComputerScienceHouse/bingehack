@@ -2259,7 +2259,7 @@ int in_ch;
     register char ch = (char)in_ch;
 
 # if defined(ASCIIGRAPH) && !defined(NO_TERMS)
-    if (iflags.IBMgraphics)
+    if (iflags.IBMgraphics || iflags.eight_bit_tty)
 	/* IBM-compatible displays don't need other stuff */
 	(void) putchar(ch);
     else if (ch & 0x80) {

@@ -5,6 +5,7 @@ autoquiver     when firing with an empty quiver, select some
                suitable inventory weapon to fill the quiver       [FALSE]
 confirm        ask before hitting tame or peaceful monsters       [TRUE]
 DECgraphics    use DEC/VT line-drawing characters for the dungeon [FALSE]
+eight_bit_tty  send 8-bit characters straight to terminal         [FALSE]
 extmenu        use a menu for selecting extended commands (#)     [FALSE]
 (fe)male       sex of the player (may only be set on startup)     [MALE]
 fixinv         try to retain the same letter for the same object  [TRUE]

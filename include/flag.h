@@ -145,6 +145,7 @@ struct instance_flags {
 	boolean  DECgraphics;	/* use DEC VT-xxx extended character set */
 	boolean  echo;		/* 1 to echo characters */
 #ifdef TTY_GRAPHICS
+	boolean  eight_bit_tty;	/* pass eight-bit characters through to tty */
 	boolean  extmenu;	/* extended commands use menu interface */
 #endif
 	boolean  IBMgraphics;	/* use IBM extended character set */

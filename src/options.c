@@ -67,6 +67,7 @@ static struct Bool_Opt
 	{"DECgraphics", (boolean *)0, FALSE},
 #endif
 #ifdef TTY_GRAPHICS
+	{"eight_bit_tty", &iflags.eight_bit_tty, FALSE},
 	{"extmenu", &iflags.extmenu, FALSE},
 #endif
 #ifdef OPT_DISPMAP
@@ -98,7 +99,7 @@ static struct Bool_Opt
 #else
 	{"large_font", (boolean *)0, FALSE},
 #endif
-	{"legacy",&flags.legacy, TRUE},
+	{"legacy", &flags.legacy, TRUE},
 	{"lit_corridor", &flags.lit_corridor, FALSE},
 #ifdef MAC_GRAPHICS_ENV
 	{"Macgraphics", &iflags.MACgraphics, TRUE},
