@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)wield.c	3.3	1999/12/13	*/
+/*	SCCS Id: @(#)wield.c	3.3	2000/01/04	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -131,12 +131,12 @@ struct obj *wep;
 	} else if (!uarmg && !Stone_resistance && wep->otyp == CORPSE
 				&& touch_petrifies(&mons[wep->corpsenm])) {
 	    /* Prevent wielding cockatrice when not wearing gloves --KAA */
-            char kbuf[BUFSZ];
+	    char kbuf[BUFSZ];
 
-            You("wield the %s corpse in your bare %s.",
-                mons[wep->corpsenm].mname, makeplural(body_part(HAND)));
-            Sprintf(kbuf, "%s corpse", an(mons[wep->corpsenm].mname));
-            instapetrify(kbuf);
+	    You("wield the %s corpse in your bare %s.",
+		mons[wep->corpsenm].mname, makeplural(body_part(HAND)));
+	    Sprintf(kbuf, "%s corpse", an(mons[wep->corpsenm].mname));
+	    instapetrify(kbuf);
 	} else if (uarms && bimanual(wep))
 	    You("cannot wield a two-handed %s while wearing a shield.",
 		is_sword(wep) ? "sword" :
@@ -221,6 +221,8 @@ register struct obj *obj;
 
 static NEARDATA const char wield_objs[] =
 	{ ALL_CLASSES, ALLOW_NONE, WEAPON_CLASS, TOOL_CLASS, 0 };
+static NEARDATA const char ready_objs[] =
+	{ ALL_CLASSES, ALLOW_NONE, WEAPON_CLASS, 0 };
 static NEARDATA const char bullets[] =	/* (note: different from dothrow.c) */
 	{ ALL_CLASSES, ALLOW_NONE, GEM_CLASS, WEAPON_CLASS, 0 };
 
@@ -334,7 +336,7 @@ dowieldquiver()
 		pline("Note: Please use #quit if you wish to exit the game.");
 
 	/* Prompt for a new quiver */
-	if (!(newquiver = getobj(uslinging() ? bullets : wield_objs, "ready")))
+	if (!(newquiver = getobj(uslinging() ? bullets : ready_objs, "ready")))
 		/* Cancelled */
 		return (0);
 
@@ -410,13 +412,13 @@ can_twoweapon()
 	else if (uswapwep->oartifact)
 		pline("%s resists being held second to another weapon!",
 			Yname2(uswapwep));
-	else if (!uarmg && !Stone_resistance && (uswapwep->otyp == CORPSE &&                   
-                  (touch_petrifies(&mons[uswapwep->corpsenm])))) {
+	else if (!uarmg && !Stone_resistance && (uswapwep->otyp == CORPSE &&
+		    touch_petrifies(&mons[uswapwep->corpsenm]))) {
 		char kbuf[BUFSZ];
 
 		You("wield the %s corpse with your bare %s.",
 		    mons[uswapwep->corpsenm].mname, body_part(HAND));
-		Sprintf(kbuf, "%s corpse", an(mons[uswapwep->corpsenm].mname));            
+		Sprintf(kbuf, "%s corpse", an(mons[uswapwep->corpsenm].mname));
 		instapetrify(kbuf);
 	} else if (Glib || uswapwep->cursed) {
 		struct obj *obj = uswapwep;
