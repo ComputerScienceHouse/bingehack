@@ -1069,8 +1069,7 @@ struct attack *mattk;
 		    mon_nam(mdef));
 	    else
 		You("seduce %s and %s starts to take off %s clothes.",
-		    mon_nam(mdef), he[pronoun_gender(mdef)],
-		    his[pronoun_gender(mdef)]);
+		    mon_nam(mdef), mhe(mdef), mhis(mdef));
 	}
 
 	while ((otmp = mdef->minvent) != 0) {
@@ -1083,7 +1082,7 @@ struct attack *mattk;
 
 		if (otmp == stealoid)	/* special message for final item */
 		    pline("%s finishes taking off %s suit.",
-			  Monnam(mdef), his[pronoun_gender(mdef)]);
+			  Monnam(mdef), mhis(mdef));
 	    }
 	    /* give the object to the character */
 	    otmp = hold_another_object(otmp, "You steal %s.",
@@ -1316,7 +1315,7 @@ register struct attack *mattk;
 
 		if ((mdef->misc_worn_check & W_ARMH) && rn2(8)) {
 		    pline("%s helmet blocks your attack to %s head.",
-			  s_suffix(Monnam(mdef)), his[pronoun_gender(mdef)]);
+			  s_suffix(Monnam(mdef)), mhis(mdef));
 		    break;
 		}
 

@@ -742,11 +742,11 @@ boolean atme;
 		    n=rnd(8)+1;
 		    while(n--) {
 			if(!u.dx && !u.dy && !u.dz) {
-			    if ((damage = zapyourself(pseudo, TRUE)) != 0)
-				losehp(damage,
-				     self_pronoun("zapped %sself with a spell",
-						"him"),
-				       NO_KILLER_PREFIX);
+			    if ((damage = zapyourself(pseudo, TRUE)) != 0) {
+				char buf[BUFSZ];
+				Sprintf(buf, "zapped %sself with a spell", uhim());
+				losehp(damage, buf, NO_KILLER_PREFIX);
+			    }
 			} else {
 			    explode(u.dx, u.dy,
 				    pseudo->otyp - SPE_MAGIC_MISSILE + 10,
@@ -787,11 +787,11 @@ boolean atme;
 			if (atme) u.dx = u.dy = u.dz = 0;
 			else (void) getdir((char *)0);
 			if(!u.dx && !u.dy && !u.dz) {
-			    if ((damage = zapyourself(pseudo, TRUE)) != 0)
-				losehp(damage,
-				     self_pronoun("zapped %sself with a spell",
-						  "him"),
-				     NO_KILLER_PREFIX);
+			    if ((damage = zapyourself(pseudo, TRUE)) != 0) {
+				char buf[BUFSZ];
+				Sprintf(buf, "zapped %sself with a spell", uhim());
+				losehp(damage, buf, NO_KILLER_PREFIX);
+			    }
 			} else weffects(pseudo);
 		} else weffects(pseudo);
 		break;

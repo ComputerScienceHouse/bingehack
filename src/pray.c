@@ -437,7 +437,7 @@ aligntyp resp_god;
 		summon_minion(resp_god, FALSE);
 		summon_minion(resp_god, FALSE);
 		summon_minion(resp_god, FALSE);
-		verbalize("Destroy %s, my servants!", him[flags.female]);
+		verbalize("Destroy %s, my servants!", uhim());
 	    }
 	}
 }

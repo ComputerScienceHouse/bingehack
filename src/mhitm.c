@@ -941,7 +941,7 @@ label2:			if (mdef->mhp > 0) return 0;
 			Strcpy(buf, s_suffix(Monnam(mdef)));
 			pline("%s helmet blocks %s attack to %s head.",
 				buf, s_suffix(mon_nam(magr)),
-				his[pronoun_gender(mdef)]);
+				mhis(mdef));
 		    }
 		    break;
 		}
@@ -1092,7 +1092,7 @@ register struct obj *otemp;
 	if (!flags.verbose || Blind) return;
 	pline("%s %s %s %s at %s.", Monnam(magr),
 	      (objects[otemp->otyp].oc_dir & PIERCE) ? "thrusts" : "swings",
-	      his[pronoun_gender(magr)], xname(otemp), buf);
+	      mhis(magr), xname(otemp), buf);
 }
 
 /*

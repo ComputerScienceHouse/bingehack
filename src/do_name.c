@@ -901,31 +901,6 @@ rndmonnam()
 	return mons[name].mname;
 }
 
-const char *pronoun_pairs[][2] = {
-	{"him", "her"}, {"Him", "Her"}, {"his", "her"}, {"His", "Her"},
-	{"he", "she"}, {"He", "She"},
-	{0, 0}
-};
-
-char *
-self_pronoun(str, pronoun)
-const char *str;
-const char *pronoun;
-{
-	static NEARDATA char buf[BUFSZ];
-	register int i;
-
-	for(i=0; pronoun_pairs[i][0]; i++) {
-		if(!strncmp(pronoun, pronoun_pairs[i][0], 3)) {
-			Sprintf(buf, str, pronoun_pairs[i][flags.female]);
-			return buf;
-		}
-	}
-	impossible("never heard of pronoun %s?", pronoun);
-	Sprintf(buf, str, pronoun_pairs[i][0]);
-	return buf;
-}
-
 #ifdef REINCARNATION
 const char *
 roguename() /* Name of a Rogue player */

@@ -1153,7 +1153,7 @@ register struct obj	*sobj;
 					if (canspotmon(mtmp))
 					    pline("%s's %s does not protect %s.",
 						Monnam(mtmp), xname(helmet),
-						him[pronoun_gender(mtmp)]);
+						mhim(mtmp));
 				    }
 				}
 	    	    	    	mtmp->mhp -= mdmg;

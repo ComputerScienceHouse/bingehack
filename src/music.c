@@ -397,11 +397,11 @@ struct obj *instr;
 		    pline("%s vibrates.", The(xname(instr)));
 		    break;
 		} else if (!u.dx && !u.dy && !u.dz) {
-		    if ((damage = zapyourself(instr, TRUE)) != 0)
-			losehp(damage,
-			       self_pronoun("using a magical horn on %sself",
-					    "him"),
-			       NO_KILLER_PREFIX);
+		    if ((damage = zapyourself(instr, TRUE)) != 0) {
+			char buf[BUFSZ];
+			Sprintf(buf, "using a magical horn on %sself", uhim());
+			losehp(damage, buf, NO_KILLER_PREFIX);
+		    }
 		} else {
 		    buzz((instr->otyp == FROST_HORN) ? AD_COLD-1 : AD_FIRE-1,
 			 rn1(6,6), u.ux, u.uy, u.dx, u.dy);

@@ -482,8 +482,8 @@ struct monst *mon;
 	register struct obj *otmp;
 	struct permonst *mdat = mon->data;
 	boolean vis = cansee(mon->mx, mon->my);
-	const char *pronoun = him[pronoun_gender(mon)],
-			*ppronoun = his[pronoun_gender(mon)];
+	const char *pronoun = mhim(mon),
+			*ppronoun = mhis(mon);
 
 	if (breakarm(mdat)) {
 	    if ((otmp = which_armor(mon, W_ARM)) != 0) {

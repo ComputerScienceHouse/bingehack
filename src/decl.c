@@ -184,11 +184,6 @@ NEARDATA struct obj *billobjs = (struct obj *)0;
 /* used to zero all elements of a struct obj */
 NEARDATA struct obj zeroobj = DUMMY;
 
-/* monster pronouns, index is return value of gender(mtmp) */
-const char *he[3]  = { "he",  "she", "it" };
-const char *him[3] = { "him", "her", "it" };
-const char *his[3] = { "his", "her", "its" };
-
 /* originally from dog.c */
 NEARDATA char dogname[PL_PSIZ] = DUMMY;
 NEARDATA char catname[PL_PSIZ] = DUMMY;

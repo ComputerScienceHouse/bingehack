@@ -55,7 +55,7 @@ dowaterdemon() /* Water demon */
 	/* Give those on low levels a (slightly) better chance of survival */
 	    if (rnd(100) > (80 + level_difficulty())) {
 		pline("Grateful for %s release, %s grants you a wish!",
-		      his[pronoun_gender(mtmp)], he[pronoun_gender(mtmp)]);
+		      mhis(mtmp), mhe(mtmp));
 		makewish();
 		mongone(mtmp);
 	    } else if (t_at(mtmp->mx, mtmp->my))

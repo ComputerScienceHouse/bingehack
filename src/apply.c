@@ -727,7 +727,7 @@ struct obj *obj;
 			Monnam(mtmp));
 		else
 		    pline("%s ignores %s reflection.",
-			  Monnam(mtmp), his[pronoun_gender(mtmp)]);
+			  Monnam(mtmp), mhis(mtmp));
 	}
 	return 1;
 }
@@ -1930,9 +1930,8 @@ struct obj *obj;
 	dam = rnd(2) + dbon() + obj->spe;
 	if (dam <= 0) dam = 1;
 	You("hit your %s with your bullwhip.", body_part(FOOT));
-	/* self_pronoun() won't work twice in a sentence */
-	Strcpy(buf, self_pronoun("killed %sself with %%s bullwhip", "him"));
-	losehp(dam, self_pronoun(buf, "his"), NO_KILLER_PREFIX);
+	Sprintf(buf, "killed %sself with %s bullwhip", uhim(), uhis());
+	losehp(dam, buf, NO_KILLER_PREFIX);
 	flags.botl = 1;
 	return 1;
 
@@ -2017,7 +2016,7 @@ struct obj *obj;
 	    if (gotit && otmp->cursed) {
 		pline("%s welded to %s %s%c",
 		      (otmp->quan == 1L) ? "It is" : "They are",
-		      his[pronoun_gender(mtmp)], mon_hand,
+		      mhis(mtmp), mon_hand,
 		      !otmp->bknown ? '!' : '.');
 		otmp->bknown = 1;
 		gotit = FALSE;	/* can't pull it free */
@@ -2273,7 +2272,7 @@ do_break_wand(obj)
     register struct monst *mon;
     int dmg, damage;
     boolean affects_objects;
-    char confirm[QBUFSZ], the_wand[BUFSZ];
+    char confirm[QBUFSZ], the_wand[BUFSZ], buf[BUFSZ];
 
     Strcpy(the_wand, yname(obj));
     Sprintf(confirm, "Are you really sure you want to break %s?", the_wand);
@@ -2366,11 +2365,10 @@ do_break_wand(obj)
 		    if (flags.botl) bot();		/* potion effects */
 		}
 		damage = zapyourself(obj, FALSE);
-		if (damage)
-		    losehp(damage,
-			   self_pronoun("killed %sself by breaking a wand",
-					"him"),
-			   NO_KILLER_PREFIX);
+		if (damage) {
+		    Sprintf(buf, "killed %sself by breaking a wand", uhim());
+		    losehp(damage, buf, NO_KILLER_PREFIX);
+		}
 		if (flags.botl) bot();		/* blindness */
 	    } else if ((mon = m_at(x, y)) != 0) {
 		(void) bhitm(mon, obj);

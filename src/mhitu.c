@@ -110,7 +110,7 @@ register struct obj *otemp;
 		return;
 	pline("%s %s %s %s.", Monnam(mtmp),
 	      (objects[otemp->otyp].oc_dir & PIERCE) ? "thrusts" : "swings",
-	      his[pronoun_gender(mtmp)], xname(otemp));
+	      mhis(mtmp), xname(otemp));
 }
 
 /* return how a poison attack was delivered */
@@ -1753,7 +1753,7 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 			if (!m_canseeu(mtmp)) { /* probably you're invisible */
 			    pline("%s doesn't seem to notice that %s gaze was reflected.",
 				Monnam(mtmp),
-				his[pronoun_gender(mtmp)]);
+				mhis(mtmp));
 			    break;
 			}
 			pline("%s is turned to stone!", Monnam(mtmp));
@@ -1978,7 +1978,7 @@ register struct monst *mon;
 
 	if (mon->mcan || mon->mspec_used) {
 		pline("%s acts as though %s has got a %sheadache.",
-		      Monnam(mon), he[pronoun_gender(mon)],
+		      Monnam(mon), mhe(mon),
 		      mon->mcan ? "severe " : "");
 		return 0;
 	}
@@ -2162,7 +2162,7 @@ register struct monst *mon;
 	if (mon->mtame) /* don't charge */ ;
 	else if (rn2(20) < ACURR(A_CHA)) {
 		pline("%s demands that you pay %s, but you refuse...",
-			Monnam(mon), him[fem]);
+			Monnam(mon), mhim(mon));
 	} else if (u.umonnum == PM_LEPRECHAUN)
 		pline("%s tries to take your money, but fails...",
 				Monnam(mon));

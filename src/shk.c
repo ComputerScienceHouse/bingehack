@@ -1042,7 +1042,7 @@ proceed:
 
 		    if(ugold > ltmp) {
 			You("give %s the %ld gold piece%s %s asked for.",
-			    mon_nam(shkp), ltmp, plur(ltmp), he[shk_pronoun]);
+			    mon_nam(shkp), ltmp, plur(ltmp), mhe(shkp));
 			pay(ltmp, shkp);
 		    } else {
 			You("give %s all your%s gold.", mon_nam(shkp),
@@ -1052,7 +1052,7 @@ proceed:
 		    }
 		    if((ugold < ltmp/2L) || (ugold < ltmp && stashed_gold))
 			pline("Unfortunately, %s doesn't look satisfied.",
-			      he[shk_pronoun]);
+			      mhe(shkp));
 		    else
 			make_happy_shk(shkp, FALSE);
 		}
@@ -1071,14 +1071,14 @@ proceed:
 				(u.ugold < ltmp && stashed_gold)) {
 			if (!u.ugold)
 			    pline(no_money, stashed_gold ? " seem to" : "");
-			else pline(not_enough_money, him[shk_pronoun]);
+			else pline(not_enough_money, mhim(shkp));
 			return(1);
 		    }
 		    pline("But since %s shop has been robbed recently,",
-			  his[shk_pronoun]);
+			  mhis(shkp));
 		    pline("you %scompensate %s for %s losses.",
 			  (u.ugold < ltmp) ? "partially " : "",
-			  mon_nam(shkp), his[shk_pronoun]);
+			  mon_nam(shkp), mhis(shkp));
 		    pay(u.ugold < ltmp ? u.ugold : ltmp, shkp);
 		    make_happy_shk(shkp, FALSE);
 		} else {
@@ -1089,12 +1089,12 @@ proceed:
 		    if(u.ugold < 1000L) {
 			if (!u.ugold)
 			    pline(no_money, stashed_gold ? " seem to" : "");
-			else pline(not_enough_money, him[shk_pronoun]);
+			else pline(not_enough_money, mhim(shkp));
 			return(1);
 		    }
 		    You("try to appease %s by giving %s 1000 gold pieces.",
 			x_monnam(shkp, ARTICLE_THE, "angry", 0, FALSE),
-			him[shk_pronoun]);
+			mhim(shkp));
 		    pay(1000L,shkp);
 		    if (strncmp(eshkp->customer, plname, PL_NSIZ) || rn2(3))
 			make_happy_shk(shkp, FALSE);
@@ -3319,7 +3319,7 @@ register struct monst *shkp;
 
 	if (ANGRY(shkp))
 		pline("%s mentions how much %s dislikes %s customers.",
-			shkname(shkp), he[shkp->female],
+			shkname(shkp), mhe(shkp),
 			eshk->robbed ? "non-paying" : "rude");
 	else if (eshk->following) {
 		if (strncmp(eshk->customer, plname, PL_NSIZ)) {
@@ -3335,7 +3335,7 @@ register struct monst *shkp;
 		      shkname(shkp), total, plur(total));
 	} else if (eshk->debit)
 		pline("%s reminds you that you owe %s %ld zorkmid%s.",
-		      shkname(shkp), him[shkp->female],
+		      shkname(shkp), mhim(shkp),
 		      eshk->debit, plur(eshk->debit));
 	else if (eshk->credit)
 		pline("%s encourages you to use your %ld zorkmid%s of credit.",

@@ -153,7 +153,7 @@ boolean self;
 					"nearby" : "distant");
 	} else if (self)
 		pline("%s zaps %sself with %s!",
-		      Monnam(mtmp), him[pronoun_gender(mtmp)], doname(otmp));
+		      Monnam(mtmp), mhim(mtmp), doname(otmp));
 	else {
 		pline("%s zaps %s!", Monnam(mtmp), an(xname(otmp)));
 		stop_occupation();
@@ -196,7 +196,7 @@ struct obj *otmp;
 
 	if (mtmp->mconf)
 	    pline("Being confused, %s mispronounces the magic words...",
-		  vismon ? mon_nam(mtmp) : he[pronoun_gender(mtmp)]);
+		  vismon ? mon_nam(mtmp) : mhe(mtmp));
 }
 
 STATIC_OVL void
@@ -734,7 +734,7 @@ mon_tele:
 			(dunlev(&u.uz) < dunlevs_in_dungeon(&u.uz) - 3)) {
 		    if (vismon) pline(
      "As %s climbs the stairs, a mysterious force momentarily surrounds %s...",
-				     mon_nam(mtmp), him[pronoun_gender(mtmp)]);
+				     mon_nam(mtmp), mhim(mtmp));
 		    /* simpler than for the player; this will usually be
 		       the Wizard and he'll immediately go right to the
 		       upstairs, so there's not much point in having any
@@ -1332,7 +1332,7 @@ struct monst *mtmp;
 					if (canspotmon(mtmp2))
 					    pline("%s's %s does not protect %s.",
 						Monnam(mtmp2), xname(helmet),
-						him[pronoun_gender(mtmp2)]);
+						mhim(mtmp2));
 				    }
 				}
 	    	    	    	mtmp2->mhp -= mdmg;

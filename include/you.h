@@ -207,6 +207,12 @@ struct Gender {
 				/* increment to 3 if you allow neuter roles */
 
 extern const struct Gender genders[];	/* table of available genders */
+#define uhe()	(genders[flags.female ? 1 : 0].he)
+#define uhim()	(genders[flags.female ? 1 : 0].him)
+#define uhis()	(genders[flags.female ? 1 : 0].his)
+#define mhe(mtmp)	(genders[pronoun_gender(mtmp)].he)
+#define mhim(mtmp)	(genders[pronoun_gender(mtmp)].him)
+#define mhis(mtmp)	(genders[pronoun_gender(mtmp)].his)
 
 
 /*** Unified structure specifying alignment information ***/

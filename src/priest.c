@@ -427,7 +427,7 @@ register struct monst *priest;
 
 	    if(!priest->mcanmove || priest->msleeping) {
 		pline("%s breaks out of %s reverie!",
-		      Monnam(priest), his[pronoun_gender(priest)]);
+		      Monnam(priest), mhis(priest));
 		priest->mfrozen = priest->msleeping = 0;
 		priest->mcanmove = 1;
 	    }

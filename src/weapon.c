@@ -616,7 +616,7 @@ register struct monst *mon;
 			if (bimanual(mw_tmp)) mon_hand = makeplural(mon_hand);
 			Sprintf(welded_buf, "%s welded to %s %s",
 				(mw_tmp->quan == 1L) ? "is" : "are",
-				his[pronoun_gender(mon)], mon_hand);
+				mhis(mon), mon_hand);
 
 			if (obj->otyp == PICK_AXE) {
 			    pline("Since %s weapon%s %s,",

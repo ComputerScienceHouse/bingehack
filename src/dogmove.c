@@ -702,7 +702,7 @@ newdogpos:
 		if (info[chi] & ALLOW_U) {
 			if (mtmp->mleashed) { /* play it safe */
 				pline("%s breaks loose of %s leash!",
-				      Monnam(mtmp), his[pronoun_gender(mtmp)]);
+				      Monnam(mtmp), mhis(mtmp));
 				m_unleash(mtmp);
 			}
 			(void) mattacku(mtmp);

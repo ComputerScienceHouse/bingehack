@@ -596,11 +596,15 @@ level_tele()
 		} else if (Flying) {
 		    escape_by_flying = "fly down to the ground";
 		} else {
+		    char buf[BUFSZ];
+
 		    pline("Unfortunately, you don't know how to fly.");
 		    You("plummet a few thousand feet to your death.");
+		    Sprintf(buf,
+				"teleported out of the dungeon and fell to %s death",
+				uhis());
+		    killer = buf;
 		    killer_format = NO_KILLER_PREFIX;
-		    killer =
-    self_pronoun("teleported out of the dungeon and fell to %s death","his");
 		}
 	}
 

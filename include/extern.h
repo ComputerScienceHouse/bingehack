@@ -326,7 +326,6 @@ E char *FDECL(Amonnam, (struct monst *));
 E char *FDECL(a_monnam, (struct monst *));
 E const char *NDECL(rndmonnam);
 E const char *FDECL(hcolor, (const char *));
-E char *FDECL(self_pronoun, (const char *,const char *));
 #ifdef REINCARNATION
 E const char *NDECL(roguename);
 #endif

@@ -263,7 +263,7 @@ register struct obj *gold;
 				if (robbed < 0) robbed = 0;
 				pline_The("amount %scovers %s recent losses.",
 				      !robbed ? "" : "partially ",
-				      his[mtmp->female]);
+				      mhis(mtmp));
 				ESHK(mtmp)->robbed = robbed;
 				if(!robbed)
 					make_happy_shk(mtmp, FALSE);

@@ -1667,9 +1667,11 @@ dozap()
 		    pline("%s glows and fades.", The(xname(obj)));
 		/* make him pay for knowing !NODIR */
 	} else if(!u.dx && !u.dy && !u.dz && !(objects[obj->otyp].oc_dir == NODIR)) {
-	    if ((damage = zapyourself(obj, TRUE)) != 0)
-		losehp(damage, self_pronoun("zapped %sself with a wand", "him"),
-			NO_KILLER_PREFIX);
+	    if ((damage = zapyourself(obj, TRUE)) != 0) {
+		char buf[BUFSZ];
+		Sprintf(buf, "zapped %sself with a wand", uhim());
+		losehp(damage, buf, NO_KILLER_PREFIX);
+	    }
 	} else {
 
 		/*	Are we having fun yet?
@@ -1697,6 +1699,7 @@ struct obj *obj;
 boolean ordinary;
 {
 	int	damage = 0;
+	char buf[BUFSZ];
 
 	switch(obj->otyp) {
 		case WAN_STRIKING:
@@ -1873,8 +1876,9 @@ boolean ordinary;
 			  : "You seem no deader than before.");
 			break;
 		    }
+		    Sprintf(buf, "shot %sself with a death ray", uhim());
+		    killer = buf;
 		    killer_format = NO_KILLER_PREFIX;
-		    killer = self_pronoun("shot %sself with a death ray","him");
 		    You("irradiate yourself with pure energy!");
 		    You("die.");
 		    makeknown(obj->otyp);

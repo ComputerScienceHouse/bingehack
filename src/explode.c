@@ -327,7 +327,7 @@ char olet;
 			} else if (type >= 0 && olet != SCROLL_CLASS) {
 			    killer_format = NO_KILLER_PREFIX;
 			    Sprintf(killer_buf, "caught %sself in %s own %s",
-				    him[flags.female], his[flags.female], str);
+				    uhim(), uhis(), str);
 			} else {
 			    killer_format = KILLED_BY;
 			    Strcpy(killer_buf, str);

@@ -793,10 +793,9 @@ struct obj *obj;
 		dam = rnd(2) + dbon() + obj->spe;
 		if (dam <= 0) dam = 1;
 		You("hit yourself with %s.", yname(uwep));
-		/* self_pronoun() won't work twice in a sentence */
-		Strcpy(buf, self_pronoun("killed %sself with %%s pick-axe",
-			"him"));
-		losehp(dam, self_pronoun(buf, "his"), NO_KILLER_PREFIX);
+		Sprintf(buf, "%s own %s", uhis(),
+				OBJ_NAME(objects[obj->otyp]));
+		losehp(dam, buf, KILLED_BY);
 		flags.botl=1;
 		return(1);
 	} else if(u.dz == 0) {

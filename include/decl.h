@@ -236,10 +236,6 @@ E NEARDATA struct obj *migrating_objs;
 E NEARDATA struct obj *billobjs;
 E NEARDATA struct obj zeroobj;		/* init'd and defined in decl.c */
 
-E const char *he[3];
-E const char *him[3];
-E const char *his[3];
-
 #include "you.h"
 E NEARDATA struct you u;
 

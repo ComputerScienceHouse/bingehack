@@ -77,7 +77,7 @@ dosounds()
 		int which = rn2(3)+hallu;
 
 		if (which != 2) You_hear(throne_msg[which]);
-		else		pline(throne_msg[2], his[flags.female]);
+		else		pline(throne_msg[2], uhis());
 		return;
 	    }
 	}
@@ -518,7 +518,7 @@ register struct monst *mtmp;
 	case MS_WERE:
 	    if (flags.moonphase == FULL_MOON && (night() ^ !rn2(13))) {
 		pline("%s throws back %s head and lets out a blood curdling %s!",
-		      Monnam(mtmp), his[pronoun_gender(mtmp)],
+		      Monnam(mtmp), mhis(mtmp),
 		      ptr == &mons[PM_HUMAN_WERERAT] ? "shriek" : "howl");
 		wake_nearto(mtmp->mx, mtmp->my, 11*11);
 	    } else
@@ -636,7 +636,7 @@ register struct monst *mtmp;
 	    if (!mtmp->mpeaceful) {
 		switch (rn2(4)) {
 		case 0: pline("%s boasts about %s gem collection.",
-			      Monnam(mtmp), his[pronoun_gender(mtmp)]);
+			      Monnam(mtmp), mhis(mtmp));
 			break;
 		case 1: pline_msg = "complains about a diet of mutton.";
 			break;
