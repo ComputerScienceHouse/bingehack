@@ -428,7 +428,13 @@ display_monster(x, y, mon, in_sight, worm_tail)
 			num = mon_to_glyph(mon);
         	else {
         		int tmplev = (int) (mon->m_lev / 4);
+			if (tmplev > WARNCOUNT - 1) tmplev = WARNCOUNT - 1;
 	        	num = warning_to_glyph(tmplev);
+	        	if (num > MAX_GLYPH) {
+	        		impossible(
+		"Invalid warning glyph, mon=%s, mon m_lev=%d, glyph=%d, warnlev=%d",
+				noit_mon_nam(mon), mon->m_lev, num, tmplev);
+			}
 	        }
 #endif
 	} else {
