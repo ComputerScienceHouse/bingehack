@@ -582,8 +582,10 @@ register int x, y;
 
 	if(mtmp && mtmp->m_ap_type != M_AP_FURNITURE) {
 		if (mtmp->m_ap_type == M_AP_OBJECT) goto objhere;
-		pline("%s stands in the way!", Blind ?
+		pline("%s stands in the way!", !canspotmon(mtmp) ?
 			"Some creature" : Monnam(mtmp));
+		if (!canspotmon(mtmp))
+		    map_invisible(mtmp->mx, mtmp->my);
 		return(TRUE);
 	}
 	if (OBJ_AT(x, y)) {
