@@ -117,22 +117,6 @@ char *argv[];
 	 * Change directories before we initialize the window system so
 	 * we can find the tile file.
 	 */
-#ifdef VAR_PLAYGROUND
-	{
-	    int len = strlen(VAR_PLAYGROUND);
-
-	    fqn_prefix[LEVELPREFIX] = (char *)alloc(len+2);
-	    Strcpy(fqn_prefix[LEVELPREFIX], VAR_PLAYGROUND);
-	    if (fqn_prefix[LEVELPREFIX][len-1] != '/') {
-		fqn_prefix[LEVELPREFIX][len] = '/';
-		fqn_prefix[LEVELPREFIX][len+1] = '\0';
-	    }
-	    fqn_prefix[SAVEPREFIX] = fqn_prefix[LEVELPREFIX];
-	    fqn_prefix[BONESPREFIX] = fqn_prefix[LEVELPREFIX];
-	    fqn_prefix[SCOREPREFIX] = fqn_prefix[LEVELPREFIX];
-	    fqn_prefix[LOCKPREFIX] = fqn_prefix[LEVELPREFIX];
-	}
-#endif
 #ifdef CHDIR
 	chdirx(dir,1);
 #endif
@@ -402,32 +386,54 @@ chdirx(dir, wr)
 const char *dir;
 boolean wr;
 {
-
-# ifdef SECURE
-	if(dir					/* User specified directory? */
-#  ifdef HACKDIR
+	if (dir					/* User specified directory? */
+# ifdef HACKDIR
 	       && strcmp(dir, HACKDIR)		/* and not the default? */
-#  endif
-		) {
-		(void) setgid(getgid());
-		(void) setuid(getuid());		/* Ron Wessels */
-	}
 # endif
+		) {
+# ifdef SECURE
+	    (void) setgid(getgid());
+	    (void) setuid(getuid());		/* Ron Wessels */
+# endif
+	} else {
+	    /* non-default data files is a sign that scores may not be
+	     * compatible, or perhaps that a binary not fitting this
+	     * system's layout is being used.
+	     */
+# ifdef VAR_PLAYGROUND
+	    int len = strlen(VAR_PLAYGROUND);
+
+	    fqn_prefix[SCOREPREFIX] = (char *)alloc(len+2);
+	    Strcpy(fqn_prefix[SCOREPREFIX], VAR_PLAYGROUND);
+	    if (fqn_prefix[SCOREPREFIX][len-1] != '/') {
+		fqn_prefix[SCOREPREFIX][len] = '/';
+		fqn_prefix[SCOREPREFIX][len+1] = '\0';
+	    }
+# endif
+	}
 
 # ifdef HACKDIR
-	if(dir == (const char *)0)
-		dir = HACKDIR;
+	if (dir == (const char *)0)
+	    dir = HACKDIR;
 # endif
 
-	if(dir && chdir(dir) < 0) {
-		perror(dir);
-		error("Cannot chdir to %s.", dir);
+	if (dir && chdir(dir) < 0) {
+	    perror(dir);
+	    error("Cannot chdir to %s.", dir);
 	}
 
 	/* warn the player if we can't write the record file */
 	/* perhaps we should also test whether . is writable */
 	/* unfortunately the access system-call is worthless */
-	if (wr) check_recordfile(dir);
+	if (wr) {
+# ifdef VAR_PLAYGROUND
+	    fqn_prefix[LEVELPREFIX] = fqn_prefix[SCOREPREFIX];
+	    fqn_prefix[SAVEPREFIX] = fqn_prefix[SCOREPREFIX];
+	    fqn_prefix[BONESPREFIX] = fqn_prefix[SCOREPREFIX];
+	    fqn_prefix[LOCKPREFIX] = fqn_prefix[SCOREPREFIX];
+# endif
+	    check_recordfile(dir);
+	}
 }
 #endif /* CHDIR */
 
