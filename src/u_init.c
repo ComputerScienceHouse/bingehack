@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)u_init.c	3.3	1999/12/05	*/
+/*	SCCS Id: @(#)u_init.c	3.3	1999/12/29	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -851,6 +851,38 @@ u_init()
 	return;
 }
 
+/* skills aren't initialized, so we use the role-specific skill lists */
+static boolean
+restricted_spell_discipline(otyp)
+int otyp;
+{
+    struct def_skill *skills;
+    int this_skill = spell_skilltype(otyp);
+
+    switch (Role_switch) {
+     case PM_ARCHEOLOGIST:	skills = Skill_A; break;
+     case PM_BARBARIAN:		skills = Skill_B; break;
+     case PM_CAVEMAN:		skills = Skill_C; break;
+     case PM_HEALER:		skills = Skill_H; break;
+     case PM_KNIGHT:		skills = Skill_K; break;
+     case PM_MONK:		skills = Skill_Mon; break;
+     case PM_PRIEST:		skills = Skill_P; break;
+     case PM_RANGER:		skills = Skill_Ran; break;
+     case PM_ROGUE:		skills = Skill_R; break;
+     case PM_SAMURAI:		skills = Skill_S; break;
+     case PM_TOURIST:		skills = Skill_T; break;
+     case PM_VALKYRIE:		skills = Skill_V; break;
+     case PM_WIZARD:		skills = Skill_W; break;
+     default:			skills = 0; break;	/* lint suppression */
+    }
+
+    while (skills->skill != P_NONE) {
+	if (skills->skill == this_skill) return FALSE;
+	++skills;
+    }
+    return TRUE;
+}
+
 static void
 ini_inv(trop)
 register struct trobj *trop;
@@ -903,11 +935,14 @@ register struct trobj *trop;
 				|| obj->otyp == RIN_HUNGER
 				|| obj->otyp == WAN_NOTHING
 				/* wizard patch -- they already have one */
-				|| obj->otyp == SPE_FORCE_BOLT
+				|| (obj->otyp == SPE_FORCE_BOLT &&
+				    Role_if(PM_WIZARD))
 				/* powerful spells are either useless to
-				   low level players or unbalancing */
+				   low level players or unbalancing; also
+				   spells in restricted skill categories */
 				|| (obj->oclass == SPBOOK_CLASS &&
-				    objects[obj->otyp].oc_level > 3)
+				    (objects[obj->otyp].oc_level > 3 ||
+				    restricted_spell_discipline(obj->otyp)))
 							) {
 				dealloc_obj(obj);
 				obj = mkobj(trop->trclass, FALSE);
@@ -1010,6 +1045,5 @@ register struct trobj *trop;
 		trop++;
 	}
 }
-
 
 /*u_init.c*/
