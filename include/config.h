@@ -219,12 +219,13 @@
  */
 #define TTY_GRAPHICS	/* good old tty based graphics */
 /* #define X11_GRAPHICS */ /* X11 interface */
+/* #define QT_GRAPHICS */	/* Qt interface */
 
 /*
  * Define the default window system.  This should be one that is compiled
  * into your system (see defines above).  Known window systems are:
  *
- *	tty, X11, mac, amii, win32
+ *	tty, X11, mac, amii, Qt
  */
 
 /* MAC also means MAC windows */
@@ -243,6 +244,14 @@
 #ifdef __BEOS__
 /* leave at tty graphics for now */
 /* # define DEFAULT_WINDOW_SYS "be" */
+#endif
+
+#ifdef QT_GRAPHICS
+# define USE_XPM		/* Use XPM format for images (required) */
+# define GRAPHIC_TOMBSTONE	/* Use graphical tombstone (rip.ppm) */
+# ifndef DEFAULT_WINDOW_SYS
+#  define DEFAULT_WINDOW_SYS "Qt"
+# endif
 #endif
 
 #ifndef DEFAULT_WINDOW_SYS

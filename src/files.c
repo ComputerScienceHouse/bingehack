@@ -1254,6 +1254,20 @@ char		*tmp_levels;
 		}
 		amii_setpens( amii_numcolors = i );
 #endif
+#ifdef QT_GRAPHICS
+	} else if (match_varname(buf, "QT_TILEWIDTH", 12)) {
+		extern char *qt_tilewidth;
+		if (qt_tilewidth == NULL)	
+			qt_tilewidth=(char *)strdup(bufp);
+	} else if (match_varname(buf, "QT_TILEHEIGHT", 13)) {
+		extern char *qt_tileheight;
+		if (qt_tileheight == NULL)	
+			qt_tileheight=(char *)strdup(bufp);
+	} else if (match_varname(buf, "QT_FONTSIZE", 11)) {
+		extern char *qt_fontsize;
+		if (qt_fontsize == NULL)
+			qt_fontsize=(char *)strdup(bufp);
+#endif
 	} else
 		return 0;
 	return 1;
