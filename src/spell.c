@@ -685,6 +685,7 @@ boolean atme;
 			 * understand quite well how to cast spells.
 			 */
 			intell = acurr(A_INT);
+			if (!Role_if(PM_WIZARD)) intell = 10;
 			switch (intell) {
 				case 25: case 24: case 23: case 22:
 				case 21: case 20: case 19: case 18:
