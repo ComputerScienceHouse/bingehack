@@ -30,17 +30,17 @@
 #include <gnome.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "GnomeHack.h"
-#include "GnomeHackMainWindow.h"
-#include "GnomeHackMapWindow.h"
-#include "GnomeHackMenuWindow.h"
-#include "GnomeHackPlayerSelDialog.h"
-#include "GnomeHackSignals.h"
-#include "GnomeHackStatusWindow.h"
-#include "GnomeHackTextWindow.h"
-#include "GnomeHackMessageWindow.h"
-#include "GnomeHackYesNoDialog.h"
-#include "GnomeHackGlyph.h"
+#include "gnomeprv.h"
+#include "gnmain.h"
+#include "gnmap.h"
+#include "gnmenu.h"
+#include "gnplayer.h"
+#include "gnsignal.h"
+#include "gnstatus.h"
+#include "gntext.h"
+#include "gnmesg.h"
+#include "gnyesno.h"
+#include "gnglyph.h"
 
 
 /* Create an array to keep track of the various windows */

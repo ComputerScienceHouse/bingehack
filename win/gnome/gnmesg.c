@@ -19,8 +19,8 @@
  *
 */
 
-#include "GnomeHackMessageWindow.h"
-#include "GnomeHackSignals.h"
+#include "gnmesg.h"
+#include "gnsignal.h"
 
 /* Pick an arbitrary number of chars such as 80 col X 40 rows text = 3200 chars */
 #define nCharsBeforeDeletingStuff	3200

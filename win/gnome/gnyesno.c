@@ -19,8 +19,8 @@
  *
 */
 
-#include "GnomeHackBind.h"
-#include "GnomeHackYesNoDialog.h"
+#include "gnbind.h"
+#include "gnyesno.h"
 
 
 

@@ -19,8 +19,8 @@
  *
 */
 
-#include "GnomeHackAskStringDialog.h"
-#include "GnomeHackMainWindow.h"
+#include "gnaskstr.h"
+#include "gnmain.h"
 #include <gnome.h>
 
 

@@ -22,9 +22,9 @@
 #include <string.h>
 #include <gtk/gtk.h>
 #include <gnome.h>
-#include "GnomeHackMenuWindow.h"
-#include "GnomeHackMainWindow.h"
-#include "GnomeHackBind.h"
+#include "gnmenu.h"
+#include "gnmain.h"
+#include "gnbind.h"
 
 typedef enum {
 	MenuUnknown = 0,

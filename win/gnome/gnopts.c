@@ -19,8 +19,8 @@
  *
 */
 
-#include "GnomeHackSettings.h"
-#include "GnomeHackMainWindow.h"
+#include "gnopts.h"
+#include "gnmain.h"
 #include <gnome.h>
 #include <ctype.h>
 

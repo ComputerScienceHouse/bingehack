@@ -24,8 +24,8 @@
 
 #include <gtk/gtk.h>
 #include <gnome.h>
-#include "GnomeHack.h"
-#include "GnomeHackGlyph.h"
+#include "gnomeprv.h"
+#include "gnglyph.h"
 
 /* The list of custom signals */
 

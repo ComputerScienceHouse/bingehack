@@ -25,7 +25,7 @@
 #include <gnome.h>
 #include "config.h"
 #include "global.h"
-#include "GnomeHack.h"
+#include "gnomeprv.h"
 
 GtkWidget* ghack_init_menu_window( void );
 

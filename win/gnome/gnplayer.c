@@ -19,8 +19,8 @@
  *
 */
 
-#include "GnomeHackPlayerSelDialog.h"
-#include "GnomeHackMainWindow.h"
+#include "gnplayer.h"
+#include "gnmain.h"
 #include <gnome.h>
 #include <ctype.h>
 

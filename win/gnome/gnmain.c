@@ -19,10 +19,10 @@
  *
 */
 
-#include "GnomeHackMainWindow.h"
-#include "GnomeHackSignals.h"
-#include "GnomeHackBind.h"
-#include "GnomeHackSettings.h"
+#include "gnmain.h"
+#include "gnsignal.h"
+#include "gnbind.h"
+#include "gnopts.h"
 #include <gnome.h>
 #include <getopt.h>
 #include <gdk/gdk.h>

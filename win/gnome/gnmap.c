@@ -18,9 +18,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#include "GnomeHackMapWindow.h"
-#include "GnomeHackGlyph.h"
-#include "GnomeHackSignals.h"
+#include "gnmap.h"
+#include "gnglyph.h"
+#include "gnsignal.h"
 #include "hack.h"
 
 #ifndef ROWNO

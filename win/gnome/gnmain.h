@@ -24,7 +24,7 @@
 
 #include <gnome.h>
 #include <gtk/gtk.h>
-#include "GnomeHack.h"
+#include "gnmain.h"
 
 
 void ghack_init_main_window( int argc, char** argv);

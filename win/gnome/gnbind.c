@@ -24,10 +24,10 @@
  * code in the Gnome port and the rest of the nethack game engine. 
 */
 
-#include "GnomeHackBind.h"
-#include "GnomeHackMainWindow.h"
-#include "GnomeHackAskStringDialog.h"
-#include "GnomeHackYesNoDialog.h"
+#include "gnbind.h"
+#include "gnmain.h"
+#include "gnaskstr.h"
+#include "gnyesno.h"
 
 GNHWinData gnome_windowlist[MAXWINDOWS];
 

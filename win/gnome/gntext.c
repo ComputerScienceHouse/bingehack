@@ -19,8 +19,8 @@
  *
 */
 
-#include "GnomeHackTextWindow.h"
-#include "GnomeHackMainWindow.h"
+#include "gntext.h"
+#include "gnmain.h"
 #include <gnome.h>
 
 /* include the standard RIP window */

@@ -19,8 +19,8 @@
  *
 */
 
-#include "GnomeHackSignals.h"
-#include "GnomeHackMainWindow.h"
+#include "gnsignal.h"
+#include "gnmain.h"
 #include <gdk/gdkkeysyms.h>
 
 GList *g_keyBuffer;

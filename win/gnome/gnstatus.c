@@ -20,13 +20,11 @@
 */
 
 
-#include "GnomeHackStatusWindow.h"
-#include "GnomeHackSignals.h"
+#include "gnstatus.h"
+#include "gnsignal.h"
 #include "xpms.h"
-
 #include "../../include/config.h"
 #include "../../include/wintype.h"
-
 #include "../../include/hack.h"
 #include "../../include/dlb.h"
 #include "../../include/patchlevel.h"
