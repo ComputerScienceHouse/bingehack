@@ -624,17 +624,14 @@ newhp()
 	    }
 	}
 
-	switch(ACURR(A_CON)) {
-		case	3:	conplus = -2; break;
-		case	4:
-		case	5:
-		case	6:	conplus = -1; break;
-		case	15:
-		case	16:	conplus = 1; break;
-		case	17:	conplus = 2; break;
-		case	18:	conplus = 3; break;
-		default:	conplus = 0;
-	}
+	if (ACURR(A_CON) <= 5) conplus = -2;
+	else if (ACURR(A_CON) == 6) conplus = -1;
+	else if (ACURR(A_CON) <= 14) conplus = 0;
+	else if (ACURR(A_CON) <= 16) conplus = 1;
+	else if (ACURR(A_CON) == 17) conplus = 2;
+	else if (ACURR(A_CON) == 18) conplus = 3;
+	else conplus = 4;
+	
 	hp += conplus;
 	return((hp <= 0) ? 1 : hp);
 }
