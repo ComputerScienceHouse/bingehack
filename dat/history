@@ -77,43 +77,66 @@ team.  In a testament to their dedication to the game, all thirteen members
 of the original development team remained on the team at the start of work
 on the current release.  During the interval between the release of 3.1.3
 and 3.2, one of the founding members of the development team, Dr. Izchak
-Miller, passed away.  This release of the game is dedicated to him by the
-development and porting teams.
+Miller, passed away.  Version 3.2 of the NetHack is dedicated in his memory
+by the development and porting teams.
 
-Version 3.2 is more stable than previous versions, (it is hoped).  Many bugs
-have been fixed, abuses eliminated, and game features tuned for better game
-play.  The menus have been modified to give players more choices in styles
-for menus which require pick list selections.  A graphical display has been
-added for some ports.  (Added to the X11 port by Dean Luick, to the
-Amiga port by Ken Lorber, and to the DOS port by Michael Allison.)  The
-spell system and weapon proficiency portions of the game were adapted by
-Stephen White from his NHPlus variant.  (The #qualifications' and '#enhance'
-extended commands were added to make use of these changes.)  Additional game
-changes worth mentioning: light sources no longer have to be carried by the
-player to be used; wands can be destroyed if desired (use the 'a'pply
-command); treasures can be found buried in walls or in the floor; the
-'#untrap' command has been improved; and, wands of probing now provide more
-information.  Other more subtle changes have also been added to the game.
-You will have to play the game to discover them.
+Version 3.2 proved to be  more stable than previous versions.  Many bugs
+were fixed, abuses eliminated, and game features tuned for better game
+play.
 
-Pat Rankin maintained 3.2 for VMS.
+Late in 1999, the dev team released NetHack 3.3.  Along with the usual set
+of bug fixes and minor tweaks (including Y2K proofing), a merge of features
+was added to the game from varients that split off from the 3.2 base code.
 
-Michael Allison, Yitzhak Sapir, and Paul Winner, with help from Steve Linhart,
-Kevin Smolkowski, Mike Stephenson and Stephen White ported 3.2 for MSDOS.
-Keizo Yamamoto and Ken Washikita ported 3.2 for the NEC 98xx machines popular
-in Japan.
+During the lifespen of NetHack 3.2, Several enthusiasts of the game added
+their own modifications to the game and made these "variants" publically
+available:
 
-Ken Lorber, Andy Church, and Gregg Wonderly, with help from Richard Addison,
-ported 3.2 for the Amiga.
+Tom Proudfoot and Yuval Oren created NetHack++, which was later renamed
+NetHack--.  Working independantly, Stephen White wrote NetHack Plus.
+Tom Proudfoot later merged NetHack Plus and his own NetHack-- to produce
+SLASH.  Larry Stewart-Zerba and Warwick Allison improved the spellcasting
+system with the Wizard Patch.
 
-Dean Luick ported 3.2 to the Macintosh.
+Warren Cheung combined SLASH with the Wizard Patch to produce Slash'em, and
+with the help of Kevin Hugo, added more features.  Kevin later joined the
+DevTeam and incorporated the best of these ideas in NetHack 3.3.
 
-Eric Smith and Warwick Allison ported 3.2 for the Ataris.
+In addition to the merged features, a number of other notable modifications
+were made to the game:
 
-Michael Allison ported 3.2 for the Microsoft Windows NT platform.
+The character's race was split from his/her/its role in life.  Although
+started, this is preliminary and will likely be enhanced over the course
+of the next few releases.  The elf, dwarf, orc, and gnome races currently
+exist in the game.
 
-Timo Hakulinen remains responsible for the OS/2 port.
+Two new classes, or "roles", the Monk and Ranger have been added. As a result
+of the Elf being split off as a race, the Elf class was removed from the game.
 
+The 3.3 development team consisted of Michael Allison, Ken Arromdee,
+David Cohrs, Jessie Collet, Steve Creps, Kevin Darcy, Timo Hakulinen,
+Kevin Hugo, Steve Linhart, Dean Luick, Pat Rankin, Eric Smith, Mike
+Stephenson, Janet Walz, and Paul Winner.
+
+As with version 3.2, various people contributed to the game as a whole as
+well as supporting ports on the different platforms that NetHack runs on:
+
+Pat Rankin maintained 3.3 for VMS.
+
+Michael Allison ported NetHack 3.3 for the MS-DOS platform.  Paul Winner
+and Yitzhak Sapir provided encouragement.
+
+Elvis was seen playing NetHack on an Amiga.  That is to say, like Elvis, it
+it might come back, but don't hold your breath.
+
+Dean Luick, Mark Modrall, and Kevin Hugo maintained and enhanced the
+Macintosh port of 3.3.
+
+The Atari port of NetHack was discontinued.
+
+Michael Allison ported 3.3 for the Microsoft Windows NT platform.
+
+Timo Hakulinen continues to be responsible for the OS/2 port.
 			   - - - - - - - - - -
 
 From time to time, some depraved individual out there in netland sends a
@@ -121,30 +144,32 @@ particularly intriguing modification to help out with the game.  The Gods of
 the Dungeon sometimes make note of the names of the worst of these miscreants
 in this, the list of Dungeoneers:
 
-    Andy Church             Izchak Miller             Mike Passaretti
-    Andy Swanson            Janet Walz                Mike Stephenson
-    Ari Huttunen            Jean-Christophe Collet    Norm Meluch
-    Barton House            Jochen Erwied             Olaf Seibert
-    Benson I. Margulies     John Kallen               Pat Rankin
-    Bill Dyer               John Rupley               Paul Winner
-    Boudewijn Wayers        John S. Bien              Pierre Martineau
-    Bruce Holloway          Johnny Lee                Ralf Brown
-    Bruce Mewborne          Jon W{tte                 Richard Addison
-    Carl Schelin            Jonathan Handler          Richard P. Hughey
-    David Cohrs             Joshua Delahunty          Rob Menke
-    David Gentzel           Keizo Yamamoto            Roland McGrath
-    David Hairston          Ken Arromdee              Ross Brown
-    Dean Luick              Ken Lorber                Scott R. Turner
-    Del Lamb                Ken Washikita             Stephen Spackman
-    Deron Meranda           Kevin Darcy               Stephen White
-    Eric Backus             Kevin Sitze               Steve Creps
-    Eric Hendrickson        Kevin Smolkowski          Steve Linhart
-    Eric R. Smith           Kevin Sweet               Steve VanDevender
-    Eric S. Raymond         Mark Gooderum             Tim Lennan
-    Frederick Roeber        Matthew Day               Timo Hakulinen
-    Gil Neiger              Merlyn LeRoy              Tom Almy
-    Greg Laskin             Michael Allison           Tom West
-    Greg Olson              Michael Hamel             Warwick Allison
-    Gregg Wonderly          Michael Sokolov           Yitzhak Sapir
-    Hao-yang Wang           Mike Engber
-    Helge Hafting           Mike Gallop
+    Andy Church               Janet Walz                Mike Gallop
+    Andy Swanson              Jean-Christophe Collet    Mike Passaretti
+    Ari Huttunen              Jochen Erwied             Mike Stephenson
+    Barton House              John Kallen               Nick Number
+    Benson I. Margulies       John Rupley               Norm Meluch
+    Bill Dyer                 John S. Bien              Olaf Seibert
+    Boudewijn Wayers          Johnny Lee                Pat Rankin
+    Bruce Holloway            Jon W{tte                 Paul Winner
+    Bruce Mewborne            Jonathan Handler          Pierre Martineau
+    Carl Schelin              Joshua Delahunty          Ralf Brown
+    David Cohrs               Keizo Yamamoto            Richard Addison
+    David Gentzel             Ken Arromdee              Richard P. Hughey
+    David Hairston            Ken Lorber                Rob Menke
+    Dean Luick                Ken Washikita             Roland McGrath
+    Del Lamb                  Kevin Darcy               Ross Brown
+    Deron Meranda             Kevin Hugo                Scott R. Turner
+    Eric Backus               Kevin Sitze               Stephen Spackman
+    Eric Hendrickson          Kevin Smolkowski          Stephen White
+    Eric R. Smith             Kevin Sweet               Steve Creps
+    Eric S. Raymond           Mark Gooderum             Steve Linhart
+    Frederick Roeber          Mark Modrall              Steve VanDevender
+    Gil Neiger                Matthew Day               Tim Lennan
+    Greg Laskin               Merlyn LeRoy              Timo Hakulinen
+    Greg Olson                Michael Allison           Tom Almy
+    Gregg Wonderly            Michael Hamel             Tom West
+    Hao-yang Wang             Michael Sokolov           Warwick Allison
+    Helge Hafting             Mike Engber               Yitzhak Sapir
+    Izchak Miller
+
