@@ -1324,7 +1324,7 @@ gotit:
 	 */
 	if (c != 'y' && mon_beside(u.ux, u.uy)) {
 		if(!getdir("Loot in what direction?")) {
-			Never_mind();
+			pline(Never_mind);
 			return(0);
 		}
 		x = u.ux + u.dx;

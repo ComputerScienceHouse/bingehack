@@ -853,7 +853,7 @@ doengrave()
 		c = yn_function("Do you want to add to the current engraving?",
 				ynqchars, 'y');
 		if (c == 'q') {
-		    Never_mind();
+		    pline(Never_mind);
 		    return(0);
 		}
 	    }
@@ -950,7 +950,7 @@ doengrave()
 		    pline("%s glows, then fades.", The(xname(otmp)));
 		return(1);
 	    } else {
-		Never_mind();
+		pline(Never_mind);
 		return(0);
 	    }
 	}

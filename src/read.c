@@ -1192,7 +1192,7 @@ register struct obj	*sobj;
 		cc.x = u.ux;
 		cc.y = u.uy;
 		if (getpos(&cc, TRUE, "the desired position") < 0) {
-		    Never_mind();
+		    pline(Never_mind);
 		    return 0;
 		}
 		if (!cansee(cc.x, cc.y) || distu(cc.x, cc.y) >= 32) {

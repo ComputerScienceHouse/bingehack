@@ -820,7 +820,7 @@ register const char *let,*word;
 		}
 		if(index(quitchars,ilet)) {
 		    if(flags.verbose)
-			Never_mind();
+			pline(Never_mind);
 		    return((struct obj *)0);
 		}
 		if(ilet == '-') {
@@ -870,7 +870,7 @@ register const char *let,*word;
 		    if(!ilet) continue;
 		    if(ilet == '\033') {
 			if(flags.verbose)
-			    Never_mind();
+			    pline(Never_mind);
 			return((struct obj *)0);
 		    }
 		    /* they typed a letter (not a space) at the prompt */
@@ -2264,7 +2264,7 @@ doorganize()	/* inventory organizer by Del Lamb */
 		Sprintf(qbuf, "Adjust letter to what [%s]?",buf);
 		let = yn_function(qbuf, (char *)0, '\0');
 		if(index(quitchars,let)) {
-			Never_mind();
+			pline(Never_mind);
 			return(0);
 		}
 		if (let == '@' || !letter(let))
