@@ -1,13 +1,13 @@
-         Copyright (c) NetHack Development Team 1990-1999
+         Copyright (c) NetHack Development Team 1990-2000
          NetHack may be freely redistributed.  See license for details.
          ==============================================================
                     Instructions for compiling and installing
              NetHack 3.3 on a Windows NT, 2000, or Windows 9x system
          ==============================================================
-         (or, How to make NetHack 3.3.0 for the WIN32 Console subsystem)
-		      Last revision: December 4, 1999
+         (or, How to make NetHack 3.3.1 for the WIN32 Console subsystem)
+		      Last revision: July 19, 2000
 
-Credit for PC versions of NetHack 3.2 goes to the PC Development team
+Credit for the PC versions of NetHack goes to the PC Development team
 of Paul Winner, Kevin Smolkowski, Michael Allison, Yitzhak Sapir, Bill
 Dyer, Timo Hakulinen, Yamamoto Keizo, Mike Threepoint, Mike Stephenson,
 Stephen White, Ken Washikita and Janet Walz.
@@ -169,7 +169,7 @@ Running NetHack
     or from a shortcut, just use the following information when 
     setting up the icon or shortcut.
 
-         Description      :  NetHack 3.3.0 
+         Description      :  NetHack 3.3.1 
          Command Line     :  C:\GAMES\NETHACK\NETHACK.EXE
 
    (changing the directory to the appropriate one of course)
