@@ -1102,7 +1102,7 @@ dopois:
 		  }
 		  break;
 		}
-	    case AD_STON:	/* at present only a cockatrice */
+	    case AD_STON:	/* cockatrice */
 		hitmsg(mtmp, mattk);
 		if(!rn2(3) && !Stoned) {
 		    if (mtmp->mcan) {
