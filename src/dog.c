@@ -27,6 +27,7 @@ register struct monst *mtmp;
 	EDOG(mtmp)->ogoal.y = -1;
 	EDOG(mtmp)->abuse = 0;
 	EDOG(mtmp)->revivals = 0;
+	EDOG(mtmp)->mhpmax_penalty = 0;
 	EDOG(mtmp)->killed_by_u = 0;
 }
 

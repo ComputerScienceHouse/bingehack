@@ -138,6 +138,11 @@ boolean devour;
 	}
 	edog->hungrytime += nutrit;
 	mtmp->mconf = 0;
+	if (edog->mhpmax_penalty) {
+	    /* no longer starving */
+	    mtmp->mhpmax += edog->mhpmax_penalty;
+	    edog->mhpmax_penalty = 0;
+	}
 	if (mtmp->mflee && mtmp->mfleetim > 1) mtmp->mfleetim /= 2;
 	if (mtmp->mtame < 20) mtmp->mtame++;
 	if (x != mtmp->mx || y != mtmp->my) {	/* moved & ate on same turn */
@@ -221,9 +226,12 @@ register struct edog *edog;
 	    if (!carnivorous(mtmp->data) && !herbivorous(mtmp->data)) {
 		edog->hungrytime = monstermoves + 500;
 		/* but not too high; it might polymorph */
-	    } else if (!mtmp->mconf) {
+	    } else if (!edog->mhpmax_penalty) {
+		/* starving pets are limited in healing */
+		int newmhpmax = mtmp->mhpmax / 3;
 		mtmp->mconf = 1;
-		mtmp->mhpmax /= 3;
+		edog->mhpmax_penalty = mtmp->mhpmax - newmhpmax;
+		mtmp->mhpmax = newmhpmax;
 		if (mtmp->mhp > mtmp->mhpmax)
 		    mtmp->mhp = mtmp->mhpmax;
 		if (mtmp->mhp < 1) goto dog_died;
