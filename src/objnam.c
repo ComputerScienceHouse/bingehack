@@ -1507,7 +1507,6 @@ register char *bp;
 			isinvisible = 1;
 #endif
 		} else if (!strncmpi(bp, "rustproof ", l=10) ||
-			   !strncmpi(bp, "rotproof ", l=9) ||
 			   !strncmpi(bp, "erodeproof ", l=11) ||
 			   !strncmpi(bp, "corrodeproof ", l=13) ||
 			   !strncmpi(bp, "fixed ", l=6) ||
