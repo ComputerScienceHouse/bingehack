@@ -304,7 +304,7 @@ NhRegion *reg;
 	for (j = reg->bounding_box.ly; j <= reg->bounding_box.hy; j++) {
 	    /* Some regions can cross the level boundaries */
 	    if (!isok(i,j))
-	      continue;
+		continue;
 	    if (MON_AT(i, j) && inside_region(reg, i, j))
 		add_mon_to_reg(reg, level.monsters[i][j]);
 	    if (reg->visible && cansee(i, j))

@@ -175,6 +175,8 @@ struct obj *obj;		/* aatyp == AT_WEAP, AT_SPIT */
 	    /* e.g. raven: all ublindf, including LENSES, protect */
 	    if (is_you && ublindf)
 		return FALSE;
+	    if ((magr == &youmonst) && u.uswallow)
+		return FALSE;	/* can't affect eyes while inside monster */
 	    check_visor = TRUE;
 	    break;
 
