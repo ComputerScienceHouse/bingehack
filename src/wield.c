@@ -325,7 +325,7 @@ dowieldquiver()
 	multi = 0;
 
 	/* Because 'Q' used to be quit... */
-	if (!flags.alerts_off_ver || flags.alerts_off_ver < FEATURE_NOTICE_VER(3,3,0))
+	if (!flags.suppress_alert || flags.suppress_alert < FEATURE_NOTICE_VER(3,3,0))
 		pline("Note: Please use #quit if you wish to exit the game.");
 
 	/* Prompt for a new quiver */

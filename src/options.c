@@ -184,7 +184,6 @@ static struct Comp_Opt
 			 * typing when game maintains information in
 			 * a different format */
 } compopt[] = {
-	{ "alerts_off_ver", "suppress alert of new features for version specified and prior", 6},
 	{ "align",    "your starting alignment (lawful, neutral, or chaotic)", 8 },
 #ifdef MAC
 	{ "background", "the color of the background (black or white),", 6 },
@@ -243,6 +242,7 @@ static struct Comp_Opt
 #ifdef MSDOS
 	{ "soundcard", "type of sound card to use", 20 },
 #endif
+	{ "suppress_alert", "suppress alert of new features for version specified and prior", 6},
 	{ "traps",    "the symbols to use in drawing traps", MAXTCHARS+1 },
 #ifdef MAC
 	{"use_stone", "use stone background patterns", 8},
@@ -728,7 +728,7 @@ char *op;
 	if (fnv > get_current_feature_ver())
 		rejectver = TRUE;
 	else
-		flags.alerts_off_ver = fnv;
+		flags.suppress_alert = fnv;
 	if (!initial) {
 		if (rejectver) {
 		      You_cant("disable new feature alerts for future versions.");
@@ -806,14 +806,6 @@ boolean tinitial, tfrom_file;
 
 	/* compound options */
 
-	fullname = "alerts_off_ver";
-	if (match_optname(opts, fullname, 4, TRUE)) {
-		op = string_for_opt(opts, negated);
-		if (negated) bad_negation(fullname, FALSE);
-		else if (op) (void) feature_alert_opts(op);
-		return;
-	}
-	
 	fullname = "pettype";
 	if (match_optname(opts, fullname, 3, TRUE)) {
 		if ((op = string_for_env_opt(fullname, opts, negated)) != 0) {
@@ -1347,6 +1339,14 @@ goodfruit:
 	    return;
 	}
 
+	fullname = "suppress_alert";
+	if (match_optname(opts, fullname, 4, TRUE)) {
+		op = string_for_opt(opts, negated);
+		if (negated) bad_negation(fullname, FALSE);
+		else if (op) (void) feature_alert_opts(op);
+		return;
+	}
+	
 #ifdef VIDEOSHADES
 	/* videocolors:string */
 	fullname = "videocolors";
@@ -1791,10 +1791,6 @@ doset()
 	doset_add_menu(tmpwin, "windowtype", windowprocs.name, 0);
 
 	/* modifiable compounds */
-	Sprintf(buf, "%lu.%lu.%lu", FEATURE_NOTICE_VER_MAJ, FEATURE_NOTICE_VER_MIN,
-			FEATURE_NOTICE_VER_PATCH);
-	doset_add_menu(tmpwin, "alerts_off_ver", (flags.alerts_off_ver == 0L) ?
-				"(null)" : buf, boolcount);
 	doset_add_menu(tmpwin, "disclose",
 		       flags.end_disclose[0] ? flags.end_disclose : "all",
 		       boolcount);
@@ -1814,6 +1810,10 @@ doset()
 	Sprintf(buf, "%d top/%d around%s", flags.end_top, flags.end_around,
 		flags.end_own ? "/own" : "");
 	doset_add_menu(tmpwin, "scores", buf, boolcount);
+	Sprintf(buf, "%lu.%lu.%lu", FEATURE_NOTICE_VER_MAJ, FEATURE_NOTICE_VER_MIN,
+			FEATURE_NOTICE_VER_PATCH);
+	doset_add_menu(tmpwin, "suppress_alert", (flags.suppress_alert == 0L) ?
+				"(null)" : buf, boolcount);
 	end_menu(tmpwin, "Set what options?");
 
 	need_redraw = FALSE;
