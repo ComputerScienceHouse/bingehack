@@ -1487,6 +1487,7 @@ gulpmu(mtmp, mattk)	/* monster swallows you, or damage if u.uswallow */
 
 		if (Punished) unplacebc();	/* ball&chain go away */
 		remove_monster(mtmp->mx, mtmp->my);
+		mtmp->mtrapped = 0;		/* no longer on old trap */
 		place_monster(mtmp, u.ux, u.uy);
 		u.ustuck = mtmp;
 		newsym(mtmp->mx,mtmp->my);
