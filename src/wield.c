@@ -356,7 +356,8 @@ dowieldquiver()
 		return(0);
 	} else if (newquiver == uwep) {
 		/* Prevent accidentally readying the main weapon */
-		pline("That is already being used as a weapon!");
+		pline("%s already being used as a weapon!",
+		      (uwep->quan == 1L) ? "That is" : "They are");
 		return(0);
 	} else if (newquiver->owornmask & (W_ARMOR | W_RING | W_AMUL | W_TOOL
 #ifdef STEED
