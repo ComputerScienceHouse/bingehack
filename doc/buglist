@@ -110,6 +110,15 @@ filtering for races, and since the Rogue and Ranger now share the same
 first letter, there is no way to get a high-score listing of just one
 of those two roles.
 
+When you drop all '[' you still get the silly redundant menu, after
+all the "You cannot drop something you are wearing" messages, that
+lists everything that you *are* wearing (and haven't dropped because
+of that) and asks you what you want to drop. If you indicate
+something, it says, of course, "You cannot drop something you are
+wearing". Present in 3.2.2 and still there in 3.3.0 beta. Either 
+the menu should not appear or dropping something in second
+instance should entail taking it off (if you can).
+
 Reported but unconfirmed bugs:
 -- Strange things happen to items in chests pets carry downstairs.
 -- Several reports of core dumps when monsters resist an effect.
