@@ -65,20 +65,21 @@ static struct stat omstat,nmstat;
 static char *mailbox = (char *)0;
 static long laststattime;
 
-# ifdef AMS				/* Just a placeholder for AMS */
+# if !defined(MAILPATH) && defined(AMS)	/* Just a placeholder for AMS */
 #  define MAILPATH "/dev/null"
-# else
-#  if defined(LINUX) || defined(__osf__)
-#   define MAILPATH "/var/spool/mail/"
-#  else
-#   if defined(BSD) || defined(ULTRIX)
-#    define MAILPATH "/usr/spool/mail/"
-#   endif
-#   if defined(SYSV) || defined(HPUX)
-#    define MAILPATH "/usr/mail/"
-#   endif
-#  endif /* LINUX */
-# endif /* AMS */
+# endif
+# if !defined(MAILPATH) && (defined(LINUX) || defined(__osf__))
+#  define MAILPATH "/var/spool/mail/"
+# endif
+# if !defined(MAILPATH) && defined(__FreeBSD__)
+#  define MAILPATH "/var/mail/"
+# endif
+# if !defined(MAILPATH) && (defined(BSD) || defined(ULTRIX))
+#  define MAILPATH "/usr/spool/mail/"
+# endif
+# if !defined(MAILPATH) && (defined(SYSV) || defined(HPUX))
+#  define MAILPATH "/usr/mail/"
+# endif
 
 void
 getmailstatus()

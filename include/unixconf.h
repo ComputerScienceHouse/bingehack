@@ -167,7 +167,7 @@
 #  endif
 #else
 # if defined(SYSV) || defined(DGUX) || defined(HPUX)
-#  ifdef M_XENIX
+#  if defined(M_XENIX) || defined(__FreeBSD__)
 #define DEF_MAILREADER	"/usr/bin/mail"
 #  else
 #   ifdef __sgi
