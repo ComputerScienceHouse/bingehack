@@ -565,8 +565,8 @@ register struct obj *obj;
 	case WEAPON_CLASS:
 		if(ispoisoned)
 			Strcat(prefix, "poisoned ");
-		add_erosion_words(obj, prefix);
 plus:
+		add_erosion_words(obj, prefix);
 		if(obj->known) {
 			Strcat(prefix, sitoa(obj->spe));
 			Strcat(prefix, " ");

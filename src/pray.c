@@ -1355,8 +1355,7 @@ int
 dopray()
 {
 	/* Confirm accidental slips of Alt-P */
-	if (yn_function("Are you sure you want to pray?",
-			ynqchars, 'n') == 'n')
+	if (yn("Are you sure you want to pray?") == 'n')
 		return (0);
 	u.uconduct.gnostic++;
 

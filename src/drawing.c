@@ -182,7 +182,7 @@ const char *monexplain[MAXMCLASSES] = {
     "vampire",			"wraith",		"xorn",
     "yeti, ape or other large beast", "zombie",
 
-    "human or elf",		"ghost",		"golem",
+    "human/demihuman",		"ghost",		"golem",
     "major demon",		"sea monster",		"lizard",
     "long worm tail",		"mimic"
 };

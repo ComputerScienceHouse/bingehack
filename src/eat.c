@@ -1509,6 +1509,7 @@ register struct obj *otmp;
 		break;
 	    case FORTUNE_COOKIE:
 		outrumor(bcsign(otmp), BY_COOKIE);
+		if (!Blind) u.uconduct.literate++;
 		break;
 	    case LUMP_OF_ROYAL_JELLY:
 		/* This stuff seems to be VERY healthy! */
