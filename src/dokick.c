@@ -312,14 +312,15 @@ xchar x, y;
 			|| kickobj == uball || kickobj == uchain)
 		return(0);
 
-	if((trap = t_at(x,y)) && trap->tseen) {
-		if (((trap->ttyp == PIT || trap->ttyp == SPIKED_PIT)
-					&& !Passes_walls)
-				|| trap->ttyp == WEB) {
-			You_cant("kick %s that's in a %s!", something,
-				trap->ttyp == WEB ? "web" : "pit");
-			return(1);
-		}
+	if ((trap = t_at(x,y)) != 0 &&
+			(((trap->ttyp == PIT ||
+			   trap->ttyp == SPIKED_PIT) && !Passes_walls) ||
+			 trap->ttyp == WEB)) {
+		if (!trap->tseen) find_trap(trap);
+		You_cant("kick %s that's in a %s!", something,
+			 Hallucination ? "tizzy" :
+			 (trap->ttyp == WEB) ? "web" : "pit");
+		return 1;
 	}
 
 	if(Fumbling && !rn2(3)) {
@@ -328,7 +329,7 @@ xchar x, y;
 	}
 
 	if(kickobj->otyp == CORPSE && touch_petrifies(&mons[kickobj->corpsenm])
-			&& !Stone_resistance && !uarmf) {            
+			&& !Stone_resistance && !uarmf) {
 		char kbuf[BUFSZ];
 
 		You("kick the %s corpse with your bare %s.",

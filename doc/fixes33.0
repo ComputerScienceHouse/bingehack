@@ -92,6 +92,7 @@ seen-invisible monsters are consistently visible but transparent, rather
 kicked object message for hitting another object no longer claims it "stops"
 kicked object hits objects (plural) if quan>1 but there is nothing else there
 kicking an object which is embedded in a closed door behaves like one in rock
+can't kick object out of a known pit, but could when pit hadn't been seen yet
 pets, shopkeepers, unique monsters, trolls, and Riders retain
 	their characteristics when killed and brought back to life
 being polymorphed into a black light makes you hallucination resistant

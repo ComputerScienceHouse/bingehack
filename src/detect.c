@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)detect.c	3.3	97/05/25	*/
+/*	SCCS Id: @(#)detect.c	3.3	1999/12/06	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -936,6 +936,21 @@ openit()	/* returns number of things found and opened */
 	return(num);
 }
 
+void
+find_trap(trap)
+struct trap *trap;
+{
+    int tt = what_trap(trap->ttyp);
+
+    You("find %s.", an(defsyms[trap_to_defsym(tt)].explanation));
+    trap->tseen = 1;
+    exercise(A_WIS, TRUE);
+    if (Blind)
+	feel_location(trap->tx, trap->ty);
+    else
+	newsym(trap->tx, trap->ty);
+}
+
 int
 dosearch0(aflag)
 register int aflag;
@@ -1032,16 +1047,7 @@ register int aflag;
 				    exercise(A_WIS, TRUE);
 				return(1);
 			    } else {
-				You("find %s.", an(defsyms[
-				    trap_to_defsym(Hallucination ?
-						rn1(TRAPNUM-3, 2) :
-						trap->ttyp)].explanation));
-				trap->tseen = 1;
-				exercise(A_WIS, TRUE);
-				if(Blind)
-				    feel_location(x,y);
-				else
-				    newsym(x,y);
+				find_trap(trap);
 			    }
 			}
 		    }

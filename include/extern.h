@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)extern.h	3.3	1999/08/16	*/
+/*	SCCS Id: @(#)extern.h	3.3	1999/12/06	*/
 /* Copyright (c) Steve Creps, 1988.				  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -219,6 +219,7 @@ E void FDECL(openone, (int,int,genericptr_t));
 #endif
 E int NDECL(findit);
 E int NDECL(openit);
+E void FDECL(find_trap, (struct trap *));
 E int FDECL(dosearch0, (int));
 E int NDECL(dosearch);
 E void NDECL(sokoban_detect);
