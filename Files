@@ -100,8 +100,8 @@ multi.h         split.doc       split.h         splitter.c
 
 sys/atari:
 (files for Atari version)
-Install.tos     Makefile.utl    atari.cnf       atarifnt.uue    nethack.mnu
-setup.g         tos.c
+Install.tos     atari.cnf       atarifnt.uue    nethack.mnu     setup.g
+tos.c           unx2atar.sed
 
 sys/be:
 (files for BeOS version)
@@ -144,13 +144,13 @@ Install.os2     Makefile.os2    nhpmico.uu      os2.c
 
 sys/share:
 (files for MSDOS and OS/2 versions)
-Makefile.lib    NetHack.cnf     termcap.uu
+Makefile.lib    termcap.uu
 (file for MSDOS, OS/2, NT, Amiga, and Atari versions)
 pcmain.c
 (files for MSDOS, OS/2, NT, and Atari versions)
 pcsys.c         pcunix.c
 (file for MSDOS, OS/2, and Atari versions)
-pctty.c
+NetHack.cnf     pctty.c
 (files for UNIX and Be versions)
 ioctl.c         unixtty.c
 (file for NT version)
@@ -213,6 +213,11 @@ nethack.rc      nh10.bdf        nh32icon        nh56icon        nh72icon
 nh_icon.xpm     pet_mark.xbm    rip.xpm         tile2x11.c      winX.c
 winmap.c        winmenu.c       winmesg.c       winmisc.c       winstat.c
 wintext.c       winval.c
+
+win/gem:
+(files for GEM versions)
+Install.gem     bitmfile.c      gem_rsc.rsc     gem_rsc.rso     load_img.c
+tile2img.c      title.img       wingem.c        wingem1.c
 
 win/share:
 (files for versions using optional tiles)

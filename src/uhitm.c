@@ -333,7 +333,8 @@ register struct monst *mtmp;
 		    You("begin bashing monsters with your %s.",
 			aobjnam(uwep, (char *)0));
 		else if (!cantwield(youmonst.data))
-		    You("begin bashing monsters with your %s %s.",
+		    You("begin %sing monsters with your %s %s.",
+			Role_if(PM_MONK) ? "strik" : "bash",
 			uarmg ? "gloved" : "bare",	/* Del Lamb */
 			makeplural(body_part(HAND)));
 	}

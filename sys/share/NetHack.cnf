@@ -34,12 +34,17 @@ OPTIONS=rawio,BIOS,IBMgraphics
 #OPTIONS=BIOS,DECgraphics
 # If your machine is NEC PC-9800, use:
 #OPTIONS=rawio,BIOS,video:default
+# If you use an Atari and want tty use:
+#OPTIONS=windowtype:tty,rawio,BIOS
 #
 #
 # General options.  You might also set "silent" so as not to attract
 # the boss's attention.
 #
 OPTIONS=time,noshowexp,number_pad,lit_corridor,rest_on_space
+#
+# If you want to get rid of "use #quit to quit..." use:
+#OPTIONS=suppress_alert:3.3.0
 #
 #
 # Some options to set personal preferences.  Uncomment and change these to
