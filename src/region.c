@@ -50,8 +50,6 @@ static callback_proc callbacks[] = {
     expire_gas_cloud
 };
 
-extern struct monst *find_mid();
-
 /* Should be inlined. */
 boolean
 inside_rect(r, x, y)
@@ -393,7 +391,7 @@ run_regions()
 	/* Check if any monster is inside region */
 	if (f_indx != NO_CALLBACK) {
 	    for (j = 0; j < regions[i]->n_monst; j++) {
-		struct monst *mtmp = find_mid(regions[i]->monsters[j]);
+		struct monst *mtmp = find_mid(regions[i]->monsters[j], FM_EVERYWHERE);
 
 		if (!mtmp || mtmp->mhp <= 0 ||
 				(*callbacks[f_indx])(regions[i], mtmp)) {

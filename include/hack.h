@@ -140,6 +140,12 @@ NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
 #define CHOOSE_ALL   0x40
 #define ALL_TYPES_SELECTED -2
 
+/* Flags to control find_mid() */
+#define FM_FMON	       0x01	/* search the fmon chain */
+#define FM_MIGRATE     0x02	/* search the migrating monster chain */
+#define FM_MYDOGS      0x04	/* search mydogs */
+#define FM_EVERYWHERE  (FM_FMON | FM_MIGRATE | FM_MYDOGS)
+
 /*** some utility macros ***/
 #define yn(query) yn_function(query,ynchars, 'n')
 #define ynq(query) yn_function(query,ynqchars, 'q')
