@@ -631,11 +631,11 @@ register struct monst *mon;
 		if (canseemon(mon)) {
 			pline("%s wields %s!", Monnam(mon), doname(obj));
 			if (obj->cursed && obj->otyp != CORPSE) {
-				pline("%s %s to %s hand!",
+				pline("%s %s to %s %s!",
 					The(xname(obj)),
 					(obj->quan == 1L) ? "welds itself"
 					    : "weld themselves",
-					s_suffix(mon_nam(mon)));
+					s_suffix(mon_nam(mon)), mbodypart(mon,HAND));
 				obj->bknown = 1;
 			}
 		}

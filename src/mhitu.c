@@ -986,6 +986,7 @@ dopois:
 		if (u_slip_free(mtmp,mattk)) break;
 
 		if (uarmh && rn2(8)) {
+		    /* not body_part(HEAD) */
 		    Your("helmet blocks the attack to your head.");
 		    break;
 		}
@@ -2021,12 +2022,12 @@ register struct monst *mon;
 		}
 		makeknown(RIN_ADORNMENT);
 		if (!uright) {
-		    pline("%s puts %s on your right hand.",
-			Blind ? "He" : Monnam(mon), the(xname(ring)));
+		    pline("%s puts %s on your right %s.",
+			Blind ? "He" : Monnam(mon), the(xname(ring)), body_part(HAND));
 		    setworn(ring, RIGHT_RING);
 		} else if (!uleft) {
-		    pline("%s puts %s on your left hand.",
-			Blind ? "He" : Monnam(mon), the(xname(ring)));
+		    pline("%s puts %s on your left %s.",
+			Blind ? "He" : Monnam(mon), the(xname(ring)), body_part(HAND));
 		    setworn(ring, LEFT_RING);
 		} else if (uright && uright->otyp != RIN_ADORNMENT) {
 		    Strcpy(buf, xname(uright));

@@ -980,7 +980,7 @@ register struct obj	*sobj;
 		    if (Hallucination)
 			pline("Wow!  Modern art.");
 		    else
-			Your("head spins in bewilderment.");
+			Your("%s spins in bewilderment.", body_part(HEAD));
 		    make_confused(HConfusion + rnd(30), FALSE);
 		    break;
 		}
@@ -996,7 +996,7 @@ register struct obj	*sobj;
 		known = TRUE;
 	case SPE_MAGIC_MAPPING:
 		if (level.flags.nommap) {
-		    Your("head spins as something blocks the spell!");
+		    Your("%s spins as something blocks the spell!", body_part(HEAD));
 		    make_confused(HConfusion + rnd(30), FALSE);
 		    break;
 		}

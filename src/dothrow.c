@@ -466,7 +466,7 @@ boolean hitsroof;
 		goto petrify;
 	case CREAM_PIE:
 	case BLINDING_VENOM:
-		pline("You've got it all over your face!");
+		pline("You've got it all over your %s!", body_part(FACE));
 		blindinc = rnd(25);
 		if (blindinc && !Blindfolded) {
 		    if (otyp != BLINDING_VENOM)

@@ -974,9 +974,9 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 				return ((boolean)(youattack || vis));
 			}
 			if (noncorporeal(mdef->data) || amorphous(mdef->data)) {
-				pline("%s slices through %s neck.",
+				pline("%s slices through %s %s.",
 				      artilist[ART_VORPAL_BLADE].name,
-				      s_suffix(mon_nam(mdef)));
+				      s_suffix(mon_nam(mdef)), mbodypart(mdef,NECK));
 				return TRUE;
 			}
 			*dmgptr = mdef->mhp + FATAL_DAMAGE;
@@ -993,8 +993,8 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 				return TRUE;
 			}
 			if (noncorporeal(youmonst.data) || amorphous(youmonst.data)) {
-				pline("%s slices through your neck.",
-				      artilist[ART_VORPAL_BLADE].name);
+				pline("%s slices through your %s.",
+				      artilist[ART_VORPAL_BLADE].name, body_part(NECK));
 				return TRUE;
 			}
 			*dmgptr = (Upolyd ? u.mh : u.uhp) + FATAL_DAMAGE;
