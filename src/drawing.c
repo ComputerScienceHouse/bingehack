@@ -729,7 +729,7 @@ static const uchar r_oc_syms[MAXOCLASSES] = {
 static const uchar IBM_r_oc_syms[MAXOCLASSES] = {	/* a la EPYX Rogue */
 /* 0*/	'\0',
 	ILLOBJ_SYM,
-#  if defined(MSDOS) || defined(OS2)
+#  if defined(MSDOS) || defined(WIN32) || defined(OS2)
 	0x18,			/* weapon: up arrow */
 /*	0x0a, */ ARMOR_SYM,	/* armor:  Vert rect with o */
 /*	0x09, */ RING_SYM,	/* ring:   circle with arrow */
@@ -742,7 +742,7 @@ static const uchar IBM_r_oc_syms[MAXOCLASSES] = {	/* a la EPYX Rogue */
 	0xe7,			/* wand:   greek tau */
 	0x0f,			/* gold:   yes it's the same as gems */
 	0x0f,			/* gems:   fancy '*' */
-#  else  /* Not MSDOS or OS2 */
+#  else
 	')',			/* weapon  */
 	ARMOR_SYM,		/* armor */
 	RING_SYM,		/* ring */
@@ -755,7 +755,7 @@ static const uchar IBM_r_oc_syms[MAXOCLASSES] = {	/* a la EPYX Rogue */
 	0xe7,			/* wand:   greek tau */
 	GEM_SYM,		/* gold:   yes it's the same as gems */
 	GEM_SYM,		/* gems    */
-#  endif /* MSDOS or OS2 */
+#  endif
 	ROCK_SYM,
 /*15*/	BALL_SYM,
 	CHAIN_SYM,
