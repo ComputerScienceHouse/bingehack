@@ -167,19 +167,18 @@ static short
 GetWinKind (WindowPtr win)
 {
 short kind;
-NhWindow *nhw = GetNhWin (win);
 char *typeStr [] = {
 	"map", "status", "message", "text", "menu" ,
 };
 
-	if (! nhw || (((long) nhw) & 1) || nhw->its_window != win) {
+	if (!CheckNhWin (win)) {
 		return -1;
 	}
 	kind = ((WindowPeek) win)->windowKind - WIN_BASE_KIND;
 	if (kind < 0 || kind > NHW_TEXT) {
 		return -1;
 	}
-	dprintf ("Got window kind %d (%lx)->%lx", kind, win, nhw);
+	dprintf ("Got window kind %d (%lx)", kind, win);
 	switch (kind) {
 	case NHW_MAP :
 	case NHW_STATUS :

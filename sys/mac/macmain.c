@@ -7,6 +7,7 @@
 #include "hack.h"
 #include "dlb.h"
 #include "macwin.h"
+#include "mactty.h"
 
 #include <OSUtils.h>
 #include <files.h>
@@ -107,6 +108,7 @@ main (void)
 #endif
 		pline("Restoring save file...");
 		mark_synch();	/* flush output */
+		game_active = 1;
 		if (dorecover(fd)) {
 #ifdef WIZARD
 			if(!wizard && remember_wiz_mode) wizard = TRUE;
@@ -127,6 +129,7 @@ main (void)
 	}
 	if (fd < 0) {
 		player_selection();
+		game_active = 1;	/* done with selection, draw active game window */
 		newgame();
 		set_wear();
 		pickup(1);

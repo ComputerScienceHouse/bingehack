@@ -95,7 +95,7 @@ typedef struct NhWindow {
 	ControlHandle	scrollBar ;
 } NhWindow ;
 
-extern NhWindow *GetNhWin(WindowPtr mac_win);
+extern Boolean CheckNhWin(WindowPtr mac_win);
 
 
 #define NUM_STAT_ROWS 2

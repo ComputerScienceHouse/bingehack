@@ -17,6 +17,8 @@
 #include "mttypriv.h"
 #include <Resources.h>
 
+char game_active = 0;	/* flag to window rendering routines not to use ppat */
+
 /* these declarations are here because I can't include macwin.h without including the world */
 extern void dprintf(char *, ...);	/* dprintf.c */
 
@@ -475,7 +477,7 @@ RGBColor rgb_white = {0xffff, 0xffff, 0xffff};
  */
 static void
 erase_rect (tty_record *record, Rect *area) {
-	if (u.uhp > 0 && iflags.use_stone && record->its_window == _mt_window) {
+	if (game_active && u.uhp > 0 && iflags.use_stone && record->its_window == _mt_window) {
 		PixPatHandle ppat;
 		
 		ppat = GetPixPat(iflags.use_stone + 127);	/* find which pat to get */
@@ -500,12 +502,14 @@ force_tty_coordinate_system_recalc (WindowPtr window) {
 short s_err;
 RECORD_EXISTS (record);
 
-	if (s_err = free_bits (record)) {
+	s_err = free_bits (record);
+	if (s_err) {
 		return s_err;
 	}
 	calc_font_sizes (record);
 
-	if (s_err = alloc_bits (record)) {
+	s_err = alloc_bits (record);
+	if (s_err) {
 /*
  * Catastrophe! We could not allocate memory for the bitmap! Things may go very
  * much downhill from here!
@@ -694,7 +698,7 @@ RECORD_EXISTS (record);
 static void
 do_add_string (tty_record *record, char *str, short len) {
 Rect r;
-register int x_pos, count = len;
+register int count = len;
 
 	if (len < 1) {
 		return;
@@ -803,6 +807,9 @@ RECORD_EXISTS (record);
 		record->x_curs >= record->x_size)
 		return noErr;		/* Optimize away drawing across border without wrap */
 
+	if (record->curs_state != 0)
+		curs_pos (record, record->x_curs, record->y_curs, 0);
+
 	ch = character;
 	is_control = (ch < sizeof(long) * 8) && ((s_control & (1 << ch)) != 0L);
 	if (is_control)
@@ -826,6 +833,9 @@ register const unsigned char * the_c;
 register unsigned char ch, is_control, tty_wrap;
 register short max_x, pos_x;
 RECORD_EXISTS (record);
+
+	if (record->curs_state != 0)
+		curs_pos (record, record->x_curs, record->y_curs, 0);
 
 	the_c = (const unsigned char *) string;
 	max_x = record->x_size;

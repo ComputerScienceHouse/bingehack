@@ -211,7 +211,8 @@ CbCursFunc winCursorFuncs [NUM_FUNCS] = {
 	GeneralCursor, GeneralCursor
 };
 
-NhWindow *
+
+static NhWindow *
 GetNhWin(WindowPtr mac_win) {
 	int ix;
 	for (ix = 0; ix < NUM_MACWINDOWS; ++ix)
@@ -219,6 +220,16 @@ GetNhWin(WindowPtr mac_win) {
 			return theWindows + ix;
 	return ((NhWindow *) nil);
 }
+
+
+Boolean CheckNhWin (WindowPtr mac_win) {
+	if (mac_win == _mt_window)
+		return 1;
+	else {
+		return GetNhWin (mac_win) != nil;
+	}
+}
+
 
 short win_fonts [NHW_TEXT + 1];
 
@@ -1291,7 +1302,6 @@ macKeyMenu (EventRecord *theEvent, WindowPtr theWindow) {
 	NhWindow *aWin = GetNhWin(theWindow);
 	MacMHMenuItem *mi;
 	int l, ch = theEvent->message & 0xff;
-	Rect r;
 
 	if (aWin) {
 		HLock ((char**)aWin->menuInfo);

@@ -316,7 +316,7 @@ GDHandle gh;
 
 	r = _mt_window->portRect;
 	SetPort (_mt_window);
-	GlobalToLocal (&p);
+	LocalToGlobal (&p);
 	OffsetRect (&r, p.h, p.v);
 
 	gh = GetMaxDevice (&r);

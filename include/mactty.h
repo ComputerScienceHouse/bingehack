@@ -66,22 +66,7 @@
 #define CHAR_BLANK ((char)32)
 #define CHAR_DELETE ((char)127)
 
-typedef struct NhWindow1 {
-	WindowPtr		its_window ;
-//	short			kind ;
-
-	short			font_number ;
-	short			font_size ;
-	short			char_width ;
-	short			row_height ;
-	short			ascent_height ;
-	
-	short			x_size;
-	short			y_size;
-	short			x_curs;
-	short			y_curs;
-} NhWindow1;
-
+extern char game_active;	/* flag to window rendering routines not to use ppat */
 /*
  * If you want some fancy operations that not a normal TTY device normally
  * supports, use EXTENDED_SUPPORT. For frames, area erases and area scrolls,

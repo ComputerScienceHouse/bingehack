@@ -445,6 +445,8 @@ char *rsrc_dlb_fgets(char *buf, int len, dlb *dp)
 		HUnlock(hfp->data);
 
 		hfp->mark += n;
+		if (n != 0)
+			buf[n] = '\0';	/* null terminate result */
 	}
 
 	return n ? buf : NULL;

@@ -1172,7 +1172,7 @@ askQuit()
 {
 	Boolean doQuit = 1 ;
 	Boolean doYes = 0 ;
-	char *quitinput = "#quit";
+	char *quitinput;
 
 	if (theMenubar < mbarRegular) {
 	short	itemHit;
@@ -1188,6 +1188,14 @@ askQuit()
 		}
 	}
 	if ( doQuit ) {
+		/* MWM -- forgive me lord, an even uglier kludge to deal with differences
+			in command input handling
+		 */
+		if (!strcmp (windowprocs.name, "mac"))
+			quitinput = "#quit";
+		else
+			quitinput = "#q\r";
+			
 		/* KMH -- Ugly kludge */
 		while (*quitinput)
 			AddToKeyQueue(*quitinput++, 1);
