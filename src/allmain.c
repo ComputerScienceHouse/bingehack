@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)allmain.c	3.3	1999/11/19	*/
+/*	SCCS Id: @(#)allmain.c	3.3	1999/11/30	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -113,7 +113,7 @@ moveloop()
 			    /* average movement is 1.67 times normal */
 			    moveamt += NORMAL_SPEED / 2;
 			    if (rn2(3) == 0) moveamt += NORMAL_SPEED / 2;
-			} else if (Fast) { 
+			} else if (Fast) {
 			    /* average movement is 1.33 times normal */
 			    if (rn2(3) != 0) moveamt += NORMAL_SPEED / 2;
 			}
@@ -162,24 +162,24 @@ moveloop()
 			    flags.botl = 1;
 			    u.mh++;
 			}
-		    } else if (u.uhp < u.uhpmax) {
-			if(u.ulevel > 9) {
-			    int heal;
+		    } else if (u.uhp < u.uhpmax &&
+			 (wtcap < MOD_ENCUMBER || !flags.mv || Regeneration)) {
+			if (u.ulevel > 9 && !(moves % 3)) {
+			    int heal, Con = (int) ACURR(A_CON);
 
-			    if(HRegeneration ||
-			       (!(moves%3) &&
-				(wtcap < MOD_ENCUMBER || !flags.mv))) {
-				flags.botl = 1;
-				if (ACURR(A_CON) <= 12) heal = 1;
-				else heal = rnd((int) ACURR(A_CON)-12);
+			    if (Con <= 12) {
+				heal = 1;
+			    } else {
+				heal = rnd(Con);
 				if (heal > u.ulevel-9) heal = u.ulevel-9;
-				u.uhp += heal;
-				if(u.uhp > u.uhpmax)
-				    u.uhp = u.uhpmax;
 			    }
-			} else if(HRegeneration ||
-				  ((wtcap < MOD_ENCUMBER || !flags.mv) &&
-				   (!(moves%((MAXULEV+12)/(u.ulevel+2)+1))))) {
+			    flags.botl = 1;
+			    u.uhp += heal;
+			    if(u.uhp > u.uhpmax)
+				u.uhp = u.uhpmax;
+			} else if (Regeneration ||
+			     (u.ulevel <= 9 &&
+			      !(moves % ((MAXULEV+12) / (u.ulevel+2) + 1)))) {
 			    flags.botl = 1;
 			    u.uhp++;
 			}
