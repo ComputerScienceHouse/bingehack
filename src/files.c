@@ -249,7 +249,7 @@ int lev;
 void
 clearlocks()
 {
-#if defined(MFLOPPY) && !defined(AMIGA)
+#if !defined(PC_LOCKING) && defined(MFLOPPY) && !defined(AMIGA)
 	eraseall(levels, alllevels);
 	if (ramdisk)
 		eraseall(permbones, alllevels);
