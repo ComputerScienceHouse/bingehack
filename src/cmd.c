@@ -1823,7 +1823,7 @@ char
 readchar()
 {
 	register int sym;
-	int x, y, mod;
+	int x = u.ux, y = u.uy, mod = 0;
 
 #ifdef REDO
 	sym = in_doagain ? Getchar() : nh_poskey(&x, &y, &mod);

@@ -186,7 +186,7 @@ static struct Comp_Opt
 } compopt[] = {
 	{ "align",    "your starting alignment (lawful, neutral, or chaotic)", 8 },
 #ifdef MAC
-	{ "background", "the color of the background (black or white),", 5 },
+	{ "background", "the color of the background (black or white),", 6 },
 #endif
 	{ "catname",  "the name of your (first) cat (e.g., catname:Tabby)",
 						PL_PSIZ },
