@@ -1407,9 +1407,11 @@ do_class_genocide()
 			buf);
 		    (void)mungspaces(buf);
 		} while (buf[0]=='\033' || !buf[0]);
-		if (strlen(buf) == 1)
+		if (strlen(buf) == 1) {
+		    if (buf[0] == ILLOBJ_SYM)
+			buf[0] = def_monsyms[S_MIMIC];
 		    class = def_char_to_monclass(buf[0]);
-		else {
+		} else {
 		    char buf2[BUFSZ];
 
 		    class = 0;

@@ -156,7 +156,7 @@ extern uchar oc_syms[MAXOCLASSES];		/* current class symbols */
 
 /* Default definitions of all object-symbols (must match classes above). */
 
-#define ILLOBJ_SYM	']'	/* should be same as S_MIMIC_DEF      */
+#define ILLOBJ_SYM	']'	/* also used for mimics */
 #define WEAPON_SYM	')'
 #define ARMOR_SYM	'['
 #define RING_SYM	'='

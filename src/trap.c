@@ -483,9 +483,11 @@ register struct trap *trap;
 	/* KMH -- You can't escape the Sokoban level traps */
 	if (In_sokoban(&u.uz) &&
 			(ttype == PIT || ttype == SPIKED_PIT || ttype == HOLE ||
-			ttype == TRAPDOOR))
-	    pline("Air currents pull you down!");
-	else if (already_seen) {
+			ttype == TRAPDOOR)) {
+	    if (Levitation || Flying)
+		pline("Air currents pull you down!");
+	    /* then proceed to normal trap effect */
+	} else if (already_seen) {
 	    if ((Levitation || Flying) &&
 		    (ttype == PIT || ttype == SPIKED_PIT || ttype == HOLE ||
 		    ttype == BEAR_TRAP)) {
