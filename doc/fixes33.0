@@ -203,8 +203,6 @@ number of roles no longer limited to 26 letters
 renamed typename() to obj_typename()
 add "You hear a nearby zap" when monster is close
 fixed a bug that would print of "a Book of the Dead" instead of "The"
-fixed a bug that would accumulate to-hit bonuses for monsters
-	that have more than one weapon attack (e.g. marilith)
 fixed a bug so there is no delay when a rolling boulder trap is
 	triggered completely out of sight
 fixed emergency_disrobe() so it will drop gold
@@ -339,9 +337,6 @@ new objects: amulet of unchanging,silver dagger,silver spear,
 add Monk role
 the old Elf role is replaced by the Ranger
 add Human, Elf, Dwarf, Gnome, and Orc races
-add two weapon combat, second weapon slot, and "pushweapon"
-	option
-add quiver and fire command
 add multishot ammunition
 add graves, iron bars, trees, and arboreal levels
 dwarvish mattocks can be used to dig
@@ -356,7 +351,6 @@ blessed magic mapping detects secret doors
 starting spells are known at start of game
 pre-discoveries are listed with an *
 voluntary challenges with #conduct
-apply pole-weapons to hit monsters at a distance
 add a funny message when eating tridents and flint stones
 allow debug-mode level teleport to the sanctum
 some #monster commands now consume energy

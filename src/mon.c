@@ -1098,6 +1098,7 @@ register struct monst *mtmp, *mtmp2;
     mtmp2->nmon = fmon;
     fmon = mtmp2;
     if (u.ustuck == mtmp) u.ustuck = mtmp2;
+    if (u.usteed == mtmp) u.usteed = mtmp2;
     if (mtmp2->isshk) replshk(mtmp,mtmp2);
 
     /* discard the old monster */

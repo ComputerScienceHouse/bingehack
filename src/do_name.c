@@ -239,15 +239,21 @@ do_mname()
 			(cx = cc.x) < 0)
 		return 0;
 	cy = cc.y;
+
 	if (cx == u.ux && cy == u.uy) {
+	    if (u.usteed && canspotmon(u.usteed))
+		mtmp = u.usteed;
+	    else {
 		pline("This %s creature is called %s and cannot be renamed.",
 		ACURR(A_CHA) > 14 ?
 		(flags.female ? "beautiful" : "handsome") :
 		"ugly",
 		plname);
 		return(0);
-	}
-	mtmp = m_at(cx, cy);
+	    }
+	} else
+	    mtmp = m_at(cx, cy);
+
 	if (!mtmp || (!sensemon(mtmp) &&
 			(!(cansee(cx,cy) || see_with_infrared(mtmp)) || mtmp->mundetected
 			|| mtmp->m_ap_type == M_AP_FURNITURE

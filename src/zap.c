@@ -2146,7 +2146,7 @@ register struct	obj	*obj;
 	if (objects[otyp].oc_dir == IMMEDIATE) {
 	    obj_zapped = FALSE;
 #ifdef STEED
-	    if (u.usteed) {
+	    if (u.usteed && !u.dx && !u.dy && u.dz >= 0) {
 		(void) bhitm(u.usteed, obj);
 	    } else
 #endif
