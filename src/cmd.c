@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)cmd.c	3.3	1999/10/31	*/
+/*	SCCS Id: @(#)cmd.c	3.3	2000/02/19	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -759,12 +759,12 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 		}
 	}
 	if (Stoned) you_are("turning to stone");
+	if (Slimed) you_are("turning into slime");
 	if (Strangled) you_are((u.uburied) ? "buried" : "being strangled");
 	if (Glib) {
 		Sprintf(buf, "slippery %s", makeplural(body_part(FINGER)));
 		you_have(buf);
 	}
-	if (Slimed) you_are("turning into slime");
 	if (Fumbling) enl_msg("You fumble", "", "d", "");
 	if (Wounded_legs) {
 		Sprintf(buf, "wounded %s", makeplural(body_part(LEG)));
@@ -808,6 +808,24 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 	if (Breathless) you_can("survive without air");
 	else if (Amphibious) you_can("breathe water");
 	if (Passes_walls) you_can("walk through walls");
+#ifdef STEED
+	if (u.usteed) {
+	    Sprintf(buf, "riding %s", y_monnam(u.usteed));
+	    you_are(buf);
+	}
+#endif
+	if (u.uswallow) {
+	    Sprintf(buf, "swallowed by %s", a_monnam(u.ustuck));
+#ifdef WIZARD
+	    if (wizard) Sprintf(eos(buf), " (%u)", u.uswldtim);
+#endif
+	    you_are(buf);
+	} else if (u.ustuck) {
+	    Sprintf(buf, "%s %s",
+		    (Upolyd && sticks(youmonst.data)) ? "holding" : "held by",
+		    a_monnam(u.ustuck));
+	    you_are(buf);
+	}
 
 	/*** Physical attributes ***/
 	if (Slow_digestion) you_have("slower digestion");
