@@ -400,7 +400,7 @@ tty_decgraphics_termcap_fixup()
 #if defined(ASCIIGRAPH) && !defined(NO_TERMS)
 	/* some termcaps suffer from the bizarre notion that resetting
 	   video attributes should also reset the chosen character set */
-	if (strstr(nh_HE, AE)) HE_resets_AS = TRUE;
+	if (strstri(nh_HE, AE)) HE_resets_AS = TRUE;
 #endif
 }
 #endif	/* TERMLIB */
