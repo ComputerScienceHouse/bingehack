@@ -314,7 +314,7 @@ pole-weapons can be applied at a distance, and similarly used by monsters.
 	"more info?" prompt; ':' for '.'+'y', ',' for '.'+'n', ';' for ','+ESC
 monsters can throw cockatrice eggs at players
 prayer trouble "stuck in wall" takes boulders into consideration
-crysknives can be "fixed".
+crysknives can be "fixed"
 vampires now #chat back
 new monsters: chickatrice,pyrolisk,fox,coyote,winter wolf cub,dingo, 
 	gas spore,flaming sphere,shocking sphere,lynx,panther,raven, 
@@ -353,8 +353,8 @@ voluntary challenges with #conduct
 apply pole-weapons to hit monsters at a distance
 add a funny message when eating tridents and flint stones
 allow debug-mode level teleport to the sanctum
-some #monster commands now consume energy.
-
+some #monster commands now consume energy
+trees can be kicked as a possible source of fruit
 
 Platform- and/or Interface-Specific New Features
 ------------------------------------------------
