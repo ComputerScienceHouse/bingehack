@@ -1331,7 +1331,7 @@ const char *oldstr;
 			   !BSTRCMPI(bp, p-7, "Artemis") || /* bow */
 		       !BSTRCMP(bp, p-10, "eucalyptus") ||
 #ifdef WIZARD
-			   !BSTRCMP(bp, p-4, "bars") ||
+			   !BSTRCMP(bp, p-9, "iron bars") ||
 #endif
 			   !BSTRCMP(bp, p-5, "aklys"))
 				return bp;
