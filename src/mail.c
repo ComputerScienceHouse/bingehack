@@ -69,7 +69,7 @@ static long laststattime;
 #  define MAILPATH "/dev/null"
 # else
 #  ifdef LINUX
-#   define MAILPATH "/var/spool/mail"
+#   define MAILPATH "/var/spool/mail/"
 #  else
 #   if defined(BSD) || defined(ULTRIX)
 #    define MAILPATH "/usr/spool/mail/"
