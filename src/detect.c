@@ -983,7 +983,7 @@ register int aflag;
 			newsym(x,y);
 		    } else {
 		/* Be careful not to find anything in an SCORR or SDOOR */
-			if(!aflag && (mtmp = m_at(x, y))) {
+			if((mtmp = m_at(x, y)) && !aflag) {
 			    if(mtmp->m_ap_type) {
 				seemimic(mtmp);
 		find:		exercise(A_WIS, TRUE);
@@ -1013,6 +1013,15 @@ register int aflag;
 			    }
 			    if (!canspotmon(mtmp))
 				goto find;
+			}
+
+			/* see if an invisible monster has moved--if Blind,
+			 * feel_location() already did it
+			 */
+			if (!aflag && !mtmp && !Blind &&
+				    glyph_is_invisible(levl[x][y].glyph)) {
+			    unmap_object(x,y);
+			    newsym(x,y);
 			}
 
 			if ((trap = t_at(x,y)) && !trap->tseen && !rnl(8)) {
