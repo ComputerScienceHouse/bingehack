@@ -486,10 +486,14 @@ register int after;	/* this is extra fast monster movement */
 
 	udist = distu(omx,omy);
 #ifdef STEED
-	/* Let steeds eat */
-	if (mtmp == u.usteed)
-		udist = 1;
-	else
+	/* Let steeds eat and maybe throw rider during Conflict */
+	if (mtmp == u.usteed) {
+	    if (Conflict && !resist(mtmp, RING_CLASS, 0, 0)) {
+		dismount_steed(DISMOUNT_THROWN);
+		return (1);
+	    }
+	    udist = 1;
+	} else
 #endif
 	/* maybe we tamed him while being swallowed --jgm */
 	if (!udist) return(0);
