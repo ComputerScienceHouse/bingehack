@@ -213,9 +213,9 @@ ASM	= asm
 #GST=gst=$(GSTFILE)
 #
 #DEBUG=debug=sf
-OPTFLAGS=opt opttime optpeep optgo optinl optcomp=10 optdep=5 optrdep=5 #optalias +OPTTIME -OPTSIZE
+OPTFLAGS=opt opttime optpeep optgo optinl optsched optcomp=10 optdep=5 optrdep=5 #optalias +OPTTIME -OPTSIZE
 CFLAGS	= data=far nominc $(DEBUG) idir=$(I) cpu=any nostkchk nover \
-	codename=none strmerge ppbuf=8000 $(OPTFLAGS) $(TILES) $(SAVEDS) \
+	codename=nhcode dataname=nhdata strmerge $(OPTFLAGS) $(TILES) $(SAVEDS) \
 	afp $(ERRREXX) $(GST)
 # for files that are too large for the standard flags:
 CFLAGS2 = code=far strmerge $(SAVEDS)
@@ -289,7 +289,7 @@ AOBJSPEC = -o
 
 #[SAS6]
 
-LINK	= slink noicons verbose stripdebug
+LINK	= slink noicons verbose maxhunk 65536 stripdebug
 LIN	= from lib:catch.o
 LLINK	= with $(AMI)ami.lnk
 LLIB	= lib lib:scnb.lib BATCH #lib lib:amiga.lib BATCH #scnb.lib or sc.lib

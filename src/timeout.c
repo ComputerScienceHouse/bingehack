@@ -98,7 +98,7 @@ choke_dialogue()
 	    else {
 		const char *str = choke_texts[SIZE(choke_texts)-i];
 
-		if (strchr(str, '%'))
+		if (index(str, '%'))
 		    pline(str, hcolor(blue));
 		else
 		    pline(str);
@@ -124,7 +124,7 @@ slime_dialogue()
 		&& i < SIZE(slime_texts)) {
 	    const char *str = slime_texts[SIZE(slime_texts)-i-1];
 
-	    if (strchr(str, '%')) {
+	    if (index(str, '%')) {
 		if (i == 4) {
 		    if (!Blind)
 			pline(str, hcolor(green));

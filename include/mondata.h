@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mondata.h	3.3	1999/08/14	*/
+/*	SCCS Id: @(#)mondata.h	3.3	2000/07/14	*/
 /* Copyright (c) 1989 Mike Threepoint				  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -107,6 +107,8 @@
 #define likes_objs(ptr)		(((ptr)->mflags2 & M2_COLLECT) != 0L || \
 				 is_armed(ptr))
 #define likes_magic(ptr)	(((ptr)->mflags2 & M2_MAGIC) != 0L)
+#define webmaker(ptr)		((ptr) == &mons[PM_CAVE_SPIDER] || \
+				 (ptr) == &mons[PM_GIANT_SPIDER])
 #define is_unicorn(ptr)		((ptr)->mlet == S_UNICORN && likes_gems(ptr))
 #define is_longworm(ptr)	(((ptr) == &mons[PM_BABY_LONG_WORM]) || \
 				 ((ptr) == &mons[PM_LONG_WORM]) || \
@@ -152,27 +154,19 @@
 /* Used for conduct with corpses, tins, and digestion attacks */
 /* G_NOCORPSE monsters might still be swallowed as a purple worm */
 /* Maybe someday this could be in mflags... */
-#define nonvegan(ptr)		((ptr)->mlet != S_BLOB && \
-				 (ptr)->mlet != S_JELLY &&            \
-				 (ptr)->mlet != S_FUNGUS &&           \
-				 (ptr)->mlet != S_VORTEX &&           \
-				 (ptr)->mlet != S_LIGHT &&            \
-				((ptr)->mlet != S_ELEMENTAL ||        \
-				 (ptr) == &mons[PM_STALKER]) &&       \
-				((ptr)->mlet != S_GOLEM ||            \
-				 (ptr) == &mons[PM_FLESH_GOLEM] ||    \
-				 (ptr) == &mons[PM_LEATHER_GOLEM]) && \
-				 !noncorporeal(ptr))
-#define nonvegetarian(ptr)		((ptr)->mlet != S_BLOB && \
-				 (ptr)->mlet != S_JELLY &&          \
-				 (ptr)->mlet != S_FUNGUS &&         \
-				 (ptr)->mlet != S_VORTEX &&         \
-				 (ptr)->mlet != S_LIGHT &&          \
-				((ptr)->mlet != S_ELEMENTAL ||      \
-				 (ptr) == &mons[PM_STALKER]) &&     \
-				 (ptr)->mlet != S_PUDDING &&        \
-				((ptr)->mlet != S_GOLEM ||          \
-				 (ptr) == &mons[PM_FLESH_GOLEM]) && \
-				 !noncorporeal(ptr))
+#define vegan(ptr)		((ptr)->mlet == S_BLOB || \
+				 (ptr)->mlet == S_JELLY ||            \
+				 (ptr)->mlet == S_FUNGUS ||           \
+				 (ptr)->mlet == S_VORTEX ||           \
+				 (ptr)->mlet == S_LIGHT ||            \
+				((ptr)->mlet == S_ELEMENTAL &&        \
+				 (ptr) != &mons[PM_STALKER]) ||       \
+				((ptr)->mlet == S_GOLEM &&            \
+				 (ptr) != &mons[PM_FLESH_GOLEM] &&    \
+				 (ptr) != &mons[PM_LEATHER_GOLEM]) || \
+				 noncorporeal(ptr))
+#define vegetarian(ptr)		(vegan(ptr) || \
+				((ptr)->mlet == S_PUDDING &&         \
+				 (ptr) != &mons[PM_BLACK_PUDDING]))
 
 #endif /* MONDATA_H */

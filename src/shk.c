@@ -2556,7 +2556,7 @@ register xchar x, y;
 		    mark_synch();
 		}
 		subfrombill(obj, shkp);
-		mpickobj(shkp, obj);
+		(void) mpickobj(shkp, obj);
 		return(1);
 	}
 	return(0);
@@ -2742,7 +2742,7 @@ boolean catchup;	/* restoring a level */
 				BEARTRAP, TRUE, FALSE);
 		otmp->quan= 1;
 		otmp->owt = weight(otmp);
-		mpickobj(shkp, otmp);
+		(void) mpickobj(shkp, otmp);
 	    }
 	    deltrap(ttmp);
 	    newsym(x, y);
@@ -2996,7 +2996,7 @@ register int fall;
 		if(obj->otyp == LEASH && obj->leashmon) continue;
 		freeinv(obj);
 		subfrombill(obj, shkp);
-		add_to_minv(shkp, obj);	/* may free obj */
+		(void) add_to_minv(shkp, obj);	/* may free obj */
 	    }
     }
 }

@@ -133,8 +133,8 @@ use_saddle(otmp)
 	    You("put the saddle on %s.", mon_nam(mtmp));
 	    freeinv(otmp);
 	    /* mpickobj may free otmp it if merges, but we have already
-	       checked for a saddle above, so no merget should happen */
-	    mpickobj(mtmp, otmp);
+	       checked for a saddle above, so no merger should happen */
+	    (void) mpickobj(mtmp, otmp);
 	    mtmp->misc_worn_check |= W_SADDLE;
 	    otmp->owornmask = W_SADDLE;
 	    otmp->leashmon = mtmp->m_id;

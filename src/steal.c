@@ -83,7 +83,7 @@ stealarm()
 			    subfrombill(otmp, shop_keeper(*u.ushops));
 			freeinv(otmp);
 			pline("%s steals %s!", Monnam(mtmp), doname(otmp));
-			mpickobj(mtmp,otmp);	/* may free otmp */
+			(void) mpickobj(mtmp,otmp);	/* may free otmp */
 			mtmp->mflee = 1;
 			if (!tele_restrict(mtmp)) rloc(mtmp);
 		        break;
@@ -266,7 +266,7 @@ gotobj:
 	freeinv(otmp);
 	pline("%s stole %s.", named ? "She" : Monnam(mtmp), doname(otmp));
 	could_petrify = otmp->otyp == CORPSE && touch_petrifies(&mons[otmp->corpsenm]);
-	mpickobj(mtmp,otmp);	/* may free otmp */
+	(void) mpickobj(mtmp,otmp);	/* may free otmp */
 	if (could_petrify && !(mtmp->misc_worn_check & W_ARMG)) {
 	    minstapetrify(mtmp, TRUE);
 	    return -1;
@@ -354,7 +354,7 @@ struct monst *mtmp;
 	freeinv(otmp);
 	/* mpickobj wont merge otmp because none of the above things
 	   to steal are mergable */
-	mpickobj(mtmp,otmp);	/* may merge and free otmp */
+	(void) mpickobj(mtmp,otmp);	/* may merge and free otmp */
 	pline("%s stole %s!", Monnam(mtmp), doname(otmp));
 	if (can_teleport(mtmp->data) && !tele_restrict(mtmp))
 	    rloc(mtmp);
@@ -411,7 +411,7 @@ boolean is_pet;		/* If true, pet should keep wielded/worn items */
 	/* put kept objects back */
 	while ((otmp = keepobj) != (struct obj *)0) {
 	    keepobj = otmp->nobj;
-	    add_to_minv(mtmp, otmp);
+	    (void) add_to_minv(mtmp, otmp);
 	}
 
 	if (mtmp->mgold) {

@@ -210,9 +210,7 @@ short hor, vert;
 	 * offscreen GWorld
 	 */
 	if (!Gestalt (gestaltQuickdrawVersion, &resp) && resp > 0x1ff) {
-	GDHandle gdh;
-
-		gdh = GetDeviceList ();
+		GDHandle gdh = GetDeviceList ();
 		while (gdh) {
 			if (TestDeviceAttribute (gdh, screenDevice)) {
 				if (HasDepth (gdh, 4, 1, 1) ||
@@ -257,6 +255,7 @@ short hor, vert;
 
 	mustwork (set_tty_attrib (_mt_window, TTY_ATTRIB_FOREGROUND, _mt_colors [NO_COLOR] [0]));
 	mustwork (set_tty_attrib (_mt_window, TTY_ATTRIB_BACKGROUND, _mt_colors [NO_COLOR] [1]));
+	clear_tty (_mt_window);//
 
 	InitMenuRes ();
 }
@@ -412,7 +411,7 @@ term_end_color (void) {
 void
 cl_end (void) {
 	_mt_set_colors (_mt_attrs [0]);
-	clear_tty_window (_mt_window, ttyDisplay->curx, ttyDisplay->cury ,
+	clear_tty_window (_mt_window, ttyDisplay->curx, ttyDisplay->cury,
 		CO - 1, ttyDisplay->cury);
 }
 
@@ -427,7 +426,7 @@ clear_screen (void) {
 void
 cl_eos (void) {
 	_mt_set_colors (_mt_attrs [0]);
-	clear_tty_window (_mt_window, ttyDisplay->curx, ttyDisplay->cury, CO - 1 ,
+	clear_tty_window (_mt_window, ttyDisplay->curx, ttyDisplay->cury, CO - 1,
 		LI - 1);
 }
 

@@ -120,6 +120,9 @@
 
 STATIC_DCL void FDECL(display_monster,(XCHAR_P,XCHAR_P,struct monst *,int,XCHAR_P));
 STATIC_DCL int FDECL(swallow_to_glyph, (int, int));
+#ifdef NEW_WARNING
+STATIC_DCL void FDECL(display_warning,(struct monst *));
+#endif
 
 STATIC_DCL int FDECL(check_pos, (int, int, int));
 #ifdef WA_VERBOSE
@@ -422,21 +425,6 @@ display_monster(x, y, mon, in_sight, worm_tail)
 		num = petnum_to_glyph(PM_LONG_WORM_TAIL);
 	    else
 		num = pet_to_glyph(mon);
-#ifdef NEW_WARNING
-	} else if (warn_of_mon(mon) && !tp_sensemon(mon)) {
-		if (MATCH_WARN_OF_MON(mon))
-			num = mon_to_glyph(mon);
-        	else {
-        		int tmplev = (int) (mon->m_lev / 4);
-			if (tmplev > WARNCOUNT - 1) tmplev = WARNCOUNT - 1;
-	        	num = warning_to_glyph(tmplev);
-	        	if (num > MAX_GLYPH) {
-	        		impossible(
-		"Invalid warning glyph, mon=%s, mon m_lev=%d, glyph=%d, warnlev=%d",
-				noit_mon_nam(mon), mon->m_lev, num, tmplev);
-			}
-	        }
-#endif
 	} else {
 	    if (worm_tail)
 		num = monnum_to_glyph(what_mon(PM_LONG_WORM_TAIL));
@@ -446,6 +434,37 @@ display_monster(x, y, mon, in_sight, worm_tail)
 	show_glyph(x,y,num);
     }
 }
+
+#ifdef NEW_WARNING
+/*
+ * display_warning()
+ *
+ * This is also *not* a map_XXXX() function!  Monster warnings float
+ * above everything just like monsters do, but only if the monster
+ * is not showing.
+ *
+ * Do not call for worm tails.
+ */
+STATIC_OVL void
+display_warning(mon)
+    register struct monst *mon;
+{
+    int x = mon->mx, y = mon->my;
+    int wl = (int) (mon->m_lev / 4);
+    int glyph;
+
+    if (mon_warning(mon)) {
+        if (wl > WARNCOUNT - 1) wl = WARNCOUNT - 1;
+        glyph = warning_to_glyph(wl);
+    } else if (MATCH_WARN_OF_MON(mon)) {
+	glyph = mon_to_glyph(mon);
+    } else {
+    	impossible("display_warning did not match warning type?");
+        return;
+    }
+    show_glyph(x, y, glyph);
+}
+#endif
 
 /*
  * feel_location()
@@ -669,6 +688,12 @@ newsym(x,y)
 	    /* This also gets rid of any invisibility glyph */
 	    display_monster(x,y,mon,0,0);
 	}
+#ifdef NEW_WARNING
+	else if ((mon = m_at(x,y)) && mon_warning(mon) &&
+		 !((x != mon->mx) || (y != mon->my))) {
+	        display_warning(mon);
+	}		
+#endif
 	/*
 	 * If the location is remembered as being both dark (waslit is false)
 	 * and lit (glyph is a lit room or lit corridor) then it was either:

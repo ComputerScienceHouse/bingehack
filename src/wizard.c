@@ -347,7 +347,7 @@ tactics(mtmp)
 				  (distu(mtmp->my, mtmp->my) <= 5) ?
 				    doname(otmp) : distant_name(otmp, doname));
 			obj_extract_self(otmp);
-			mpickobj(mtmp, otmp);
+			(void) mpickobj(mtmp, otmp);
 			return(1);
 		    } else return(0);
 		  }
@@ -385,7 +385,8 @@ clonewiz()
 				u.ux, u.uy, NO_MM_FLAGS)) != 0) {
 	    mtmp2->msleeping = mtmp2->mtame = mtmp2->mpeaceful = 0;
 	    if (!u.uhave.amulet && rn2(2)) {  /* give clone a fake */
-		add_to_minv(mtmp2, mksobj(FAKE_AMULET_OF_YENDOR, TRUE, FALSE));
+		(void) add_to_minv(mtmp2, mksobj(FAKE_AMULET_OF_YENDOR,
+					TRUE, FALSE));
 	    }
 	    mtmp2->m_ap_type = M_AP_MONSTER;
 	    mtmp2->mappearance = wizapp[rn2(SIZE(wizapp))];

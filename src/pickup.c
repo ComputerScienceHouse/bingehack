@@ -1226,213 +1226,212 @@ int x, y;
 int
 doloot()	/* loot a container on the floor. */
 {
-	register struct obj *cobj, *nobj;
-	register int c = -1;
-	int timepassed = 0;
-	int x,y;
-	boolean underfoot = TRUE;
-	const char *dont_find_anything = "don't find anything";
-	struct monst *mtmp;
+    register struct obj *cobj, *nobj;
+    register int c = -1;
+    int timepassed = 0;
+    int x,y;
+    boolean underfoot = TRUE;
+    const char *dont_find_anything = "don't find anything";
+    struct monst *mtmp;
+    char qbuf[QBUFSZ];
 #ifdef STEED
-	char qbuf[QBUFSZ];
-	struct obj *otmp;
-	boolean saddled_there = FALSE;
-	boolean got_saddle = FALSE;
+    struct obj *otmp;
+    boolean saddled_there = FALSE;
+    boolean got_saddle = FALSE;
 #endif
 
-	if (check_capacity((char *)0)) {
-		/* "Can't do that while carrying so much stuff." */
-		return 0;
-	}
-	x = u.ux; y = u.uy;
+    if (check_capacity((char *)0)) {
+	/* "Can't do that while carrying so much stuff." */
+	return 0;
+    }
+    x = u.ux; y = u.uy;
 
 lootcont:
 
-	if (container_at(x, y, FALSE)) {
-		if (!able_to_loot(x, y)) return 0;
-		for(cobj = level.objects[x][y]; cobj; cobj = nobj) {
-			nobj = cobj->nexthere;
+    if (container_at(x, y, FALSE)) {
+	if (!able_to_loot(x, y)) return 0;
+	for (cobj = level.objects[x][y]; cobj; cobj = nobj) {
+	    nobj = cobj->nexthere;
 
-			if(Is_container(cobj)) {
-			    char qbuf[QBUFSZ];
+	    if (Is_container(cobj)) {
+		Sprintf(qbuf, "There is %s here, loot it?", doname(cobj));
+		c = ynq(qbuf);
+		if (c == 'q') return (timepassed);
+		if (c == 'n') continue;
 
-			    Sprintf(qbuf, "There is %s here, loot it?", doname(cobj));
-			    c = ynq(qbuf);
-			    if(c == 'q') return (timepassed);
-			    if(c == 'n') continue;
-
-			    if(cobj->olocked) {
-				pline("Hmmm, it seems to be locked.");
-				continue;
-			    }
-			    if(cobj->otyp == BAG_OF_TRICKS) {
-				You("carefully open the bag...");
-				pline("It develops a huge set of teeth and bites you!");
-				c = rnd(10);
-				if(Half_physical_damage) c = (c+1) / 2;
-				losehp(c, "carnivorous bag", KILLED_BY_AN);
-				makeknown(BAG_OF_TRICKS);
-				timepassed = 1;
-				continue;
-			    }
-
-			    You("carefully open %s...", the(xname(cobj)));
-			    timepassed |= use_container(cobj, 0);
-			    if (multi < 0) return 1;		/* chest trap */
-			}
+		if (cobj->olocked) {
+		    pline("Hmmm, it seems to be locked.");
+		    continue;
 		}
-	} else if (Confusion) {
-		if(u.ugold){
-			    long contribution = rnd((int)min(LARGEST_INT,u.ugold));
-			    struct obj *goldob = mkgoldobj(contribution);
-			    if(IS_THRONE(levl[u.ux][u.uy].typ)){
-				struct obj *coffers;
-				int pass;
-				    /* find the original coffers chest, or any chest */
-				for(pass = 2; pass > -1; pass -= 2)
-				    for(coffers=fobj; coffers; coffers=coffers->nobj)
-					if(coffers->otyp==CHEST && coffers->spe ==pass)
-					    goto gotit;	/* two level break */
-gotit:
-				if(coffers){
-				    struct obj *tmp;
-		verbalize("Thank you for your contribution to reduce the debt.");
-				    for (tmp = coffers->cobj; tmp; tmp = tmp->nobj)
-					if (tmp->otyp == goldob->otyp) break;
-
-				    if (tmp) {
-					tmp->quan += goldob->quan;
-					delobj(goldob);
-				    } else {
-					add_to_container(coffers, goldob);
-				    }
-				} else {
-				    struct monst *mon = makemon(courtmon(),
-							    u.ux, u.uy, NO_MM_FLAGS);
-				    if (mon) {
-					mon->mgold += goldob->quan;
-					delobj(goldob);
-					pline(
-					   "The exchequer accepts your contribution.");
-				    } else {
-					dropx(goldob);
-				    }
-				}
-			    } else {
-				dropx(goldob);
-				pline("Ok, now there is loot here.");
-			    }
+		if (cobj->otyp == BAG_OF_TRICKS) {
+		    You("carefully open the bag...");
+		    pline("It develops a huge set of teeth and bites you!");
+		    c = rnd(10);
+		    if (Half_physical_damage) c = (c+1) / 2;
+		    losehp(c, "carnivorous bag", KILLED_BY_AN);
+		    makeknown(BAG_OF_TRICKS);
+		    timepassed = 1;
+		    continue;
 		}
-	} else if (IS_GRAVE(levl[x][y].typ)) {
-		You("need to dig up the grave to effectively loot it...");
+
+		You("carefully open %s...", the(xname(cobj)));
+		timepassed |= use_container(cobj, 0);
+		if (multi < 0) return 1;		/* chest trap */
+	    }
 	}
-	/*
-	 * 3.3.1 introduced directional looting for some things.
-	 */
-	if (c != 'y' && mon_beside(u.ux, u.uy)) {
-		if(!getdir("Loot in what direction?")) {
-			pline(Never_mind);
-			return(0);
+    } else if (Confusion) {
+	if (u.ugold){
+	    long contribution = rnd((int)min(LARGEST_INT,u.ugold));
+	    struct obj *goldob = mkgoldobj(contribution);
+	    if (IS_THRONE(levl[u.ux][u.uy].typ)){
+		struct obj *coffers;
+		int pass;
+		/* find the original coffers chest, or any chest */
+		for (pass = 2; pass > -1; pass -= 2)
+		    for (coffers = fobj; coffers; coffers = coffers->nobj)
+			if (coffers->otyp == CHEST && coffers->spe == pass)
+			    goto gotit;	/* two level break */
+gotit:
+		if (coffers){
+		    struct obj *tmp;
+	    verbalize("Thank you for your contribution to reduce the debt.");
+		    for (tmp = coffers->cobj; tmp; tmp = tmp->nobj)
+			if (tmp->otyp == goldob->otyp) break;
+
+		    if (tmp) {
+			tmp->quan += goldob->quan;
+			delobj(goldob);
+		    } else {
+			add_to_container(coffers, goldob);
+		    }
+		} else {
+		    struct monst *mon = makemon(courtmon(),
+					    u.ux, u.uy, NO_MM_FLAGS);
+		    if (mon) {
+			mon->mgold += goldob->quan;
+			delobj(goldob);
+			pline("The exchequer accepts your contribution.");
+		    } else {
+			dropx(goldob);
+		    }
 		}
-		x = u.ux + u.dx;
-		y = u.uy + u.dy;
-		if (x == u.ux && y == u.uy) {
-			underfoot = TRUE;
-			if (container_at(x, y, FALSE))
-				goto lootcont;
-		} else
-			underfoot = FALSE;
-		if (u.dz < 0) {
-			You("%s to loot on the %s.", dont_find_anything,
-				ceiling(x, y));
-			timepassed = 1;
-			return timepassed;
-		}
-		mtmp = m_at(x, y);
+	    } else {
+		dropx(goldob);
+		pline("Ok, now there is loot here.");
+	    }
+	}
+    } else if (IS_GRAVE(levl[x][y].typ)) {
+	You("need to dig up the grave to effectively loot it...");
+    }
+    /*
+     * 3.3.1 introduced directional looting for some things.
+     */
+    if (c != 'y' && mon_beside(u.ux, u.uy)) {
+	if (!getdir("Loot in what direction?")) {
+	    pline(Never_mind);
+	    return(0);
+	}
+	x = u.ux + u.dx;
+	y = u.uy + u.dy;
+	if (x == u.ux && y == u.uy) {
+	    underfoot = TRUE;
+	    if (container_at(x, y, FALSE))
+		goto lootcont;
+	} else
+	    underfoot = FALSE;
+	if (u.dz < 0) {
+	    You("%s to loot on the %s.", dont_find_anything,
+		ceiling(x, y));
+	    timepassed = 1;
+	    return timepassed;
+	}
+	mtmp = m_at(x, y);
 #ifdef STEED
-		/* 3.3.1 introduced the ability to remove saddle from a steed */
-		if (mtmp && (mtmp != u.usteed) && (otmp = which_armor(mtmp, W_SADDLE))) {
-		    int unwornmask;
-		    saddled_there = TRUE;
-		    Sprintf(qbuf, "Do you want to remove the saddle from %s?",
-			x_monnam(mtmp, ARTICLE_THE, (char *)0, SUPPRESS_SADDLE, FALSE));
-		    if ((c = yn_function(qbuf, ynqchars, 'n')) == 'y') {
-			if (nolimbs(youmonst.data)) {
-				You_cant("do that without limbs."); /* not body_part(HAND) */
-				return (0);
-			}
-			if (otmp->cursed) {
-				You("can't. The saddle seems to be stuck to %s.",
-				    x_monnam(mtmp, ARTICLE_THE, (char *)0, SUPPRESS_SADDLE, FALSE));
-					
-				/* the attempt costs you time */
-				return (1);
-			}
-			obj_extract_self(otmp);
-		    	if ((unwornmask = otmp->owornmask) != 0L) {
-				mtmp->misc_worn_check &= ~unwornmask;
-				otmp->owornmask = 0L;
-				update_mon_intrinsics(mtmp, otmp, FALSE);
-			}
-			otmp = hold_another_object(otmp,
-				"You drop %s!", doname(otmp),
-				(const char *)0);
-			timepassed = rnd(3);
-			got_saddle = TRUE;
-		    } else if (c == 'q') {
-		    	return (0);
-		    }
+	/* 3.3.1 introduced the ability to remove saddle from a steed */
+	if (mtmp && mtmp != u.usteed && (otmp = which_armor(mtmp, W_SADDLE))) {
+	    long unwornmask;
+	    saddled_there = TRUE;
+	    Sprintf(qbuf, "Do you want to remove the saddle from %s?",
+		x_monnam(mtmp, ARTICLE_THE, (char *)0, SUPPRESS_SADDLE, FALSE));
+	    if ((c = yn_function(qbuf, ynqchars, 'n')) == 'y') {
+		if (nolimbs(youmonst.data)) {
+		    You_cant("do that without limbs."); /* not body_part(HAND) */
+		    return (0);
 		}
+		if (otmp->cursed) {
+		    You("can't. The saddle seems to be stuck to %s.",
+			x_monnam(mtmp, ARTICLE_THE, (char *)0,
+				SUPPRESS_SADDLE, FALSE));
+			    
+		    /* the attempt costs you time */
+			return (1);
+		}
+		obj_extract_self(otmp);
+		if ((unwornmask = otmp->owornmask) != 0L) {
+		    mtmp->misc_worn_check &= ~unwornmask;
+		    otmp->owornmask = 0L;
+		    update_mon_intrinsics(mtmp, otmp, FALSE);
+		}
+		otmp = hold_another_object(otmp, "You drop %s!", doname(otmp),
+					(const char *)0);
+		timepassed = rnd(3);
+		got_saddle = TRUE;
+	    } else if (c == 'q') {
+		return (0);
+	    }
+	}
 # if 0
-		/* Loot your steed, even if you can't reach the floor */
-		if (u.usteed) {
-		    Sprintf(qbuf, "Do you want to loot %s inventory?",
-	s_suffix(x_monnam(u.usteed, ARTICLE_YOUR, (char *)0, SUPPRESS_SADDLE, FALSE)));
-		    switch (c = ynq(qbuf)) {
-			case 'y':
-			    if (!u.usteed->minvent) {
-				impossible("no saddle?");
-				break;
-			    }
-			    /* TO DO: get and put things into the inventory */
-			    You("peek at %s inventory...",
-	s_suffix(x_monnam(u.usteed, ARTICLE_YOUR, (char *)0, SUPPRESS_SADDLE, FALSE)));
-			    (void) display_minventory(u.usteed, MINV_ALL);
-			    timepassed = 1;
-			    break;
-			case 'n':
-			    break;
-			case 'q':
-			    return (0);
+	/* Loot your steed, even if you can't reach the floor */
+	if (u.usteed) {
+	    Sprintf(qbuf, "Do you want to loot %s inventory?",
+			s_suffix(x_monnam(u.usteed, ARTICLE_YOUR,
+				(char *)0, SUPPRESS_SADDLE, FALSE)));
+	    switch (c = ynq(qbuf)) {
+		case 'y':
+		    if (!u.usteed->minvent) {
+			impossible("no saddle?");
+			break;
 		    }
-		}
+		    /* TO DO: get and put things into the inventory */
+		    You("peek at %s inventory...",
+			s_suffix(x_monnam(u.usteed, ARTICLE_YOUR,
+				(char *)0, SUPPRESS_SADDLE, FALSE)));
+		    (void) display_minventory(u.usteed, MINV_ALL);
+		    timepassed = 1;
+		    break;
+		case 'n':
+		    break;
+		case 'q':
+		    return (0);
+	    }
+	}
 # endif
 #endif	/* STEED */
 
-		/* Preserve pre-3.3.1 behaviour for containers.
-		 * Adjust this if-block to allow container looting
-	         * from one square away to change that in the future.
-		 */
-		if (!underfoot) {
-			if (container_at(x, y, FALSE)) {
-			    if (mtmp) {
-				You("can't loot anything %sthere with %s in the way.",
-					saddled_there ? "else " : "", mon_nam(mtmp));
-				return timepassed;
-			    } else {
-				You("have to be at a container to loot it.");
-			    }
-			} else {
-				You("%s %sthere to loot.", dont_find_anything,
-					(saddled_there || got_saddle) ? "else " : "");
-				return timepassed;
-			}
+	/* Preserve pre-3.3.1 behaviour for containers.
+	 * Adjust this if-block to allow container looting
+	 * from one square away to change that in the future.
+	 */
+	if (!underfoot) {
+	    if (container_at(x, y, FALSE)) {
+		if (mtmp) {
+		    You("can't loot anything %sthere with %s in the way.",
+			    saddled_there ? "else " : "", mon_nam(mtmp));
+		    return timepassed;
+		} else {
+		    You("have to be at a container to loot it.");
 		}
-	} else if (c != 'y' && c != 'n') {
-		You("%s %s to loot.", dont_find_anything,
-			underfoot ? "here" : "there");
+	    } else {
+		You("%s %sthere to loot.", dont_find_anything,
+			(saddled_there || got_saddle) ? "else " : "");
+		return timepassed;
+	    }
 	}
-	return (timepassed);
+    } else if (c != 'y' && c != 'n') {
+	You("%s %s to loot.", dont_find_anything,
+		    underfoot ? "here" : "there");
+    }
+    return (timepassed);
 }
 
 /*

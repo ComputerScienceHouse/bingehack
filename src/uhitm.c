@@ -735,8 +735,9 @@ int thrown;
 		    case CREAM_PIE:
 		    case BLINDING_VENOM:
 			mon->msleeping = 0;
-			if (can_blnd(&youmonst, mon, obj->otyp == BLINDING_VENOM
-				     ? AT_SPIT : AT_WEAP, obj)) {
+			if (can_blnd(&youmonst, mon, (uchar)
+				    (obj->otyp == BLINDING_VENOM
+				     ? AT_SPIT : AT_WEAP), obj)) {
 			    if (Blind) {
 				pline(obj->otyp == CREAM_PIE ?
 				      "Splat!" : "Splash!");
@@ -1319,9 +1320,10 @@ register struct attack *mattk;
 
 		You("eat %s brain!", s_suffix(mon_nam(mdef)));
 		u.uconduct.food++;
-		if (nonvegan(mdef->data))
+		if (!vegan(mdef->data))
 		    u.uconduct.unvegan++;
-		/* Vegetarian okay */
+		if (!vegetarian(mdef->data))
+		    violated_vegetarian();
 		if (mindless(mdef->data)) {
 		    pline("%s doesn't notice.", Monnam(mdef));
 		    break;
@@ -1539,9 +1541,9 @@ register struct attack *mattk;
 
 			/* KMH, conduct */
 			u.uconduct.food++;
-			if (nonvegan(mdef->data))
+			if (!vegan(mdef->data))
 			     u.uconduct.unvegan++;
-			if (nonvegetarian(mdef->data))
+			if (!vegetarian(mdef->data))
 			     violated_vegetarian();
 
 			/* Use up amulet of life saving */

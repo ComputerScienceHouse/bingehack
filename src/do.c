@@ -510,7 +510,7 @@ register struct obj *obj;
 	/* uswallow check done by GAN 01/29/87 */
 	if(u.uswallow) {
 		if (obj != uball) {		/* mon doesn't pick up ball */
-		    mpickobj(u.ustuck,obj);
+		    (void) mpickobj(u.ustuck,obj);
 		}
 	} else  {
 		place_object(obj, u.ux, u.uy);
@@ -1186,7 +1186,7 @@ boolean at_stairs, falling, portal;
 	save_currentstate();
 #endif
 
-	pickup(1);
+	(void) pickup(1);
 }
 
 STATIC_OVL void

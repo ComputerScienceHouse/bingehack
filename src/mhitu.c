@@ -2008,7 +2008,7 @@ register struct monst *mon;
 		if (ring==uswapwep) setuswapwep((struct obj *)0);
 		if (ring==uquiver) setuqwep((struct obj *)0);
 		freeinv(ring);
-		mpickobj(mon,ring);
+		(void) mpickobj(mon,ring);
 	    } else {
 		char buf[BUFSZ];
 

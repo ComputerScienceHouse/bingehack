@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)trap.c	3.3	2000/06/30	*/
+/*	SCCS Id: @(#)trap.c	3.3	2000/07/07	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -432,7 +432,7 @@ int *fail_reason;
 	/* transfer any statue contents to monster's inventory */
 	while ((item = statue->cobj) != 0) {
 	    obj_extract_self(item);
-	    add_to_minv(mon, item);
+	    (void) add_to_minv(mon, item);
 	}
 	m_dowear(mon, TRUE);
 	delobj(statue);
@@ -805,7 +805,7 @@ glovecheck:		(void) rust_dmg(uarmg, "gauntlets", 1, TRUE, &youmonst);
 			    a_your[trap->madeby_u]);
 		    break;
 		}
-		if (youmonst.data->mlet == S_SPIDER) {
+		if (webmaker(youmonst.data)) {
 		    pline(trap->madeby_u ? "You take a walk on your web."
 					 : "There is a spider web here.");
 		    break;
@@ -1034,7 +1034,7 @@ int style;
 			    if (rn2(3)) {
 				pline("%s snatches the boulder.",
 					Monnam(mtmp));
-				mpickobj(mtmp, singleobj);
+				(void) mpickobj(mtmp, singleobj);
 				used_up = TRUE;
 				break;
 			    }
@@ -1044,15 +1044,12 @@ int style;
 				used_up = TRUE;
 				break;
 			}
-		} else if (bhitpos.x==u.ux && bhitpos.y==u.uy) {
-			int hitvalu, hitu;
+		} else if (bhitpos.x == u.ux && bhitpos.y == u.uy) {
 			if (multi) nomul(0);
-			hitvalu = 9 + singleobj->spe;
-			hitu = thitu(hitvalu,
-				dmgval(singleobj, &youmonst),
-				singleobj,
-				xname(singleobj));
-			if (hitu) stop_occupation();
+			if (thitu(9 + singleobj->spe,
+				  dmgval(singleobj, &youmonst),
+				  singleobj, (char *)0))
+			    stop_occupation();
 		}
 		if (style == ROLL) {
 		    if (down_gate(bhitpos.x, bhitpos.y) != -1) {
@@ -1483,7 +1480,7 @@ glovecheck:		    target = which_armor(mtmp, W_ARMG);
 
 		case WEB:
 			/* Monster in a web. */
-			if (mptr->mlet == S_SPIDER) break;
+			if (webmaker(mptr)) break;
 			if (amorphous(mptr) || is_whirly(mptr) || unsolid(mptr)){
 			    if(acidic(mptr) ||
 			       mptr == &mons[PM_GELATINOUS_CUBE] ||

@@ -142,7 +142,10 @@ lookat(x, y, buf, monbuf)
 		    ways_seen++;
 		if (Detect_monsters)
 		    ways_seen++;
-
+#ifdef NEW_WARNING
+		if (MATCH_WARN_OF_MON(mtmp))
+		    ways_seen++;
+#endif
 		if (ways_seen > 1 || !normal) {
 		    if (normal) {
 			Strcat(monbuf, "normal vision");
@@ -172,6 +175,14 @@ lookat(x, y, buf, monbuf)
 			Strcat(monbuf, "monster detection");
 			if (ways_seen-- > 1) Strcat(monbuf, ", ");
 		    }
+#ifdef NEW_WARNING
+		    if (MATCH_WARN_OF_MON(mtmp)) {
+		    	char wbuf[BUFSZ];
+		    	Sprintf(wbuf, "warned of %s", makeplural(mtmp->data->mname));
+		    	Strcat(monbuf, wbuf);
+		    	if (ways_seen-- > 1) Strcat(monbuf, ", ");
+		    }
+#endif
 		}
 	    }
 	}

@@ -961,7 +961,6 @@ minimal_enlightenment()
 	anything any;
 	char buf[BUFSZ], buf2[BUFSZ];
 	static char fmtstr[] = "%-15s: %-12s";
-	boolean currentgend = Upolyd ? u.mfemale : flags.female;
 
 	any.a_void = 0;
 	buf[0] = buf2[0] = '\0';
@@ -991,11 +990,16 @@ minimal_enlightenment()
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
 	if (!Upolyd) {
 	    Sprintf(buf, fmtstr, "role",
-		(currentgend && urole.name.f) ? urole.name.f : urole.name.m);
+		(flags.female && urole.name.f) ? urole.name.f : urole.name.m);
 	    add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
 	}
-	Sprintf(buf, fmtstr, "gender", genders[currentgend].adj);
+	Sprintf(buf, fmtstr, "gender", genders[poly_gender()].adj);
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
+
+	if (Upolyd) {
+	    Sprintf(buf, fmtstr, "gender (base)", genders[u.mfemale].adj);
+	    add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
+	}
 
 	/* Current alignment */
 	Sprintf(buf, fmtstr, "alignment", align_str(u.ualign.type));

@@ -916,16 +916,18 @@ STATIC_OVL void
 reset_oattached_mids(ghostly)
 boolean ghostly;
 {
-	struct obj *otmp;
-	unsigned oldid, nid;
-	for(otmp = fobj; otmp; otmp = otmp->nobj)
-		if(ghostly && otmp->oattached == OATTACHED_M_ID) {
-			(void) memcpy(&oldid, (genericptr_t)otmp->oextra, sizeof(oldid));
-			if (lookup_id_mapping(oldid, &nid))
-			    (void) memcpy((genericptr_t) otmp->oextra, &nid, sizeof(nid));
-			else
-			    otmp->oattached = OATTACHED_NOTHING;
-		}
+    struct obj *otmp;
+    unsigned oldid, nid;
+    for (otmp = fobj; otmp; otmp = otmp->nobj)
+	if (ghostly && otmp->oattached == OATTACHED_M_ID) {
+	    (void) memcpy((genericptr_t)&oldid, (genericptr_t)otmp->oextra,
+								sizeof(oldid));
+	    if (lookup_id_mapping(oldid, &nid))
+		(void) memcpy((genericptr_t)otmp->oextra, (genericptr_t)&nid,
+								sizeof(nid));
+	    else
+		otmp->oattached = OATTACHED_NOTHING;
+	}
 }
 
 

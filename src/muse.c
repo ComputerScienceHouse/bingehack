@@ -620,18 +620,21 @@ mon_tele:
 		}
 		if (!Can_dig_down(&u.uz)) {
 		    if(canseemon(mtmp))
-			pline_The("floor here is too hard to dig in.");
+			pline_The("%s here is too hard to dig in.",
+					surface(mtmp->mx, mtmp->my));
 		    return 2;
 		}
 		ttmp = maketrap(mtmp->mx, mtmp->my, HOLE);
 		if (!ttmp) return 2;
 		seetrap(ttmp);
 		if (vis) {
-		    pline("%s has made a hole in the floor.", Monnam(mtmp));
+		    pline("%s has made a hole in the %s.", Monnam(mtmp),
+				surface(mtmp->mx, mtmp->my));
 		    pline("%s %s through...", Monnam(mtmp),
 			  is_flyer(mtmp->data) ? "dives" : "falls");
 		} else if (flags.soundok)
-			You_hear("%s crash through the floor.", something);
+			You_hear("%s crash through the %s.", something,
+				surface(mtmp->mx, mtmp->my));
 		/* we made sure that there is a level for mtmp to go to */
 		migrate_to_level(mtmp, ledger_no(&u.uz) + 1,
 				 MIGR_RANDOM, (coord *)0);
@@ -1795,7 +1798,7 @@ skipmsg:
 			case 3:		/* into mon's inventory */
 			    pline("%s snatches %s!", Monnam(mtmp),
 				  the_weapon);
-			    mpickobj(mtmp,obj);
+			    (void) mpickobj(mtmp,obj);
 			    break;
 		    }
 		    return 1;

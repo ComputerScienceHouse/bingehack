@@ -582,6 +582,7 @@ struct monst *mtmp;
 	return(0);
 }
 
+#ifdef NEW_WARNING
 /* return the index of monster that an artifact's special attacks apply against */
 long
 spec_m2(otmp)
@@ -592,6 +593,7 @@ struct obj *otmp;
 		return artifact->mtype;
 	return 0L;
 }
+#endif
 
 /* special attack bonus */
 int

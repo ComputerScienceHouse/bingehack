@@ -702,11 +702,7 @@ dokick()
 		}
 		return(1);
 	}
-	if (glyph_is_invisible(levl[x][y].glyph)
-#ifdef NEW_WARNING
-	    || glyph_is_warning(levl[x][y].glyph)
-#endif
-						 ) {
+	if (glyph_is_invisible(levl[x][y].glyph)) {
 		unmap_object(x, y);
 		newsym(x, y);
 	}

@@ -317,7 +317,7 @@ walk_path(src_cc, dest_cc, check_proc, arg)
     boolean FDECL((*check_proc), (genericptr_t, int, int));
     genericptr_t arg;
 {
-    int x, y, dx, dy, x_change, y_change, error, i, prev_x, prev_y;
+    int x, y, dx, dy, x_change, y_change, err, i, prev_x, prev_y;
     boolean keep_going = TRUE;
 
     /* Use Bresenham's Line Algorithm to walk from src to dest */
@@ -337,16 +337,16 @@ walk_path(src_cc, dest_cc, check_proc, arg)
     } else
 	y_change = 1;
 
-    i = error = 0;
+    i = err = 0;
     if (dx < dy) {
 	while (i++ < dy) {
 	    prev_x = x;
 	    prev_y = y;
 	    y += y_change;
-	    error += dx;
-	    if (error >= dy) {
+	    err += dx;
+	    if (err >= dy) {
 		x += x_change;
-		error -= dy;
+		err -= dy;
 	    }
 	/* check for early exit condition */
 	if (!(keep_going = (*check_proc)(arg, x, y)))
@@ -357,10 +357,10 @@ walk_path(src_cc, dest_cc, check_proc, arg)
 	    prev_x = x;
 	    prev_y = y;
 	    x += x_change;
-	    error += dy;
-	    if (error >= dx) {
+	    err += dy;
+	    if (err >= dx) {
 		y += y_change;
-		error -= dx;
+		err -= dx;
 	    }
 	/* check for early exit condition */
 	if (!(keep_going = (*check_proc)(arg, x, y)))
@@ -504,7 +504,7 @@ hurtle(dx, dy, range, verbose)
     /* this setting of cc is only correct if dx and dy are [-1,0,1] only */
     cc.x = u.ux + (dx * range);
     cc.y = u.uy + (dy * range);
-    walk_path(&uc, &cc, hurtle_step, (genericptr_t)&range);
+    (void) walk_path(&uc, &cc, hurtle_step, (genericptr_t)&range);
 }
 
 STATIC_OVL void
@@ -810,7 +810,7 @@ long wep_mask;	/* used to re-equip returning boomerang */
 
 	if (u.uswallow) {
 		/* ball is not picked up by monster */
-		if (obj != uball) mpickobj(u.ustuck,obj);
+		if (obj != uball) (void) mpickobj(u.ustuck,obj);
 	} else {
 		/* the code following might become part of dropy() */
 		if (obj->oartifact == ART_MJOLLNIR &&
@@ -864,7 +864,7 @@ long wep_mask;	/* used to re-equip returning boomerang */
 			      Monnam(mon), the(xname(obj)));
 		    if(*u.ushops)
 			check_shop_obj(obj, bhitpos.x, bhitpos.y, FALSE);
-		    mpickobj(mon, obj);	/* may merge and free obj */
+		    (void) mpickobj(mon, obj);	/* may merge and free obj */
 		    return;
 		}
 		(void) snuff_candle(obj);
@@ -1036,7 +1036,7 @@ register struct obj   *obj;
 		    (void) encumber_msg();
 		} else {
 		    /* angry leader caught it and isn't returning it */
-		    mpickobj(mon, obj);
+		    (void) mpickobj(mon, obj);
 		}
 		return 1;		/* caller doesn't need to place it */
 	    }
@@ -1206,7 +1206,7 @@ register struct obj *obj;
 	}
 	Strcat(buf,acceptgift);
 	if(*u.ushops) check_shop_obj(obj, mon->mx, mon->my, TRUE);
-	mpickobj(mon, obj);	/* may merge and free obj */
+	(void) mpickobj(mon, obj);	/* may merge and free obj */
 	ret = 1;
 
 nopick:

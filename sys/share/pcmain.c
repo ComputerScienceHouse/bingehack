@@ -397,7 +397,7 @@ not_recovered:
 
 		flags.move = 0;
 		set_wear();
-		pickup(1);
+		(void) pickup(1);
 		read_engr_at(u.ux,u.uy);
 	}
 

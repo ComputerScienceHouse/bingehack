@@ -103,6 +103,9 @@ int FDECL(parse_config_line, (FILE *,char *,char *,char *));
 STATIC_DCL void FDECL(adjust_prefix, (char *, int));
 #endif
 
+#ifndef PREFIXES_IN_USE
+/*ARGSUSED*/
+#endif
 const char *
 fqname(basename, whichprefix, buffnum)
 const char *basename;

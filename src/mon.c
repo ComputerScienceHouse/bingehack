@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mon.c	3.3	2000/01/23	*/
+/*	SCCS Id: @(#)mon.c	3.3	2000/07/14	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -652,7 +652,7 @@ meatobj(mtmp)		/* for gelatinous cubes */
 			    otmp3->age = monstermoves - otmp3->age;
 			    start_corpse_timeout(otmp3);
 			}
-			mpickobj(mtmp, otmp3);
+			(void) mpickobj(mtmp, otmp3);
 		    }
 		}
 		poly = polyfodder(otmp);
@@ -679,7 +679,7 @@ meatobj(mtmp)		/* for gelatinous cubes */
 		} else if (ecount == 2)
 			Sprintf(buf, "%s engulfs several objects.", Monnam(mtmp));
 		obj_extract_self(otmp);
-		mpickobj(mtmp, otmp);	/* slurp */
+		(void) mpickobj(mtmp, otmp);	/* slurp */
 	    }
 	    /* Engulf & devour is instant, so don't set meating */
 	    if (mtmp->minvis) newsym(mtmp->mx, mtmp->my);
@@ -753,7 +753,7 @@ mpickstuff(mtmp, str)
 		/* unblock point after extract, before pickup */
 		if (otmp->otyp == BOULDER)
 		    unblock_point(otmp->ox,otmp->oy);	/* vision */
-		mpickobj(mtmp, otmp);	/* may merge and free otmp */
+		(void) mpickobj(mtmp, otmp);	/* may merge and free otmp */
 		m_dowear(mtmp, FALSE);
 		newsym(mtmp->mx, mtmp->my);
 		return TRUE;			/* pick only one object */
@@ -1013,7 +1013,7 @@ impossible("A monster looked at a very strange trap of type %d.", ttmp->ttyp);
 				    !resists_fire(mon))
 				&& (ttmp->ttyp != SQKY_BOARD || !is_flyer(mdat))
 				&& (ttmp->ttyp != WEB || (!amorphous(mdat) &&
-				    mdat->mlet != S_SPIDER))
+				    !webmaker(mdat)))
 			) {
 			    if (!(flag & ALLOW_TRAPS)) {
 				if (mon->mtrapseen & (1L << (ttmp->ttyp - 1)))
@@ -1314,10 +1314,6 @@ register struct monst *mtmp;
 	if(mtmp->data->msound == MS_NEMESIS) nemdead();
 	if(glyph_is_invisible(levl[mtmp->mx][mtmp->my].glyph))
 	    unmap_object(mtmp->mx, mtmp->my);
-#ifdef NEW_WARNING
-	if(glyph_is_warning(levl[mtmp->mx][mtmp->my].glyph))
-		unmap_object(mtmp->mx, mtmp->my);
-#endif
 	m_detach(mtmp, mptr);
 }
 
@@ -1331,8 +1327,8 @@ struct monst *mon;
 
 	if (mdat == &mons[PM_VLAD_THE_IMPALER] || mdat->mlet == S_LICH) {
 		if (cansee(mon->mx, mon->my))
-			pline("%s%ss body crumbles into dust.", Monnam(mon),
-				canseemon(mon) ? "'" : "");
+			pline("%s body crumbles into dust.",
+				s_suffix(Monnam(mon)));
 		return FALSE;
 	}
 
@@ -1457,10 +1453,6 @@ register struct monst *mdef;
 	/* mondead() already does this, but we must do it before the newsym */
 	if(glyph_is_invisible(levl[x][y].glyph))
 	    unmap_object(x, y);
-#ifdef NEW_WARNING
-	if(glyph_is_warning(levl[x][y].glyph))
-	    unmap_object(x, y);
-#endif
 	if (cansee(x, y)) newsym(x,y);
 	mondead(mdef);
 }

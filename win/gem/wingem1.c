@@ -1887,8 +1887,8 @@ mar_nh_poskey(x, y, mod)
 			case ' ':	/* just that command */
 				retval=str[1];
 				break;
-			case '':	/* Alt command */
-			case '':
+			case '\005':	/* Alt command */
+			case '\007':
 				retval=M(str[1]);
 				break;
 			case '^':	/* Ctrl command */

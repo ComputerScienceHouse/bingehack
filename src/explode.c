@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)explode.c	3.3	97/06/14	*/
+/*	SCCS Id: @(#)explode.c	3.3	2000/07/07	*/
 /*	Copyright (C) 1990 by Ken Arromdee */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -171,13 +171,6 @@ char olet;
 		    unmap_object(i+x-1, j+y-1);
 		    newsym(i+x-1, j+y-1);
 		}
-#ifdef NEW_WARNING
-		else if (!mtmp && glyph_is_warning(levl[i+x-1][j+y-1].glyph)) {
-		    unmap_object(i+x-1, j+y-1);
-		    newsym(i+x-1, j+y-1);
-		}			
-#endif
-
 		if (cansee(i+x-1, j+y-1)) visible = TRUE;
 		if (explmask[i][j] == 1) any_shield = TRUE;
 	}
@@ -498,14 +491,9 @@ struct obj *obj;			/* only scatter this obj        */
 				    if (multi) nomul(0);
 				    hitvalu = 8 + stmp->obj->spe;
 				    if (bigmonst(youmonst.data)) hitvalu++;
-				    /* could just use doname all the time,
-				     * except thitu adds "an" to the front
-				     */
 				    hitu = thitu(hitvalu,
-					dmgval(stmp->obj, &youmonst),
-					stmp->obj,
-					(stmp->obj->quan>1) ? doname(stmp->obj)
-						: xname(stmp->obj));
+						 dmgval(stmp->obj, &youmonst),
+						 stmp->obj, (char *)0);
 				    if (hitu) {
 					stmp->range -= 3;
 					stop_occupation();

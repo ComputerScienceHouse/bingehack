@@ -1200,7 +1200,7 @@ const char *str;
 	/* Engrave the headstone */
 	if (!str) str = epitaphs[rn2(SIZE(epitaphs))];
 	del_engr_at(x, y);
-	make_engr_at(x, y, str, 0, HEADSTONE);
+	make_engr_at(x, y, str, 0L, HEADSTONE);
 	return;
 }
 

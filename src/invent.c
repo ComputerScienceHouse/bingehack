@@ -2389,7 +2389,7 @@ int dflags;
 		 * Make temporary gold object and insert at the head of
 		 * the mon's inventory.  We can get away with using a
 		 * stack variable object because monsters don't carry
-		 * gold in thier inventory, so it won't merge.
+		 * gold in their inventory, so it won't merge.
 		 */
 		m_gold = zeroobj;
 		m_gold.otyp = GOLD_PIECE;  m_gold.oclass = GOLD_CLASS;

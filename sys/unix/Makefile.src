@@ -145,18 +145,20 @@ GNOMEINC=-I/usr/lib/glib/include -I/usr/lib/gnome-libs/include -I../win/gnome -I
 # CFLAGS = -g -I../include
 
 CFLAGS = -O -I../include
+# CFLAGS = -O -I../include $(GNOMEINC)
 LFLAGS =
 
-# Only used for Qt interface (other interfaces are standard C)
-CXXFLAGS = -g $(CFLAGS) -I. -I$(QTDIR)/include
-# Qt is C++, so define the compiler and linker thus required:
-#CXX=g++
+# The Qt and Be window systems are written in C++, while the rest of
+# NetHack is standard C.  If using Qt, uncomment the LD line here to get
+# the C++ libraries linked in.
+CXXFLAGS = $(CFLAGS) -I. -I$(QTDIR)/include
+CXX=g++
 #LD=g++
 
 # Set the WINSRC, WINOBJ, and WINLIB lines to correspond to your desired
 # combination of windowing systems.  Also set windowing systems in config.h.
-# Note that if you are including both the X11 and Qt window systems, you don't
-# want two copies of tile.o, so use the alternate WINQTOBJ line.
+# Note that if you are including multiple tiled window systems, you don't
+# want two copies of tile.o, so comment out all but the first.
 #
 # files for a straight tty port using no native windowing system
 WINTTYSRC = ../win/tty/getline.c ../win/tty/termcap.c ../win/tty/topl.c \
@@ -176,7 +178,6 @@ WINX11OBJ = Window.o dialogs.o winX.o winmap.o winmenu.o winmesg.o \
 #
 WINQTSRC = ../win/Qt/qt_win.cpp ../win/Qt/qt_clust.cpp
 WINQTOBJ = qt_win.o qt_clust.o tile.o
-# WINQTOBJ = qt_win.o qt_clust.o # tile.o
 #
 # Files for a Gnome port
 #
@@ -261,6 +262,9 @@ WINLIB = $(WINTTYLIB)
 # versions compile fine using SYSV without this.)
 # LIBS = -lbsd
 #
+# for CYGWIN32 aka cygwin 1.1.1
+# LIBS = -lcygwin
+#
 # Solaris 2.x seems to work with the following
 # LIBS = -lsocket -lnsl
 #
@@ -319,14 +323,14 @@ SYSCSRC = ../sys/atari/tos.c ../sys/share/pcmain.c ../sys/share/pcsys.c \
 	../sys/unix/unixunix.c ../sys/be/bemain.c
 
 # all windowing-system-dependent .c (for dependencies and such)
-WINCSRC = $(WINTTYSRC) $(WINX11SRC) $(WINGEMSRC)
+WINCSRC = $(WINTTYSRC) $(WINX11SRC) $(WINGNOMESRC) $(WINGEMSRC)
 # all windowing-system-dependent .cpp (for dependencies and such)
-WINCXXSRC = $(WINQTSRC)
+WINCXXSRC = $(WINQTSRC) $(WINBESRC)
 
 # .c files for this version (for date.h)
 VERSOURCES = $(HACKCSRC) $(SYSSRC) $(WINSRC) monstr.c vis_tab.c
 
-# .c files for all UNIX versions (for lint and tags)
+# .c files for all versions using this Makefile (for lint and tags)
 CSOURCES = $(HACKCSRC) $(SYSSRC) $(WINCSRC) monstr.c vis_tab.c
 
 
@@ -624,33 +628,44 @@ qt_win.o: ../win/Qt/qt_win.cpp $(HACK_H) ../include/func_tab.h \
 	$(CXX) $(CXXFLAGS) -c ../win/Qt/qt_win.cpp
 qt_clust.o: ../win/Qt/qt_clust.cpp ../include/qt_clust.h
 	$(CXX) $(CXXFLAGS) -c ../win/Qt/qt_clust.cpp
-gnaskstr.o: ../win/gnome/gnaskstr.c ../win/gnome/gnaskstr.h ../win/gnome/gnmain.h
+gnaskstr.o: ../win/gnome/gnaskstr.c ../win/gnome/gnaskstr.h \
+		../win/gnome/gnmain.h
 	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnaskstr.c
-gnbind.o: ../win/gnome/gnbind.c ../win/gnome/gnbind.h ../win/gnome/gnmain.h ../win/gnome/gnaskstr.h ../win/gnome/gnyesno.h
+gnbind.o: ../win/gnome/gnbind.c ../win/gnome/gnbind.h ../win/gnome/gnmain.h \
+		../win/gnome/gnaskstr.h ../win/gnome/gnyesno.h
 	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnbind.c
 gnglyph.o: ../win/gnome/gnglyph.c ../win/gnome/gnglyph.h
 	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnglyph.c
-gnmain.o: ../win/gnome/gnmain.c ../win/gnome/gnbind.h ../win/gnome/gnmain.h ../win/gnome/gnsignal.h ../win/gnome/gnopts.h ../include/hack.h ../include/date.h
+gnmain.o: ../win/gnome/gnmain.c ../win/gnome/gnbind.h ../win/gnome/gnmain.h \
+		../win/gnome/gnsignal.h ../win/gnome/gnopts.h \
+		../include/hack.h ../include/date.h
 	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnmain.c
-gnmap.o: ../win/gnome/gnmap.c ../win/gnome/gnmap.h ../win/gnome/gnglyph.h ../win/gnome/gnsignal.h ../include/hack.h
+gnmap.o: ../win/gnome/gnmap.c ../win/gnome/gnmap.h ../win/gnome/gnglyph.h \
+		../win/gnome/gnsignal.h ../include/hack.h
 	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnmap.c
-gnmenu.o: ../win/gnome/gnmenu.c ../win/gnome/gnmenu.h ../win/gnome/gnmain.h ../win/gnome/gnbind.h
+gnmenu.o: ../win/gnome/gnmenu.c ../win/gnome/gnmenu.h ../win/gnome/gnmain.h \
+		../win/gnome/gnbind.h
 	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnmenu.c
 gnmesg.o: ../win/gnome/gnmesg.c ../win/gnome/gnmesg.h ../win/gnome/gnsignal.h
 	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnmesg.c
-gnopts.o: ../win/gnome/gnopts.c ../win/gnome/gnopts.h ../win/gnome/gnmain.h ../include/hack.h
+gnopts.o: ../win/gnome/gnopts.c ../win/gnome/gnopts.h ../win/gnome/gnmain.h \
+		../include/hack.h
 	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnopts.c
-gnplayer.o: ../win/gnome/gnplayer.c ../win/gnome/gnplayer.h ../win/gnome/gnmain.h ../include/hack.h
+gnplayer.o: ../win/gnome/gnplayer.c ../win/gnome/gnplayer.h \
+		../win/gnome/gnmain.h ../include/hack.h
 	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnplayer.c
-gnsignal.o: ../win/gnome/gnsignal.c ../win/gnome/gnsignal.h ../win/gnome/gnmain.h
+gnsignal.o: ../win/gnome/gnsignal.c ../win/gnome/gnsignal.h \
+		../win/gnome/gnmain.h
 	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnsignal.c
-gnstatus.o: ../win/gnome/gnstatus.c ../win/gnome/gnstatus.h ../win/gnome/gnsignal.h ../win/gnome/xpms.h ../include/hack.h ../include/dlb.h ../include/patchlevel.h
+gnstatus.o: ../win/gnome/gnstatus.c ../win/gnome/gnstatus.h \
+		../win/gnome/gnsignal.h ../win/gnome/xpms.h ../include/hack.h \
+		../include/dlb.h ../include/patchlevel.h
 	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnstatus.c
-gntext.o: ../win/gnome/gntext.c ../win/gnome/gntext.h ../win/gnome/gnmain.h ../win/X11/rip.xpm
+gntext.o: ../win/gnome/gntext.c ../win/gnome/gntext.h ../win/gnome/gnmain.h \
+		../win/X11/rip.xpm
 	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gntext.c
 gnyesno.o: ../win/gnome/gnyesno.c ../win/gnome/gnyesno.h ../win/gnome/gnbind.h
 	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnyesno.c
-
 allmain.o: allmain.c $(HACK_H)
 alloc.o: alloc.c $(CONFIG_H)
 apply.o: apply.c $(HACK_H) ../include/edog.h
@@ -757,7 +772,7 @@ vision.o: vision.c $(HACK_H) ../include/vis_tab.h
 weapon.o: weapon.c $(HACK_H)
 were.o: were.c $(HACK_H)
 wield.o: wield.c $(HACK_H)
-windows.o: windows.c $(HACK_H) ../include/wingem.h
+windows.o: windows.c $(HACK_H) ../include/wingem.h ../include/winGnome.h
 wizard.o: wizard.c $(HACK_H) ../include/qtext.h
 worm.o: worm.c $(HACK_H) ../include/lev.h
 worn.o: worn.c $(HACK_H)
@@ -766,3 +781,4 @@ zap.o: zap.c $(HACK_H)
 # DEPENDENCIES MUST END AT END OF FILE
 # IF YOU PUT STUFF HERE IT WILL GO AWAY
 # see make depend above
+

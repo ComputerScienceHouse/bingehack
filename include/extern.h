@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)extern.h	3.3	2000/01/22	*/
+/*	SCCS Id: @(#)extern.h	3.3	2000/07/14	*/
 /* Copyright (c) Steve Creps, 1988.				  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -693,7 +693,9 @@ E char *FDECL(strstri, (const char *,const char *));
 E boolean FDECL(fuzzymatch, (const char *,const char *,const char *,BOOLEAN_P));
 E void NDECL(setrandom);
 E int NDECL(getyear);
+#if 0
 E char *FDECL(yymmdd, (time_t));
+#endif
 E long FDECL(yyyymmdd, (time_t));
 E int NDECL(phase_of_the_moon);
 E boolean NDECL(friday_13th);
@@ -1097,7 +1099,6 @@ E boolean FDECL(dmgtype, (struct permonst *,int));
 E int FDECL(max_passive_dmg, (struct monst *,struct monst *));
 E int FDECL(monsndx, (struct permonst *));
 E int FDECL(name_to_mon, (const char *));
-E boolean FDECL(webmaker, (struct permonst *));
 E int FDECL(gender, (struct monst *));
 E int FDECL(pronoun_gender, (struct monst *));
 E boolean FDECL(levl_follower, (struct monst *));
@@ -1563,9 +1564,6 @@ E NhRegion *FDECL(visible_region_at, (XCHAR_P,XCHAR_P));
 E void FDECL(show_region, (NhRegion*, XCHAR_P, XCHAR_P));
 E void FDECL(save_regions, (int,int));
 E void FDECL(rest_regions, (int));
-E void FDECL(remove_region, (NhRegion*));
-E NhRegion* FDECL(find_obj_region, (unsigned));
-E NhRegion* FDECL(find_mon_region, (unsigned));
 E NhRegion* FDECL(create_gas_cloud, (XCHAR_P, XCHAR_P, int, int));
 
 /* ### restore.c ### */

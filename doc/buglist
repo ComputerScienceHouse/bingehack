@@ -3,6 +3,28 @@ Buglist: actual bugs that may get fixed someday
 -----------------------------------------------------------------------------
 
 =============================================================================
+Eating a fox corpse results in "Ulch - that protoplasm was tainted!"
+[raisse@rempt.xs4all.nl]
+
+An additional "[horsename] is caught in bear trap!" message is displayed,
+if caught in beartrap while riding and you unmount 
+[eino.keskitalo@purkki.mbnet.fi]
+ 
+Releasing your pet from a bear trap by displacing is silly.
+[eino.keskitalo@purkki.mbnet.fi]
+
+Potion of paralyzation's "Your feet are frozen to the floor" seems
+redundant while riding. Also, the steed might want to wander about
+when (of course the knight's well-trained pony wouldn't)
+[eino.keskitalo@purkki.mbnet.fi]
+
+A monkey can steal a banded mail you are wearing, whereas a nymph
+has to get you to remove it first.  The monkey should not be able
+to do so. [eino.keskitalo@purkki.mbnet.fi]
+
+A cloud of sleeping gas (trap) etc could treat the rider and the steed
+separately. [eino.keskitalo@purkki.mbnet.fi]
+
 A camera flash stops at an invisible monster, yet it is not clear just what
 this looks like (a beam stopping in mid-air?  A camera flash wouldn't really
 look like a beam) and also the effect of the flash on the monster is not

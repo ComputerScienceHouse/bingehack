@@ -533,11 +533,12 @@ register struct obj *obj;
 			if (obj->oxlth && (obj->oattached == OATTACHED_M_ID)) {
 			    unsigned m_id;
 			    struct monst *ghost;
-			    (void) memcpy(&m_id, (genericptr_t)obj->oextra, sizeof(m_id));
+			    (void) memcpy((genericptr_t)&m_id,
+				    (genericptr_t)obj->oextra, sizeof(m_id));
 			    ghost = find_mid(m_id, FM_FMON);
 		    	    if (ghost && ghost->data == &mons[PM_GHOST]) {
-		    		    int x,y;
-		    		    x = ghost->mx; y = ghost->my;
+		    		    int x2, y2;
+		    		    x2 = ghost->mx; y2 = ghost->my;
 		    		    if (ghost->mtame)
 		    		    	savetame = ghost->mtame;
 		    		    if (canseemon(ghost))
@@ -545,7 +546,7 @@ register struct obj *obj;
 						Monnam(ghost));
 				    mongone(ghost);
 				    recorporealization = TRUE;
-				    newsym(x,y);
+				    newsym(x2, y2);
 			    }
 			    /* don't mess with obj->oxlth here */
 			    obj->oattached = OATTACHED_NOTHING;

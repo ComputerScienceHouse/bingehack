@@ -30,7 +30,8 @@ register struct monst *mon;
 	if (!tunnels(mon->data) || !needspick(mon->data))
 		item1 = TRUE;
 	for(obj = mon->minvent; obj; obj = obj->nobj) {
-		if (!item1 && is_pick(obj) && (obj->otyp != DWARVISH_MATTOCK || !which_armor(mon, W_ARMS))) {
+		if (!item1 && is_pick(obj) && (obj->otyp != DWARVISH_MATTOCK
+						|| !which_armor(mon, W_ARMS))) {
 			item1 = TRUE;
 			continue;
 		}
@@ -304,8 +305,9 @@ int udist;
 				    distant_name(obj, doname));
 			    obj_extract_self(obj);
 			    newsym(omx,omy);
-			    mpickobj(mtmp,obj);
-			    if (attacktype(mtmp->data, AT_WEAP) && mtmp->weapon_check == NEED_WEAPON) {
+			    (void) mpickobj(mtmp,obj);
+			    if (attacktype(mtmp->data, AT_WEAP) &&
+					mtmp->weapon_check == NEED_WEAPON) {
 				mtmp->weapon_check = NEED_HTH_WEAPON;
 				(void) mon_wield_item(mtmp);
 			    }
@@ -559,7 +561,9 @@ register int after;	/* this is extra fast monster movement */
 		if (m_carrying(mtmp, SKELETON_KEY)) allowflags |= BUSTDOOR;
 	}
 	if (is_giant(mtmp->data)) allowflags |= BUSTDOOR;
-	if (tunnels(mtmp->data) && (!needspick(mtmp->data) || m_carrying(mtmp, PICK_AXE) || m_carrying(mtmp, DWARVISH_MATTOCK)))
+	if (tunnels(mtmp->data) && (!needspick(mtmp->data) ||
+					m_carrying(mtmp, PICK_AXE) ||
+					m_carrying(mtmp, DWARVISH_MATTOCK)))
 		allowflags |= ALLOW_DIG;
 	cnt = mfndpos(mtmp, poss, info, allowflags);
 

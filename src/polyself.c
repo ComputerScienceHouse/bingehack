@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)polyself.c	3.3	2000/05/26	*/
+/*	SCCS Id: @(#)polyself.c	3.3	2000/07/14	*/
 /*	Copyright (C) 1987, 1988, 1989 by Ken Arromdee */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -103,15 +103,18 @@ change_sex()
 	   swap unintentionally makes `Upolyd' appear to be true */
 	boolean already_polyd = (boolean) Upolyd;
 
-	flags.female = !flags.female;
+	/* Some monsters are always of one sex and their sex can't be changed */
+	/* succubi/incubi are handled below */
+	if (u.umonnum != PM_SUCCUBUS && u.umonnum != PM_INCUBUS && !is_male(youmonst.data) && !is_female(youmonst.data) && !is_neuter(youmonst.data))
+	    flags.female = !flags.female;
 	if (already_polyd)	/* poly'd: also change saved sex */
-		u.mfemale = !u.mfemale;
+	    u.mfemale = !u.mfemale;
 	max_rank_sz();		/* [this appears to be superfluous] */
 	if (flags.female && urole.name.f)
 	    Strcpy(pl_character, urole.name.f);
 	else
 	    Strcpy(pl_character, urole.name.m);
-	u.umonster = (flags.female && urole.femalenum != NON_PM) ?
+	u.umonster = ((already_polyd ? u.mfemale : flags.female) && urole.femalenum != NON_PM) ?
 			urole.femalenum : urole.malenum;
 	if (!already_polyd) {
 	    u.umonnum = u.umonster;
@@ -518,7 +521,7 @@ int	mntmp;
 	    /* probably should burn webs too if PM_FIRE_ELEMENTAL */
 	    u.utrap = 0;
 	}
-	if (youmonst.data->mlet == S_SPIDER && u.utrap && u.utraptype == TT_WEB) {
+	if (webmaker(youmonst.data) && u.utrap && u.utraptype == TT_WEB) {
 	    You("orient yourself on the web.");
 	    u.utrap = 0;
 	}
@@ -1112,18 +1115,6 @@ poly_gender()
 {
 /* Returns gender of polymorphed player; 0/1=same meaning as flags.female,
  * 2=none.
- * Used in:
- *	- Seduction by succubus/incubus
- *	- Talking to nymphs (sounds.c)
- * Not used in:
- *	- Messages given by nymphs stealing armor (they can't steal from
- *	  incubi/succubi/nymphs, and nonhumanoids can't wear armor).
- *	- Amulet of change (must refer to real gender no matter what
- *	  polymorphed into).
- *	- Priest/Priestess, Caveman/Cavewoman (ditto)
- *	- Polymorph self (only happens when human)
- *	- Shopkeeper messages (since referred to as "creature" and not "sir"
- *	  or "lady" when polymorphed)
  */
 	if (is_neuter(youmonst.data) || !humanoid(youmonst.data)) return 2;
 	return flags.female;

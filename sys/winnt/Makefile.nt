@@ -1,11 +1,11 @@
-#       SCCS Id: @(#)Makefile.nt       3.3     99/10/09
-#       Copyright (c) NetHack PC Development Team 1993, 1994, 1995, 1996,1999
+#       SCCS Id: @(#)Makefile.nt       3.3     2000/07/15
+#       Copyright (c) NetHack PC Development Team 1993-2000
 #
 #       NetHack 3.2 Makefile for MS Visual C++ V4.x and above and MS NMAKE
 #  
 #       Win32 Compilers Tested:
 #                              - Microsoft 32 bit Visual C++ V4.x
-#                              - Microsoft 32 bit Visual C++ V6.0 SP3
+#                              - Microsoft 32 bit Visual C++ V6.0 SP3, SP4
 #
 #	This is used for building a TTY version of NetHack using WIN32 Console
 #	I/O routines only.
@@ -83,12 +83,12 @@ DO_LEX  = LEX_MSG
 # - Specify your yacc and lex programs (or work-alikes) here.
 #
 
-YACC	= bison -y
-#YACC   = byacc
+#YACC	= bison -y
+YACC   = byacc
 #YACC	= yacc
 
-LEX	= lex
-#LEX	= flex
+#LEX	= lex
+LEX	= flex
 
 #
 # - Specify your flex skeleton file (if needed).
@@ -97,9 +97,9 @@ LEX	= lex
 FLEXSKEL =
 #FLEXSKEL = -S../tools/flex.ske
 
-YTABC   = y.tab.c
-YTABH   = y.tab.h
-LEXYYC  = lex.yy.c
+YTABC   = y_tab.c
+YTABH   = y_tab.h
+LEXYYC  = lexyy.c
 
 #
 # Optional high-quality BSD random number generation routines
@@ -577,7 +577,7 @@ tileutil: $(U)gif2txt.exe $(U)txt2ppm.exe
 
 $(GAMEFILE) :  $(ALLOBJ)
 	@echo Linking....
-	$(link) $(LFLAGSG) -out:$@ @<<$(GAME).lnk
+	@$(link) $(LFLAGSG) -out:$@ @<<$(GAME).lnk
 		$(ALLOBJ:^	=^
 		) 
 		$(PCHOBJ)
@@ -593,12 +593,12 @@ $(GAME)_.ico : $(NTSYS)\$(GAME).ico
 #
 
 $(U)makedefs.exe:	$(MAKEOBJS)
-	$(link) $(LFLAGSU) -out:$@ $(MAKEOBJS)
+	@$(link) $(LFLAGSU) -out:$@ $(MAKEOBJS)
 
 $(O)makedefs.o:  $(CONFIG_H)	$(PERMONST_H)   $(OBJCLASS_H) \
 		 $(MONSYM_H)    $(QTEXT_H)	$(PATCHLEVEL_H) \
 		 $(U)makedefs.c
-	$(cc) $(CFLAGSU) $(NTSUB) -Fo$@ $(U)makedefs.c
+	@$(cc) $(CFLAGSU) $(NTSUB) -Fo$@ $(U)makedefs.c
 
 #
 #  date.h should be remade every time any of the source or include
@@ -630,23 +630,25 @@ $(SRC)\vis_tab.c: $(U)makedefs.exe
 # Level Compiler Stuff
 #
 
+LEVCFLAGS=-c -nologo -DWINVER=0x0400 -DWIN32 -D_WIN32 -D_MT -MT -I..\include -nologo -Z7 -Od -DDLB
+
 $(U)lev_comp.exe:  $(SPLEVOBJS)
 	@echo Linking $@...
-	$(link) $(LFLAGSU) -out:$@ @<<$(@B).lnk
+	@$(link) $(LFLAGSU) -out:$@ @<<$(@B).lnk
  		$(SPLEVOBJS:^	=^
 		)
 		$(PCHOBJ)
 <<
 
 $(O)lev_yacc.o:  $(HACK_H)   $(SP_LEV_H) $(INCL)\lev_comp.h $(U)lev_yacc.c
-	@$(cc) $(CFLAGSU) -W0 $(NTSUB) -Fo$@ $(U)lev_yacc.c
+	@$(cc) $(LEVCFLAGS) -W0 $(NTSUB) -Fo$@ $(U)lev_yacc.c
 
 $(O)lev_$(LEX).o:  $(HACK_H)   $(INCL)\lev_comp.h $(SP_LEV_H) \
                $(U)lev_$(LEX).c
-	@$(cc) $(CFLAGSU) -W0 $(NTSUB) -Fo$@ $(U)lev_$(LEX).c
+	@$(cc) $(LEVCFLAGS) -W0 $(NTSUB) -Fo$@ $(U)lev_$(LEX).c
 
 $(O)lev_main.o:	$(U)lev_main.c $(HACK_H)   $(SP_LEV_H)
-	@$(cc) $(CFLAGSU) -W0 $(NTSUB) -Fo$@ $(U)lev_main.c
+	@$(cc) $(LEVCFLAGS) -W0 $(NTSUB) -Fo$@ $(U)lev_main.c
 
 
 $(U)lev_yacc.c $(INCL)\lev_comp.h : $(U)lev_comp.y
@@ -692,21 +694,21 @@ $(U)lev_$(LEX).c:  $(U)lev_comp.l
 
 $(U)dgn_comp.exe: $(DGNCOMPOBJS)
     @echo Linking $@...
-	$(link) $(LFLAGSU) -out:$@ @<<$(@B).lnk
+	@$(link) $(LFLAGSU) -out:$@ @<<$(@B).lnk
 		$(DGNCOMPOBJS:^	=^
 		)
 		$(PCHOBJ)
 <<
 
 $(O)dgn_yacc.o:	$(HACK_H)   $(DGN_FILE_H) $(INCL)\dgn_comp.h $(U)dgn_yacc.c
-	@$(cc) $(CFLAGSU) -W0 $(NTSUB) -Fo$@ $(U)dgn_yacc.c
+	@$(cc) $(LEVCFLAGS) -W0 $(NTSUB) -Fo$@ $(U)dgn_yacc.c
 
 $(O)dgn_$(LEX).o: $(HACK_H)   $(DGN_FILE_H)  $(INCL)\dgn_comp.h \
 	$(U)dgn_$(LEX).c
-	@$(cc) $(CFLAGSU) -W0 $(NTSUB) -Fo$@ $(U)dgn_$(LEX).c
+	@$(cc) $(LEVCFLAGS) -W0 $(NTSUB) -Fo$@ $(U)dgn_$(LEX).c
 
 $(O)dgn_main.o:	$(HACK_H) $(U)dgn_main.c
-	@$(cc) $(CFLAGSU) -W0 $(NTSUB) -Fo$@ $(U)dgn_main.c
+	@$(cc) $(LEVCFLAGS) -W0 $(NTSUB) -Fo$@ $(U)dgn_main.c
 
 $(U)dgn_yacc.c $(INCL)\dgn_comp.h : $(U)dgn_comp.y
 !	IF "$(DO_YACC)"=="YACC_ACT"
@@ -779,7 +781,7 @@ $(INCL)\win32api.h: $(NTSYS)\win32api.h
 #
 
 $(U)recover.exe: $(RECOVOBJS)
-	$(link) $(LFLAGSU) -out:$@ $(RECOVOBJS)
+	@$(link) $(LFLAGSU) -out:$@ $(RECOVOBJS)
 
 #
 #  Tile Mapping
@@ -790,7 +792,7 @@ $(SRC)\tile.c: $(U)tilemap.exe
 	@$(U)tilemap
 
 $(U)tilemap.exe: $(O)tilemap.o
-	$(link) $(LFLAGSU) -out:$@ $(O)tilemap.o
+	@$(link) $(LFLAGSU) -out:$@ $(O)tilemap.o
 
 $(O)tilemap.o:  $(WSHR)\tilemap.c $(HACK_H)
 	@$(cc) $(CFLAGSU) $(NTSUB) -Fo$@ $(WSHR)\tilemap.c
@@ -806,7 +808,7 @@ $(O)tilemap.o:  $(WSHR)\tilemap.c $(HACK_H)
 
 $(U)gif2txt.exe: $(GIFREADERS) $(TEXT_IO)
     @echo Linking $@...
-	$(link) $(LFLAGSU) -out:$@ @<<$(@B).lnk
+	@$(link) $(LFLAGSU) -out:$@ @<<$(@B).lnk
 		$(GIFREADERS:^	=^
 		)
 		$(TEXT_IO:^	=^
@@ -816,7 +818,7 @@ $(U)gif2txt.exe: $(GIFREADERS) $(TEXT_IO)
 
 $(U)txt2ppm.exe: $(PPMWRITERS) $(TEXT_IO)
     @echo Linking $@...
-	$(link) $(LFLAGSU) -out:$@ @<<$(@B).lnk
+	@$(link) $(LFLAGSU) -out:$@ @<<$(@B).lnk
 		$(PPMWRITERS:^	=^
 		)
 		$(TEXT_IO:^	=^
@@ -834,7 +836,7 @@ $(TILEBMP): $(TILEUTIL) $(TILEFILES)
 
 $(U)tile2bmp.exe: $(O)tile2bmp.o $(TEXT_IO)
     @echo Linking $@...
-	$(link) $(LFLAGSU) -out:$@ @<<$(@B).lnk
+	@$(link) $(LFLAGSU) -out:$@ @<<$(@B).lnk
 		$(O)tile2bmp.o
 		$(TEXT_IO:^  =^
 		)
@@ -870,7 +872,7 @@ nhdat:	$(U)dlb_main.exe $(DAT)\data $(DAT)\oracles $(DAT)\options \
 	cd $(SRC)
 
 $(U)dlb_main.exe: $(DLBOBJ) $(O)dlb.o
-	$(link) $(LFLAGSU) -out:$@ @<<$(@B).lnk
+	@$(link) $(LFLAGSU) -out:$@ @<<$(@B).lnk
 		$(O)dlb_main.o
 		$(O)dlb.o
 		$(O)alloc.o
@@ -965,7 +967,7 @@ pch.c:
 
 hack.pch: $(HACK_H) pch.c
 	@echo Generating new precompiled header: hack.pch
-	$(CC) $(CFLAGSG) $(PCHMAK) pch.c
+	@$(CC) $(CFLAGSG) $(PCHMAK) pch.c
 
 #
 # dat dependencies

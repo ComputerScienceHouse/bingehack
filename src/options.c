@@ -285,7 +285,7 @@ static struct Comp_Opt
 	{"use_stone", "use stone background patterns", 8, SET_IN_FILE },
 #endif
 #ifdef MSDOS
-	{ "video",    "method of video updating", 20, DISP_IN_GAME },
+	{ "video",    "method of video updating", 20, SET_IN_FILE },
 #endif
 #ifdef VIDEOSHADES
 	{ "videocolors", "color mappings for internal screen routines",
@@ -2052,7 +2052,7 @@ boolean setinitial,setfromfile;
 }
 
 #define rolestring(val,array,field) ((val >= 0) ? array[val].field : \
-				     (val == ROLE_RANDOM) ? randrole : none)
+				     (val == ROLE_RANDOM) ? randomrole : none)
 
 /* This is ugly. We have all the option names in the compopt[] array,
    but we need to look at each option individually to get the value. */
@@ -2062,7 +2062,7 @@ const char *optname;
 char *buf;
 {
 	char ocl[MAXOCLASSES+1];
-	static const char none[] = "(none)", randrole[] = "random",
+	static const char none[] = "(none)", randomrole[] = "random",
 		     to_be_done[] = "(to be done)";
 #ifdef PREFIXES_IN_USE
 	int i;

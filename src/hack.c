@@ -807,7 +807,8 @@ domove()
 		} else if (u.utraptype == TT_INFLOOR) {
 		    if(--u.utrap) {
 			if(flags.verbose)
-			    Norep("You are stuck in the floor.");
+			    Norep("You are stuck in the %s.",
+					surface(u.ux, u.uy));
 		    } else You("finally wiggle free.");
 		} else {
 		    if(flags.verbose)

@@ -872,7 +872,7 @@ label2:			if (mdef->mhp > 0) return 0;
 
 			/* make a special x_monnam() call that never omits
 			   the saddle, and save it for later messages */
-			strcpy(mdefnambuf, x_monnam(mdef, ARTICLE_THE, (char *)0, 0, FALSE));
+			Strcpy(mdefnambuf, x_monnam(mdef, ARTICLE_THE, (char *)0, 0, FALSE));
 
 			otmp = mdef->minvent;
 #ifdef STEED
@@ -890,7 +890,7 @@ label2:			if (mdef->mhp > 0) return 0;
 			/* add_to_minv() might free otmp [if it merges] */
 			if (vis)
 				Strcpy(onambuf, doname(otmp));
-			add_to_minv(magr, otmp);
+			(void) add_to_minv(magr, otmp);
 			if (vis) {
 				Strcpy(buf, Monnam(magr));
 				pline("%s steals %s from %s!", buf,

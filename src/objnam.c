@@ -324,10 +324,10 @@ register struct obj *obj;
 			Strcat(buf, " of spinach");
 		    else if (obj->corpsenm == NON_PM)
 		        Strcpy(buf, "empty tin");
-		    else if (nonvegetarian(&mons[obj->corpsenm]))
-			Sprintf(eos(buf), " of %s meat", mons[obj->corpsenm].mname);
-		    else
+		    else if (vegetarian(&mons[obj->corpsenm]))
 			Sprintf(eos(buf), " of %s", mons[obj->corpsenm].mname);
+		    else
+			Sprintf(eos(buf), " of %s meat", mons[obj->corpsenm].mname);
 		}
 		break;
 	    case GOLD_CLASS:

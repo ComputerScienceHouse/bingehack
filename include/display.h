@@ -34,18 +34,20 @@
 )
 
 #ifdef NEW_WARNING
-#define warn_of_mon(mon) (!canseemon(mon) && !cansee((mon)->mx,(mon)->my) &&           \
-			  ((Warn_of_mon &&    			       \
-			    flags.warntype && (flags.warntype & (mon)->data->mflags2)) \
-        		|| (Warning && !(mon)->mpeaceful &&                            \
-                            distu((mon)->mx, (mon)->my) < 100 &&                       \
-			    (((int) ((mon)->m_lev / 4)) >= flags.warnlevel))))
+#define sensemon(mon) (tp_sensemon(mon) || Detect_monsters || MATCH_WARN_OF_MON(mon))
+#else
+#define sensemon(mon) (tp_sensemon(mon) || Detect_monsters)
 #endif
 
 #ifdef NEW_WARNING
-#define sensemon(mon) (tp_sensemon(mon) || Detect_monsters || warn_of_mon(mon))
-#else
-#define sensemon(mon) (tp_sensemon(mon) || Detect_monsters)
+/*
+ * mon_warning() is used to warn of any dangerous monsters in your
+ * vicinity, and a glyph representing the warning level is displayed.
+ */
+
+#define mon_warning(mon) (Warning && !(mon)->mpeaceful && 				\
+			 (distu((mon)->mx, (mon)->my) < 100) &&				\
+			 (((int) ((mon)->m_lev / 4)) >= flags.warnlevel))
 #endif
 
 /*

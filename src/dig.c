@@ -1329,10 +1329,10 @@ escape_tomb()
 		   noncorporeal(youmonst.data) || unsolid(youmonst.data) ||
 		   (tunnels(youmonst.data) && !needspick(youmonst.data))) {
 
-		    You("%s up through the floor.",
+		    You("%s up through the %s.",
 			(tunnels(youmonst.data) && !needspick(youmonst.data)) ?
 			 "try to tunnel" : (amorphous(youmonst.data)) ?
-			 "ooze" : "phase");
+			 "ooze" : "phase", surface(u.ux, u.uy));
 
 		    if(tunnels(youmonst.data) && !needspick(youmonst.data))
 			good = dighole(TRUE);

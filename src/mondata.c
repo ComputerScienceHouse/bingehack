@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mondata.c	3.3	99/09/15	*/
+/*	SCCS Id: @(#)mondata.c	3.3	2000/07/14	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -456,17 +456,6 @@ const char *in_str;
 }
 
 #endif /* OVL1 */
-#ifdef OVLB
-
-boolean
-webmaker(ptr)   /* creature can spin a web */
-	register struct permonst *ptr;
-{
-	return((boolean)(ptr->mlet == S_SPIDER &&
-		ptr != &mons[PM_SCORPION] && ptr != &mons[PM_SCORPIUS]));
-}
-
-#endif /* OVLB */
 #ifdef OVL2
 
 /* returns 3 values (0=male, 1=female, 2=none) */

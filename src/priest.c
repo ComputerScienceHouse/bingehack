@@ -102,7 +102,7 @@ pick_move:
 			    pline("%s picks up %s.", Monnam(mtmp),
 				distant_name(ib,doname));
 			obj_extract_self(ib);
-			mpickobj(mtmp, ib);
+			(void) mpickobj(mtmp, ib);
 		}
 		return(1);
 	}
@@ -222,7 +222,7 @@ boolean sanctum;   /* is it the seat of the high priest? */
 		cnt = rn1(2,3);
 		while(cnt) {
 		    otmp = mkobj(SPBOOK_CLASS, FALSE);
-		    if(otmp) mpickobj(priest, otmp);
+		    if(otmp) (void) mpickobj(priest, otmp);
 		    cnt--;
 		}
 		if(p_coaligned(priest))
@@ -231,7 +231,7 @@ boolean sanctum;   /* is it the seat of the high priest? */
 		    otmp = mksobj(ROBE, TRUE, FALSE);
 		    if(otmp) {
 			if(!rn2(2)) curse(otmp);
-			mpickobj(priest, otmp);
+			(void) mpickobj(priest, otmp);
 		    }
 		}
 		m_dowear(priest, TRUE);

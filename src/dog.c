@@ -620,11 +620,9 @@ register struct obj *obj;
 			(poisonous(&mons[obj->corpsenm]) &&
 						!resists_poison(mon)))
 			return POISON;
-		    else if (fptr->mlet == S_FUNGUS)
+		    else if (vegan(fptr))
 			return (herbi ? CADAVER : MANFOOD);
-		    else if (nonvegetarian(fptr))
-		        return (carni ? CADAVER : MANFOOD);
-		    else return (carni ? ACCFOOD : MANFOOD);
+		    else return (carni ? CADAVER : MANFOOD);
 		case CLOVE_OF_GARLIC:
 		    return (is_undead(mon->data) ? TABU :
 			    (herbi ? ACCFOOD : MANFOOD));

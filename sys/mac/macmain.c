@@ -132,7 +132,7 @@ main (void)
 		game_active = 1;	/* done with selection, draw active game window */
 		newgame();
 		set_wear();
-		pickup(1);
+		(void) pickup(1);
 	}
 
 	if (discover)
@@ -236,7 +236,7 @@ process_openfile (short src_vol, long src_dir, Str255 fName, OSType ftype)
 				Str255 save_f_p;
 				P2C(*(StringHandle)name, plname);
 				set_savefile_name();
-				C2P(SAVEF, save_f_p);
+				C2P(fqname(SAVEF, SAVEPREFIX, 0), save_f_p);
 				force_hdelete(theDirs.dataRefNum, theDirs.dataDirID, save_f_p);
 
 				if (HRename(theDirs.dataRefNum, theDirs.dataDirID, fName, save_f_p) == noErr)

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)termcap.c	3.3	2000/06/29	*/
+/*	SCCS Id: @(#)termcap.c	3.3	2000/07/10	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -400,7 +400,26 @@ tty_decgraphics_termcap_fixup()
 #if defined(ASCIIGRAPH) && !defined(NO_TERMS)
 	/* some termcaps suffer from the bizarre notion that resetting
 	   video attributes should also reset the chosen character set */
-	if (strstri(nh_HE, AE)) HE_resets_AS = TRUE;
+    {
+	const char *nh_he = nh_HE, *ae = AE;
+	int he_limit, ae_length;
+
+	if (digit(*ae)) {	/* skip over delay prefix, if any */
+	    do ++ae; while (digit(*ae));
+	    if (*ae == '.') { ++ae; if (digit(*ae)) ++ae; }
+	    if (*ae == '*') ++ae;
+	}
+	/* can't use nethack's case-insensitive strstri() here, and some old
+	   systems don't have strstr(), so use brute force substring search */
+	ae_length = strlen(ae), he_limit = strlen(nh_he);
+	while (he_limit >= ae_length) {
+	    if (strncmp(nh_he, ae, ae_length) == 0) {
+		HE_resets_AS = TRUE;
+		break;
+	    }
+	    ++nh_he, --he_limit;
+	}
+    }
 #endif
 }
 #endif	/* TERMLIB */
@@ -811,6 +830,10 @@ cl_eos()			/* free after Robert Viduya */
 
 #include <curses.h>
 
+#ifndef LINUX
+extern char *tparm();
+#endif
+
 #  ifdef COLOR_BLACK	/* trust include file */
 #undef COLOR_BLACK
 #  else
@@ -843,7 +866,6 @@ init_hilite()
 {
 	register int c;
 	char *setf, *scratch;
-	extern char *tparm();
 
 	for (c = 0; c < SIZE(hilites); c++)
 		hilites[c] = nh_HI;

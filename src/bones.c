@@ -136,7 +136,7 @@ struct obj *cont;
 
 		if(rn2(5)) curse(otmp);
 		if (mtmp)
-			add_to_minv(mtmp, otmp);
+			(void) add_to_minv(mtmp, otmp);
 		else if (cont)
 			add_to_container(cont, otmp);
 		else

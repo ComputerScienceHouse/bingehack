@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)apply.c	3.3	1999/12/15	*/
+/*	SCCS Id: @(#)apply.c	3.3	2000/07/07	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -264,12 +264,6 @@ use_stethoscope(obj)
 		newsym(rx, ry);
 		pline_The("invisible monster must have moved.");
 	}
-#ifdef NEW_WARNING
-	if (glyph_is_warning(levl[rx][ry].glyph)) {
-		unmap_object(rx, ry);
-		newsym(rx, ry);
-	}
-#endif
 	lev = &levl[rx][ry];
 	switch(lev->typ) {
 	case SDOOR:
@@ -715,7 +709,7 @@ struct obj *obj;
 		} else pline ("It steals your mirror!");
 		setnotworn(obj); /* in case mirror was wielded */
 		freeinv(obj);
-		mpickobj(mtmp,obj);
+		(void) mpickobj(mtmp,obj);
 		if (!tele_restrict(mtmp)) rloc(mtmp);
 	} else if (!is_unicorn(mtmp->data) && !humanoid(mtmp->data) &&
 			(!mtmp->minvis || perceives(mtmp->data)) && rn2(5)) {
@@ -1288,7 +1282,7 @@ int magic; /* 0=Physical, otherwise skill level */
 	    if (temp < 0) temp = -temp;
 	    if (range < temp)
 		range = temp;
-	    walk_path(&uc, &cc, hurtle_step, (genericptr_t)&range);
+	    (void) walk_path(&uc, &cc, hurtle_step, (genericptr_t)&range);
 
 	    /* A little Sokoban guilt... */
 	    if (In_sokoban(&u.uz))
@@ -2059,8 +2053,8 @@ struct obj *obj;
 
 					hitvalu = 8 + otmp->spe;
 					hitu = thitu(hitvalu,
-						dmgval(otmp, &youmonst),
-						otmp, onambuf);
+						     dmgval(otmp, &youmonst),
+						     otmp, (char *)0);
 					if (hitu) {
 				You("The %s hits you as you try to snatch it!",
 						the(onambuf));

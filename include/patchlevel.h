@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)patchlevel.h	3.3	2000/03/01	*/
+/*	SCCS Id: @(#)patchlevel.h	3.3	2000/07/10	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -40,7 +40,7 @@
 /*****************************************************************************/
 /* Version 3.3.1 */
 
-/*  Patch 1, May ??, 2000
+/*  Patch 1, July 15, 2000
  *  Many, many general fixes, including a number for riding, twoweapon,
  *	and invisible monsters.
  *  Redo Ranger quest.

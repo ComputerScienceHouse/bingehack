@@ -527,16 +527,25 @@ Amulet_on()
 		}
 		break;
 	case AMULET_OF_CHANGE:
+	    {
+		int orig_sex = poly_gender();
+
 		if (Unchanging) break;
-		makeknown(AMULET_OF_CHANGE);
 		change_sex();
 		/* Don't use same message as polymorph */
-		You("are suddenly very %s!", flags.female ? "feminine"
+		if (orig_sex != poly_gender()) {
+		    makeknown(AMULET_OF_CHANGE);
+		    You("are suddenly very %s!", flags.female ? "feminine"
 			: "masculine");
-		flags.botl = 1;
+		    flags.botl = 1;
+		} else
+		    /* already polymorphed into single-gender monster; only
+		       changed the character's base sex */
+		    You("don't feel like yourself.");
 		pline_The("amulet disintegrates!");
 		useup(uamul);
 		break;
+	    }
 	case AMULET_OF_STRANGULATION:
 		makeknown(AMULET_OF_STRANGULATION);
 		pline("It constricts your throat!");
@@ -1815,7 +1824,7 @@ doddoremarm()
     if (taking_off || takeoff_mask) {
 	You("continue disrobing.");
 	set_occupation(take_off, "disrobing", 0);
-	take_off();
+	(void) take_off();
 	return 0;
     } else if (!uwep && !uswapwep && !uquiver && !uamul && !ublindf &&
 		!uleft && !uright && !wearing_armor()) {
@@ -1829,7 +1838,7 @@ doddoremarm()
 	result = menu_remarm(result);
 
     if (takeoff_mask)
-	take_off();
+	(void) take_off();
     /* The time to perform the command is already completely accounted for
      * in take_off(); if we return 1, that would add an extra turn to each
      * disrobe.

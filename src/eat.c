@@ -995,9 +995,9 @@ opentin()		/* called during each move whilst opening a tin */
 
 	    /* KMH, conduct */
 	    u.uconduct.food++;
-	    if (nonvegan(&mons[tin.tin->corpsenm]))
+	    if (!vegan(&mons[tin.tin->corpsenm]))
 		u.uconduct.unvegan++;
-	    if (nonvegetarian(&mons[tin.tin->corpsenm]))
+	    if (!vegetarian(&mons[tin.tin->corpsenm]))
 		violated_vegetarian();
 
 	    tin.tin->dknown = tin.tin->known = TRUE;
@@ -1166,7 +1166,7 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 	if (mnum != PM_ACID_BLOB && !stoneable && rotted > 5L) {
 		pline("Ulch - that %s was tainted!",
 		      mons[mnum].mlet == S_FUNGUS ? "fungoid vegetation" :
-		      nonvegetarian(&mons[mnum]) ? "meat" : "protoplasm");
+		      !vegetarian(&mons[mnum]) ? "meat" : "protoplasm");
 		if (Sick_resistance) {
 			pline("It doesn't seem at all sickening, though...");
 		} else {
@@ -1187,9 +1187,9 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 		}
 
 		/* KMH, conduct */
-		if (nonvegan(&mons[mnum]))
+		if (!vegan(&mons[mnum]))
 		     u.uconduct.unvegan++;
-		if (nonvegetarian(&mons[mnum]))
+		if (!vegetarian(&mons[mnum]))
 		     violated_vegetarian();
 
 		if (carried(otmp)) useup(otmp);
@@ -1234,9 +1234,9 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 	}
 
 	/* KMH, conduct */
-	if (nonvegan(&mons[mnum]))
+	if (!vegan(&mons[mnum]))
 	     u.uconduct.unvegan++;
-	if (nonvegetarian(&mons[mnum]))
+	if (!vegetarian(&mons[mnum]))
 	     violated_vegetarian();
 
 	return(retcode);
@@ -1360,22 +1360,25 @@ struct obj *otmp;
 	/* KMH, conduct */
 	switch (objects[otmp->otyp].oc_material) {
 	  case WAX: /* let's assume bees' wax */
-	  case LEATHER:
-	  case BONE:
-	  case DRAGON_HIDE:
 	    u.uconduct.unvegan++;
 	    break;
 
 	  case FLESH:
-	    if (otmp->otyp == EGG)
+	    if (otmp->otyp == EGG) {
+		u.uconduct.unvegan++;
+		break;
+	    }
+	  case LEATHER:
+	  case BONE:
+	  case DRAGON_HIDE:
 	    u.uconduct.unvegan++;
-	    else
-		violated_vegetarian();
+	    violated_vegetarian();
 	    break;
 
 	  default:
-	    if (otmp->otyp == PANCAKE || otmp->otyp == FORTUNE_COOKIE || /* eggs */
-			otmp->otyp == CREAM_PIE || otmp->otyp == CANDY_BAR || /* milk */
+	    if (otmp->otyp == PANCAKE ||
+			otmp->otyp == FORTUNE_COOKIE || /* eggs */
+		otmp->otyp == CREAM_PIE || otmp->otyp == CANDY_BAR || /* milk */
 			otmp->otyp == LUMP_OF_ROYAL_JELLY)
 		u.uconduct.unvegan++;
 	    break;

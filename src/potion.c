@@ -544,7 +544,7 @@ peffects(otmp)
 
 		    if (Detect_monsters) nothing++;
 		    unkn++;
-		    incr_itimeout(&HDetect_monsters, 20L+rnd(40));
+		    incr_itimeout(&HDetect_monsters, 20+rnd(40));
 		    for (x = 1; x < COLNO; x++) {
 			for (y = 0; y < ROWNO; y++) {
 			    if (levl[x][y].glyph == GLYPH_INVISIBLE) {
