@@ -95,6 +95,9 @@ STATIC_DCL FILE *FDECL(fopen_config_file, (const char *));
 STATIC_DCL int FDECL(get_uchars, (FILE *,char *,char *,uchar *,int,const char *));
 int FDECL(parse_config_line, (FILE *,char *,char *,char *));
 
+#ifdef WIN32
+extern void NDECL(dircheck);
+#endif
 
 /* fopen a file, with OS-dependent bells and whistles */
 /* NOTE: a simpler version of this routine also exists in util/dlb_main.c */
@@ -103,6 +106,9 @@ fopen_datafile(filename, mode)
 const char *filename, *mode;
 {
 	FILE *fp;
+#ifdef WIN32
+	dircheck();
+#endif
 #ifdef AMIGA
 	fp = fopenp(filename, mode);
 #else
@@ -172,6 +178,9 @@ int lev;
 {
 	int fd;
 
+#ifdef WIN32
+	dircheck();
+#endif
 	set_levelfile_name(lock, lev);
 
 #if defined(MICRO)
@@ -200,6 +209,9 @@ int lev;
 {
 	int fd;
 
+#ifdef WIN32
+	dircheck();
+#endif
 	set_levelfile_name(lock, lev);
 #ifdef MFLOPPY
 	/* If not currently accessible, swap it in. */
@@ -219,6 +231,9 @@ void
 delete_levelfile(lev)
 int lev;
 {
+#ifdef WIN32
+	dircheck();
+#endif
 	/*
 	 * Level 0 might be created by port specific code that doesn't
 	 * call create_levfile(), so always assume that it exists.
@@ -307,6 +322,9 @@ char **bonesid;
 	char *file;
 	int fd;
 
+#ifdef WIN32
+	dircheck();
+#endif
 	*bonesid = set_bonesfile_name(bones, lev);
 	file = set_bonestemp_name();
 
@@ -384,6 +402,9 @@ char **bonesid;
 {
 	int fd;
 
+#ifdef WIN32
+	dircheck();
+#endif
 	*bonesid = set_bonesfile_name(bones, lev);
 	uncompress(bones);	/* no effect if nonexistent */
 #ifdef MAC
@@ -399,6 +420,9 @@ int
 delete_bonesfile(lev)
 d_level *lev;
 {
+#ifdef WIN32
+	dircheck();
+#endif
 	(void) set_bonesfile_name(bones, lev);
 	return !(unlink(bones) < 0);
 }
@@ -491,6 +515,9 @@ int
 create_savefile()
 {
 	int fd;
+#ifdef WIN32
+	dircheck();
+#endif
 #ifdef AMIGA
 	fd = ami_wbench_getsave(O_WRONLY | O_CREAT | O_TRUNC);
 #else
@@ -526,6 +553,9 @@ open_savefile()
 {
 	int fd;
 
+#ifdef WIN32
+	dircheck();
+#endif
 #ifdef AMIGA
 	fd = ami_wbench_getsave(O_RDONLY);
 #else
@@ -556,6 +586,9 @@ int
 restore_saved_game()
 {
 	int fd;
+#ifdef WIN32
+	dircheck();
+#endif
 
 	set_savefile_name();
 #ifdef MFLOPPY
@@ -591,6 +624,9 @@ char *filename, *mode;
 FILE *stream;
 boolean uncomp;
 {
+#ifdef WIN32
+	dircheck();
+#endif
 	if (freopen(filename, mode, stream) == (FILE *)0) {
 		(void) fprintf(stderr, "freopen of %s for %scompress failed\n",
 			filename, uncomp ? "un" : "");
@@ -619,6 +655,9 @@ boolean uncomp;
 	int i = 0;
 	int f;
 
+#ifdef WIN32
+	dircheck();
+#endif
 	Strcpy(cfn, filename);
 # ifdef COMPRESS_EXTENSION
 	Strcat(cfn, COMPRESS_EXTENSION);
@@ -793,6 +832,9 @@ int retryct;
 {
 	char *lockname, locknambuf[BUFSZ];
 
+#ifdef WIN32
+	dircheck();
+#endif
 	nesting++;
 	if (nesting > 1) {
 	    impossible("TRIED TO NEST LOCKS");
@@ -901,6 +943,9 @@ const char *filename;
 	if (nesting == 1) {
 		lockname = make_lockname(filename, locknambuf);
 
+#ifdef WIN32
+	dircheck();
+#endif
 #if defined(UNIX) || defined(VMS)
 		if (unlink(lockname) < 0)
 			HUP raw_printf("Can't unlink %s.", lockname);
@@ -932,17 +977,14 @@ const char *configfile =
 # if defined(MAC) || defined(__BEOS__)
 			"NetHack Defaults";
 # else
-#  ifdef WIN32
-			"Defaults.NetHack-settings";
-#  else
-#   ifdef MSDOS
+#  if defined(MSDOS) || defined(WIN32)
 			"defaults.nh";
-#   else
+#  else
 			"NetHack.cnf";
-#   endif
 #  endif
 # endif
 #endif
+
 
 #ifdef MSDOS
 /* conflict with speed-dial under windows
@@ -968,6 +1010,9 @@ const char *filename;
 	char	tmp_config[BUFSZ];
 #endif
 
+#ifdef WIN32
+	dircheck();
+#endif
 	/* "filename" is an environment variable, so it should hang around */
 	if (filename) {
 #ifdef UNIX
@@ -1315,6 +1360,9 @@ const char *filename;
 #endif
 	char	buf[4*BUFSZ];
 	FILE	*fp;
+#ifdef WIN32
+	dircheck();
+#endif
 
 	if (!(fp = fopen_config_file(filename))) return;
 
@@ -1390,10 +1438,12 @@ const char *dir;
 	    wait_synch();
 	}
 #endif  /* !UNIX && !VMS */
-
 #ifdef MICRO
 	int fd;
 	char tmp[PATHLEN];
+# ifdef WIN32
+	dircheck();
+# endif
 
 # ifdef OS2_CODEVIEW   /* explicit path on opening for OS/2 */
 	Strcpy(tmp, dir);
