@@ -3,15 +3,15 @@
 # NetHack may be freely distributed.  See license for details.
 #
 
-# PC NetHack 3.3 Makefile for Borland C++ 3.1.
+# PC NetHack 3.3 Makefile for Borland C++ 3.1 and 4.5.
 #
 # Nota Bene:	Before you get to here you should have already read
 # 		the Install.dos file located in the sys/msdos directory.
 #		Additionally, you should run this makefile with the -N
 #		Microsoft Compatibility option.
 #
-# This Makefile is for use with Borland C++ version 3.1, but might also
-# work with more up to date versions.
+# This Makefile is for use with Borland C++ version 3.1 and 4.5, but might
+# also work with more up to date versions.
 #
 # This Makefile is specific to Borland's MAKE which is supplied with the
 # compiler.  It supports only one overlay management facility - VROOMM.
@@ -1749,7 +1749,7 @@ $(O)vidtxt.0: $(MSYS)\vidtxt.c  $(HACK_H) $(WINTTY_H) $(PCVIDEO_H)
 	@type schema$(SCHEMA).bc | find "$(@B)_0" > $(VROOMMCFG)
 	@echo $(BCOPTS1) >> $(VROOMMCFG)
 	@echo $(BCOPTS2) >> $(VROOMMCFG)
-	$(CC) $(CFLAGSN) $(COVL0) $$($(@B)_0) $(COBJNAM)$@ $(MSYS)\vidtxt.c
+	$(CC) $(CFLAGSN) $(COVL0) $(COBJNAM)$@ $(MSYS)\vidtxt.c
 
 $(O)vidtxt.B: $(MSYS)\vidtxt.c  $(HACK_H) $(WINTTY_H) $(PCVIDEO_H)
 	@type schema$(SCHEMA).bc | find "$(@B)_b" > $(VROOMMCFG)
