@@ -4,7 +4,7 @@
 
 #include "gnstatus.h"
 #include "gnsignal.h"
-#include "xpms.h"
+#include "gn_xpms.h"
 #include "gnomeprv.h"
 
 
