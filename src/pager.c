@@ -509,6 +509,11 @@ do_look(quick)
 		}
 	    }
 	}
+	/* handle '@' as a special case; firstmatch is guaranteed
+	   to already be set in that case */
+	if (!from_screen ? (sym == def_monsyms[S_HUMAN]) :
+		(cc.x == u.ux && cc.y == u.uy && sym == monsyms[S_HUMAN]))
+	     found += append_str(out_str, "you");	/* tack on "or you" */
 
 	/*
 	 * Special case: if identifying from the screen, and we're swallowed,

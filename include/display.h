@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)display.h	3.3	97/01/24	*/
+/*	SCCS Id: @(#)display.h	3.3	1999/11/30	*/
 /* Copyright (c) Dean Luick, with acknowledgements to Kevin Darcy */
 /* and Dave Cohrs, 1990.					  */
 /* NetHack may be freely redistributed.  See license for details. */
@@ -188,7 +188,7 @@
 	(u.usteed && mon_visible(u.usteed)) ?			\
 				ridden_mon_to_glyph(u.usteed) :		\
 	youmonst.m_ap_type == M_AP_NOTHING ?				\
-				monnum_to_glyph(Upolyd ? u.umonnum : urace.malenum) :	\
+				monnum_to_glyph(u.umonnum) :	\
 	youmonst.m_ap_type == M_AP_FURNITURE ?				\
 				cmap_to_glyph(youmonst.mappearance) :	\
 	youmonst.m_ap_type == M_AP_OBJECT ?				\
