@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)eat.c	3.3	1999/08/18	*/
+/*	SCCS Id: @(#)eat.c	3.3	1999/12/13	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1276,10 +1276,21 @@ struct obj *otmp;
 		    more_experienced(1,0);
 		    flags.botl = 1;
 		}
-		if (rn2(2) && (!carnivorous(youmonst.data) || humanoid(youmonst.data))) {
+		if (rn2(2) &&
+		    (Upolyd ? (!carnivorous(youmonst.data) ||
+				(humanoid(youmonst.data) &&
+					!is_orc(youmonst.data)))
+			    : !(Role_if(PM_CAVEMAN) || Race_if(PM_ORC)))) {
 			make_vomiting((long)rn1(victual.reqtime, 14), FALSE);
 		}
 		break;
+	    case MEATBALL:
+	    case MEAT_STICK:
+	    case HUGE_CHUNK_OF_MEAT:
+	    case MEAT_RING:
+		u.uconduct.meat++;
+		goto give_feedback;
+	     /* break; */
 	    case CLOVE_OF_GARLIC:
 		if (is_undead(youmonst.data)) {
 			make_vomiting((long)rn1(victual.reqtime, 5), FALSE);
@@ -1318,6 +1329,7 @@ struct obj *otmp;
 		    pline("Ugh.  Rotten egg.");	/* perhaps others like it */
 		    make_vomiting(Vomiting+d(10,4), TRUE);
 		} else
+ give_feedback:
 		    pline("This %s is %s", singular(otmp, xname),
 		      otmp->cursed ? (Hallucination ? "grody!" : "terrible!") :
 		      (otmp->otyp == CRAM_RATION
