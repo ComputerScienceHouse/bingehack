@@ -163,7 +163,7 @@ fightm(mtmp)		/* have monsters fight each other */
  *
  * This function returns a result bitfield:
  *
- *	    --------- agressor died
+ *	    --------- aggressor died
  *	   /  ------- defender died
  *	  /  /  ----- defender was hit
  *	 /  /  /
@@ -257,6 +257,9 @@ mattackm(magr, mdef)
 	    case AT_TUCH:
 	    case AT_BUTT:
 	    case AT_TENT:
+		/* Nymph that teleported away on first attack? */
+		if (distmin(magr->mx,magr->my,mdef->mx,mdef->my) > 1)
+		    return MM_MISS;
 		/* Monsters won't attack cockatrices physically if they
 		 * have a weapon instead.  This instinct doesn't work for
 		 * players, or under conflict or confusion. 
@@ -865,7 +868,11 @@ label2:			if (mdef->mhp > 0) return 0;
 	    case AD_SITM:	/* for now these are the same */
 	    case AD_SEDU:
 		if (!magr->mcan && mdef->minvent) {
-			char onambuf[BUFSZ];
+			char onambuf[BUFSZ], mdefnambuf[BUFSZ];
+
+			/* make a special x_monnam() call that never omits
+			   the saddle, and save it for later messages */
+			strcpy(mdefnambuf, x_monnam(mdef, ARTICLE_THE, (char *)0, 0, FALSE));
 
 			otmp = mdef->minvent;
 #ifdef STEED
@@ -887,7 +894,7 @@ label2:			if (mdef->mhp > 0) return 0;
 			if (vis) {
 				Strcpy(buf, Monnam(magr));
 				pline("%s steals %s from %s!", buf,
-				      onambuf, mon_nam(mdef));
+				    onambuf, mdefnambuf);
 			}
 			possibly_unwield(mdef);
 			mselftouch(mdef, (const char *)0, FALSE);

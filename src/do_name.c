@@ -566,7 +566,7 @@ int article;
  */
 const char *adjective;
 int suppress;
-/* SUPPRESS_IT,SUPPRESS_INVISIBLE, SUPPRESS_HALLUCINATION, SUPPRESS_MISC
+/* SUPPRESS_IT, SUPPRESS_INVISIBLE, SUPPRESS_HALLUCINATION, SUPPRESS_SADDLE.
  * EXACT_NAME: combination of all the above
  */
 boolean called;
@@ -577,7 +577,7 @@ boolean called;
 	static char buf[BUFSZ];
 #endif
 	struct permonst *mdat = mtmp->data;
-	boolean do_hallu, do_invis, do_it, do_misc;
+	boolean do_hallu, do_invis, do_it, do_saddle;
 	boolean name_at_start, has_adjectives;
 
 	if (article == ARTICLE_YOUR && !mtmp->mtame)
@@ -591,7 +591,7 @@ boolean called;
 #endif
 	    !(u.uswallow && mtmp == u.ustuck) &&
 	    !(suppress & SUPPRESS_IT);
-	do_misc = !(suppress & SUPPRESS_MISC);
+	do_saddle = !(suppress & SUPPRESS_SADDLE);
 
 	buf[0] = 0;
 
@@ -625,7 +625,7 @@ boolean called;
 	 * none of this applies.
 	 */
 	if (mtmp->isshk && !do_hallu) {
-	    if (do_misc && adjective && article == ARTICLE_THE) {
+	    if (adjective && article == ARTICLE_THE) {
 		/* pathological case: "the angry Asidonhopo the blue dragon"
 		   sounds silly */
 		Strcpy(buf, "the ");
@@ -644,13 +644,12 @@ boolean called;
 	}
 
 	/* Put the adjectives in the buffer */
-	if (do_misc && adjective)
+	if (adjective)
 	    Strcat(strcat(buf, adjective), " ");
 	if (do_invis)
 	    Strcat(buf, "invisible ");
 #ifdef STEED
-	if (do_misc && (mtmp->misc_worn_check & W_SADDLE) &&
-			!Blind && mtmp != u.usteed)
+	if (do_saddle && (mtmp->misc_worn_check & W_SADDLE) && !Blind)
 	    Strcat(buf, "saddled ");
 #endif
 	if (buf[0] != 0)
@@ -725,7 +724,8 @@ char *
 l_monnam(mtmp)
 register struct monst *mtmp;
 {
-	return(x_monnam(mtmp, ARTICLE_NONE, (char *)0, 0, TRUE));
+	return(x_monnam(mtmp, ARTICLE_NONE, (char *)0, 
+		mtmp->mnamelth ? SUPPRESS_SADDLE : 0, TRUE));
 }
 
 #endif /* OVLB */
@@ -735,7 +735,8 @@ char *
 mon_nam(mtmp)
 register struct monst *mtmp;
 {
-	return(x_monnam(mtmp, ARTICLE_THE, (char *)0, 0, FALSE));
+	return(x_monnam(mtmp, ARTICLE_THE, (char *)0,
+		mtmp->mnamelth ? SUPPRESS_SADDLE : 0, FALSE));
 }
 
 /* print the name as if mon_nam() was called, but assume that the player
@@ -746,7 +747,9 @@ char *
 noit_mon_nam(mtmp)
 register struct monst *mtmp;
 {
-	return(x_monnam(mtmp, ARTICLE_THE, (char *)0, SUPPRESS_IT, FALSE));
+	return(x_monnam(mtmp, ARTICLE_THE, (char *)0,
+		mtmp->mnamelth ? (SUPPRESS_SADDLE|SUPPRESS_IT) :
+		    SUPPRESS_IT, FALSE));
 }
 
 char *
@@ -782,7 +785,8 @@ char *
 y_monnam(mtmp)
 struct monst *mtmp;
 {
-	return x_monnam(mtmp, ARTICLE_YOUR, (char *)0, 0, FALSE);
+	return x_monnam(mtmp, ARTICLE_YOUR, (char *)0, 
+		mtmp->mnamelth ? SUPPRESS_SADDLE : 0, FALSE);
 }
 
 #endif /* OVL0 */
@@ -793,7 +797,8 @@ Adjmonnam(mtmp, adj)
 register struct monst *mtmp;
 register const char *adj;
 {
-	register char *bp = x_monnam(mtmp, ARTICLE_THE, adj, 0, FALSE);
+	register char *bp = x_monnam(mtmp, ARTICLE_THE, adj,
+		mtmp->mnamelth ? SUPPRESS_SADDLE : 0, FALSE);
 
 	*bp = highc(*bp);
 	return(bp);
@@ -803,7 +808,8 @@ char *
 a_monnam(mtmp)
 register struct monst *mtmp;
 {
-	return x_monnam(mtmp, ARTICLE_A, (char *)0, 0, FALSE);
+	return x_monnam(mtmp, ARTICLE_A, (char *)0,
+		mtmp->mnamelth ? SUPPRESS_SADDLE : 0, FALSE);
 }
 
 char *

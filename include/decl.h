@@ -299,7 +299,7 @@ E const char *materialnm[];
 #define SUPPRESS_IT		0x01
 #define SUPPRESS_INVISIBLE	0x02
 #define SUPPRESS_HALLUCINATION  0x04
-#define SUPPRESS_MISC		0x08
+#define SUPPRESS_SADDLE		0x08
 #define EXACT_NAME		0x0F
 
 /* Vision */

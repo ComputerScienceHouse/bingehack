@@ -109,7 +109,7 @@ lookat(x, y, buf, monbuf)
 		    (!hp && mtmp->mtame && !Hallucination) ? "tame " :
 		    (!hp && mtmp->mpeaceful && !Hallucination) ?
 		                                          "peaceful " : "",
-		    (hp ? "high priest" : l_monnam(mtmp)));
+		    (hp ? "high priest" : x_monnam(mtmp, ARTICLE_NONE, (char *)0, 0, TRUE)));
 	    if (u.ustuck == mtmp)
 		Strcat(buf, (Upolyd && sticks(youmonst.data)) ?
 			", being held" : ", holding you");

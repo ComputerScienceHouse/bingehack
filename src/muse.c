@@ -191,7 +191,7 @@ struct obj *otmp;
 	else
 	    You_hear("%s reading %s.",
 		x_monnam(mtmp, ARTICLE_A, (char *)0,
-		    (SUPPRESS_IT|SUPPRESS_INVISIBLE|SUPPRESS_MISC), FALSE),
+		    (SUPPRESS_IT|SUPPRESS_INVISIBLE|SUPPRESS_SADDLE), FALSE),
 		onambuf);
 
 	if (mtmp->mconf)

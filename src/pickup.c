@@ -1348,7 +1348,7 @@ gotit:
 		    int unwornmask;
 		    saddled_there = TRUE;
 		    Sprintf(qbuf, "Do you want to remove the saddle from %s?",
-				mon_nam(mtmp));
+			x_monnam(mtmp, ARTICLE_THE, (char *)0, SUPPRESS_SADDLE, FALSE));
 		    if ((c = yn_function(qbuf, ynqchars, 'n')) == 'y') {
 			if (nolimbs(youmonst.data)) {
 				You_cant("do that without limbs."); /* not body_part(HAND) */
@@ -1356,7 +1356,8 @@ gotit:
 			}
 			if (otmp->cursed) {
 				You("can't. The saddle seems to be stuck to %s.",
-					mon_nam(mtmp));
+				    x_monnam(mtmp, ARTICLE_THE, (char *)0, SUPPRESS_SADDLE, FALSE));
+					
 				/* the attempt costs you time */
 				return (1);
 			}
@@ -1379,7 +1380,7 @@ gotit:
 		/* Loot your steed, even if you can't reach the floor */
 		if (u.usteed) {
 		    Sprintf(qbuf, "Do you want to loot %s inventory?",
-		    		s_suffix(y_monnam(u.usteed)));
+	s_suffix(x_monnam(u.usteed, ARTICLE_YOUR, (char *)0, SUPPRESS_SADDLE, FALSE)));
 		    switch (c = ynq(qbuf)) {
 			case 'y':
 			    if (!u.usteed->minvent) {
@@ -1387,7 +1388,8 @@ gotit:
 				break;
 			    }
 			    /* TO DO: get and put things into the inventory */
-			    You("peek at %s inventory...", s_suffix(y_monnam(u.usteed)));;
+			    You("peek at %s inventory...",
+	s_suffix(x_monnam(u.usteed, ARTICLE_YOUR, (char *)0, SUPPRESS_SADDLE, FALSE)));
 			    (void) display_minventory(u.usteed, MINV_ALL);
 			    timepassed = 1;
 			    break;

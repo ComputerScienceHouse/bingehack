@@ -321,13 +321,10 @@ register struct monst *mtmp;
 	if (mtmp == u.usteed)	  Strcat(info, ", carrying you");
 #endif
 
-	Strcpy(monnambuf, noit_mon_nam(mtmp));
 	/* avoid "Status of the invisible newt ..., invisible" */
-	if (mtmp->minvis && strstri(monnambuf, "invisible")) {
-	    mtmp->minvis = 0;
-	    Strcpy(monnambuf, mon_nam(mtmp));
-	    mtmp->minvis = 1;
-	}
+	/* and unlike a normal mon_nam, use "saddled" even if it has a name */
+	Strcpy(monnambuf, x_monnam(mtmp, ARTICLE_THE, (char *)0,
+	    (SUPPRESS_IT|SUPPRESS_INVISIBLE), FALSE));
 
 	pline("Status of %s (%s):  Level %d  HP %d(%d)  AC %d%s.",
 		monnambuf,
