@@ -83,7 +83,7 @@ Build.ami       HackWB.uu       Install.ami     Makefile.ami    NHinfo.uu
 NetHack.cnf     NewGame.uu      amidos.c        amidos.p        amifont.uu
 amifont8.uu     amigst.c        amii.hlp        amilib.c        amimenu.c
 amirip.c        amisnd.c        amistack.c      amitty.c        amiwbench.c
-amiwind.p       ask.uu          char.c          charwin.uu      amiwind.c
+amiwind.c       amiwind.p       ask.uu          char.c          charwin.uu
 clipwin.c       clipwin.uu      colors.uu       colorwin.c      cvtsnd.c
 dflticon.uu     dispmap.s       grave16.xpm     hackwb.hlp      ifchange
 mkdmake         randwin.c       randwin.uu      scroll.uu       string.uu
