@@ -1851,7 +1851,7 @@ Included in all official distributions of NetHack is a file called
 the game to run in a manner accessible to the blind. After you have gained
 some experience with the game and with editing files, you may want to alter
 settings to better suit your preferences. Instructions on how to do this
-are included in the \fBNHAccess.cnf\fP file itself. The most crucial settings to
+are included in the \fBNHAccess.nh\fP file itself. The most crucial settings to
 make the game accessible are:
 .pg
 .lp IBMgraphics
