@@ -92,6 +92,8 @@ Please read items (1), (2) and (3) BEFORE doing anything with your new code.
 
         Apple Macintosh running MacOS 7.5 or higher, LinuxPPC, BeOS 4.0
         Atari ST/TT/Falcon running TOS (or MultiTOS) with GCC
+        Commodore Amiga running AmigaDOS 3.0 or higher with SAS/C 6.x
+                (but see Makefile.ami about DICE and Manx)
         DEC Alpha/VMS (aka OpenVMS AXP), running V1.x through V7.0
         DEC VAX/VMS, running V4.6 through V7.0
         HP 9000s700 running HP-UX 10.x, 11.x
@@ -113,8 +115,6 @@ Please read items (1), (2) and (3) BEFORE doing anything with your new code.
         AT&T 3B2/1000 Model 80 running System V R3.2.2
         AT&T 3B4000 running System V
         AT&T 6386 running System V R3.2
-        Commodore Amiga running AmigaDOS 1.3 or greater with SAS/C 6.55
-                (but see Install.ami about DICE and Manx)
         Data General AViiON systems running DG/UX
         DEC vaxen running BSD, Ultrix
         Decstations running Ultrix 3.1, 4.x

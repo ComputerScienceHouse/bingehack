@@ -516,7 +516,7 @@ INSTDUNGEONFILES= $(NETHACK)NetHack.cnf $(INSTDUNGEONFILES1)
 INSTDATAFILES= \
 	$(NETHACK)license	$(NETHACK)logfile	$(NETHACK)record \
 	$(NETHACK)tomb.iff	$(NETHACK)amii.hlp 	$(NETHACK)Recover.txt \
-	$(NETHACK)GuideBook.txt	$(NETHACK)NetHack.txt	\
+	$(NETHACK)GuideBook.txt	$(NETHACK)NetHack.txt	$(NETHACK)Install.ami \
 #	$(NETHACK)HackWB.hlp	$(NETHACK)WBDefaults.def
 
 LIBFILES= \
@@ -1257,6 +1257,9 @@ $(NETHACK)GuideBook.txt: $(DOC)GuideBook.txt
 
 $(NETHACK)NetHack.txt: $(DOC)NetHack.txt
 	copy $(DOC)NetHack.txt $@
+
+$(NETHACK)Install.ami: $(AMI)Install.ami
+	copy $(AMI)Install.ami $@
 
 #SFD_INSTEAD $(NETHACK)logfile: $(NETHACK)logfile
 $(NETHACK)logfile:

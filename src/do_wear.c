@@ -52,6 +52,7 @@ STATIC_DCL struct obj *NDECL(do_takeoff);
 STATIC_PTR int NDECL(take_off);
 STATIC_DCL int FDECL(menu_remarm, (int));
 STATIC_DCL void FDECL(already_wearing, (const char*));
+STATIC_DCL void FDECL(already_wearing2, (const char*, const char*));
 
 void
 off_msg(otmp)
@@ -1132,6 +1133,13 @@ const char *cc;
 	You("are already wearing %s%c", cc, (cc == c_that_) ? '!' : '.');
 }
 
+STATIC_OVL void
+already_wearing2(cc1, cc2)
+const char *cc1, *cc2;
+{
+	You_cant("wear %s because you're wearing %s there already.", cc1, cc2);
+}
+
 /*
  * canwearobj checks to see whether the player can wear a piece of armor
  *
@@ -1404,16 +1412,22 @@ doputon()
 			return(1);
 		}
 		Amulet_on();
-	} else {	/* it's a blindfold */
+	} else {	/* it's a blindfold, towel, or lenses */
 		if (ublindf) {
 			if (ublindf->otyp == TOWEL)
 				Your("%s is already covered by a towel.",
 					body_part(FACE));
-			else if (ublindf->otyp == BLINDFOLD)
-				already_wearing("a blindfold");
-			else if (ublindf->otyp == LENSES)
-				already_wearing("some lenses");
-			else
+			else if (ublindf->otyp == BLINDFOLD) {
+				if (otmp->otyp == LENSES)
+					already_wearing2("lenses", "a blindfold");
+				else
+					already_wearing("a blindfold");
+			} else if (ublindf->otyp == LENSES) {
+				if (otmp->otyp == BLINDFOLD)
+					already_wearing2("a blindfold", "some lenses");
+				else
+					already_wearing("some lenses");
+			} else
 				already_wearing(something); /* ??? */
 			return(0);
 		}
