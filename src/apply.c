@@ -1082,7 +1082,8 @@ light_cocktail(obj)
 	    return;
 	}
 
-	You("light %s potion.  It gives off a dim light.", shk_your(buf, obj));
+	You("light %s potion.%s", shk_your(buf, obj),
+	    Blind ? "" : "  It gives off a dim light.");
 	if (obj->unpaid) {
 	    check_unpaid(obj);		/* surcharge for use of unpaid item */
 	    bill_dummy_object(obj);	/* treat it as having been used up    */

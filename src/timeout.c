@@ -95,18 +95,24 @@ choke_dialogue()
 	if(i > 0 && i <= SIZE(choke_texts)) {
 	    if (Breathless || !rn2(50))
 		pline(choke_texts2[SIZE(choke_texts2) - i], body_part(NECK));
-	    else
-		pline(choke_texts[SIZE(choke_texts) - i], hcolor(blue));
+	    else {
+		char *str = choke_texts[SIZE(choke_texts)-i];
+
+		if (strchr(str, '%'))
+		    pline(str, hcolor(blue));
+		else
+		    pline(str);
+	    }
 	}
 	exercise(A_STR, FALSE);
 }
 
 static NEARDATA const char *slime_texts[] = {
-	"You are turning a little green.",           /* 5 */
+	"You are turning a little %s.",           /* 5 */
 	"Your limbs are getting oozy.",              /* 4 */
 	"Your skin begins to peel away.",            /* 3 */
-	"You are turning into a green slime.",       /* 2 */
-	"You have become a green slime."             /* 1 */
+	"You are turning into %s.",       /* 2 */
+	"You have become %s."             /* 1 */
 };
 
 STATIC_OVL void
@@ -115,8 +121,18 @@ slime_dialogue()
 	register long i = (Slimed & TIMEOUT) / 2L;
 
 	if (((Slimed & TIMEOUT) % 2L) && i >= 0
-	    && i < SIZE(slime_texts))
-	    pline(slime_texts[SIZE(slime_texts) - i - 1]);
+		&& i < SIZE(slime_texts)) {
+	    char *str = slime_texts[SIZE(slime_texts)-i-1];
+
+	    if (strchr(str, '%')) {
+		if (i == 4) {
+		    if (!Blind)
+			pline(str, hcolor(green));
+		} else
+		    pline(str, an(Hallucination ? rndmonnam() : "green slime"));
+	    } else
+		pline(str);
+	}
 	if(i == 4)
 	    HFast = 0;
 	exercise(A_DEX, FALSE);
