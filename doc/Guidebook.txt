@@ -27,17 +27,18 @@
           and  somehow managed to forget about them until now.  Some nights
           you awaken suddenly and cry out, terrified at the vivid recollec-
           tion  of the strange and powerful creatures that seem to be lurk-
-          ing behind every corner of the dungeon in your dream.  Could this
-          place  haunting  your  dreams  be real? As each night passes, you
-          feel the desire to enter the mysterious caverns  near  the  ruins
-          grow  stronger.   Each morning, however, you quickly put the idea
-          out of your head as you recall the tales of those who entered the
-          caverns before you and did not return.  Eventually you can resist
-          the yearning to seek out the fantastic place in  your  dreams  no
-          longer.  After  all,  when  other  adventurers came back this way
-          after spending time in the caverns, they  usually  seemed  better
-          off than when they passed through the first time.  And who was to
-          say that all of those who did not return had not just kept going?
+          ing behind every corner of the  dungeon  in  your  dream.   Could
+          these details haunting your dreams be real? As each night passes,
+          you feel the desire to enter  the  mysterious  caverns  near  the
+          ruins  grow stronger.  Each morning, however, you quickly put the
+          idea out of your head as you recall the tales of  those  who  en-
+          tered  the caverns before you and did not return.  Eventually you
+          can resist the yearning to seek out the fantastic place  in  your
+          dreams  no  longer.  After  all, when other adventurers came back
+          this way after spending time in the caverns, they usually  seemed
+          better off than when they passed through the first time.  And who
+          was to say that all of those who did not return had not just kept
+          going?
 
 
                Asking around, you hear about a bauble, called the Amulet of
@@ -46,7 +47,7 @@
           finds  the  amulet  will be granted immortality by the gods.  The
           amulet is rumored to be somewhere beyond the Valley of  Gehennom,
           deep  within  the Mazes of Menace.  Upon hearing the legends, you
-          immediately realize that there is some profound, and undiscovered
+          immediately realize that there is some profound and  undiscovered
           reason that you are to descend into the caverns and seek out that
           amulet of which they spoke.  Even if the rumors of  the  amulet's
           powers are untrue, you decide that you should at least be able to
@@ -56,7 +57,6 @@
           last  night  fortifying  yourself at the local inn, becoming more
           and more depressed as you watch the odds of  your  success  being
           posted on the inn's walls getting lower and lower.
-
 
 
 
@@ -70,13 +70,13 @@
           NetHack Guidebook                                               2
 
 
-                 In the morning you awake, gather together your belongings,
-          and  set  off  for the dungeon.  After several days of uneventful
-          travel, you see the ancient ruins that mark the entrance  to  the
-          Mazes  of  Menace.   It is late at night, so you make camp at the
-          entrance and spend the night sleeping under the open  skies.   In
-          the morning, you gather your gear, eat what may be your last meal
-          outside, and enter the dungeon...
+                 In the morning you awake, collect your belongings, and set
+          off  for  the  dungeon.  After several days of uneventful travel,
+          you see the ancient ruins that mark the entrance to the Mazes  of
+          Menace.   It  is  late at night, so you make camp at the entrance
+          and spend the night sleeping under the open skies.  In the  morn-
+          ing,  you  gather  your gear, eat what may be your last meal out-
+          side, and enter the dungeon...
 
 
           2.  What is going on here?
@@ -126,7 +126,7 @@
           as well as tracking and stealthy movement.
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -192,7 +192,7 @@
 
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -258,7 +258,7 @@
 
            Player the Rambler         St:12 Dx:7 Co:18 In:11 Wi:9 Ch:15  Neutral
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -324,7 +324,7 @@
                react  toward  you.   Monsters  of a like alignment are more
                likely to be non-aggressive,  while  those  of  an  opposing
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -390,7 +390,7 @@
 
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -429,8 +429,8 @@
 
           <    Stairs up: a way to the previous level.
 
-          +    A closed door, or a spellbook containing  a  spell  you  can
-               learn.
+          +    A closed door, or a spellbook containing a spell you may  be
+               able to learn.
 
           @    Your character or a human.
 
@@ -456,7 +456,7 @@
 
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -522,7 +522,7 @@
           count,  so  the  example  above  would be typed ``n10s'' instead.
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -588,7 +588,7 @@
 
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -654,7 +654,7 @@
 
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -720,7 +720,7 @@
 
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -786,7 +786,7 @@
           (R)UNIX is a registered trademark of AT&T.
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -841,7 +841,7 @@
           #dip Dip an object into something.
 
           #enhance
-               Advance or check weapons skills.
+               Advance or check weapons and spell skills.
 
           #force
                Force a lock.
@@ -852,7 +852,7 @@
 
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -918,7 +918,7 @@
           NetHack, the `Alt' key can be used in this fashion.
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -984,7 +984,7 @@
 
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -1050,7 +1050,7 @@
           the player gets stuck; however, they will lower your luck.
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -1116,7 +1116,7 @@
 
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -1182,7 +1182,7 @@
 
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -1227,8 +1227,8 @@
           you'll be so overloaded that you'll either have to  discard  some
           of what you're carrying or collapse under its weight.
 
-               NetHack will tell you how badly have loaded  yourself.   The
-          symbols   `Burdened',  `Stressed',  `Strained',  `Overtaxed'  and
+               NetHack will tell you how badly you  have  loaded  yourself.
+          The  symbols  `Burdened', `Stressed', `Strained', `Overtaxed' and
           `Overloaded' are displayed on the bottom line display to indicate
           your condition.
 
@@ -1248,7 +1248,7 @@
 
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -1288,7 +1288,7 @@
           the curse lifted and the item removed.  Priests  and  Priestesses
           have  an  innate  sensitivity  to this property in any object, so
           they can more easily avoid cursed objects  than  other  character
-          classes.
+          roles.
 
                An item with unknown status will be reported in your  inven-
           tory with no prefix.  An item which you know the state of will be
@@ -1314,7 +1314,7 @@
           gems).
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -1380,7 +1380,7 @@
           depends mainly on the type of object and your  strength.   Arrows
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -1446,7 +1446,7 @@
           ``grand master''.
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -1512,7 +1512,7 @@
           lowering your armor class one unit further to 4.  When you put on
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -1527,7 +1527,7 @@
           negative enchantments (minuses) in addition to being unremovable.
 
                Many types of armor are subject to some kind of damage  like
-          rust.   Such damage can be repaired.  Some types or armor may in-
+          rust.   Such damage can be repaired.  Some types of armor may in-
           hibit spell casting.
 
                The commands to use armor are `W' (wear) and `T' (take off).
@@ -1548,9 +1548,10 @@
           give you special powers when you eat them.  A good rule of  thumb
           is ``you are what you eat.''
 
-               Some classes and some monsters are  vegetarian.   Vegetarian
-          monsters will typically never eat animal corpses, while vegetari-
-          an players can, but with some rather unpleasant side-effects.
+               Some character  roles  and  some  monsters  are  vegetarian.
+          Vegetarian  monsters  will  typically  never  eat animal corpses,
+          while vegetarian players can, but  with  some  rather  unpleasant
+          side-effects.
 
                You can name one food item after something you like  to  eat
           with the fruit option.
@@ -1575,10 +1576,9 @@
           feature on versions where NetHack mail delivery is  triggered  by
           electronic  mail  appearing  in your system mailbox, you must let
           NetHack know where to look for new mail by setting  the  ``MAIL''
-          environment  variable  to the file name of your mailbox.  You may
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -1588,6 +1588,7 @@
           NetHack Guidebook                                              25
 
 
+          environment  variable  to the file name of your mailbox.  You may
           also want to set the ``MAILREADER'' environment variable  to  the
           file  name  of  your  favorite reader, so NetHack can shell to it
           when you read the scroll.  On versions of NetHack where  mail  is
@@ -1640,11 +1641,10 @@
           then by its current number of charges.  A current charge count of
           -1 is a special case indicating that the wand has been cancelled.
 
-               The command to use a wand is `z' (zap).  To break  one,  use
-          the `a' (apply) command.
 
 
-          NetHack 3.3                                         June 28, 2000
+
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -1653,6 +1653,9 @@
 
           NetHack Guidebook                                              26
 
+
+               The command to use a wand is `z' (zap).  To break  one,  use
+          the `a' (apply) command.
 
           7.8.  Rings (`=')
 
@@ -1671,14 +1674,16 @@
           7.9.  Spellbooks (`+')
 
                Spellbooks are tomes of mighty magic.  When studied with the
-          `r'  (read)  command, they bestow the knowledge of a spell-unless
-          the attempt backfires.  Reading a cursed spellbook  or  one  with
-          mystic runes beyond your ken can be harmful to your health!
+          `r'  (read) command, they transfer to the reader the knowledge of
+          a spell (and therefore eventually become unreadable) - unless the
+          attempt backfires.  Reading a cursed spellbook or one with mystic
+          runes beyond your ken can be harmful to your health!
 
                A spell (even when learned) can also backfire when you  cast
           it.   If  you  attempt to cast a spell well above your experience
-          level, or cast it at a time when your luck is  particularly  bad,
-          you  can  end up wasting both the energy and the time required in
+          level, or if you have little skill  with  the  appropriate  spell
+          type,  or  cast  it at a time when your luck is particularly bad,
+          you can end up wasting both the energy and the time  required  in
           casting.
 
                Casting a spell calls forth  magical  energies  and  focuses
@@ -1687,6 +1692,13 @@
           spell, your familiarity with it will dwindle, until you eventual-
           ly forget the details completely and must relearn it.
 
+               Just as weapons are divided into groups in which a character
+          can  become proficient (to varying degrees), spells are similarly
+          grouped.  Successfully casting a spell exercises the skill group;
+          sufficient skill may increase the potency of the spell and reduce
+          the risk of spell failure.  Skill slots are shared  with  weapons
+          skills.  (See also the section on ``Weapon proficiency''.)
+
                Casting a spell also requires flexible movement, and wearing
           various types of armor may interfere with that.
 
@@ -1694,6 +1706,19 @@
           `r'  (read).   The  `+' command lists your current spells and the
           number of spell points they  require.   The  `Z'  (cast)  command
           casts a spell.
+
+
+
+
+          NetHack 3.3                                        August 2, 2000
+
+
+
+
+
+
+          NetHack Guidebook                                              27
+
 
           7.10.  Tools (`(')
 
@@ -1708,18 +1733,6 @@
 
                You may encounter bags, boxes, and chests in  your  travels.
           A  tool  of  this  sort can be opened with the ``#loot'' extended
-
-
-          NetHack 3.3                                         June 28, 2000
-
-
-
-
-
-
-          NetHack Guidebook                                              27
-
-
           command when you are standing on top of it (that is, on the  same
           floor  spot), or with the `a' (apply) command when you are carry-
           ing it.  However, chests are often locked, and are  in  any  case
@@ -1761,6 +1774,18 @@
           generally  heavy.   It  is rumored that some statues are not what
           they seem.
 
+
+
+          NetHack 3.3                                        August 2, 2000
+
+
+
+
+
+
+          NetHack Guidebook                                              28
+
+
                Very large humanoids (giants and their ilk) have been  known
           to use boulders as weapons.
 
@@ -1770,20 +1795,6 @@
           with  it.  There are a number of monsters in the dungeon that may
           be influenced by the amount of gold you are carrying (shopkeepers
           aside).
-
-
-
-
-
-
-          NetHack 3.3                                         June 28, 2000
-
-
-
-
-
-
-          NetHack Guidebook                                              28
 
 
           8.  Conduct
@@ -1829,6 +1840,18 @@
 
                Eating any kind of meat violates the vegetarian, vegan,  and
           foodless  conducts.   This includes tripe rations, the corpses or
+
+
+          NetHack 3.3                                        August 2, 2000
+
+
+
+
+
+
+          NetHack Guidebook                                              29
+
+
           tins of any monsters not mentioned above, and the  various  other
           chunks  of meat found in the dungeon.  Swallowing and digesting a
           monster while polymorphed is treated as if you ate the creature's
@@ -1840,18 +1863,6 @@
 
                Regardless of conduct, there will be some  items  which  are
           indigestible,  and  others  which  are hazardous to eat.  Using a
-
-
-          NetHack 3.3                                         June 28, 2000
-
-
-
-
-
-
-          NetHack Guidebook                                              29
-
-
           swallow-and-digest attack against a monster is equivalent to eat-
           ing the monster's corpse.  Please note that the term ``vegan'' is
           used here only in the context of diet.  You  are  still  free  to
@@ -1895,6 +1906,18 @@
           starting  inventory  is  assumed to be learned from your teachers
           prior to the start of the game and isn't counted.
 
+
+
+          NetHack 3.3                                        August 2, 2000
+
+
+
+
+
+
+          NetHack Guidebook                                              30
+
+
                There are several other minor challenges.  It is possible to
           eliminate a species of monsters by genocide; playing without this
           feature is considered a challenge.  You can change  the  form  of
@@ -1905,17 +1928,6 @@
           ceive  wishes; a game without an attempt to wish for an object is
           a challenge, as is a game without wishing for an  artifact  (even
           if the artifact immediately disappears).
-
-
-
-          NetHack 3.3                                         June 28, 2000
-
-
-
-
-
-
-          NetHack Guidebook                                              30
 
 
           9.  Options
@@ -1959,6 +1971,19 @@
 
           in sh or ksh.
 
+
+
+
+          NetHack 3.3                                        August 2, 2000
+
+
+
+
+
+
+          NetHack Guidebook                                              31
+
+
           9.3.  Using a configuration file
 
                Any line in  the  configuration  file  starting  with  ``OP-
@@ -1971,18 +1996,6 @@
           displaying  each entry.  Such a sequence can be continued to mul-
           tiple lines by putting a `\' at the end of each line to  be  con-
           tinued.  Any line starting with `#' is treated as a comment.
-
-
-
-          NetHack 3.3                                         June 28, 2000
-
-
-
-
-
-
-          NetHack Guidebook                                              31
-
 
                The default name of the configuration file  varies  on  dif-
           ferent  operating  systems, but NETHACKOPTIONS can also be set to
@@ -2025,6 +2038,18 @@
                Name your starting cat (ex. ``catname:Morris'').  Cannot  be
                set with the `O' command.
 
+
+
+          NetHack 3.3                                        August 2, 2000
+
+
+
+
+
+
+          NetHack Guidebook                                              32
+
+
           character
                Pick  your  type  of  character  (ex.   ``character:Monk'');
                synonym  for ``role''.  See ``name'' for an alternate method
@@ -2038,18 +2063,6 @@
 
           checkspace
                Check free disk space before writing files to disk  (default
-
-
-          NetHack 3.3                                         June 28, 2000
-
-
-
-
-
-
-          NetHack Guidebook                                              32
-
-
                on).   You may have to turn this off if you have more than 2
                GB free space on the partition used for your save and  level
                files.   Only applies when MFLOPPY was defined during compi-
@@ -2090,23 +2103,10 @@
                Set the graphics symbols for displaying the dungeon (default
                `` |--------||.-|++##.##<><>_|\\#{}.}..## #}'').         The
                dungeon option should be followed by a string of 1-41  char-
-               acters to be used instead of the default map-drawing charac-
-               ters.  The dungeon map will use the characters  you  specify
-               instead  of the default symbols, and default symbols for any
-               you do not specify.  Remember that you may  need  to  escape
-               some  of these characters on a command line if they are spe-
-               cial to your shell.
-
-               Note that NetHack escape-processes  this  option  string  in
-               conventional  C fashion.  This means that `\' is a prefix to
-               take the following character literally.  Thus `\'  needs  to
-               be  represented  as  `\\'.   The  special  escape  form `\m'
-               switches on the meta bit in the following character, and the
-               `^' prefix causes the following character to be treated as a
-               control character.
+               acters  to  be  used  instead  of  the  default  map-drawing
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -2115,6 +2115,20 @@
 
           NetHack Guidebook                                              33
 
+
+               characters.  The dungeon map will  use  the  characters  you
+               specify  instead of the default symbols, and default symbols
+               for any you do not specify.  Remember that you may  need  to
+               escape  some  of  these characters on a command line if they
+               are special to your shell.
+
+               Note that NetHack escape-processes  this  option  string  in
+               conventional  C fashion.  This means that `\' is a prefix to
+               take the following character literally.  Thus `\'  needs  to
+               be  represented  as  `\\'.   The  special  escape  form `\m'
+               switches on the meta bit in the following character, and the
+               `^' prefix causes the following character to be treated as a
+               control character.
 
                The order of the symbols is:   solid  rock,  vertical  wall,
                horizontal  wall,  upper  left  corner,  upper right corner,
@@ -2156,6 +2170,18 @@
                Note that in the next release, new symbols may be added,  or
                the present ones rearranged.
 
+
+
+          NetHack 3.3                                        August 2, 2000
+
+
+
+
+
+
+          NetHack Guidebook                                              34
+
+
                Cannot be set with the `O' command.
 
           eight_bit_tty
@@ -2170,17 +2196,6 @@
                you  hit  Enter. It is implemented only by the tty port (de-
                fault off), when the game has been compiled to  support  tty
                graphics.
-
-
-          NetHack 3.3                                         June 28, 2000
-
-
-
-
-
-
-          NetHack Guidebook                                              34
-
 
           female
                An obsolete synonym for ``gender:female''.   Cannot  be  set
@@ -2220,6 +2235,19 @@
                is turned off; with X tiles, display  a  heart  symbol  near
                pets.
 
+
+
+
+          NetHack 3.3                                        August 2, 2000
+
+
+
+
+
+
+          NetHack Guidebook                                              35
+
+
           horsename
                Name your starting horse (ex. ``horsename:Trigger'').   Can-
                not be set with the `O' command.
@@ -2235,18 +2263,6 @@
 
           ignintr
                Ignore interrupt signals, including breaks (default off).
-
-
-
-          NetHack 3.3                                         June 28, 2000
-
-
-
-
-
-
-          NetHack Guidebook                                              35
-
 
           legacy
                Display an introductory message when starting the game  (de-
@@ -2287,6 +2303,17 @@
                Menu character accelerator deselect all items on  this  page
                of a menu.  Implemented only by the tty port.  Default '\'.
 
+
+          NetHack 3.3                                        August 2, 2000
+
+
+
+
+
+
+          NetHack Guidebook                                              36
+
+
           menu_first_page
                Menu character accelerator to jump to the first  page  in  a
                menu.  Implemented only by the tty port.  Default '^'.
@@ -2302,17 +2329,6 @@
           menu_last_page
                Menu character accelerator to jump to the  last  page  in  a
                menu.  Implemented only by the tty port.  Default '|'.
-
-
-          NetHack 3.3                                         June 28, 2000
-
-
-
-
-
-
-          NetHack Guidebook                                              36
-
 
           menu_next_page
                Menu character accelerator to goto the next menu page.   Im-
@@ -2353,6 +2369,17 @@
                ghost,  golem,  demon,  sea monster, lizard, long worm tail,
                and mimic.  Cannot be set with the `O' command.
 
+
+          NetHack 3.3                                        August 2, 2000
+
+
+
+
+
+
+          NetHack Guidebook                                              37
+
+
           msghistory
                The number of top line messages to save (and recall with ^P)
                (default 20).  Cannot be set with the `O' command.
@@ -2368,18 +2395,6 @@
           news
                Read the NetHack news file, if present (default on).   Since
                the  news  is shown at the beginning of the game, there's no
-
-
-          NetHack 3.3                                         June 28, 2000
-
-
-
-
-
-
-          NetHack Guidebook                                              37
-
-
                point in setting this with the `O' command.
 
           null
@@ -2419,6 +2434,18 @@
           pickup_burden
                When you pick up an item that would exceed this  encumbrance
                level  (Unburdened, Burdened, streSsed, straiNed, overTaxed,
+
+
+          NetHack 3.3                                        August 2, 2000
+
+
+
+
+
+
+          NetHack Guidebook                                              38
+
+
                or overLoaded), you will be asked if you want  to  continue.
                (Default `S').
 
@@ -2434,17 +2461,6 @@
                get  pre-loaded into RAM at the start of the game.  Doing so
                enhances performance of the tile  graphics,  but  uses  more
                memory. (default on).  Cannot be set with the `O' command.
-
-
-          NetHack 3.3                                         June 28, 2000
-
-
-
-
-
-
-          NetHack Guidebook                                              38
-
 
           pushweapon
                Using the `w' (wield) command when  already  wielding  some-
@@ -2485,6 +2501,17 @@
                Show your accumulated experience points on bottom line  (de-
                fault off).
 
+
+          NetHack 3.3                                        August 2, 2000
+
+
+
+
+
+
+          NetHack Guidebook                                              39
+
+
           showscore
                Show your approximate accumulated score on bottom line  (de-
                fault off).
@@ -2498,19 +2525,6 @@
 
           standout
                Boldface monsters and ``--More--'' (default off).
-
-
-
-
-          NetHack 3.3                                         June 28, 2000
-
-
-
-
-
-
-          NetHack Guidebook                                              39
-
 
           suppress_alert
                This option may  be  set  to  a  NetHack  version  level  to
@@ -2553,6 +2567,17 @@
                teleporter, magic portal,  web,  statue  trap,  magic  trap,
                anti-magic field, polymorph trap.
 
+
+          NetHack 3.3                                        August 2, 2000
+
+
+
+
+
+
+          NetHack Guidebook                                              40
+
+
                Cannot be set with the `O' command.
 
           verbose
@@ -2565,18 +2590,6 @@
                bright.red,      bright.green,      yellow,     bright.blue,
                bright.magenta, and bright.cyan.  Cannot be set with the `O'
                command.
-
-
-
-          NetHack 3.3                                         June 28, 2000
-
-
-
-
-
-
-          NetHack Guidebook                                              40
-
 
           videoshades
                Set the intensity level of the three gray  scales  available
@@ -2619,6 +2632,18 @@
           and with editing files, you may want to alter settings to  better
           suit your preferences. Instructions on how to do this are includ-
           ed in the NHAccess.nh file itself. The most crucial  settings  to
+
+
+          NetHack 3.3                                        August 2, 2000
+
+
+
+
+
+
+          NetHack Guidebook                                              41
+
+
           make the game accessible are:
 
           IBMgraphics
@@ -2631,18 +2656,6 @@
                A lot of speech access programs use the number-pad to review
                the  screen.   If  this is the case, turn off the number_pad
                option and use the traditional Rogue-like commands.
-
-
-
-          NetHack 3.3                                         June 28, 2000
-
-
-
-
-
-
-          NetHack Guidebook                                              41
-
 
           Character graphics
                Comment out all character graphics sets found near the  bot-
@@ -2686,6 +2699,17 @@
           files and cheat death, at the paltry cost of not getting  on  the
           high score list.
 
+
+          NetHack 3.3                                        August 2, 2000
+
+
+
+
+
+
+          NetHack Guidebook                                              42
+
+
                There are two ways of enabling  explore  mode.   One  is  to
           start the game with the -X switch.  The other is to issue the `X'
           command while already playing the game.  The  other  benefits  of
@@ -2698,18 +2722,6 @@
           gue  game.  Large portions of this paper were shamelessly cribbed
           from A Guide to the Dungeons of Doom, by Michael C. Toy and  Ken-
           neth  C.  R. C. Arnold.  Small portions were adapted from Further
-
-
-          NetHack 3.3                                         June 28, 2000
-
-
-
-
-
-
-          NetHack Guidebook                                              42
-
-
           Exploration of the Dungeons of Doom, by Ken Arromdee.
 
                NetHack is the product of literally dozens of people's work.
@@ -2752,6 +2764,18 @@
           code for PC NetHack 3.0.  Johnny Lee ported NetHack  3.0  to  the
           Macintosh.   Along with various other Dungeoneers, they continued
           to enhance the PC, Macintosh, and Amiga ports through  the  later
+
+
+          NetHack 3.3                                        August 2, 2000
+
+
+
+
+
+
+          NetHack Guidebook                                              43
+
+
           revisions of 3.0.
 
                Headed by Mike Stephenson and coordinated by  Izchak  Miller
@@ -2763,18 +2787,6 @@
           the code.  They added multiple dungeons, a new  display,  special
           individual  character  quests,  a  new endgame and many other new
           features, and produced NetHack 3.1.
-
-
-
-          NetHack 3.3                                         June 28, 2000
-
-
-
-
-
-
-          NetHack Guidebook                                              43
-
 
                Ken Lorber, Gregg Wonderly and Greg Olson,  with  help  from
           Richard  Addison,  Mike  Passaretti,  and Olaf Seibert, developed
@@ -2819,6 +2831,17 @@
           enthusiasts of the game added their own modifications to the game
           and made these ``variants'' publicly available:
 
+
+          NetHack 3.3                                        August 2, 2000
+
+
+
+
+
+
+          NetHack Guidebook                                              44
+
+
                Tom Proudfoot and Yuval Oren created  NetHack++,  which  was
           quickly  renamed NetHack--.  Working independently, Stephen White
           wrote NetHack Plus.  Tom Proudfoot later merged NetHack Plus  and
@@ -2830,18 +2853,6 @@
                Warren Cheung combined SLASH with the Wizard Patch  to  pro-
           duce  Slash'em,  and  with  the  help  of  Kevin Hugo, added more
           features.  Kevin later joined the DevTeam  and  incorporated  the
-
-
-          NetHack 3.3                                         June 28, 2000
-
-
-
-
-
-
-          NetHack Guidebook                                              44
-
-
           best of these ideas in NetHack 3.3.
 
                The 3.3 development team consisted of Michael  Allison,  Ken
@@ -2887,18 +2898,7 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
@@ -2964,7 +2964,7 @@
 
 
 
-          NetHack 3.3                                         June 28, 2000
+          NetHack 3.3                                        August 2, 2000
 
 
 
