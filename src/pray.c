@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)pray.c	3.3	2000/04/06	*/
+/*	SCCS Id: @(#)pray.c	3.3	2000/06/29	*/
 /* Copyright (c) Benson I. Margulies, Mike Stephenson, Steve Linhart, 1989. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -304,13 +304,14 @@ register int trouble;
 			    what = rightglow;
 		    } else if (uamul && uamul->cursed) /* amulet */
 			    otmp = uamul;
+		    else if (ublindf && ublindf->cursed) /* eyewear */
+			    otmp = ublindf;  /* must be non-blinding lenses */
 		    /* if weapon wasn't handled above, do it now */
 		    else if (welded(uwep))		/* weapon */
 			    otmp = uwep;
 		    else {
 			    for(otmp=invent; otmp; otmp=otmp->nobj)
 				if ((otmp->otyp==LOADSTONE ||
-	   			     otmp->otyp == LENSES  ||
 				     otmp->otyp==LUCKSTONE) && otmp->cursed)
 					break;
 		    }
