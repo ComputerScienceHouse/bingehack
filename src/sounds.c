@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)sounds.c	3.3	97/05/25	*/
+/*	SCCS Id: @(#)sounds.c	3.3	2000/07/24	*/
 /*	Copyright (c) 1989 Janet Walz, Mike Threepoint */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -663,9 +663,12 @@ register struct monst *mtmp;
 		verbl_msg = !rn2(3) ? "Huh?" : rn2(2) ? "What?" : "Eh?";
 	    else if (!mtmp->mcansee)
 		verbl_msg = "I can't see!";
-	    else if (mtmp->mtrapped)
+	    else if (mtmp->mtrapped) {
+		struct trap *t = t_at(mtmp->mx, mtmp->my);
+
+		if (t) t->tseen = 1;
 		verbl_msg = "I'm trapped!";
-	    else if (mtmp->mhp < mtmp->mhpmax/2)
+	    } else if (mtmp->mhp < mtmp->mhpmax/2)
 		pline_msg = "asks for a potion of healing.";
 	    else if (mtmp->mtame && !mtmp->isminion &&
 						moves > EDOG(mtmp)->hungrytime)
