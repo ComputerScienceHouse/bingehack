@@ -482,7 +482,7 @@ register struct monst *mtmp;
 		    		verbl_msg = "I only drink... potions.";
     	        } else {
 			int vampindex;
-	    		char *vampmsg[] = {
+	    		static const char *vampmsg[] = {
 			       /* These first two (0 and 1) are specially handled below */
 	    			"I vant to suck your %s!",
 	    			"I vill come after %s without regret!",
