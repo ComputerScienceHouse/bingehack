@@ -127,8 +127,9 @@ STATIC_DCL void FDECL(contained, (winid, const char *, long *, long *));
 STATIC_PTR int NDECL(wiz_show_stats);
 # endif
 STATIC_PTR int NDECL(enter_explore_mode);
-STATIC_PTR int NDECL(wiz_attributes);
+STATIC_PTR int NDECL(doattributes);
 STATIC_PTR int NDECL(doconduct); /**/
+STATIC_PTR void NDECL(minimal_enlightenment);
 
 #ifdef OVLB
 STATIC_DCL void FDECL(enlght_line, (const char *,const char *,const char *));
@@ -939,13 +940,94 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 	return;
 }
 
-STATIC_PTR int
-wiz_attributes()
+/*
+ * Courtesy function for non-debug, non-explorer mode players
+ * to help refresh them about who/what they are.
+ */
+STATIC_OVL
+void minimal_enlightenment()
 {
+	winid tmpwin;
+	menu_item *selected;
+	anything any;
+	char buf[BUFSZ], buf2[BUFSZ];
+	char fmtstr[] = "%-15s: %-12s";
+	boolean currentgend = Upolyd ? u.mfemale : flags.female;
+
+	any.a_void = 0;
+	buf[0] = buf2[0] = '\0';
+	tmpwin = create_nhwindow(NHW_MENU);
+	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_BOLD, "Starting", FALSE);
+
+	/* Starting name, race, role, gender */
+	Sprintf(buf, fmtstr, "name", plname);
+	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
+	Sprintf(buf, fmtstr, "race", urace.noun);
+	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
+	Sprintf(buf, fmtstr, "role",
+		(flags.initgend && urole.name.f) ? urole.name.f : urole.name.m);
+	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
+	Sprintf(buf, fmtstr, "gender", genders[flags.initgend].adj);
+	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
+
+	/* Starting alignment */
+	Sprintf(buf, fmtstr, "alignment", align_str(u.ualignbase[0]));
+	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
+
+	/* Current name, race, role, gender */
+	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, "", FALSE);
+	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_BOLD, "Current", FALSE);
+	Sprintf(buf, fmtstr, "name", plname);
+	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
+	Sprintf(buf, fmtstr, "race", Upolyd ? youmonst.data->mname : urace.noun);
+	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
+	if (!Upolyd) {
+	    Sprintf(buf, fmtstr, "role",
+		(currentgend && urole.name.f) ? urole.name.f : urole.name.m);
+	    add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
+	}
+	Sprintf(buf, fmtstr, "gender", genders[currentgend].adj);
+	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
+
+	/* Current alignment */
+	Sprintf(buf, fmtstr, "alignment", align_str(u.ualign.type));
+	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
+
+	/* Deity list */
+	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, "", FALSE);
+	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_BOLD, "Deities", FALSE);
+	Sprintf(buf2, "%-17s%s", align_gname(A_CHAOTIC),
+	    (u.ualignbase[0] == u.ualign.type && u.ualign.type == A_CHAOTIC) ? " (s,c)" :
+	    (u.ualignbase[0] == A_CHAOTIC)       ? " (s)" :
+	    (u.ualign.type   == A_CHAOTIC)       ? " (c)" : "");
+    	Sprintf(buf, fmtstr, "chaotic deity", buf2);
+	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
+
+	Sprintf(buf2, "%-17s%s", align_gname(A_NEUTRAL),
+	    (u.ualignbase[0] == u.ualign.type && u.ualign.type == A_NEUTRAL) ? " (s,c)" :
+	    (u.ualignbase[0] == A_NEUTRAL)       ? " (s)" :
+	    (u.ualign.type   == A_NEUTRAL)       ? " (c)" : "");
+    	Sprintf(buf, fmtstr, "neutral deity", buf2);
+	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
+
+	Sprintf(buf2, "%-17s%s", align_gname(A_LAWFUL),
+	    (u.ualignbase[0] == u.ualign.type && u.ualign.type == A_LAWFUL)  ? " (s,c)" :
+	    (u.ualignbase[0] == A_LAWFUL)        ? " (s)" :
+	    (u.ualign.type   == A_LAWFUL)        ? " (c)" : "");
+    	Sprintf(buf, fmtstr, "lawful  deity", buf2);
+	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
+
+	end_menu(tmpwin, "Base Attributes");
+	(void) select_menu(tmpwin, PICK_NONE, &selected);
+	destroy_nhwindow(tmpwin);
+}
+
+STATIC_PTR int
+doattributes()
+{
+	minimal_enlightenment();
 	if (wizard || discover)
 		enlightenment(0);
-	else
-		pline("Unavailable command '^X'.");
 	return 0;
 }
 
@@ -1083,7 +1165,7 @@ static const struct func_tab cmdlist[] = {
 	{C('v'), TRUE, wiz_level_tele},
 	{C('w'), TRUE, wiz_wish},
 #endif
-	{C('x'), TRUE, wiz_attributes},
+	{C('x'), TRUE, doattributes},
 #ifdef SUSPEND
 	{C('z'), TRUE, dosuspend},
 #endif
