@@ -130,11 +130,13 @@ it might come back, but don't hold your breath.
 Dean Luick, Mark Modrall, and Kevin Hugo maintained and enhanced the
 Macintosh port of 3.3.
 
-The Atari port of NetHack was discontinued.
-
 Michael Allison ported 3.3 for the Microsoft Windows NT platform.
 
 Ron Van Iwaarden took over responsibility for the OS/2 port.
+
+The Atari port of NetHack was resurrected for 3.3.1 by Christian "Marvin"
+Bressler.
+
 			   - - - - - - - - - -
 
 From time to time, some depraved individual out there in netland sends a
@@ -142,35 +144,35 @@ particularly intriguing modification to help out with the game.  The Gods of
 the Dungeon sometimes make note of the names of the worst of these miscreants
 in this, the list of Dungeoneers:
 
-    Adam Aronow               Irina Rempt-Drijfhout     Mike Passaretti
-    Andy Church               Izchak Miller             Mike Stephenson
-    Andy Swanson              Janet Walz                Norm Meluch
-    Ari Huttunen              Jean-Christophe Collet    Olaf Seibert
-    Barton House              Jochen Erwied             Pat Rankin
-    Benson I. Margulies       John Kallen               Paul Winner
-    Bill Dyer                 John Rupley               Pierre Martineau
-    Boudewijn Waijers         John S. Bien              Ralf Brown
-    Bruce Cox                 Johnny Lee                Richard Addison
-    Bruce Holloway            Jon W{tte                 Richard Beigel
-    Bruce Mewborne            Jonathan Handler          Richard P. Hughey
-    Carl Schelin              Joshua Delahunty          Rob Menke
-    Chris Russo               Keizo Yamamoto            Robin Johnson
-    David Cohrs               Ken Arromdee              Roland McGrath
-    David Damerell            Ken Lorber                Ron Van Iwaarden
-    David Gentzel             Ken Washikita             Ronnen Miller
-    David Hairston            Kevin Darcy               Ross Brown
-    Dean Luick                Kevin Hugo                Sascha Wostmann
-    Del Lamb                  Kevin Sitze               Scott R. Turner
-    Deron Meranda             Kevin Smolkowski          Stephen Spackman
-    Dylan O'Donnell           Kevin Sweet               Stephen White
-    Eric Backus               Lars Huttar               Steve Creps
-    Eric Hendrickson          Mark Gooderum             Steve Linhart
-    Eric R. Smith             Mark Modrall              Steve VanDevender
-    Eric S. Raymond           Matthew Day               Tim Lennan
-    Frederick Roeber          Merlyn LeRoy              Timo Hakulinen
-    Gil Neiger                Michael Allison           Tom Almy
-    Greg Laskin               Michael Feir              Tom West
-    Greg Olson                Michael Hamel             Warren Cheung
-    Gregg Wonderly            Michael Sokolov           Warwick Allison
-    Hao-yang Wang             Mike Engber               Yitzhak Sapir
-    Helge Hafting             Mike Gallop
+    Adam Aronow               Irina Rempt-Drijfhout     Mike Gallop
+    Andy Church               Izchak Miller             Mike Passaretti
+    Andy Swanson              Janet Walz                Mike Stephenson
+    Ari Huttunen              Jean-Christophe Collet    Norm Meluch
+    Barton House              Jochen Erwied             Olaf Seibert
+    Benson I. Margulies       John Kallen               Pat Rankin
+    Bill Dyer                 John Rupley               Paul Winner
+    Boudewijn Waijers         John S. Bien              Pierre Martineau
+    Bruce Cox                 Johnny Lee                Ralf Brown
+    Bruce Holloway            Jon W{tte                 Richard Addison
+    Bruce Mewborne            Jonathan Handler          Richard Beigel
+    Carl Schelin              Joshua Delahunty          Richard P. Hughey
+    Chris Russo               Keizo Yamamoto            Rob Menke
+    David Cohrs               Ken Arromdee              Robin Johnson
+    David Damerell            Ken Lorber                Roland McGrath
+    David Gentzel             Ken Washikita             Ron Van Iwaarden
+    David Hairston            Kevin Darcy               Ronnen Miller
+    Dean Luick                Kevin Hugo                Ross Brown
+    Del Lamb                  Kevin Sitze               Sascha Wostmann
+    Deron Meranda             Kevin Smolkowski          Scott R. Turner
+    Dylan O'Donnell           Kevin Sweet               Stephen Spackman
+    Eric Backus               Lars Huttar               Stephen White
+    Eric Hendrickson          Mark Gooderum             Steve Creps
+    Eric R. Smith             Mark Modrall              Steve Linhart
+    Eric S. Raymond           Marvin Bressler           Steve VanDevender
+    Frederick Roeber          Matthew Day               Tim Lennan
+    Gil Neiger                Merlyn LeRoy              Timo Hakulinen
+    Greg Laskin               Michael Allison           Tom Almy
+    Greg Olson                Michael Feir              Tom West
+    Gregg Wonderly            Michael Hamel             Warren Cheung
+    Hao-yang Wang             Michael Sokolov           Warwick Allison
+    Helge Hafting             Mike Engber               Yitzhak Sapir

@@ -800,8 +800,8 @@ stored in a file on disk.  If you're moving to a previously visited
 level, it will be loaded from its file on disk and reactivated.  If
 you're moving to a level which has not yet been visited, it will be
 created (from scratch for most random levels, from a template for
-some "special" levels, or loaded from the remains of an earlier game
-for a "bones" level as briefly described below).  Monsters are only
+some ``special'' levels, or loaded from the remains of an earlier game
+for a ``bones'' level as briefly described below).  Monsters are only
 active on the current level; those on other levels are essentially
 placed into stasis.
 .pg
@@ -1080,9 +1080,9 @@ skilled in daggers or staves but not in swords or bows.
 The `#enhance' extended command is used to review current weapons proficiency
 (also spell proficiency) and to choose which skill(s) to improve when
 you've used one or more skills enough to become eligible to do so.  The
-skill rankings are "none" (sometimes also referred to as "restricted",
-because you won't be able to advance), "unskilled", "basic", "skilled",
-and "expert".  Restricted skills simply will not appear in the list
+skill rankings are ``none'' (sometimes also referred to as ``restricted'',
+because you won't be able to advance), ``unskilled'', ``basic'', ``skilled'',
+and ``expert''.  Restricted skills simply will not appear in the list
 shown by `#enhance'.  (Divine intervention might unrestrict a particular
 skill, in which case it will start at unskilled and be limited to basic.)
 .pg
@@ -2059,11 +2059,13 @@ it might come back, but don't hold your breath.
 \fBDean Luick\fP, \fBMark Modrall\fP, and \fBKevin Hugo\fP maintained and enhanced the
 Macintosh port of 3.3.
 .pg
-The Atari port of NetHack was discontinued.
-.pg
 \fBMichael Allison\fP maintained and enhanced 3.3 for the Microsoft Windows NT platform.
 .pg
 \fBRon Van Iwaarden\fP took over responsibility for the OS/2 port.
+.pg
+The Atari port of NetHack was resurrected for 3.3.1 by \fBChristian ``Marvin''
+Bressler\fP.
+.pg
 			   - - - - - - - - - -
 .pg
 From time to time, some depraved individual out there in netland sends a
@@ -2076,38 +2078,38 @@ in this, the list of Dungeoneers:
 center;
 c c c.
 .\"TABLE_START
-Adam Aronow	Irina Rempt-Drijfhout	Mike Passaretti
-Andy Church	Izchak Miller	Mike Stephenson
-Andy Swanson	Janet Walz	Norm Meluch
-Ari Huttunen	Jean-Christophe Collet	Olaf Seibert
-Barton House	Jochen Erwied	Pat Rankin
-Benson I. Margulies	John Kallen	Paul Winner
-Bill Dyer	John Rupley	Pierre Martineau
-Boudewijn Waijers	John S. Bien	Ralf Brown
-Bruce Cox	Johnny Lee	Richard Addison
-Bruce Holloway	Jon W{tte	Richard Beigel
-Bruce Mewborne	Jonathan Handler	Richard P. Hughey
-Carl Schelin	Joshua Delahunty	Rob Menke
-Chris Russo	Keizo Yamamoto	Robin Johnson
-David Cohrs	Ken Arromdee	Roland McGrath
-David Damerell	Ken Lorber	Ron Van Iwaarden
-David Gentzel	Ken Washikita	Ronnen Miller
-David Hairston	Kevin Darcy	Ross Brown
-Dean Luick	Kevin Hugo	Sascha Wostmann
-Del Lamb	Kevin Sitze	Scott R. Turner
-Deron Meranda	Kevin Smolkowski	Stephen Spackman
-Dylan O'Donnell	Kevin Sweet	Stephen White
-Eric Backus	Lars Huttar	Steve Creps
-Eric Hendrickson	Mark Gooderum	Steve Linhart
-Eric R. Smith	Mark Modrall	Steve VanDevender
-Eric S. Raymond	Matthew Day	Tim Lennan
-Frederick Roeber	Merlyn LeRoy	Timo Hakulinen
-Gil Neiger	Michael Allison	Tom Almy
-Greg Laskin	Michael Feir	Tom West
-Greg Olson	Michael Hamel	Warren Cheung
-Gregg Wonderly	Michael Sokolov	Warwick Allison
-Hao-yang Wang	Mike Engber	Yitzhak Sapir
-Helge Hafting	Mike Gallop
+Adam Aronow	Irina Rempt-Drijfhout	Mike Gallop
+Andy Church	Izchak Miller	Mike Passaretti
+Andy Swanson	Janet Walz	Mike Stephenson
+Ari Huttunen	Jean-Christophe Collet	Norm Meluch
+Barton House	Jochen Erwied	Olaf Seibert
+Benson I. Margulies	John Kallen	Pat Rankin
+Bill Dyer	John Rupley	Paul Winner
+Boudewijn Waijers	John S. Bien	Pierre Martineau
+Bruce Cox	Johnny Lee	Ralf Brown
+Bruce Holloway	Jon W{tte	Richard Addison
+Bruce Mewborne	Jonathan Handler	Richard Beigel
+Carl Schelin	Joshua Delahunty	Richard P. Hughey
+Chris Russo	Keizo Yamamoto	Rob Menke
+David Cohrs	Ken Arromdee	Robin Johnson
+David Damerell	Ken Lorber	Roland McGrath
+David Gentzel	Ken Washikita	Ron Van Iwaarden
+David Hairston	Kevin Darcy	Ronnen Miller
+Dean Luick	Kevin Hugo	Ross Brown
+Del Lamb	Kevin Sitze	Sascha Wostmann
+Deron Meranda	Kevin Smolkowski	Scott R. Turner
+Dylan O'Donnell	Kevin Sweet	Stephen Spackman
+Eric Backus	Lars Huttar	Stephen White
+Eric Hendrickson	Mark Gooderum	Steve Creps
+Eric R. Smith	Mark Modrall	Steve Linhart
+Eric S. Raymond	Marvin Bressler	Steve VanDevender
+Frederick Roeber	Matthew Day	Tim Lennan
+Gil Neiger	Merlyn LeRoy	Timo Hakulinen
+Greg Laskin	Michael Allison	Tom Almy
+Greg Olson	Michael Feir	Tom West
+Gregg Wonderly	Michael Hamel	Warren Cheung
+Hao-yang Wang	Michael Sokolov	Warwick Allison
+Helge Hafting	Mike Engber	Yitzhak Sapir
 .\"TABLE_END  Do not delete this line.
 .TE
 .ed
