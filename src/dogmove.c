@@ -98,8 +98,10 @@ struct obj *obj;
 		nutrit = eaten_stat(nutrit, obj);
 	    }
 	} else if (obj->oclass == GOLD_CLASS) {
-	    mtmp->meating = ((int)obj->quan/2000) + 1;
-	    nutrit = ((int)obj->quan/20);
+	    mtmp->meating = (int)(obj->quan/2000) + 1;
+	    if (mtmp->meating < 0) mtmp->meating = 1;
+	    nutrit = (int)(obj->quan/20);
+	    if (nutrit < 0) nutrit = 0;
 	} else {
 	    /* Unusual pet such as gelatinous cube eating odd stuff.
 	     * meating made consistent with wild monsters in mon.c.

@@ -458,6 +458,7 @@ toofar:
 			    return(mattacku(mtmp));
 			} else
 				return(0);
+			/*NOTREACHED*/
 			break;
 		    case 2:	/* monster died */
 			return(1);

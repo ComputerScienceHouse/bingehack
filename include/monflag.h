@@ -169,7 +169,7 @@
 #define MZ_GIGANTIC	7		/* off the scale */
 
 
-/* Monster races */
+/* Monster races -- must stay within ROLE_RACEMASK */
 /* Eventually this may become its own field */
 #define MH_HUMAN	M2_HUMAN
 #define MH_ELF		M2_ELF

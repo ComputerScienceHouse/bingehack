@@ -18,7 +18,7 @@ STATIC_DCL void FDECL(kickdmg, (struct monst *, BOOLEAN_P));
 STATIC_DCL void FDECL(kick_monster, (XCHAR_P, XCHAR_P));
 STATIC_DCL int FDECL(kick_object, (XCHAR_P, XCHAR_P));
 STATIC_DCL char *FDECL(kickstr, (char *));
-STATIC_DCL void FDECL(otransit_msg, (struct obj *, BOOLEAN_P, int));
+STATIC_DCL void FDECL(otransit_msg, (struct obj *, BOOLEAN_P, long));
 STATIC_DCL void FDECL(drop_to, (coord *,SCHAR_P));
 
 static NEARDATA struct obj *kickobj;
@@ -1158,7 +1158,7 @@ boolean shop_floor_obj;
 	struct obj *obj;
 	struct trap *t;
 	boolean nodrop, unpaid, container, impact = FALSE;
-	int n = 0;
+	long n = 0L;
 
 	if (!otmp) return(FALSE);
 	if ((toloc = down_gate(x, y)) == MIGR_NOWHERE) return(FALSE);
@@ -1280,7 +1280,7 @@ STATIC_OVL void
 otransit_msg(otmp, nodrop, num)
 register struct obj *otmp;
 register boolean nodrop;
-int num;
+long num;
 {
 	char obuf[BUFSZ];
 
@@ -1292,8 +1292,8 @@ int num;
 	if(num) { /* means: other objects are impacted */
 	    Sprintf(eos(obuf), " hit%s %s object%s",
 		      otmp->quan == 1L ? "s" : "",
-		      num == 1 ? "another" : "other",
-		      num > 1 ? "s" : "");
+		      num == 1L ? "another" : "other",
+		      num > 1L ? "s" : "");
 	    if(nodrop)
 		Sprintf(eos(obuf), ".");
 	    else

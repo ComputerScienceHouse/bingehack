@@ -1132,8 +1132,8 @@ register struct obj *obj;
 	case POT_MONSTER_DETECTION:
 	case POT_OBJECT_DETECTION:
 	case POT_OIL:
-*/
 		break;
+*/
 	}
 	/* note: no obfree() */
 	if (obj->dknown)

@@ -471,6 +471,7 @@ int curse_bless;
 		break;
 	    default:
 		goto not_chargable;
+		/*NOTREACHED*/
 		break;
 	    } /* switch */
 

@@ -1509,7 +1509,7 @@ long timeout;
 	struct obj *figurine = (struct obj *)arg;
 	struct monst *mtmp;
 	coord cc;
-	boolean cansee_spot, silent, montype_exists, okay_spot;
+	boolean cansee_spot, silent, okay_spot;
 	boolean redraw = FALSE;
 	char monnambuf[BUFSZ], carriedby[BUFSZ];
 
@@ -1519,8 +1519,6 @@ long timeout;
 #endif
 	    return;
 	}
-	montype_exists = (mvitals[figurine->corpsenm].mvflags &
-			 (G_GENOD | G_EXTINCT)) ? FALSE : TRUE;
 	silent = (timeout != monstermoves); /* happened while away */
 	okay_spot = get_obj_location(figurine, &cc.x, &cc.y, 0);
 	if (figurine->where == OBJ_INVENT ||

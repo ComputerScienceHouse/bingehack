@@ -1610,7 +1610,7 @@ blocked_boulder(dx,dy)
 int dx,dy;
 {
     register struct obj *otmp;
-    int count=0;
+    long count = 0L;
 
     for(otmp = level.objects[u.ux+dx][u.uy+dy]; otmp; otmp = otmp->nexthere) {
 	if(otmp->otyp == BOULDER)

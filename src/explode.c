@@ -396,7 +396,9 @@ struct obj *obj;			/* only scatter this obj        */
 
 	while ((otmp = individual_object ? obj : level.objects[sx][sy]) != 0) {
 	    if (otmp->quan > 1L) {
-		qtmp = (long)rnd((int)otmp->quan - 1);
+		qtmp = otmp->quan - 1;
+		if (qtmp > LARGEST_INT) qtmp = LARGEST_INT;
+		qtmp = (long)rnd((int)qtmp);
 		(void) splitobj(otmp, qtmp);
 		if (qtmp < otmp->quan)
 			split_up = TRUE;

@@ -16,7 +16,7 @@
 #define FIRST_AMULET AMULET_OF_ESP
 #define LAST_AMULET  AMULET_OF_YENDOR
  
-struct valuable_data { int count; int typ; };
+struct valuable_data { long count; int typ; };
 
 struct valuable_data
 	gems[LAST_GEM+1 - FIRST_GEM + 1], /* 1 extra for glass */
@@ -618,14 +618,14 @@ die:
 
 	    for (val = valuables; val->list; val++)
 		for (i = 0; i < val->size; i++) {
-		    val->list[i].count = 0;
+		    val->list[i].count = 0L;
 		}
 	    get_valuables(invent);
 
 	    /* add points for collected valuables */
 	    for (val = valuables; val->list; val++)
 		for (i = 0; i < val->size; i++)
-		    if (val->list[i].count != 0)
+		    if (val->list[i].count != 0L)
 			u.urexp += val->list[i].count
 				  * (long)objects[val->list[i].typ].oc_cost;
 
@@ -681,9 +681,9 @@ die:
 		sort_valuables(val->list, val->size);
 		for (i = 0; i < val->size && !done_stopprint; i++) {
 		    int typ = val->list[i].typ;
-		    int count = val->list[i].count;
+		    long count = val->list[i].count;
 
-		    if (count == 0) continue;
+		    if (count == 0L) continue;
 		    if (objects[typ].oc_class != GEM_CLASS || typ <= LAST_GEM) {
 			otmp = mksobj(typ, FALSE, FALSE);
 			makeknown(otmp->otyp);
@@ -697,7 +697,7 @@ die:
 		    } else {
 			Sprintf(pbuf,
 				"%8d worthless piece%s of colored glass,",
-				count, plur((long)count));
+				count, plur(count));
 		    }
 		    putstr(endwin, 0, pbuf);
 		}
