@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)wield.c	3.3	2000/01/22	*/
+/*	SCCS Id: @(#)wield.c	3.3	2000/06/04	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -392,23 +392,22 @@ dowieldquiver()
 int
 can_twoweapon()
 {
+	struct obj *otmp;
+
 #define NOT_WEAPON(obj) (!is_weptool(obj) && obj->oclass != WEAPON_CLASS)
 	if (Upolyd)
 		You("can only use two weapons in your normal form.");
 	else if (!uwep || !uswapwep)
 		Your("%s%s%s empty.", uwep ? "left " : uswapwep ? "right " : "",
 			body_part(HAND), (!uwep && !uswapwep) ? "s are" : " is");
-	else if (NOT_WEAPON(uwep) || bimanual(uwep))
-		pline("%s isn't %s%s%s.", Yname2(uwep),
-			NOT_WEAPON(uwep) ? "a ": "",
-			bimanual(uwep) ? "one-handed": "",
-			NOT_WEAPON(uwep) ? "weapon": "");
-	else if (NOT_WEAPON(uswapwep) || bimanual(uswapwep))
-		pline("%s isn't %s%s%s.", Yname2(uswapwep),
-			NOT_WEAPON(uswapwep) ? "a ": "",
-			bimanual(uswapwep) ? "one-handed": "",
-			NOT_WEAPON(uswapwep) ? "weapon": "");
-	else if (uarms)
+	else if (NOT_WEAPON(uwep) || NOT_WEAPON(uswapwep)) {
+		otmp = NOT_WEAPON(uwep) ? uwep : uswapwep;
+		pline("%s %s.", Yname2(otmp),
+		    (otmp->quan) > 1L ? "aren't weapons" : "isn't a weapon");
+	} else if (bimanual(uwep) || bimanual(uswapwep)) {
+		otmp = bimanual(uwep) ? uwep : uswapwep;
+		pline("%s isn't one-handed.", Yname2(otmp));
+	} else if (uarms)
 		You_cant("use two weapons while wearing a shield.");
 	else if (uswapwep->oartifact)
 		pline("%s resists being held second to another weapon!",
