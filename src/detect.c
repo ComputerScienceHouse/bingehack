@@ -739,8 +739,7 @@ register int x, y;
     if (Confusion && rn2(7)) return;
     lev = &levl[x][y];
 
-    if (IS_WALL(lev->typ) || lev->typ == SDOOR)
-	lev->seenv = SVALL;		/* we know they are walls */
+    lev->seenv = SVALL;
 
     /* Secret corridors are found, but not secret doors. */
     if (lev->typ == SCORR) {
