@@ -495,7 +495,7 @@ register struct obj *obj;
 			    coord xy;
 			    xy.x = x; xy.y = y;
 		    	    mtmp = montraits(obj, &xy);
-		    	    if (mtmp->mtame && !mtmp->isminion)
+		    	    if (mtmp && mtmp->mtame && !mtmp->isminion)
 				wary_dog(mtmp, TRUE);
 		    } else
  		            mtmp = makemon(&mons[montype], x, y,
