@@ -366,7 +366,7 @@ moveloop()
 #ifdef MAIL
 		    ckmailstatus();
 #endif
-		    rhack(NULL);
+		    rhack((char *)0);
 		}
 		if (u.utotype)		/* change dungeon level */
 		    deferred_goto();	/* after rhack() */

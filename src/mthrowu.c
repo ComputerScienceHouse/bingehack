@@ -435,7 +435,7 @@ register struct monst *mtmp;
 	register xchar x, y;
 	boolean ispole;
 	schar skill;
-	long multishot = 1L;
+	int multishot = 1;
 
 
 	/* Rearranged beginning so monsters can use polearms not in a line */
@@ -492,7 +492,7 @@ register struct monst *mtmp;
 				if (bigmonst(youmonst.data)) hitv++;
 				hitv += 8 + otmp->spe;
 				if (dam < 1) dam = 1;
-				thitu(hitv, dam, otmp, xname(otmp));
+				(void) thitu(hitv, dam, otmp, xname(otmp));
 
 				return;
 			}
@@ -523,10 +523,10 @@ register struct monst *mtmp;
 			    break;
 			}
 		    }
-		    if (otmp->quan < multishot) multishot = otmp->quan;
-		    if (multishot < 1L) multishot = 1L;
+		    if (otmp->quan < multishot) multishot = (int)otmp->quan;
+		    if (multishot < 1) multishot = 1;
 		    else multishot = rnd(multishot);
-		    while (multishot-- > 0L)
+		    while (multishot-- > 0)
 			m_throw(mtmp, mtmp->mx, mtmp->my, sgn(tbx), sgn(tby),
 					distmin(mtmp->mx,mtmp->my,mtmp->mux,mtmp->muy), otmp);
 		    nomul(0);

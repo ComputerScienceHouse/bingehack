@@ -1389,7 +1389,7 @@ register struct attack *mattk;
 	    			mdef->data != &mons[PM_FIRE_ELEMENTAL] &&
 	    			mdef->data != &mons[PM_GREEN_SLIME]) {
 	    	    You("turn %s into slime.", mon_nam(mdef));
-	    	    newcham(mdef, &mons[PM_GREEN_SLIME]);
+	    	    (void) newcham(mdef, &mons[PM_GREEN_SLIME]);
 	    	    tmp = 0;
 	    	}
 	    	break;
@@ -1458,7 +1458,7 @@ common:
 		} else {
 		    shieldeff(mdef->mx, mdef->my);
 		    if (is_golem(mdef->data))
-			golemeffects(mdef, mattk->adtyp, tmp);
+			golemeffects(mdef, (int)mattk->adtyp, tmp);
 		    else
 			pline_The("blast doesn't seem to affect %s.",
 				mon_nam(mdef));

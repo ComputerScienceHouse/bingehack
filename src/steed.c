@@ -167,7 +167,7 @@ doride()
 	if (wizard && yn("Force the mount to succeed?") == 'y')
 		forcemount = TRUE;
 #endif
-	    mount_steed(m_at(u.ux+u.dx, u.uy+u.dy), forcemount);
+	    (void) mount_steed(m_at(u.ux+u.dx, u.uy+u.dy), forcemount);
 	}
 	return 1;
 }
@@ -393,7 +393,7 @@ dismount_steed(fall)
 
 	    /* Put your steed in your trap */
 	    if (u.utrap && mtmp->mhp > 0)
-	    	mintrap(mtmp);
+	    	(void) mintrap(mtmp);
 	    u.utrap = 0;
 	/* Couldn't... try placing the steed */
 	} else if (enexto(&cc, u.ux, u.uy, mtmp->data))
@@ -407,7 +407,7 @@ dismount_steed(fall)
 	}
 
 	/* Return the player to the floor */
-	float_down(0L, W_SADDLE);
+	(void) float_down(0L, W_SADDLE);
 	flags.botl = 1;
 	(void)encumber_msg();
 	return;

@@ -386,8 +386,8 @@ extcmd_via_menu()	/* here after # - now show pick-list of possible commands */
 		    Sprintf(prompt, "%s or %s", choices[i-1]->ef_txt,
 				choices[i]->ef_txt);
 		} else {
-		    strcat(prompt," or ");
-		    strcat(prompt, choices[i]->ef_txt);
+		    Strcat(prompt," or ");
+		    Strcat(prompt, choices[i]->ef_txt);
 		}
 		++acount;
 	    }

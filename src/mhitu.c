@@ -2253,7 +2253,7 @@ register struct attack *mattk;
 		return 1;
 	    case AD_ENCH:	/* KMH -- remove enchantment (disenchanter) */
 	    	if (otmp) {
-	    	    drain_item(otmp);
+	    	    (void) drain_item(otmp);
 	    	    /* No message */
 	    	}
 	    	return (1);

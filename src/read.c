@@ -1253,7 +1253,7 @@ register struct obj	*sobj;
 		if (!cansee(cc.x, cc.y) || distu(cc.x, cc.y) >= 32)
 		    return 0;
 		known = TRUE;
-		create_gas_cloud(cc.x, cc.y, 3, 10);
+		(void) create_gas_cloud(cc.x, cc.y, 3, 10);
 		break;
 	}
 	default:

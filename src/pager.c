@@ -139,30 +139,30 @@ lookat(x, y, buf, monbuf)
 
 		if (ways_seen > 1 || !normal) {
 		    if (normal) {
-			strcat(monbuf, "normal vision");
+			Strcat(monbuf, "normal vision");
 			/* can't actually be 1 yet here */
-			if (ways_seen-- > 1) strcat(monbuf, ", ");
+			if (ways_seen-- > 1) Strcat(monbuf, ", ");
 		    }
 		    if (canseemon(mtmp) && mtmp->minvis) {
-			strcat(monbuf, "see invisible");
-			if (ways_seen-- > 1) strcat(monbuf, ", ");
+			Strcat(monbuf, "see invisible");
+			if (ways_seen-- > 1) Strcat(monbuf, ", ");
 		    }
 		    if ((!mtmp->minvis || See_invisible) && see_with_infrared(mtmp)) {
-			strcat(monbuf, "infravision");
-			if (ways_seen-- > 1) strcat(monbuf, ", ");
+			Strcat(monbuf, "infravision");
+			if (ways_seen-- > 1) Strcat(monbuf, ", ");
 		    }
 		    if (tp_sensemon(mtmp)) {
-			strcat(monbuf, "telepathy");
-			if (ways_seen-- > 1) strcat(monbuf, ", ");
+			Strcat(monbuf, "telepathy");
+			if (ways_seen-- > 1) Strcat(monbuf, ", ");
 		    }
 		    if (canseemon(mtmp) && u.xray_range > 0 && distu(mtmp->mx,mtmp->my) <= (u.xray_range*u.xray_range)) {
 			/* Eyes of the Overworld */
-			strcat(monbuf, "astral vision");
-			if (ways_seen-- > 1) strcat(monbuf, ", ");
+			Strcat(monbuf, "astral vision");
+			if (ways_seen-- > 1) Strcat(monbuf, ", ");
 		    }
 		    if (Detect_monsters) {
-			strcat(monbuf, "monster detection");
-			if (ways_seen-- > 1) strcat(monbuf, ", ");
+			Strcat(monbuf, "monster detection");
+			if (ways_seen-- > 1) Strcat(monbuf, ", ");
 		    }
 		}
 	    }

@@ -659,7 +659,7 @@ meatobj(mtmp)		/* for gelatinous cubes */
 		++ecount;
 		if (cansee(mtmp->mx, mtmp->my) && flags.verbose) {
 		    if (ecount == 1) {
-			sprintf(buf, "%s engulfs %s.", Monnam(mtmp),
+			Sprintf(buf, "%s engulfs %s.", Monnam(mtmp),
 			    distant_name(otmp,doname));
 		    } else if (ecount == 2)
 			pline("%s engulfs several objects.", Monnam(mtmp));
@@ -1298,7 +1298,7 @@ struct monst *mon;
 	    	else if(mdat->mattk[i].damd)
 	    	    tmp = d((int)mdat->mlevel+1, (int)mdat->mattk[i].damd);
 	    	else tmp = 0;
-	    	sprintf(buf, "%s explosion", s_suffix(mdat->mname));
+	    	Sprintf(buf, "%s explosion", s_suffix(mdat->mname));
 	    	killer = buf;
 	    	killer_format = KILLED_BY_AN;
 	    	explode(mon->mx, mon->my, -1, tmp, MON_EXPLODE); 
@@ -2004,12 +2004,12 @@ boolean construct;
 	 /* if (n == 0) animal_temp[n++] = NON_PM; */
 
 	    animal_list = (short *)alloc(n * sizeof *animal_list);
-	    (void) memcpy((genericptr_t *)animal_list,
-			  (genericptr_t *)animal_temp,
+	    (void) memcpy((genericptr_t)animal_list,
+			  (genericptr_t)animal_temp,
 			  n * sizeof *animal_list);
 	    animal_list_count = n;
 	} else {	/* release */
-	    if (animal_list) free(animal_list), animal_list = 0;
+	    if (animal_list) free((genericptr_t)animal_list), animal_list = 0;
 	    animal_list_count = 0;
 	}
 }

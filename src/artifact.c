@@ -678,30 +678,30 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 
 	/* the four basic attacks: fire, cold, shock and missiles */
 	if (attacks(AD_FIRE, otmp)) {
-		if (realizes_damage) {
-			pline_The("fiery blade burns %s!", hittee);
-			if (!rn2(4)) destroy_mitem(mdef, POTION_CLASS, AD_FIRE);
-			if (!rn2(4)) destroy_mitem(mdef, SCROLL_CLASS, AD_FIRE);
-			if (!rn2(7)) destroy_mitem(mdef, SPBOOK_CLASS, AD_FIRE);
-			return TRUE;
-		}
+	    if (realizes_damage) {
+		pline_The("fiery blade burns %s!", hittee);
+		if (!rn2(4)) (void) destroy_mitem(mdef, POTION_CLASS, AD_FIRE);
+		if (!rn2(4)) (void) destroy_mitem(mdef, SCROLL_CLASS, AD_FIRE);
+		if (!rn2(7)) (void) destroy_mitem(mdef, SPBOOK_CLASS, AD_FIRE);
+		return TRUE;
+	    }
 	}
 	if (attacks(AD_COLD, otmp)) {
-		if (realizes_damage) {
-			pline_The("ice-cold blade freezes %s!", hittee);
-			if (!rn2(4)) destroy_mitem(mdef, POTION_CLASS, AD_COLD);
-			return TRUE;
-		}
+	    if (realizes_damage) {
+		pline_The("ice-cold blade freezes %s!", hittee);
+		if (!rn2(4)) (void) destroy_mitem(mdef, POTION_CLASS, AD_COLD);
+		return TRUE;
+	    }
 	}
 	if (attacks(AD_ELEC, otmp)) {
-		if (realizes_damage) {
-			if(youattack && otmp != uwep)
-			    pline("%s hits %s!", The(xname(otmp)), hittee);
-			pline("Lightning strikes %s!", hittee);
-			if (!rn2(5)) destroy_mitem(mdef, RING_CLASS, AD_ELEC);
-			if (!rn2(5)) destroy_mitem(mdef, WAND_CLASS, AD_ELEC);
-			return TRUE;
-		}
+	    if (realizes_damage) {
+		if(youattack && otmp != uwep)
+		    pline("%s hits %s!", The(xname(otmp)), hittee);
+		pline("Lightning strikes %s!", hittee);
+		if (!rn2(5)) (void) destroy_mitem(mdef, RING_CLASS, AD_ELEC);
+		if (!rn2(5)) (void) destroy_mitem(mdef, WAND_CLASS, AD_ELEC);
+		return TRUE;
+	    }
 	}
 	if (attacks(AD_MAGM, otmp)) {
 		if (realizes_damage) {

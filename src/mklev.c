@@ -1401,7 +1401,7 @@ struct mkroom *croom;
 	}
 
 	/* Leave a bell, in case we accidentally buried someone alive */
-	if (!rn2(25)) mksobj_at(BELL, m.x, m.y, TRUE);
+	if (!rn2(25)) (void) mksobj_at(BELL, m.x, m.y, TRUE);
 	return;
 }
 

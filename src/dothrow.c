@@ -33,7 +33,7 @@ throw_obj (obj)
 	register struct obj *obj;
 {
 	struct obj *otmp;
-	long multishot = 1L;
+	int multishot = 1;
 	schar skill;
 
 
@@ -106,10 +106,10 @@ throw_obj (obj)
 	    }
 	}
 
-	if (obj->quan < multishot) multishot = obj->quan;
-	if (multishot < 1L) multishot = 1L;
+	if (obj->quan < multishot) multishot = (int)obj->quan;
+	if (multishot < 1) multishot = 1;
 	else multishot = rnd(multishot);
-	while (obj && multishot-- > 0L) {
+	while (obj && multishot-- > 0) {
 		/* Split this object off from its slot */
 		otmp = (struct obj *)0;
 		if (obj == uquiver) {
@@ -209,7 +209,7 @@ autoquiver ()
 int
 dofire()
 {
-	if(check_capacity(NULL)) return(0);
+	if(check_capacity((char *)0)) return(0);
 	if (!uquiver) {
 		if (!flags.autoquiver) {
 			/* Don't automatically fill the quiver */
@@ -222,7 +222,7 @@ dofire()
 			return(dothrow());
 		} else {
 			You("fill your quiver:");
-			prinv(NULL, uquiver, 0L);
+			prinv((char *)0, uquiver, 0L);
 		}
 	}
 

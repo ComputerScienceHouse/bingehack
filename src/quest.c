@@ -326,7 +326,7 @@ prisoner_speaks (mtmp)
 	    adjalign(3);
 
 		/* ...But the guards are not */
-	    angry_guards(FALSE);
+	    (void) angry_guards(FALSE);
 	}
 	return;
 }

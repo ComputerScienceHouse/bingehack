@@ -492,7 +492,7 @@ xchar x, y;
 		return 1;	/* alert shk caught it */
 	    notonhead = (mon->mx != bhitpos.x || mon->my != bhitpos.y);
 	    if(isgold ? ghitm(mon, kickobj) :	/* caught? */
-		thitmonst(mon, kickobj))	/* hit && used up? */
+		(void) thitmonst(mon, kickobj))	/* hit && used up? */
 		return(1);
 	}
 

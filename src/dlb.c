@@ -457,7 +457,7 @@ dlb_fopen(name, mode)
 	dp->fp = fp;
     else {
 	/* can't find anything */
-	free(dp);
+	free((genericptr_t) dp);
 	dp = (dlb *) 0;
 	}
 

@@ -158,7 +158,7 @@ int sig_unused;
 	return;
 }
 
-#if defined(UNIX) || defined(VMS) || defined(__EMX__) || defined(__EMX__)
+#if defined(UNIX) || defined(VMS) || defined(__EMX__)
 static void
 done_hangup(sig)	/* signal() handler */
 int sig;
@@ -668,7 +668,7 @@ die:
 		    otmp->known = otmp->bknown = otmp->dknown =
 			otmp->rknown = 1;
 		    /* assumes artifacts don't have quan>1 */
-		    sprintf(pbuf, "%s (worth %ld zorkmids and %ld points)",
+		    Sprintf(pbuf, "%s (worth %ld zorkmids and %ld points)",
 			artifact_name(xname(otmp), (short *)0),
 			4L * objects[otmp->otyp].oc_cost,
 			40L * objects[otmp->otyp].oc_cost);

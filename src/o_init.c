@@ -382,7 +382,7 @@ dodiscovered()				/* free after Robert Viduya */
 	if (objects[uniq_objs[i]].oc_name_known) {
 	    if (!dis++)
 		putstr(tmpwin, ATR_INVERSE, "Unique Items");
-		sprintf(buf, "  %s", OBJ_NAME(objects[uniq_objs[i]]));
+		Sprintf(buf, "  %s", OBJ_NAME(objects[uniq_objs[i]]));
 	    putstr(tmpwin, 0, buf);
 	    ++ct;
 	}
@@ -408,7 +408,7 @@ dodiscovered()				/* free after Robert Viduya */
 		    putstr(tmpwin, ATR_INVERSE, let_to_name(oclass, FALSE));
 		    prev_class = oclass;
 		}
-		sprintf(buf, "%s %s",(objects[dis].oc_pre_discovered ? "*" : " "),
+		Sprintf(buf, "%s %s",(objects[dis].oc_pre_discovered ? "*" : " "),
 				obj_typename(dis));
 		putstr(tmpwin, 0, buf);
 	    }

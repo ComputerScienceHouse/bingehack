@@ -223,7 +223,7 @@ boolean picked_some;
 	if (ct) {
 	    if (flags.run) nomul(0);
 	    flush_screen(1);
-	    look_here(ct, picked_some);
+	    (void) look_here(ct, picked_some);
 	} else {
 	    read_engr_at(u.ux,u.uy);
 	}

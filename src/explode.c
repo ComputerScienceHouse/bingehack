@@ -294,7 +294,7 @@ char olet;
 		if (mtmp->mhp <= 0) {
 			/* KMH -- Don't blame the player for pets killing gas spores */
 			if (!flags.mon_moving) killed(mtmp);
-			else monkilled(mtmp, (const char *)0, adtyp);
+			else monkilled(mtmp, (const char *)0, (int)adtyp);
 		}
 	}
 

@@ -919,7 +919,7 @@ label2:			if (mdef->mhp > 0) return 0;
 	    			mdef->data != &mons[PM_FIRE_ELEMENTAL] &&
 	    			mdef->data != &mons[PM_GREEN_SLIME]) {
 	    	    if (vis) pline("%s turns into slime.", Monnam(mdef));
-	    	    newcham(mdef, &mons[PM_GREEN_SLIME]);
+	    	    (void) newcham(mdef, &mons[PM_GREEN_SLIME]);
 	    	    tmp = 0;
 	    	}
 	    	break;
@@ -1079,7 +1079,7 @@ int mdead;
 		goto assess_dmg;
 	    case AD_ENCH:	/* KMH -- remove enchantment (disenchanter) */
 		if (mhit && !mdef->mcan && otmp) {
-		    drain_item(otmp);
+		    (void) drain_item(otmp);
 		    /* No message */
 		}
 		break;

@@ -364,7 +364,7 @@ dowieldquiver()
 		/* Okay to put in quiver; print it */
 		dummy = newquiver->owornmask;
 		newquiver->owornmask |= W_QUIVER;
-		prinv(NULL, newquiver, 0L);
+		prinv((char *)0, newquiver, 0L);
 		newquiver->owornmask = dummy;
 	}
 

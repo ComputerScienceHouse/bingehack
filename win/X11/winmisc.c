@@ -248,9 +248,9 @@ X11_player_selection()
 	flags.initalign = randalign(flags.initrole, flags.initrace);
 
     if (role_names != 0)
-	free(role_names);
+	free((genericptr_t)role_names);
     if (race_names != 0)
-	free(race_names);
+	free((genericptr_t)race_names);
 }
 
 

@@ -258,7 +258,7 @@ struct obj *otmp;
 		/* perhaps for stone giants too (but what to turn them into)? */
 		if (monsndx(mtmp->data) == PM_STONE_GOLEM) {
 		    /* turn into flesh golem */
-		    newcham(mtmp, &mons[PM_FLESH_GOLEM]);
+		    (void) newcham(mtmp, &mons[PM_FLESH_GOLEM]);
 		    if (cansee(mtmp->mx, mtmp->my))
 			pline("The stone golem turns to flesh!");
 		} else
@@ -1408,7 +1408,8 @@ struct obj *obj, *otmp;
 			    poly_obj(obj, HUGE_CHUNK_OF_MEAT);
 			    goto smell;
 			} else if (obj->otyp == STATUE) {
-			    if (animate_statue(obj, obj->ox, obj->oy, ANIMATE_SPELL, NULL) == (struct monst *)0)
+			    if (animate_statue(obj, obj->ox, obj->oy,
+				  ANIMATE_SPELL, (int *)0) == (struct monst *)0)
 			    	res = 0;
 			} else { /* new rock class object... */
 			    /* impossible? */
@@ -1869,7 +1870,7 @@ boolean ordinary;
 		    boolean didmerge;
 
 		    if (u.umonnum == PM_STONE_GOLEM)
-			polymon(PM_FLESH_GOLEM);
+			(void) polymon(PM_FLESH_GOLEM);
 		    if (Stoned) fix_petrification();	/* saved! */
 		    /* but at a cost.. */
 		    for (otemp = invent; otemp; otemp = onext) {

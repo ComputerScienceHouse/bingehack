@@ -570,7 +570,7 @@ struct obj *obj;
 	}
 	if(uquiver == obj) setuqwep((struct obj *)0);
 	if(uswapwep == obj) {
-	    doswapweapon();
+	    (void) doswapweapon();
 	    /* If doswapweapon failed... */
 	    if(uswapwep == obj) return (FALSE);
 	} else {
@@ -1642,7 +1642,7 @@ register struct obj *obj;
 		"toss the figurine into the air" :
 		"set the figurine on the ground"));
 	(void) make_familiar(obj, u.ux+u.dx, u.uy+u.dy, FALSE);
-	stop_timer(FIG_TRANSFORM, (genericptr_t)obj);
+	(void) stop_timer(FIG_TRANSFORM, (genericptr_t)obj);
 	useup(obj);
 }
 
@@ -2121,7 +2121,7 @@ use_pole (obj)
 
 	/* Attack the monster there */
 	if ((mtmp = m_at(cc.x, cc.y)) != (struct monst *)0)
-	    thitmonst(mtmp, obj);
+	    (void) thitmonst(mtmp, obj);
 	else
 	    /* Now you know that nothing is there... */
 	    pline(nothing_happens);
@@ -2179,7 +2179,7 @@ use_grapple (obj)
 	    if ((otmp = level.objects[cc.x][cc.y]) !=
 	    		(struct obj *)0) {
 	    	You("snag an object from the %s!", surface(cc.x, cc.y));
-	    	pickup_object(otmp, 1, FALSE);
+	    	(void) pickup_object(otmp, 1L, FALSE);
 	    	/* If pickup fails, leave it alone */
 	    	newsym(cc.x, cc.y);
 	    	return (1);
@@ -2188,14 +2188,14 @@ use_grapple (obj)
 	case 2:	/* Monster */
 	    if ((mtmp = m_at(cc.x, cc.y)) == (struct monst *)0) break;
 	    if (verysmall(mtmp->data) && !rn2(4) &&
-	    		enexto(&cc, u.ux, u.uy, 0)) {
+	    		enexto(&cc, u.ux, u.uy, (struct permonst *)0)) {
 	    	You("pull in %s!", mon_nam(mtmp));
 	    	mtmp->mundetected = 0;
 	    	rloc_to(mtmp, cc.x, cc.y);
 	    	return (1);
 	    } else if ((!bigmonst(mtmp->data) && !strongmonst(mtmp->data)) ||
 		       rn2(4)) {
-	    	thitmonst(mtmp, obj);
+	    	(void) thitmonst(mtmp, obj);
 	    	return (1);
 	    }
 	    /* FALL THROUGH */

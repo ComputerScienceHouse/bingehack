@@ -805,7 +805,7 @@ role_init()
 
 	/* We now have a valid role index.  Copy the role name back. */
 	/* This should become OBSOLETE */
-	strcpy(pl_character, roles[flags.initrole].name.m);
+	Strcpy(pl_character, roles[flags.initrole].name.m);
 	pl_character[PL_CSIZ-1] = '\0';
 
 	/* Check for a valid race */

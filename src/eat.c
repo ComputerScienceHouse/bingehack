@@ -1612,7 +1612,7 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 	/* KMH -- Slow digestion is... undigestable */
 	if (otmp->otyp == RIN_SLOW_DIGESTION) {
 		pline("This ring is undigestable!");
-		rottenfood(otmp);
+		(void) rottenfood(otmp);
 		docall(otmp);
 		return (1);
 	}

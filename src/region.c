@@ -142,7 +142,8 @@ NhRect* rect;
 
   tmp_rect = (NhRect*) alloc(sizeof(NhRect) * (reg->nrects + 1));
   if (reg->nrects > 0) {
-    (void) memcpy(tmp_rect, reg->rects, (sizeof(NhRect) * reg->nrects));
+    (void) memcpy((genericptr_t)tmp_rect, (genericptr_t)reg->rects,
+					(sizeof(NhRect) * reg->nrects));
     free((genericptr_t)reg->rects);
   }
   tmp_rect[reg->nrects] = *rect;
@@ -245,7 +246,7 @@ NhRegion* reg;
   if (reg->n_monst > 0) {
     ret_reg->monsters = (unsigned int*) alloc((sizeof(unsigned int)) * 
 					       reg->n_monst);
-    (void) memcpy(ret_reg->monsters, reg->monsters, 
+    (void) memcpy((genericptr_t)ret_reg->monsters, (genericptr_t)reg->monsters, 
 		  sizeof(unsigned int) * reg->n_monst);
   } else
     ret_reg->monsters = NULL;
@@ -283,7 +284,8 @@ NhRegion* reg;
     tmp_reg = regions;
     regions = (NhRegion**) alloc(sizeof(NhRegion*) * (max_regions + 10));
     if (max_regions > 0) {
-      (void) memcpy(regions, tmp_reg, max_regions * sizeof(NhRegion *));
+      (void) memcpy((genericptr_t)regions, (genericptr_t)tmp_reg,
+					max_regions * sizeof(NhRegion *));
       free((genericptr_t) tmp_reg);
     }
     max_regions += 10;
@@ -860,7 +862,7 @@ genericptr_t p2;
   reg = (NhRegion*) p1;
   dam = (int) reg->arg;
   if (p2 == NULL) {		/* This means *YOU* Bozo! */
-    if (!Blind) make_blinded(1, FALSE);
+    if (!Blind) make_blinded(1L, FALSE);
     if (!Poison_resistance) {
       pline("Something is burning your lungs!");
       You("cough and spit blood!");
