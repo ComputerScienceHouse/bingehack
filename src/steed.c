@@ -329,8 +329,9 @@ dismount_steed(reason)
 	struct obj *otmp;
 	coord cc;
 	const char *verb = "fall";
-
-
+	boolean repair_leg_damage = TRUE;
+	unsigned save_utrap = u.utrap;
+	
 	/* Sanity checks */
 	if (!(mtmp = u.usteed))
 	    /* Just return silently */
@@ -346,6 +347,7 @@ dismount_steed(reason)
 		losehp(rn1(10,10), "riding accident", KILLED_BY_AN);
 		HWounded_legs += rn1(5, 5);
 		EWounded_legs |= BOTH_SIDES;
+		repair_leg_damage = FALSE;
 		break;
 	    case DISMOUNT_POLY:
 		You("can no longer ride %s.", mon_nam(u.usteed));
@@ -371,6 +373,11 @@ dismount_steed(reason)
 		} else
 			You("dismount %s.", mon_nam(mtmp));
 	}
+ 	/* While riding these refer to the steed's legs
+	 * so after dismounting they refer to the player's
+	 * legs once again.
+	 */
+	if (repair_leg_damage) HWounded_legs = EWounded_legs = 0;
 
 	/* Release the steed and saddle */
 	u.usteed = 0;
@@ -400,15 +407,15 @@ dismount_steed(reason)
 	    	}
 	    }
 
-	    /* Keep steed here, move the player to cc */
+	    /* Keep steed here, move the player to cc; teleds() clears u.utrap */
 	    teleds(cc.x, cc.y);
 	    if (reason != DISMOUNT_ENGULFED) /* being swallowed anyway in that case */
 		vision_full_recalc = 1;
 
 	    /* Put your steed in your trap */
-	    if (u.utrap && mtmp->mhp > 0)
+	    if (save_utrap && mtmp->mhp > 0)
 	    	(void) mintrap(mtmp);
-	    u.utrap = 0;
+
 	/* Couldn't... try placing the steed */
 	} else if (enexto(&cc, u.ux, u.uy, mtmp->data))
 	    /* Keep player here, move the steed to cc */
