@@ -99,7 +99,7 @@ and easy to overcome at first sight, an experienced Wizard is a deadly foe.
 You may also choose the race of your character:
 .pg
 \fIDwarves\fP are smaller than humans or elves, but are stocky and solid
-individuals.  Dwarves most notable trait is their great expertise in mining
+individuals.  Dwarves' most notable trait is their great expertise in mining
 and metalwork.  Dwarvish armor is said to be second in quality not even to the
 mithril armor of the Elves.
 .pg
@@ -234,7 +234,8 @@ Charisma affects how certain creatures react toward you.  In
 particular, it can affect the prices shopkeepers offer you.
 .lp Alignment
 \fBLawful\fP, \fBNeutral\fP, or \fBChaotic\fP.  Often, Lawful is
-taken as good and Chaotic as evil.  Your alignment influences how other
+taken as good and Chaotic as evil, but legal and ethical do not always
+coincide.  Your alignment influences how other
 monsters react toward you.  Monsters of a like alignment are more likely
 to be non-aggressive, while those of an opposing alignment are more likely
 to be seriously offended at your presence.
@@ -331,7 +332,7 @@ A potion.
 .lp (
 A useful item (pick-axe, key, lamp...).
 .lp """
-An amulet (or a spider web).
+An amulet or a spider web.
 .lp *
 A gem or rock (possibly valuable, possibly worthless).
 .lp `
@@ -380,7 +381,7 @@ carrying.  Finally, if you change your mind and decide you don't want
 to do this command after all, you can press the ESC key to abort the
 command.
 .pg
-You can put a number before most commands to repeat them that many
+You can put a number before some commands to repeat them that many
 times; for example, ``10s'' will search ten times.  If you have the
 .op number_pad
 option set, you must type `n' to prefix a count, so the example above
@@ -465,7 +466,7 @@ Redo the previous command.
 Close a door.
 .lp C
 Call (name) an individual monster.
-.lp "^C or #quit
+.lp ^C
 Panic button.  Quit the game.
 .lp d
 Drop something.  Ex. ``d7a'' means drop seven items of object \fIa\fP.
@@ -525,8 +526,8 @@ entry for the given option (ie, by typing its letter or clicking upon
 it, depending on your user interface).  For the non-boolean choices,
 a further menu or prompt will appear once you've closed this menu.
 The available options
-are listed later in this Guidebook.  Options are usually set before
-the game, not with the `O' command; see the section on options below.
+are listed later in this Guidebook.  Options are usually set before the
+game rather than with the `O' command; see the section on options below.
 .lp p
 Pay your shopping bill.
 .lp P
@@ -549,8 +550,8 @@ Redraw the screen.
 Search for secret doors and traps around you.  It usually takes several
 tries to find something.
 .lp S
-Save the game.  The game will be restored automatically the next time
-you play.
+Save (and suspend) the game.  The game will be restored automatically the
+next time you play.
 .lp t
 Throw an object or shoot a projectile.
 .lp T
@@ -576,7 +577,7 @@ weapon slot.  The latter is used as your second weapon in
 two-weapon combat.  Note that if one of these slots is empty,
 the exchange still takes place.
 .lp X
-Enter explore (discovery) mode.
+Enter explore (discovery) mode, explained in its own section later.
 .lp z
 Zap a wand.  To aim at yourself, use `.' for the direction.
 .lp Z
@@ -624,13 +625,63 @@ Escape to a shell.
 .lp #
 Perform an extended command.  As you can see, the authors of NetHack
 used up all the letters, so this is a way to introduce the less frequently
-used commands.  You may obtain a list of them by entering `?' after the `#'.
+used commands.
 What extended commands are available depends on what features the game was
 compiled with.
+.lp #adjust
+Adjust inventory letters (most useful when the
+.op fixinv
+option is ``on'').
+.lp #chat
+Talk to someone.
+.lp #conduct
+List which challenges you have adhered to.
+.lp #dip
+Dip an object into something.
+.lp #enhance
+Advance or check weapons skills.
+.lp #force
+Force a lock.
+.lp #invoke
+Invoke an object's special powers.
+.lp #jump
+Jump to another location.
+.lp #loot
+Loot a box on the floor.
+.lp #monster
+Use a monster's special ability (when polymorphed into monster form).
+.lp #name
+Name an item or type of object.
+.lp #offer
+Offer a sacrifice to the gods.
+.lp #pray
+Pray to the gods for help.
+.lp #quit
+Quit the program without saving your game.
+.lp #ride
+Ride (or stop riding) a monster.
+.lp #rub
+Rub a lamp.
+.lp #sit
+Sit down.
+.lp #turn
+Turn undead.
+.lp #twoweapon
+Toggle two-weapon combat on or off.  Note that you must
+use suitable weapons for this type of combat, or it will
+be automatically turned off.
+.lp #untrap
+Untrap something (trap, door, or chest).
+.lp #version
+Print compile time options for this version of NetHack.
+.lp #wipe
+Wipe off your face.
+.lp #?
+Help menu:  get the list of available extended commands.
 .pg
 If your keyboard has a meta key (which, when pressed in combination
 with another key, modifies it by setting the `meta' [8th, or `high']
-bit), you can invoke the extended commands by meta-ing the first
+bit), you can invoke many extended commands by meta-ing the first
 letter of the command.
 .\" In {\it NT, OS/2, PC\/ {\rm and} ST NetHack},
 .\" the `Alt' key can be used in this fashion;
@@ -638,49 +689,43 @@ letter of the command.
 In NT, OS/2, and PC NetHack, the `Alt' key
 can be used in this fashion.
 .lp M-a
-Adjust inventory letters (most useful when the
-.op fixinv
-option is ``on'').
+#adjust
 .lp M-c
-Talk to someone.
+#chat
 .lp M-d
-Dip an object into something.
+#dip
 .lp M-e
-Advance or check weapons skills.
+#enhance
 .lp M-f
-Force a lock.
+#force
 .lp M-i
-Invoke an object's special powers.
+#invoke
 .lp M-j
-Jump to another location.
+#jump
 .lp M-l
-Loot a box on the floor.
+#loot
 .lp M-m
-Use a monster's special ability.
+#monster
 .lp M-n
-Name an item or type of object.
+#name
 .lp M-o
-Offer a sacrifice to the gods.
+#offer
 .lp M-p
-Pray to the gods for help.
+#pray
 .lp M-q
-Quit the program without saving your game.
+#quit
 .lp M-r
-Rub a lamp.
+#rub
 .lp M-s
-Sit down.
+#sit
 .lp M-t
-Turn undead.
+#turn
 .lp M-u
-Untrap something (trap, door, or chest).
+#untrap
 .lp M-v
-Print compile time options for this version of NetHack.
+#version
 .lp M-w
-Wipe off your face.
-.lp #twoweapon
-Toggle two-weapon combat on or off.  Note that you must
-use suitable weapons for this type of combat, or it will
-be automatically turned off.
+#wipe
 .pg
 If the
 .op number_pad
@@ -788,8 +833,8 @@ which is just a space will remove any prior name.
 .pg
 The extended command ``#chat'' can be used to interact with an adjacent
 monster.  There is no actual dialog (in other words, you don't get to
-choose what you'll say), but chatting with some monsters such as the
-Oracle of Delphi can produce useful results.
+choose what you'll say), but chatting with some monsters such as a
+shopkeeper or the Oracle of Delphi can produce useful results.
 .hn 2
 Fighting
 .pg
@@ -827,9 +872,9 @@ have the right equipment and skill.  Convincing a wild beast to let
 you saddle it up is difficult to say the least.  Many a dungeoneer 
 has had to resort to magic and wizardry in order to forge the alliance.
 Once you do have the beast under your control however, you can 
-easily climb in and out of the saddle with the `#ride' command. Lead
+easily climb in and out of the saddle with the `#ride' command.  Lead
 the beast around the dungeon when riding, in the same manner as 
-you would move yourself. It is the beast that you will see displayed
+you would move yourself.  It is the beast that you will see displayed
 on the map.
 .pg
 Riding skill is managed by the `#enhance' command.  See the section
@@ -861,10 +906,11 @@ up anything more.  Otherwise, it will add the object(s) to your pack and tell
 you what you just picked up.
 .pg
 As you add items to your inventory, you also add the weight of that object
-to your load.  The amount that you can carry depends on your strength.  The
+to your load.  The amount that you can carry depends on your strength and
+your constitution.  The
 stronger you are, the less the additional load will affect you.  There comes
 a point, though, when the weight of all of that stuff you are carrying around
-with you through the dungeon will begin to encumber you.  Your reactions
+with you through the dungeon will encumber you.  Your reactions
 will get slower and you'll burn calories faster, requiring food more frequently
 to cope with it.  Eventually, you'll be so overloaded that you'll either have
 to discard some of what you're carrying or collapse under it's weight.
@@ -1134,7 +1180,7 @@ The command to eat food is `e'.
 Scrolls (`?')
 .pg
 Scrolls are labeled with various titles, probably chosen by ancient wizards
-for their amusement value (ex. ``READ ME,'' or ``HOLY BIBLE'' backwards).
+for their amusement value (ex. ``READ ME,'' or ``THANX MAUD'' backwards).
 Scrolls disappear after you read them (except for blank ones, without
 magic spells on them).
 .pg

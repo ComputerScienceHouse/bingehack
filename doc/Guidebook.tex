@@ -170,7 +170,7 @@ You may also choose the race of your character:
 \blist{}
 \item[\bb{Dwarves}]%
 are smaller than humans or elves, but are stocky and solid
-individuals.  Dwarves most notable trait is their great expertise in mining
+individuals.  Dwarves' most notable trait is their great expertise in mining
 and metalwork.  Dwarvish armor is said to be second in quality not even to the
 mithril armor of the Elves.
 %.pg
@@ -330,7 +330,8 @@ particular, it can affect the prices shopkeepers offer you.
 \item[\bb{Alignment}]
 %
 {\it Lawful}, {\it Neutral\/} or {\it Chaotic}.  Often, Lawful is
-taken as good and Chaotic is evil.  Your alignment influences how other
+taken as good and Chaotic is evil, but legal and ethical do not always
+coincide.  Your alignment influences how other
 monsters react toward you.  Monsters of a like alignment are more likely
 to be non-aggressive, while those of an opposing alignment are more likely
 to be seriously offended at your presence.
@@ -462,7 +463,7 @@ A potion.
 A useful item (pick-axe, key, lamp \ldots).
 %.lp
 \item[\tb{"}]
-An amulet (or a spider web).
+An amulet or a spider web.
 %.lp
 \item[\tb{*}]
 A gem or rock (possibly valuable, possibly worthless).
@@ -524,7 +525,7 @@ to do this command after all, you can press the `ESC' key to abort the
 command.
 
 %.pg
-You can put a number before most commands to repeat them that many
+You can put a number before some commands to repeat them that many
 times; for example, ``{\tt 10s}'' will search ten times.  If you have the
 {\it number\_pad\/}
 option set, you must type `{\tt n}' to prefix a count, so the example above
@@ -633,7 +634,7 @@ Close a door.
 \item[\tb{C}]
 Call (name) an individual monster.
 %.lp
-\item[\tb{\^{}C {\rm or} \#quit}]
+\item[\tb{\^{}C}]
 Panic button.  Quit the game.
 %.lp
 \item[\tb{d}]
@@ -703,8 +704,8 @@ entry for the given option (ie, by typing its letter or clicking upon
 it, depending on your user interface).  For the non-boolean choices,
 a further menu or prompt will appear once you've closed this menu.
 The available options
-are listed later in this Guidebook.  Options are usually set before
-the game, not with the `{\tt O}' command; see the section on options below.
+are listed later in this Guidebook.  Options are usually set before the
+game rather than with the `{\tt O}' command; see the section on options below.
 %.lp
 \item[\tb{p}]
 Pay your shopping bill.
@@ -737,8 +738,8 @@ Search for secret doors and traps around you.  It usually takes several
 tries to find something.
 %.lp
 \item[\tb{S}]
-Save the game.  The game will be restored automatically the next time
-you play.
+Save (and suspend) the game.  The game will be restored automatically the
+next time you play.
 %.lp
 \item[\tb{t}]
 Throw an object or shoot a projectile.
@@ -773,7 +774,7 @@ two-weapon combat.  Note that if one of these slots is empty,
 the exchange still takes place.
 %.lp
 \item[\tb{X}]
-Enter explore (discovery) mode.
+Enter explore (discovery) mode, explained in its own section later.
 %.lp
 \item[\tb{z}]
 Zap a wand.  To aim at yourself, use `{\tt .}' for the direction.
@@ -837,15 +838,88 @@ Escape to a shell.
 \item[\tb{\#}]
 Perform an extended command.  As you can see, the authors of {\it NetHack\/}
 used up all the letters, so this is a way to introduce the less frequently
-used commands.  You may obtain a list of them by entering `{\tt ?}' after
-the `{\tt \#}'.  What extended commands are available depends on what features
+used commands.
+What extended commands are available depends on what features
 the game was compiled with.
+%.lp
+\item[\tb{\#adjust}]
+Adjust inventory letters (most useful when the
+{\it fixinv\/}
+option is ``on'').
+%.lp
+\item[\tb{\#chat}]
+Talk to someone.
+%.lp
+\item[\tb{\#conduct}]
+List which challenges you have adhered to.
+%.lp
+\item[\tb{\#dip}]
+Dip an object into something.
+%.lp
+\item[\tb{\#enhance}]
+Advance or check weapons skills.
+%.lp
+\item[\tb{\#force}]
+Force a lock.
+%.lp
+\item[\tb{\#invoke}]
+Invoke an object's special powers.
+%.lp
+\item[\tb{\#jump}]
+Jump to another location.
+%.lp
+\item[\tb{\#loot}]
+Loot a box on the floor.
+%.lp
+\item[\tb{\#monster}]
+Use a monster's special ability (when polymorphed into monster form).
+%.lp
+\item[\tb{\#name}]
+Name an item or type of object.
+%.lp
+\item[\tb{\#offer}]
+Offer a sacrifice to the gods.
+%.lp
+\item[\tb{\#pray}]
+Pray to the gods for help.
+%.lp
+\item[\tb{\#quit}]
+Quit the program without saving your game.
+%.lp
+\item[\tb{\#ride}]
+Ride (or stop riding) a monster.
+%.lp
+\item[\tb{\#rub}]
+Rub a lamp.
+%.lp
+\item[\tb{\#sit}]
+Sit down.
+%.lp
+\item[\tb{\#turn}]
+Turn undead.
+%.lp
+\item[\tb{\#twoweapon}]
+Toggle two-weapon combat on or off.  Note that you must
+use suitable weapons for this type of combat, or it will
+be automatically turned off.
+%.lp
+\item[\tb{\#untrap}]
+Untrap something (trap, door, or chest).
+%.lp
+\item[\tb{\#version}]
+Print compile time options for this version of {\it NetHack}.
+%.lp
+\item[\tb{\#wipe}]
+Wipe off your face.
+%.lp
+\item[\tb{\#?}]
+Help menu:  get the list of available extended commands.
 \elist
 
 %.pg
 \nd If your keyboard has a meta key (which, when pressed in combination
 with another key, modifies it by setting the `meta' [8th, or `high']
-bit), you can invoke the extended commands by meta-ing the first
+bit), you can invoke many extended commands by meta-ing the first
 letter of the command.
 %- In {\it NT, OS/2, PC\/ {\rm and} ST NetHack},
 %- the `Alt' key can be used in this fashion;
@@ -855,68 +929,61 @@ the `Alt' key can be used in this fashion.
 \blist{}
 %.lp
 \item[\tb{M-a}]
-Adjust inventory letters (most useful when the
-{\it fixinv\/}
-option is ``on'').
+{\tt\#adjust}
 %.lp
 \item[\tb{M-c}]
-Talk to someone.
+{\tt\#chat}
 %.lp
 \item[\tb{M-d}]
-Dip an object into something.
+{\tt\#dip}
 %.lp
 \item[\tb{M-e}]
-Advance or check weapons skills.
+{\tt\#enhance}
 %.lp
 \item[\tb{M-f}]
-Force a lock.
+{\tt\#force}
 %.lp
 \item[\tb{M-i}]
-Invoke an object's special powers.
+{\tt\#invoke}
 %.lp
 \item[\tb{M-j}]
-Jump to another location.
+{\tt\#jump}
 %.lp
 \item[\tb{M-l}]
-Loot a box on the floor.
+{\tt\#loot}
 %.lp
 \item[\tb{M-m}]
-Use a monster's special ability.
+{\tt\#monster}
 %.lp
 \item[\tb{M-n}]
-Name an item or type of object.
+{\tt\#name}
 %.lp
 \item[\tb{M-o}]
-Offer a sacrifice to the gods.
+{\tt\#offer}
 %.lp
 \item[\tb{M-p}]
-Pray to the gods for help.
+{\tt\#pray}
 %.Ip
 \item[\tb{M-q}]
-Quit the program without saving your game.
+{\tt\#quit}
 %.lp
 \item[\tb{M-r}]
-Rub a lamp.
+{\tt\#rub}
 %.lp
 \item[\tb{M-s}]
-Sit down.
+{\tt\#sit}
 %.lp
 \item[\tb{M-t}]
-Turn undead.
+{\tt\#turn}
 %.lp
 \item[\tb{M-u}]
-Untrap something (trap, door, or chest).
+{\tt\#untrap}
 %.lp
 \item[\tb{M-v}]
-Print compile time options for this version of {\it NetHack}.
+{\tt\#version}
 %.lp
 \item[\tb{M-w}]
-Wipe off your face.
-%.Ip
-\item[\tb{\#twoweapon}]
-Toggle two-weapon combat on or off.  Note that you must
-use suitable weapons for this type of combat, or it will
-be automatically turned off.
+{\tt\#wipe}
 \elist
 
 %.pg
@@ -1051,8 +1118,8 @@ which is just a space will remove any prior name.
 %.pg
 The extended command ``{\tt \#chat}'' can be used to interact with an adjacent
 monster.  There is no actual dialog (in other words, you don't get to
-choose what you'll say), but chatting with some monsters such as the
-Oracle of Delphi can produce useful results.
+choose what you'll say), but chatting with some monsters such as a
+shopkeeper or the Oracle of Delphi can produce useful results.
 
 %.hn 2
 \subsection*{Fighting}
@@ -1099,9 +1166,9 @@ have the right equipment and skill.  Convincing a wild beast to let
 you saddle it up is difficult to say the least.  Many a dungeoneer
 has had to resort to magic and wizardry in order to forge the alliance.
 Once you do have the beast under your control however, you can
-easily climb in and out of the saddle with the `{\tt \#ride}' command. Lead
+easily climb in and out of the saddle with the `{\tt \#ride}' command.  Lead
 the beast around the dungeon when riding, in the same manner as
-you would move yourself. It is the beast that you will see displayed
+you would move yourself.  It is the beast that you will see displayed
 on the map.
 
 %.pg
@@ -1135,10 +1202,11 @@ won't be able to pick up anything more.  Otherwise, it will add the object(s)
 to your pack and tell you what you just picked up.
 %.pg
 As you add items to your inventory, you also add the weight of that object
-to your load.  The amount that you can carry depends on your strength.  The
+to your load.  The amount that you can carry depends on your strength and
+your constitution.  The
 stronger you are, the less the additional load will affect you.  There comes
 a point, though, when the weight of all of that stuff you are carrying around
-with you through the dungeon will begin to encumber you.  Your reactions
+with you through the dungeon will encumber you.  Your reactions
 will get slower and you'll burn calories faster, requiring food more frequently
 to cope with it.  Eventually, you'll be so overloaded that you'll either have
 to discard some of what you're carrying or collapse under it's weight.
@@ -1442,7 +1510,7 @@ The command to eat food is `{\tt e}'.
 
 %.pg
 Scrolls are labeled with various titles, probably chosen by ancient wizards
-for their amusement value (ex.\ ``READ ME,'' or ``HOLY BIBLE'' backwards).
+for their amusement value (ex.\ ``READ ME,'' or ``THANX MAUD'' backwards).
 Scrolls disappear after you read them (except for blank ones, without
 magic spells on them).
 
