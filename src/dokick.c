@@ -663,6 +663,9 @@ dokick()
 		flags.forcefight = FALSE;
 		/* see comment in attack_checks() */
 		if (!canspotmon(mtmp) &&
+		    /* check x and y; a monster that evades your kick by
+		       jumping to an unseen square doesn't leave an I behind */
+		    mtmp->mx == x && mtmp->my == y &&
 		    !glyph_is_invisible(levl[x][y].glyph) &&
 		    !(u.uswallow && mtmp == u.ustuck))
 			map_invisible(x, y);
