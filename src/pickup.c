@@ -1264,11 +1264,12 @@ lootcont:
 		    continue;
 		}
 		if (cobj->otyp == BAG_OF_TRICKS) {
+		    int tmp;
 		    You("carefully open the bag...");
 		    pline("It develops a huge set of teeth and bites you!");
-		    c = rnd(10);
-		    if (Half_physical_damage) c = (c+1) / 2;
-		    losehp(c, "carnivorous bag", KILLED_BY_AN);
+		    tmp = rnd(10);
+		    if (Half_physical_damage) tmp = (tmp+1) / 2;
+		    losehp(tmp, "carnivorous bag", KILLED_BY_AN);
 		    makeknown(BAG_OF_TRICKS);
 		    timepassed = 1;
 		    continue;
