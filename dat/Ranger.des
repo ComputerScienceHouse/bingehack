@@ -1,4 +1,4 @@
-#	SCCS Id: @(#)Ranger.des	3.3	99/03/28
+#	SCCS Id: @(#)Ranger.des	3.3	1999/11/26
 #	Copyright (c) 1989 by Jean-Christophe Collet
 #	Copyright (c) 1991 by M. Stephenson
 # NetHack may be freely redistributed.  See license for details.
@@ -217,7 +217,7 @@ STAIR:(19,10),up
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # Objects
-OBJECT:')',"bow",(37,10),blessed,0,"Longbow of Artemis"
+OBJECT:')',"bow",(37,10),blessed,0,"The Longbow of Artemis"
 OBJECT:'(',"chest",(37,10)
 OBJECT:random,random,(36,09)
 OBJECT:random,random,(36,10)
