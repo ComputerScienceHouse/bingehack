@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)dig.c	3.3	1999/08/19	*/
+/*	SCCS Id: @(#)dig.c	3.3	1999/12/05	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -548,7 +548,7 @@ int ttyp;
 		if (newobjs)
 		    impact_drop((struct obj *)0, x, y, 0);
 		if (mtmp) {
-
+		     /*[don't we need special sokoban handling here?]*/
 		    if (is_flyer(mtmp->data) || is_floater(mtmp->data) ||
 		        mtmp->data == &mons[PM_WUMPUS] ||
 			(mtmp->wormno && count_wsegs(mtmp) > 5) ||
@@ -556,7 +556,7 @@ int ttyp;
 		    if (mtmp == u.ustuck)	/* probably a vortex */
 			    return;		/* temporary? kludge */
 
-		    if (teleport_pet(mtmp)) {
+		    if (teleport_pet(mtmp, FALSE)) {
 			d_level tolevel;
 
 			if (Is_stronghold(&u.uz)) {

@@ -977,7 +977,10 @@ impossible("A monster looked at a very strange trap of type %d.", ttmp->ttyp);
 				    && ttmp->ttyp != SPIKED_PIT
 				    && ttmp->ttyp != TRAPDOOR
 				    && ttmp->ttyp != HOLE)
-				      || (!is_flyer(mdat) && !is_clinger(mdat)))
+				      || (!is_flyer(mdat)
+				    && !is_floater(mdat)
+				    && !is_clinger(mdat))
+				      || In_sokoban(&u.uz))
 				&& (ttmp->ttyp != SLP_GAS_TRAP ||
 				    !resists_sleep(mon))
 				&& (ttmp->ttyp != BEAR_TRAP ||

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)trap.c	3.3	1999/08/16	*/
+/*	SCCS Id: @(#)trap.c	3.3	1999/12/05	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -327,7 +327,7 @@ boolean td;	/* td == TRUE : trapdoor or hole */
 	} else pline_The("%s opens up under you!", surface(u.ux,u.uy));
 
 	if (In_sokoban(&u.uz) && Can_fall_thru(&u.uz))
-	    /* KMH -- You can't escape the Sokoban level traps */;
+	    ;	/* KMH -- You can't escape the Sokoban level traps */
 	else if(Levitation || u.ustuck || !Can_fall_thru(&u.uz)
 	   || Flying || is_clinger(youmonst.data)
 	   || (Inhell && !u.uevent.invoked &&
@@ -1183,10 +1183,14 @@ register struct monst *mtmp;
 	    }
 	} else {
 	    register int tt = trap->ttyp;
-	    boolean in_sight, tear_web, see_it;
+	    boolean in_sight, tear_web, see_it,
+		    inescapable = ((tt == HOLE || tt == PIT) &&
+				   In_sokoban(&u.uz) && !trap->madeby_u);
+	    const char *fallverb;
 
-	    if ((mtmp->mtrapseen & (1 << (tt-1))) != 0 ||
-		    (tt == HOLE && !mindless(mtmp->data))) {
+	    if (!inescapable &&
+		    ((mtmp->mtrapseen & (1 << (tt-1))) != 0 ||
+			(tt == HOLE && !mindless(mtmp->data)))) {
 		/* it has been in such a trap - perhaps it escapes */
 		if(rn2(4)) return(0);
 	    } else {
@@ -1377,22 +1381,26 @@ two_hand:		    erode_weapon(mtmp, FALSE);
 
 		case PIT:
 		case SPIKED_PIT:
-			if ( !is_flyer(mptr) &&
-			     (!mtmp->wormno || (count_wsegs(mtmp) < 6)) &&
-			     !is_clinger(mptr) ) {
-				if (!passes_walls(mptr))
-				    mtmp->mtrapped = 1;
-				if(in_sight) {
-				    pline("%s falls into %s pit!",
-					Monnam(mtmp), a_your[trap->madeby_u]);
-				    seetrap(trap);
-				}
-				mselftouch(mtmp, "Falling, ", FALSE);
-				if(mtmp->mhp <= 0 ||
-					thitm(0, mtmp, (struct obj *)0,
-					 rnd((tt==PIT) ? 6 : 10)))
-				    trapkilled = TRUE;
+			fallverb = "falls";
+			if (is_flyer(mptr) || is_floater(mptr) ||
+				(mtmp->wormno && count_wsegs(mtmp) > 5) ||
+				is_clinger(mptr)) {
+			    if (!inescapable) break;	/* avoids trap */
+			    fallverb = "is dragged";	/* sokoban pit */
 			}
+			if (!passes_walls(mptr))
+			    mtmp->mtrapped = 1;
+			if (in_sight) {
+			    pline("%s %s into %s pit!",
+				  Monnam(mtmp), fallverb,
+				  a_your[trap->madeby_u]);
+			    seetrap(trap);
+			}
+			mselftouch(mtmp, "Falling, ", FALSE);
+			if (mtmp->mhp <= 0 ||
+				thitm(0, mtmp, (struct obj *)0,
+				      rnd((tt == PIT) ? 6 : 10)))
+			    trapkilled = TRUE;
 			break;
 		case HOLE:
 		case TRAPDOOR:
@@ -1401,15 +1409,28 @@ two_hand:		    erode_weapon(mtmp, FALSE);
 				    defsyms[trap_to_defsym(tt)].explanation);
 			    break;	/* don't activate it after all */
 			}
-			if (is_flyer(mptr) || mptr == &mons[PM_WUMPUS] ||
-			    (mtmp->wormno && count_wsegs(mtmp) > 5) ||
-			    mptr->msize >= MZ_HUGE) break;
+			if (is_flyer(mptr) || is_floater(mptr) ||
+				mptr == &mons[PM_WUMPUS] ||
+				(mtmp->wormno && count_wsegs(mtmp) > 5) ||
+				mptr->msize >= MZ_HUGE) {
+			    if (inescapable) {	/* sokoban hole */
+				if (in_sight) {
+				    pline("%s seems to be yanked down!",
+					  Monnam(mtmp));
+				    /* suppress message in mlevel_tele_trap() */
+				    in_sight = FALSE;
+				    seetrap(trap);
+				}
+			    } else
+				break;
+			}
 			/* Fall through */
 		case LEVEL_TELEP:
 		case MAGIC_PORTAL:
 			{
 			    int mlev_res;
-			    mlev_res = mlevel_tele_trap(mtmp, trap, in_sight);
+			    mlev_res = mlevel_tele_trap(mtmp, trap,
+							inescapable, in_sight);
 			    if (mlev_res) return(mlev_res);
 			}
 			break;

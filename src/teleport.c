@@ -282,8 +282,9 @@ vault_tele()
 }
 
 boolean
-teleport_pet(mtmp)
+teleport_pet(mtmp, force_it)
 register struct monst *mtmp;
+boolean force_it;
 {
 	register struct obj *otmp;
 
@@ -298,7 +299,7 @@ register struct monst *mtmp;
 		impossible("%s is leashed, without a leash.", Monnam(mtmp));
 		goto release_it;
 	    }
-	    if (otmp->cursed) {
+	    if (otmp->cursed && !force_it) {
 		yelp(mtmp);
 		return FALSE;
 	    } else {
@@ -902,7 +903,7 @@ int in_sight;
 	char *monname;
 
 	if (tele_restrict(mtmp)) return;
-	if (teleport_pet(mtmp)) {
+	if (teleport_pet(mtmp, FALSE)) {
 	    /* save name with pre-movement visibility */
 	    monname = Monnam(mtmp);
 
@@ -925,9 +926,10 @@ int in_sight;
 
 /* return 0 if still on level, 3 if not */
 int
-mlevel_tele_trap(mtmp, trap, in_sight)
+mlevel_tele_trap(mtmp, trap, force_it, in_sight)
 struct monst *mtmp;
 struct trap *trap;
+boolean force_it;
 int in_sight;
 {
 	int tt = trap->ttyp;
@@ -935,7 +937,7 @@ int in_sight;
 
 	if (mtmp == u.ustuck)	/* probably a vortex */
 	    return 0;		/* temporary? kludge */
-	if (teleport_pet(mtmp)) {
+	if (teleport_pet(mtmp, force_it)) {
 	    d_level tolevel;
 	    int migrate_typ = MIGR_RANDOM;
 
