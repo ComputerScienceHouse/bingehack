@@ -1069,8 +1069,15 @@ poly_obj(obj, id)
 		otmp = mkobj(obj->oclass, FALSE);
 	    } while (--try_limit > 0 &&
 		  objects[obj->otyp].oc_magic != objects[otmp->otyp].oc_magic);
-	} else /* literally replace obj with this new thing */
+	} else {
+	    /* literally replace obj with this new thing */
 	    otmp = mksobj(id, FALSE, FALSE);
+	/* Actually more things use corpsenm but they polymorph differently */
+#define USES_CORPSENM(typ) ((typ)==CORPSE || (typ)==STATUE || (typ)==FIGURINE)
+	    if (USES_CORPSENM(obj->otyp) && USES_CORPSENM(id))
+		otmp->corpsenm = obj->corpsenm;
+#undef USES_CORPSENM
+	}
 
 	/* preserve quantity */
 	otmp->quan = obj->quan;
@@ -1138,7 +1145,7 @@ poly_obj(obj, id)
 	if (obj->opoisoned && is_poisonable(otmp))
 		otmp->opoisoned = TRUE;
 
-	if (obj->otyp == CORPSE) {
+	if (id == STRANGE_OBJECT && obj->otyp == CORPSE) {
 	/* turn crocodile corpses into shoes */
 	    if (obj->corpsenm == PM_CROCODILE) {
 		otmp->otyp = LOW_BOOTS;
@@ -1407,32 +1414,66 @@ struct obj *obj, *otmp;
 			    poly_obj(obj, HUGE_CHUNK_OF_MEAT);
 			    goto smell;
 			} else if (obj->otyp == STATUE) {
-			    if (!animate_statue(obj, obj->ox, obj->oy,
-						ANIMATE_SPELL, (int *)0))
-				res = 0;
+			    xchar oox, ooy;
+
+			    switch(obj->where) {
+				case OBJ_MINVENT: oox = obj->ocarry->mx;
+				    ooy = obj->ocarry->my;
+				    break;
+				case OBJ_INVENT: oox = u.ux; ooy = u.uy; break;
+				default: impossible("where was %d?",
+				    obj->where);
+				    /* fall through */
+				case OBJ_FLOOR: oox = obj->ox; ooy = obj->oy;
+				    break;
+			    }
+			    if (!animate_statue(obj, oox, ooy,
+						ANIMATE_SPELL, (int *)0)) {
+makecorpse:			if (mvitals[obj->corpsenm].mvflags & (G_NOCORPSE|G_UNIQ)) {
+				    res = 0;
+				    break;
+				}
+				/* Unlikely to get here since genociding
+				 * monsters also sets the G_NOCORPSE flag.
+				 */
+				poly_obj(obj, CORPSE);
+				break;
+			    }
 			} else { /* new rock class object... */
 			    /* impossible? */
 			    res = 0;
 			}
 			break;
 		    case TOOL_CLASS:	/* figurine */
-			{
+		    {
 			struct monst *mon;
+			xchar oox, ooy;
 
 			if (obj->otyp != FIGURINE) {
 			    res = 0;
 			    break;
 			}
+			switch(obj->where) {
+			    case OBJ_MINVENT: oox = obj->ocarry->mx;
+				ooy = obj->ocarry->my;
+				break;
+			    case OBJ_INVENT: oox = u.ux; ooy = u.uy; break;
+			    default: impossible("where was %d?",
+				obj->where);
+				/* fall through */
+			    case OBJ_FLOOR: oox = obj->ox; ooy = obj->oy;
+				break;
+			}
 			mon = makemon(&mons[obj->corpsenm],
-				      obj->ox, obj->oy, NO_MM_FLAGS);
+				      oox, ooy, NO_MM_FLAGS);
 			if (mon) {
 			    delobj(obj);
 			    if (cansee(mon->mx, mon->my))
 				pline_The("figurine animates!");
 			    break;
 			}
-			/* else fall through and make a meatball */
-			}
+			goto makecorpse;
+		    }
 		    /* maybe add weird things to become? */
 		    case RING_CLASS:	/* some of the rings are stone */
 			poly_obj(obj, MEAT_RING);
