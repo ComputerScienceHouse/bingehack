@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)winmisc.c	3.3	1999/12/21	*/
+/*	SCCS Id: @(#)winmisc.c	3.3	2000/05/21	*/
 /* Copyright (c) Dean Luick, 1992				  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -269,6 +269,11 @@ X11_player_selection()
     char qbuf[QBUFSZ];
 
     while (flags.initrole < 0) {
+	if (flags.initrole == ROLE_RANDOM) {
+	    flags.initrole = pick_role(flags.initrace,
+				       flags.initgend, flags.initalign);
+	    break;
+	}
 	/* select a role */
 	for (num_roles = 0; roles[num_roles].name.m; ++num_roles) continue;
 	choices = (const char **)alloc(sizeof(char *) * num_roles);
@@ -312,8 +317,7 @@ X11_player_selection()
 	    X11_exit_nhwindows((char *)0);
 	    terminate(0);
 	} else if (ps_selected == PS_RANDOM) {
-	    flags.initrole = pick_role(flags.initrace,
-				       flags.initgend, flags.initalign);
+	    flags.initrole = ROLE_RANDOM;
 	} else if (ps_selected < 0 || ps_selected >= num_roles) {
 	    panic("player_selection: bad role select value %d\n", ps_selected);
 	} else {
@@ -322,6 +326,11 @@ X11_player_selection()
     }
 
     while (!validrace(flags.initrole, flags.initrace)) {
+	if (flags.initrace == ROLE_RANDOM) {
+	    flags.initrace = pick_race(flags.initrole,
+				       flags.initgend, flags.initalign);
+	    break;
+	}
 	/* select a race */
 	for (num_races = 0; races[num_races].noun; ++num_races) continue;
 	choices = (const char **)alloc(sizeof(char *) * num_races);
@@ -374,8 +383,7 @@ X11_player_selection()
 		X11_exit_nhwindows((char *)0);
 		terminate(0);
 	    } else if (ps_selected == PS_RANDOM) {
-		flags.initrace = pick_race(flags.initrole,
-					   flags.initgend, flags.initalign);
+		flags.initrace = ROLE_RANDOM;
 	    } else if (ps_selected < 0 || ps_selected >= num_races) {
 		panic("player_selection: bad race select value %d\n", ps_selected);
 	    } else {
@@ -385,6 +393,11 @@ X11_player_selection()
     }
 
     while (!validgend(flags.initrole, flags.initrace, flags.initgend)) {
+	if (flags.initgend == ROLE_RANDOM) {
+	    flags.initgend = pick_gend(flags.initrole, flags.initrace,
+				       flags.initalign);
+	    break;
+	}
 	/* select a gender */
 	num_gends = 2;		/* genders[2] isn't allowed */
 	choices = (const char **)alloc(sizeof(char *) * num_gends);
@@ -437,8 +450,7 @@ X11_player_selection()
 		X11_exit_nhwindows((char *)0);
 		terminate(0);
 	    } else if (ps_selected == PS_RANDOM) {
-		flags.initgend = pick_gend(flags.initrole, flags.initrace,
-					   flags.initalign);
+		flags.initgend = ROLE_RANDOM;
 	    } else if (ps_selected < 0 || ps_selected >= num_gends) {
 		panic("player_selection: bad gender select value %d\n", ps_selected);
 	    } else {
@@ -448,6 +460,11 @@ X11_player_selection()
     }
 
     while (!validalign(flags.initrole, flags.initrace, flags.initalign)) {
+	if (flags.initalign == ROLE_RANDOM) {
+	    flags.initalign = pick_align(flags.initrole, flags.initrace,
+					 flags.initgend);
+	    break;
+	}
 	/* select an alignment */
 	num_algns = 3;		/* aligns[3] isn't allowed */
 	choices = (const char **)alloc(sizeof(char *) * num_algns);
@@ -501,8 +518,7 @@ X11_player_selection()
 		X11_exit_nhwindows((char *)0);
 		terminate(0);
 	    } else if (ps_selected == PS_RANDOM) {
-		flags.initalign = pick_align(flags.initrole, flags.initrace,
-					     flags.initgend);
+		flags.initalign = ROLE_RANDOM;
 	    } else if (ps_selected < 0 || ps_selected >= num_algns) {
 		panic("player_selection: bad alignment select value %d\n", ps_selected);
 	    } else {

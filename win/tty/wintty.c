@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)wintty.c	3.3	1999/10/28	*/
+/*	SCCS Id: @(#)wintty.c	3.3	2000/05/21	*/
 /* Copyright (c) David Cohrs, 1991				  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -313,8 +313,8 @@ tty_player_selection()
 	menu_item *selected = 0;
 
 	/* Should we randomly pick for the player? */
-	if (flags.initrole < 0 || flags.initrace < 0 || flags.initgend < 0
-		|| flags.initalign < 0) {
+	if (flags.initrole == ROLE_NONE || flags.initrace == ROLE_NONE ||
+		flags.initgend == ROLE_NONE || flags.initalign == ROLE_NONE) {
 	    const char *prompt = "Shall I pick a character for you? [ynq] ";
 	    int echoline;
 
@@ -351,8 +351,7 @@ give_up:	/* Quit */
 	 * but may not succeed */
 	if (flags.initrole < 0) {
 	    /* Process the choice */
-	    switch (pick4u) {
-	    case 'y':
+	    if (pick4u == 'y' || flags.initrole == ROLE_RANDOM) {
 		/* Pick a random role */
 		flags.initrole = pick_role(flags.initrace, flags.initgend,
 						flags.initalign);
@@ -360,9 +359,7 @@ give_up:	/* Quit */
 		    tty_putstr(BASE_WINDOW, 0, "Incompatible role!");
 		    flags.initrole = randrole();
 		}
-		break;
-
-	    case 'n':
+	    } else {
 		/* Prompt for a role */
 		win = create_nhwindow(NHW_MENU);
 		start_menu(win);
@@ -397,7 +394,6 @@ give_up:	/* Quit */
 
 		flags.initrole = selected[0].item.a_int - 1;
 		free((genericptr_t) selected),	selected = 0;
-		break;
 	    }
 	}
 
@@ -406,7 +402,7 @@ give_up:	/* Quit */
 	 * pre-selected gender/alignment */
 	if (flags.initrace < 0 || !validrace(flags.initrole, flags.initrace)) {
 	    /* pre-selected race not valid */
-	    if (pick4u == 'y') {
+	    if (pick4u == 'y' || flags.initrace == ROLE_RANDOM) {
 		flags.initrace = pick_race(flags.initrole, flags.initgend,
 							flags.initalign);
 		if (flags.initrace < 0) {
@@ -475,7 +471,7 @@ give_up:	/* Quit */
 	if (flags.initgend < 0 || !validgend(flags.initrole, flags.initrace,
 						flags.initgend)) {
 	    /* pre-selected gender not valid */
-	    if (pick4u == 'y') {
+	    if (pick4u == 'y' || flags.initgend == ROLE_RANDOM) {
 		flags.initgend = pick_gend(flags.initrole, flags.initrace,
 						flags.initalign);
 		if (flags.initgend < 0) {
@@ -544,7 +540,7 @@ give_up:	/* Quit */
 	if (flags.initalign < 0 || !validalign(flags.initrole, flags.initrace,
 							flags.initalign)) {
 	    /* pre-selected alignment not valid */
-	    if (pick4u == 'y') {
+	    if (pick4u == 'y' || flags.initalign == ROLE_RANDOM) {
 		flags.initalign = pick_align(flags.initrole, flags.initrace,
 							flags.initgend);
 		if (flags.initalign < 0) {

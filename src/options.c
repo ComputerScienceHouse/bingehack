@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)options.c	3.3	2000/04/27	*/
+/*	SCCS Id: @(#)options.c	3.3	2000/05/21	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1166,7 +1166,7 @@ goodfruit:
 	    match_optname(opts, (fullname = "character"), 4, TRUE)) {
 		if (negated) bad_negation(fullname, FALSE);
 		else if ((op = string_for_env_opt(fullname, opts, FALSE)) != 0)
-			if ((flags.initrole = str2role(op)) < 0)
+			if ((flags.initrole = str2role(op)) == ROLE_NONE)
 				badoption(opts);
 			else  /* Backwards compatibility */
 				nmcpy(pl_character, op, PL_NSIZ);
@@ -1178,7 +1178,7 @@ goodfruit:
 	if (match_optname(opts, fullname, 4, TRUE)) {
 		if (negated) bad_negation(fullname, FALSE);
 		else if ((op = string_for_env_opt(fullname, opts, FALSE)) != 0)
-			if ((flags.initrace = str2race(op)) < 0)
+			if ((flags.initrace = str2race(op)) == ROLE_NONE)
 				badoption(opts);
 			else /* Backwards compatibility */
 				pl_race = *op;
@@ -1190,7 +1190,7 @@ goodfruit:
 	if (match_optname(opts, fullname, 4, TRUE)) {
 		if (negated) bad_negation(fullname, FALSE);
 		else if ((op = string_for_env_opt(fullname, opts, FALSE)) != 0)
-			if ((flags.initgend = str2gend(op)) < 0)
+			if ((flags.initgend = str2gend(op)) == ROLE_NONE)
 				badoption(opts);
 			else
 				flags.female = flags.initgend;
@@ -1202,7 +1202,7 @@ goodfruit:
 	if (match_optname(opts, fullname, 4, TRUE)) {
 		if (negated) bad_negation(fullname, FALSE);
 		else if ((op = string_for_env_opt(fullname, opts, FALSE)) != 0)
-			if ((flags.initalign = str2align(op)) < 0)
+			if ((flags.initalign = str2align(op)) == ROLE_NONE)
 				badoption(opts);
 		return;
 	}
@@ -1953,7 +1953,10 @@ boolean setinitial,setfromfile;
     }
     return retval;
 }
-	
+
+#define rolestring(val,array,field) ((val >= 0) ? array[val].field : \
+				     (val == ROLE_RANDOM) ? randrole : none)
+
 /* This is ugly. We have all the option names in the compopt[] array,
    but we need to look at each option individually to get the value. */
 STATIC_OVL char *
@@ -1961,18 +1964,16 @@ get_compopt_value(optname, buf)
 const char *optname;
 char *buf;
 {
-	char tbuf[BUFSZ];
 	char ocl[MAXOCLASSES+1];
-	const char *none = "(none)";
-	const char *to_be_done = "(to be done)";
+	static const char none[] = "(none)", randrole[] = "random",
+		     to_be_done[] = "(to be done)";
 #ifdef PREFIXES_IN_USE
 	int i;
 #endif
 
 	buf[0] = '\0';
 	if (!strcmp(optname,"align"))
-		Sprintf(buf, "%s",
-		    (flags.initalign < 0) ? none : aligns[flags.initalign].adj);
+		Sprintf(buf, "%s", rolestring(flags.initalign, aligns, adj));
 	else if (!strcmp(optname, "catname")) 
 		Sprintf(buf, "%s", catname[0] ? catname : none );
 	else if (!strcmp(optname, "disclose")) 
@@ -1987,8 +1988,7 @@ char *buf;
 	else if (!strcmp(optname, "fruit")) 
 		Sprintf(buf, "%s", pl_fruit);
 	else if (!strcmp(optname, "gender"))
-		Sprintf(buf, "%s",
-		    (flags.initgend < 0) ? none : genders[flags.initgend].adj );
+		Sprintf(buf, "%s", rolestring(flags.initgend, genders, adj));
 	else if (!strcmp(optname, "horsename")) 
 		Sprintf(buf, "%s", horsename[0] ? horsename : none);
 	else if (!strcmp(optname, "menustyle")) 
@@ -2041,11 +2041,9 @@ char *buf;
 		Sprintf(buf, "%s", ocl[0] ? ocl : "all" );
 	     }
 	else if (!strcmp(optname, "race"))
-		Sprintf(buf, "%s",
-		    (flags.initrace < 0) ? none : races[flags.initrace].noun );
-	else if (!strcmp(optname, "role")) 
-		Sprintf(buf, "%s",
-		    (flags.initrole < 0) ? none : roles[flags.initrole].name.m);
+		Sprintf(buf, "%s", rolestring(flags.initrace, races, noun));
+	else if (!strcmp(optname, "role"))
+		Sprintf(buf, "%s", rolestring(flags.initrole, roles, name.m));
 	else if (!strcmp(optname, "scores")) {
 		Sprintf(buf, "%d top/%d around%s", flags.end_top,
 				flags.end_around, flags.end_own ? "/own" : "");
@@ -2055,13 +2053,14 @@ char *buf;
 		Sprintf(buf, "%s", to_be_done);
 #endif
 	else if (!strcmp(optname, "suppress_alert")) {
-		Sprintf(tbuf, "%lu.%lu.%lu",
+	    if (flags.suppress_alert == 0L)
+		Strcpy(buf, none);
+	    else
+		Sprintf(buf, "%lu.%lu.%lu",
 			FEATURE_NOTICE_VER_MAJ,
 			FEATURE_NOTICE_VER_MIN,
 			FEATURE_NOTICE_VER_PATCH);
-		Sprintf(buf, "%s", (flags.suppress_alert == 0L) ? none : tbuf);
-	     }
-	else if (!strcmp(optname, "traps"))
+	} else if (!strcmp(optname, "traps"))
 		Sprintf(buf, "%s", to_be_done);
 #ifdef MSDOS
 	else if (!strcmp(optname, "video"))

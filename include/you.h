@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)you.h	3.3	1999/11/01	*/
+/*	SCCS Id: @(#)you.h	3.3	2000/05/21	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -142,6 +142,10 @@ extern struct Role urole;
 #define Role_if(X)	(urole.malenum == (X))
 #define Role_switch	(urole.malenum)
 
+/* used during initialization for race, gender, and alignment
+   as well as for character class */
+#define ROLE_NONE	(-1)
+#define ROLE_RANDOM	(-2)
 
 /*** Unified structure specifying race information ***/
 
