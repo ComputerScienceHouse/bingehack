@@ -264,13 +264,15 @@ void message_handler(int x, int y){
 	}
 }
 
-void mar_ob_mapcenter(OBJECT *p_obj){
+int mar_ob_mapcenter(OBJECT *p_obj){
 	WIN *p_w= WIN_MAP!=WIN_ERR ? Gem_nhwindow[WIN_MAP].gw_window : NULL;
 
 	if(p_obj && p_w){
 		p_obj->ob_x=p_w->work.g_x+p_w->work.g_w/2-p_obj->ob_width/2;
 		p_obj->ob_y=p_w->work.g_y+p_w->work.g_h/2-p_obj->ob_height/2;
+		return(DIA_LASTPOS);
 	}
+	return(DIA_CENTERED);
 }
 
 /****************************** set_no_glyph *************************************/
@@ -770,13 +772,19 @@ mar_ask_name()
 /************************* more *******************************/
 
 void
-send_return()
+send_key(int key)
 {
 	int buf[8];
 
 	buf[3]=0;	/* No Shift/Ctrl/Alt */
-	buf[4]=key(SCANRET,0);	/* Return */
+	buf[4]=key;
 	AvSendMsg(ap_id,AV_SENDKEY,buf);
+}
+
+void
+send_return()
+{
+	send_key(key(SCANRET,0));
 }
 
 int
@@ -1518,7 +1526,7 @@ winid wind;
 		ob_set_text(z_ob,QLINE,strOk);
 		ob_undoflag(z_ob,LINESLIST,SELECTABLE);
 		Event_Handler(Text_Init,Text_Handler);
-		if((dlg_info=open_dialog(z_ob,strText, NULL, NULL, DIA_CENTERED, FALSE, mar_di_mode, FAIL, NULL, NULL))!=NULL){
+		if((dlg_info=open_dialog(z_ob,strText, NULL, NULL, mar_ob_mapcenter(z_ob), FALSE, mar_di_mode, FAIL, NULL, NULL))!=NULL){
 			WIN *ptr_win=dlg_info->di_win;
 
 			ptr_win->scroll=&scroll_menu;
@@ -1546,9 +1554,8 @@ winid wind;
 		tmp_button=ob_get_text(z_ob,QLINE,0);
 		ob_set_text(z_ob,QLINE,Inv_how!=PICK_NONE ? strCancel : strOk );
 		ob_doflag(z_ob,LINESLIST,SELECTABLE);
-		mar_ob_mapcenter(z_ob);
 		Event_Handler(Inv_Init, Inv_Handler);
-		if((Inv_dialog=open_dialog(z_ob,(wind==WIN_INVEN) ? "Inventory" : (Menu_title ? Menu_title : "Staun"), NULL, NULL, DIA_LASTPOS, FALSE, mar_di_mode, FAIL, NULL, NULL))!=NULL){
+		if((Inv_dialog=open_dialog(z_ob,(wind==WIN_INVEN) ? "Inventory" : (Menu_title ? Menu_title : "Staun"), NULL, NULL, mar_ob_mapcenter(z_ob), FALSE, mar_di_mode, FAIL, NULL, NULL))!=NULL){
 			WIN *ptr_win=Inv_dialog->di_win;
 
 			ptr_win->scroll=&scroll_menu;
@@ -2011,8 +2018,7 @@ char *input;
 	ob_set_text(z_ob,LGREPLY, input);
 
 	ob_clear_edit(z_ob);
-	mar_ob_mapcenter(z_ob);
-	d_exit=xdialog(z_ob, nullstr, NULL, NULL, DIA_LASTPOS, FALSE, DIALOG_MODE);
+	d_exit=xdialog(z_ob, nullstr, NULL, NULL, mar_ob_mapcenter(z_ob), FALSE, DIALOG_MODE);
 
 	free(ob_get_text(z_ob,LGPROMPT,0));
 	ob_set_text(z_ob,LGPROMPT,tmp_prompt );
@@ -2039,6 +2045,12 @@ XEVENT *xev;
 		DIAINFO *dinf;
 
 		switch(ch){
+		case 's':
+			send_key((int)(mar_iflags_numpad() ? '5' : '.'));
+			break;
+		case '.':
+			send_key('5');	/* MAR -- '.' is a button if numpad isn't set */
+			break;
 		case '\033':	/*ESC*/
 			if((w=get_top_window()) && (dinf=(DIAINFO *)w->dialog) && dinf->di_tree==zz_oblist[DIRECTION]){
 				close_dialog(dinf,FALSE);
@@ -2060,9 +2072,8 @@ mar_ask_direction()
 	OBJECT *z_ob=zz_oblist[DIRECTION];
 
 	Event_Handler(Dia_Init,Dia_Handler);
-	mar_ob_mapcenter(z_ob);
 	mar_set_dir_keys();
-	d_exit=xdialog(z_ob, nullstr, NULL, NULL, DIA_LASTPOS, FALSE, DIALOG_MODE);
+	d_exit=xdialog(z_ob, nullstr, NULL, NULL, mar_ob_mapcenter(z_ob), FALSE, DIALOG_MODE);
 	Event_Handler(NULL,NULL);
 
 	if(d_exit==W_CLOSED || d_exit==W_ABANDON)
@@ -2105,11 +2116,7 @@ send_yn_esc(char ch)
 
 	if(ch<0){
 		if(esc_char){
-			int buf[8];
-
-			buf[3]=0;
-			buf[4]=esc_char;
-			AvSendMsg(ap_id,AV_SENDKEY,buf);
+			send_key((int)esc_char);
 			return(TRUE);
 		}
 		return(FALSE);
@@ -2227,8 +2234,7 @@ char def;
 		Event_Handler(any_init,any_handler);
 	}
 
-	mar_ob_mapcenter(z_ob);
-	d_exit=xdialog(z_ob, nullstr, NULL, NULL, DIA_LASTPOS, FALSE, DIALOG_MODE);
+	d_exit=xdialog(z_ob, nullstr, NULL, NULL, mar_ob_mapcenter(z_ob), FALSE, DIALOG_MODE);
 	Event_Handler(NULL,NULL);
 	/* display of count is missing (through the core too) */
 
