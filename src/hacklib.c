@@ -232,7 +232,7 @@ sitoa(n)		/* make a signed digit string from a number */
 {
     Static char buf[13];
 
-    (void) sprintf(buf, (n < 0) ? "%d" : "+%d", n);
+    Sprintf(buf, (n < 0) ? "%d" : "+%d", n);
     return buf;
 }
 

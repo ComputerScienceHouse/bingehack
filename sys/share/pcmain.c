@@ -597,7 +597,7 @@ char *str;
 	bsize = EXEPATHBUFSZ;
 	tmp = exepathbuf;
 # ifndef WIN32
-	strcpy (tmp, str);
+	Strcpy (tmp, str);
 # else
 	*(tmp + GetModuleFileName((HANDLE)0, tmp, bsize)) = '\0';
 # endif

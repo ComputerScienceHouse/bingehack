@@ -132,8 +132,7 @@ char *str;
 	int j = 0;
 
 	if (!str) return 0L;
-	strcpy(buf,str);
-	str = buf;
+	str = strcpy(buf, str);
 	istr[j] = str;
 	while (*str) {
 		if (*str == '.') {

@@ -264,12 +264,13 @@ tty: get repeat to work properly on extended commands
 tty/ASCIIGRAPH: rogue level uses PC Rogue colors and symbols
 nt: in TTY port, non-English keyboard layouts that depended on AltGr-+ sequence
 	were getting "Unknown command 'M-\'" for '\','@','$','{','[',']','}'.
+tty and X11: avoid crashing trying to display long (>128 char) menu items
+X11: avoid setuid install problems by changing uid to real uid while
+	opening the X11 connection.
 unix: compress/uncompress detects failure of the compressor, such as for
 	filesystem full or missing compressor, and no longer deletes the
 	valid file.  In the uncompress case, such as uncompressing the save
 	file, a message is generated as well.
-X11: avoid setuid install problems by changing uid to real uid while
-	opening the X11 connection.
 dlb: handle situation where lseek(,,SEEK_END) doesn't yield the size of the
 	contents of a file (specifically, VMS "variable length" record format)
 vms: install.com couldn't handle the `copy readonly files' step when DLB
