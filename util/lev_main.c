@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)lev_main.c	3.3	2000/01/17	*/
+/*	SCCS Id: @(#)lev_main.c	3.3	2000/08/01	*/
 /*	Copyright (c) 1989 by Jean-Christophe Collet */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -97,7 +97,7 @@ static boolean FDECL(write_maze, (int,specialmaze *));
 static boolean FDECL(write_rooms, (int,splev *));
 static void NDECL(init_obj_classes);
 
-static int bases[MAXOCLASSES];
+int bases[MAXOCLASSES];
 
 static struct {
 	const char *name;

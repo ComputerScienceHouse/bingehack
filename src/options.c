@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)options.c	3.3	2000/05/21	*/
+/*	SCCS Id: @(#)options.c	3.3	2000/08/01	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -393,7 +393,7 @@ STATIC_DCL int FDECL(change_inv_order, (char *));
 STATIC_DCL void FDECL(oc_to_str, (char *, char *));
 STATIC_DCL void FDECL(graphics_opts, (char *,const char *,int,int));
 STATIC_DCL int FDECL(feature_alert_opts, (char *, const char *));
-STATIC_DCL char *FDECL(get_compopt_value, (const char *, char *));
+STATIC_DCL const char *FDECL(get_compopt_value, (const char *, char *));
 STATIC_DCL boolean FDECL(special_handling, (const char *, BOOLEAN_P, BOOLEAN_P));
 STATIC_DCL void FDECL(warning_opts, (char *,const char *));
 #if 0
@@ -1854,7 +1854,7 @@ doset_add_menu(win, option, indexoffset)
 
 	if (compopt[i].name) {
 	    any.a_int = i + 1 + indexoffset;
-    	    value = get_compopt_value(option, buf2);
+	    value = get_compopt_value(option, buf2);
 	} else {
 	    /* We are trying to add an option not found in compopt[].
 	       This is almost certainly bad, but we'll let it through anyway
@@ -2054,7 +2054,7 @@ boolean setinitial,setfromfile;
 
 /* This is ugly. We have all the option names in the compopt[] array,
    but we need to look at each option individually to get the value. */
-STATIC_OVL char *
+STATIC_OVL const char *
 get_compopt_value(optname, buf)
 const char *optname;
 char *buf;
@@ -2183,7 +2183,7 @@ char *buf;
 #ifdef PREFIXES_IN_USE
 	else {
 	    for (i = 0; i < PREFIX_COUNT; ++i)
-	    	if (!strcmp(optname, fqn_prefix_names[i]) && fqn_prefix[i])
+		if (!strcmp(optname, fqn_prefix_names[i]) && fqn_prefix[i])
 			Sprintf(buf, "%s", fqn_prefix[i]);
 	}
 #endif
