@@ -15,12 +15,12 @@ on.
 
         NetHack uses the following symbols:
 
-        - and |  The walls of a room, possibly also open doors.
+        - and |  The walls of a room, possibly also open doors or a grave.
         .        The floor of a room or a doorway.
-        #        A corridor, a kitchen sink (if your dungeon has sinks), or
-                 a drawbridge.
-        >        A way to the next level.
-        <        A way to the previous level.
+        #        A corridor, or iron bars, or a tree, or possibly a kitchen
+                 sink (if your dungeon has sinks), or a drawbridge.
+        >        Stairs down: a way to the next level.
+        <        Stairs up: a way to the previous level.
         @        You (usually), or another human.
         )        A weapon of some sort.
         [        A suit or piece of armor.
@@ -38,8 +38,8 @@ on.
         "        An amulet, or a spider web.
         0        An iron ball.
         _        An altar, or an iron chain.
-        }        A pool of water or moat or a pool of lava.
         {        A fountain.
+        }        A pool of water or moat or a pool of lava.
         \        An opulent throne.
         `        A boulder or statue.
         A to Z, a to z, and several others:  Monsters.
@@ -147,7 +147,7 @@ Commands:
         (       Tell what tools you are using.
         *       Tell what equipment you are using; combines the preceding five.
         $       Count your gold pieces.
-        +       List the spells you know.
+        +       List the spells you know; also rearrange them if desired.
         \       Show what types of objects have been discovered.
         !       Escape to a shell, if supported in your version and OS.
         #       Introduces one of the "extended" commands.  To get a list of

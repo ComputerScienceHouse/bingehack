@@ -302,10 +302,10 @@ The floor of a room, ice, or a doorless doorway.
 .lp #
 A corridor, or iron bars, or a tree, or possibly a kitchen sink (if
 your dungeon has sinks), or a drawbridge.
-.lp <
-A way to the previous level.
 .lp >
-A way to the next level.
+Stairs down: a way to the next level.
+.lp <
+Stairs up: a way to the previous level.
 .lp +
 A closed door, or a spellbook containing a spell you can learn.
 .lp @
@@ -340,10 +340,10 @@ A boulder or statue.
 An iron ball.
 .lp _
 An altar, or an iron chain.
-.lp }
-A pool of water or moat or a pool of lava.
 .lp {
 A fountain.
+.lp }
+A pool of water or moat or a pool of lava.
 .lp "\e
 An opulent throne.
 .lp "a-zA-Z and other symbols
@@ -352,7 +352,7 @@ of the Mazes of Menace.  Watch out, they can be nasty and vicious.
 Sometimes, however, they can be helpful.
 .pg
 You need not memorize all these symbols; you can ask the game what any
-symbol represents with the `/' command (see the Commands section for
+symbol represents with the `/' command (see the next section for
 more info).
 
 .hn 1
@@ -471,14 +471,15 @@ Panic button.  Quit the game.
 Drop something.  Ex. ``d7a'' means drop seven items of object \fIa\fP.
 .lp D
 Drop several things.  In answer to the question
-``What kinds of things do you want to drop? [!%= au]''
+``What kinds of things do you want to drop? [!%= aium]''
 you should type zero or more object symbols possibly followed by 
-`a' and/or `m' and/or `u'.
+`a' and/or `i' and/or `u' and/or `m'.
 .sd
 .si
 Da  - drop all objects, without asking for confirmation.
-Dm  - use a menu to pick which object(s) to drop.
+Dm  - examine your inventory before dropping anything.
 Du  - drop only unpaid objects (when in a shop).
+Dm  - use a menu to pick which object(s) to drop.
 D%u - drop only unpaid food.
 .ei
 .ed
@@ -561,7 +562,12 @@ Display version number.
 .lp V
 Display the game history.
 .lp w
-Wield weapon.  `w-' means wield nothing, use your bare hands.
+Wield weapon.
+.sd
+.si
+w- - wield nothing, use your bare hands.
+.ei
+.ed
 .lp W
 Wear armor.
 .lp x
@@ -606,7 +612,11 @@ commands into one.
 .lp $
 Count your gold pieces.
 .lp +
-List the spells you know.
+List the spells you know.  Using this command, you can also rearrange
+the order in which your spells are listed.  They are shown via a menu,
+and if you select a spell in that menu, you'll be re-prompted for
+another spell to swap places with it, and then have opportunity to
+make further exchanges.
 .lp "\e
 Show what types of objects have been discovered.
 .lp !

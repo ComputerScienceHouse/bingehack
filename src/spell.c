@@ -21,7 +21,7 @@ static void FDECL(cursed_book, (int));
 static void FDECL(deadbook, (struct obj *));
 STATIC_PTR int NDECL(learn);
 static boolean FDECL(getspell, (int *));
-static boolean FDECL(dospellmenu, (int, int *));
+static boolean FDECL(dospellmenu, (const char *,int,int *));
 static int FDECL(percent_success, (int));
 static int NDECL(throwspell);
 static void NDECL(cast_protection);
@@ -504,7 +504,7 @@ getspell(spell_no)
 		    You("don't know that spell.");
 	    }
 	}
-	return dospellmenu(PICK_ONE, spell_no);
+	return dospellmenu("Choose which spell to cast", -1, spell_no);
 }
 
 /* the 'Z' command -- cast a spell */
@@ -921,19 +921,31 @@ losespells()
 int
 dovspell()
 {
-	int dummy;
+	char qbuf[QBUFSZ];
+	int splnum, othnum;
+	struct spell spl_tmp;
 
 	if (spellid(0) == NO_SPELL)
 	    You("don't know any spells right now.");
-	else
-	    (void) dospellmenu(PICK_NONE, &dummy);
+	else {
+	    while (dospellmenu("Currently known spells", -1, &splnum)) {
+		Sprintf(qbuf, "Reordering spells; swap '%c' with",
+			spellet(splnum));
+		if (!dospellmenu(qbuf, splnum, &othnum)) break;
+
+		spl_tmp = spl_book[splnum];
+		spl_book[splnum] = spl_book[othnum];
+		spl_book[othnum] = spl_tmp;
+	    }
+	}
 	return 0;
 }
 
 static boolean
-dospellmenu(how, spell_no)
-	int how;
-	int *spell_no;
+dospellmenu(prompt, preselect, spell_no)
+const char *prompt;
+int preselect;
+int *spell_no;
 {
 	winid tmpwin;
 	int i, n;
@@ -965,17 +977,29 @@ dospellmenu(how, spell_no)
 
 		any.a_int = i+1;	/* must be non-zero */
 		add_menu(tmpwin, NO_GLYPH, &any,
-			 spellet(i), 0, ATR_NONE, buf, MENU_UNSELECTED);
+			 spellet(i), 0, ATR_NONE, buf,
+			 (i == preselect) ? MENU_SELECTED : MENU_UNSELECTED);
 	      }
-	end_menu(tmpwin, how == PICK_ONE ? "Choose a spell" :
-					   "Currently known spells");
+	end_menu(tmpwin, prompt);
 
-	n = select_menu(tmpwin, how, &selected);
+	n = select_menu(tmpwin, PICK_ONE, &selected);
 	destroy_nhwindow(tmpwin);
 	if (n > 0) {
 		*spell_no = selected[0].item.a_int - 1;
+		/* menu selection for `PICK_ONE' does not
+		   de-select any preselected entry */
+		if (n > 1 && *spell_no == preselect)
+		    *spell_no = selected[1].item.a_int - 1;
 		free((genericptr_t)selected);
+		/* default selection of preselected spell means that
+		   user chose not to swap it with anything */
+		if (*spell_no == preselect) return FALSE;
 		return TRUE;
+	} else if (preselect != -1) {
+	    /* explicit de-selection of preselected spell means that
+	       user is still swapping but not for the current spell */
+	    *spell_no = preselect;
+	    return TRUE;
 	}
 	return FALSE;
 }

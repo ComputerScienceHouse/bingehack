@@ -419,11 +419,11 @@ The floor of a room, ice, or a doorless doorway.
 A corridor, or iron bars, or a tree, or possibly a kitchen sink (if
 your dungeon has sinks), or a drawbridge.
 %.lp
-\item[\tb{<}]
-A way to the previous level.
-%.lp
 \item[\tb{>}]
-A way to the next level.
+Stairs down: a way to the next level.
+%.lp
+\item[\tb{<}]
+Stairs up: a way to the previous level.
 %.lp
 \item[\tb{+}]
 A closed door, or a spellbook containing a spell you can learn.
@@ -476,11 +476,11 @@ An iron ball.
 \item[\tb{_}]
 An altar, or an iron chain.
 %.lp
-\item[\tb{\}}]
-A pool of water or moat or a pool of lava.
-%.lp
 \item[\tb{\{}]
 A fountain.
+%.lp
+\item[\tb{\}}]
+A pool of water or moat or a pool of lava.
 %.lp
 \item[\tb{$\backslash$}]
 An opulent throne.
@@ -493,7 +493,7 @@ Sometimes, however, they can be helpful.
 \elist
 %.pg
 You need not memorize all these symbols; you can ask the game what any
-symbol represents with the `{\tt /}' command (see the Commands section for
+symbol represents with the `{\tt /}' command (see the next section for
 more info).
 
 %.hn 1
@@ -620,8 +620,6 @@ Rest, do nothing for one turn.
 Apply (use) a tool (pick-axe, key, lamp \ldots).
 %.lp
 \item[\tb{A}]
-Remove all armor.  Use `{\tt T}' (take off) to take off only one piece of
-armor.
 Remove one or more worn items, such as armor.
 Use `{\tt T}' (take off) to take off only one piece of armor 
 or `{\tt R}' (remove) to take off only one accessory.
@@ -645,14 +643,15 @@ Drop something.\\
 %.lp
 \item[\tb{D}]
 Drop several things.  In answer to the question
-``{\tt What kinds of things do you want to drop? [!\%= au]}''
+``{\tt What kinds of things do you want to drop? [!\%= aium]}''
 you should type zero or more object symbols possibly followed by
-`{\tt a}' and/or `{\tt m}' and/or `{\tt u}'.\\
+`{\tt a}' and/or `{\tt i}' and/or `{\tt u}' and/or `{\tt m}'.\\
 %.sd
 %.si
 {\tt Da}  --- drop all objects, without asking for confirmation.\\
-{\tt Dm}  --- use a menu to pick which object(s) to drop.\\
+{\tt Di}  --- examine your intentory before dropping anything.\\
 {\tt Du}  --- drop only unpaid objects (when in a shop).\\
+{\tt Dm}  --- use a menu to pick which object(s) to drop.\\
 {\tt D\%u} --- drop only unpaid food.
 %.ei
 %.ed
@@ -677,7 +676,7 @@ of the game, so your version might not have it.)\\
 %.Ip
 \item[\tb{f}]
 Fire one of the objects placed in your quiver.  You may select
-ammunition with a previous `Q' command, or let the computer pick
+ammunition with a previous `{\tt Q}' command, or let the computer pick
 something appropriate if {\it autoquiver\/} is true.
 %.lp
 \item[\tb{i}]
@@ -758,7 +757,11 @@ Display the game history.
 %.lp
 \item[\tb{w}]
 Wield weapon.\\
-`{\tt w-}' means wield nothing, use your bare hands.
+%.sd
+%.si
+{\tt w-} --- wield nothing, use your bare hands.
+%.ei
+%.ed
 %.lp
 \item[\tb{W}]
 Wear armor.
@@ -819,7 +822,11 @@ commands into one.
 Count your gold pieces.
 %.lp
 \item[\tb{+}]
-List the spells you know.
+List the spells you know.  Using this command, you can also rearrange
+the order in which your spells are listed.  They are shown via a menu,
+and if you select a spell in that menu, you'll be re-prompted for
+another spell to swap places with it, and then have opportunity to
+make further exchanges.
 %.lp
 \item[\tb{$\backslash$}]
 Show what types of objects have been discovered.

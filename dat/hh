@@ -66,7 +66,7 @@ Z       Zap     cast a spell
 ),[,=,",(       ask for current items of specified symbol in use
 *               ask for combination of ),[,=,",( all at once
 $       gold    count your gold
-+       spells  list the spells you know
++       spells  list the spells you know; also rearrange them if desired
 .       rest    wait a moment
 ,       pickup  pick up all you can carry
 @               toggle "pickup" (auto pickup) option on and off
