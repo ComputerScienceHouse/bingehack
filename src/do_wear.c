@@ -1771,6 +1771,13 @@ take_off()
 	}
 
 	if (otmp) todelay += objects[otmp->otyp].oc_delay;
+
+	/* Since setting the occupation now starts the counter next move, that
+         * would always produce a delay 1 too big per item unless we subtract
+	 * 1 here to account for it.
+	 */
+	if (todelay>0) todelay--;
+
 	set_occupation(take_off, "disrobing", 0);
 	return(1);		/* get busy */
 }
@@ -1795,7 +1802,8 @@ doddoremarm()
     if (taking_off || takeoff_mask) {
 	You("continue disrobing.");
 	set_occupation(take_off, "disrobing", 0);
-	return(take_off());
+	take_off();
+	return 0;
     } else if (!uwep && !uswapwep && !uquiver && !uamul && !ublindf &&
 		!uleft && !uright && !wearing_armor()) {
 	You("are not wearing anything.");
@@ -1807,7 +1815,13 @@ doddoremarm()
 	    (result = ggetobj("take off", select_off, 0, FALSE)) < -1)
 	result = menu_remarm(result);
 
-    return takeoff_mask ? take_off() : 0;
+    if (takeoff_mask)
+	take_off();
+    /* The time to perform the command is already completely accounted for
+     * in take_off(); if we return 1, that would add an extra turn to each
+     * disrobe.
+     */
+    return 0;
 }
 
 STATIC_OVL int

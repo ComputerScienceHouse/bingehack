@@ -1037,14 +1037,20 @@ register struct obj *otmp;
 		reveal_invis = TRUE;
 		if (mtmp == &youmonst) {
 			if (zap_oseen) makeknown(WAN_STRIKING);
-			if (rnd(20) < 10 + u.uac) {
-				pline_The("wand hits you!");
-				tmp = d(2,12);
-				if(Half_spell_damage) tmp = (tmp+1) / 2;
-				losehp(tmp, "wand", KILLED_BY_AN);
+			if (Antimagic) {
+			    shieldeff(u.ux, u.uy);
+			    pline("Boing!");
+			} else if (rnd(20) < 10 + u.uac) {
+			    pline_The("wand hits you!");
+			    tmp = d(2,12);
+			    if(Half_spell_damage) tmp = (tmp+1) / 2;
+			    losehp(tmp, "wand", KILLED_BY_AN);
 			} else pline_The("wand misses you.");
 			stop_occupation();
 			nomul(0);
+		} else if (resists_magm(mtmp)) {
+			shieldeff(mtmp->mx, mtmp->my);
+			pline("Boing!");
 		} else if (rnd(20) < 10+find_mac(mtmp)) {
 			tmp = d(2,12);
 			hit("wand", mtmp, exclam(tmp));
