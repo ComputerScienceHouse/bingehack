@@ -22,6 +22,7 @@ static char *FDECL(copy_of, (const char *));
 static void FDECL(bail, (const char *));	/* __attribute__((noreturn)) */
 
 extern short glyph2tile[MAX_GLYPH];		/* from tile.c */
+extern void mar_display_nhwindow(winid);	/* from wingem1.c */
 
 /* Interface definition, for windows.c */
 struct window_procs Gem_procs = {
@@ -149,29 +150,49 @@ char** argv;
 void
 Gem_player_selection()
 {
-	int i, j, k, n;
+	int i, k, n;
 	char pick4u = 'n', pbuf[QBUFSZ], lastch=0, currch;
 	winid win;
 	anything any;
 	menu_item *selected=NULL;
 
+	/* Should we randomly pick for the player? */
+	if (flags.initrole < 0 || flags.initrace < 0 || flags.initgend < 0
+		 || flags.initalign < 0) {
+		pick4u = yn_function("Shall I pick a character for you? [ynq]",ynqchars,'n');
+		if(pick4u=='q'){
+give_up:		/* Just quit */
+			if (selected) free((genericptr_t) selected);
+			bail((char *)0);
+			/*NOTREACHED*/
+			return;
+		}
+	}
+
 	/* Select a role, if necessary */
 	if (flags.initrole < 0) {
-		pick4u = yn_function("Shall I pick a character for you? [yes, no, or quit]",ynqchars,'n');
 
 		/* Process the choice */
 		switch (pick4u) {
-			case 'y':
-				/* Pick a random role */
+		case 'y':
+			/* Pick a random role */
+			flags.initrole = pick_role(flags.initrace, flags.initgend,
+							flags.initalign);
+			if (flags.initrole < 0) {
+				mar_add_message("Incompatible role!");
+				mar_display_nhwindow(WIN_MESSAGE);
 				flags.initrole = randrole();
-				break;
+			}
+			break;
 
-			case 'n':
-				/* Prompt for a role */
-				win = create_nhwindow(NHW_MENU);
-				start_menu(win);
-				any.a_void = 0;         /* zero out all bits */
-				for (i = 0; roles[i].name.m; i++) {
+		case 'n':
+			/* Prompt for a role */
+			win = create_nhwindow(NHW_MENU);
+			start_menu(win);
+			any.a_void = 0;         /* zero out all bits */
+			for (i = 0; roles[i].name.m; i++) {
+				if (ok_role(i, flags.initrace, flags.initgend,
+					 flags.initalign)) {
 					any.a_int = i+1;	/* must be non-zero */
 					currch = lowc(roles[i].name.m[0]);
 					if(currch == lastch)
@@ -180,172 +201,242 @@ Gem_player_selection()
 							0, ATR_NONE, an(roles[i].name.m), MENU_UNSELECTED);
 					lastch = currch;
 				}
-				any.a_int = randrole()+1;	/* must be non-zero */
-				add_menu(win, NO_GLYPH, &any , '*', 0, ATR_NONE,
-					"Random", MENU_UNSELECTED);
-				any.a_int = i+1;	/* must be non-zero */
-				add_menu(win, NO_GLYPH, &any , 'q', 0, ATR_NONE,
-					"Quit", MENU_UNSELECTED);
-				end_menu(win, "Pick a role");
-				n = select_menu(win, PICK_ONE, &selected);
-				destroy_nhwindow(win);
+			}
+			any.a_int = pick_role(flags.initrace, flags.initgend,
+					    flags.initalign)+1;
+			if (any.a_int == 0)	/* must be non-zero */
+			    any.a_int = randrole()+1;
+			add_menu(win, NO_GLYPH, &any , '*', 0, ATR_NONE,
+				"Random", MENU_UNSELECTED);
+			any.a_int = i+1;	/* must be non-zero */
+			add_menu(win, NO_GLYPH, &any , 'q', 0, ATR_NONE,
+				"Quit", MENU_UNSELECTED);
+			end_menu(win, "Pick a role");
+			n = select_menu(win, PICK_ONE, &selected);
+			destroy_nhwindow(win);
 
-				/* Process the choice */
-				if (n != 1 || selected[0].item.a_int == any.a_int)
-				    goto give_up;		/* Selected quit */
+			/* Process the choice */
+			if (n != 1 || selected[0].item.a_int == any.a_int)
+			    goto give_up;		/* Selected quit */
 
-				flags.initrole = selected[0].item.a_int - 1;
-				free((genericptr_t) selected),	selected = 0;
-				break;
-
-			default:
-			case 'q':
-give_up:		/* Just quit */
-		if (selected) free((genericptr_t) selected);
-		bail((char *)0);
-		/*NOTREACHED*/
-		return;
+			flags.initrole = selected[0].item.a_int - 1;
+			free((genericptr_t) selected),	selected = 0;
+			break;
 		}
 	}
 
-	/* Select a race */
-	if (!validrace(flags.initrole, flags.initrace))
-	    i = j = k = randrace(flags.initrole);
-	else
-	    i = j = k = flags.initrace;
-	/* Count the number of valid races */
-	n = 0;
-	do {
-	    if (validrace(flags.initrole, i)) n++;
-	    else if ((i == k) && (!races[++k].noun)) k = 0;
-	    if (!races[++i].noun) i = 0;
-	} while (i != j);
-	/* Permit the user to pick, if there is more than one */
-	if (!validrace(flags.initrole, flags.initrace)) {
-	    if (pick4u == 'n' && n > 1) {
-		win = create_nhwindow(NHW_MENU);
-		start_menu(win);
-		any.a_void = 0;         /* zero out all bits */
-		for (i = 0; races[i].noun; i++)
-		    if (validrace(flags.initrole, i)) {
-			any.a_int = i+1;	/* must be non-zero */
-			add_menu(win, NO_GLYPH, &any, races[i].noun[0],
-				0, ATR_NONE, races[i].noun, MENU_UNSELECTED);
-		    }
-		any.a_int = randrace(flags.initrole)+1;
-		add_menu(win, NO_GLYPH, &any , '*', 0, ATR_NONE,
-				"Random", MENU_UNSELECTED);
-		any.a_int = i+1;	/* must be non-zero */
-		add_menu(win, NO_GLYPH, &any , 'q', 0, ATR_NONE,
-				"Quit", MENU_UNSELECTED);
-		Sprintf(pbuf, "Pick the race of your %s",
-				roles[flags.initrole].name.m);
-		end_menu(win, pbuf);
-		n = select_menu(win, PICK_ONE, &selected);
-		destroy_nhwindow(win);
-		if (n != 1 || selected[0].item.a_int == any.a_int)
-		    goto give_up;		/* Selected quit */
-
-		k = selected[0].item.a_int - 1;
-		free((genericptr_t) selected),	selected = 0;
-	    }
+	/* Select a race, if necessary */
+	/* force compatibility with role, try for compatibility with
+	 * pre-selected gender/alignment */
+	if (flags.initrace < 0 || !validrace(flags.initrole, flags.initrace)) {
+		/* pre-selected race not valid */
+		if (pick4u == 'y') {
+			flags.initrace = pick_race(flags.initrole, flags.initgend,
+								flags.initalign);
+			if (flags.initrace < 0) {
+				mar_add_message("Incompatible race!");
+				mar_display_nhwindow(WIN_MESSAGE);
+				flags.initrace = randrace(flags.initrole);
+			}
+		} else {	/* pick4u == 'n' */
+			/* Count the number of valid races */
+			n = 0;	/* number valid */
+			k = 0;	/* valid race */
+			for (i = 0; races[i].noun; i++) {
+				if (ok_race(flags.initrole, i, flags.initgend,
+								flags.initalign)) {
+					n++;
+					k = i;
+				}
+			}
+			if (n == 0) {
+				for (i = 0; races[i].noun; i++) {
+					if (validrace(flags.initrole, i)) {
+						n++;
+						k = i;
+					}
+				}
+			}
+	
+			/* Permit the user to pick, if there is more than one */
+			if (n > 1) {
+				win = create_nhwindow(NHW_MENU);
+				start_menu(win);
+				any.a_void = 0;         /* zero out all bits */
+				for (i = 0; races[i].noun; i++)
+					if (ok_race(flags.initrole, i, flags.initgend,
+									flags.initalign)) {
+						any.a_int = i+1;	/* must be non-zero */
+						add_menu(win, NO_GLYPH, &any, races[i].noun[0],
+							0, ATR_NONE, races[i].noun, MENU_UNSELECTED);
+					}
+				any.a_int = pick_race(flags.initrole, flags.initgend,
+					flags.initalign)+1;
+				if (any.a_int == 0)	/* must be non-zero */
+					any.a_int = randrace(flags.initrole)+1;
+				add_menu(win, NO_GLYPH, &any , '*', 0, ATR_NONE,
+						"Random", MENU_UNSELECTED);
+				any.a_int = i+1;	/* must be non-zero */
+				add_menu(win, NO_GLYPH, &any , 'q', 0, ATR_NONE,
+						"Quit", MENU_UNSELECTED);
+				Sprintf(pbuf, "Pick the race of your %s",
+						roles[flags.initrole].name.m);
+				end_menu(win, pbuf);
+				n = select_menu(win, PICK_ONE, &selected);
+				destroy_nhwindow(win);
+				if (n != 1 || selected[0].item.a_int == any.a_int)
+				    goto give_up;		/* Selected quit */
+		
+				k = selected[0].item.a_int - 1;
+				free((genericptr_t) selected),	selected = 0;
+			}
+			flags.initrace = k;
+		}
 	}
-	flags.initrace = k;
 
-	/* Select a gender */
-	if (!validgend(flags.initrole, flags.initrace, flags.initgend))
-	    /* Pick a random valid gender */
-	    i = j = k = randgend(flags.initrole, flags.initrace);
-	else
-	    i = j = k = flags.initgend;
-	/* Count the number of valid genders */
-	n = 0;
-	do {
-	    if (validgend(flags.initrole, flags.initrace, i)) n++;
-	    else if ((i == k) && (++k >= ROLE_GENDERS)) k = 0;
-	    if (++i >= ROLE_GENDERS) i = 0;
-	} while (i != j);
-	/* Permit the user to pick, if there is more than one */
-	if (!validgend(flags.initrole, flags.initrace, flags.initgend)) {
-	    if (pick4u == 'n' && n > 1) {
-		win = create_nhwindow(NHW_MENU);
-		start_menu(win);
-		any.a_void = 0;         /* zero out all bits */
-		for (i = 0; i < ROLE_GENDERS; i++)
-		    if (validgend(flags.initrole, flags.initrace, i)) {
-			any.a_int = i+1;	/* must be non-zero */
-			add_menu(win, NO_GLYPH, &any, genders[i].adj[0],
-				0, ATR_NONE, genders[i].adj, MENU_UNSELECTED);
-		    }
-		any.a_int = randgend(flags.initrole, flags.initrace)+1;
-		add_menu(win, NO_GLYPH, &any , '*', 0, ATR_NONE,
-				"Random", MENU_UNSELECTED);
-		any.a_int = i+1;	/* must be non-zero */
-		add_menu(win, NO_GLYPH, &any , 'q', 0, ATR_NONE,
-				"Quit", MENU_UNSELECTED);
-		Sprintf(pbuf, "Pick the gender of your %s %s",
-				races[flags.initrace].adj,
-				roles[flags.initrole].name.m);
-		end_menu(win, pbuf);
-		n = select_menu(win, PICK_ONE, &selected);
-		destroy_nhwindow(win);
-		if (n != 1 || selected[0].item.a_int == any.a_int)
-		    goto give_up;		/* Selected quit */
-
-		k = selected[0].item.a_int - 1;
-		free((genericptr_t) selected),	selected = 0;
-	    }
+	/* Select a gender, if necessary */
+	/* force compatibility with role/race, try for compatibility with
+	 * pre-selected alignment */
+	if (flags.initgend < 0 || !validgend(flags.initrole, flags.initrace,
+						flags.initgend)) {
+		/* pre-selected gender not valid */
+		if (pick4u == 'y') {
+			flags.initgend = pick_gend(flags.initrole, flags.initrace,
+							flags.initalign);
+			if (flags.initgend < 0) {
+				mar_add_message("Incompatible gender!");
+				mar_display_nhwindow(WIN_MESSAGE);
+				flags.initgend = randgend(flags.initrole, flags.initrace);
+			}
+		} else {	/* pick4u == 'n' */
+			/* Count the number of valid genders */
+			n = 0;	/* number valid */
+			k = 0;	/* valid gender */
+			for (i = 0; i < ROLE_GENDERS; i++) {
+				if (ok_gend(flags.initrole, flags.initrace, i,
+								flags.initalign)) {
+					n++;
+					k = i;
+				}
+			}
+			if (n == 0) {
+				for (i = 0; i < ROLE_GENDERS; i++) {
+					if (validgend(flags.initrole, flags.initrace, i)) {
+						n++;
+						k = i;
+					}
+				}
+			}
+	
+			/* Permit the user to pick, if there is more than one */
+			if (n > 1) {
+				win = create_nhwindow(NHW_MENU);
+				start_menu(win);
+				any.a_void = 0;         /* zero out all bits */
+				for (i = 0; i < ROLE_GENDERS; i++)
+					if (ok_gend(flags.initrole, flags.initrace, i,
+									    flags.initalign)) {
+						any.a_int = i+1;
+						add_menu(win, NO_GLYPH, &any, genders[i].adj[0],
+							0, ATR_NONE, genders[i].adj, MENU_UNSELECTED);
+					}
+				any.a_int = pick_gend(flags.initrole, flags.initrace,
+						    flags.initalign)+1;
+				if (any.a_int == 0)	/* must be non-zero */
+					any.a_int = randgend(flags.initrole, flags.initrace)+1;
+				add_menu(win, NO_GLYPH, &any , '*', 0, ATR_NONE,
+						"Random", MENU_UNSELECTED);
+				any.a_int = i+1;	/* must be non-zero */
+				add_menu(win, NO_GLYPH, &any , 'q', 0, ATR_NONE,
+						"Quit", MENU_UNSELECTED);
+				Sprintf(pbuf, "Pick the gender of your %s %s",
+						races[flags.initrace].adj,
+						roles[flags.initrole].name.m);
+				end_menu(win, pbuf);
+				n = select_menu(win, PICK_ONE, &selected);
+				destroy_nhwindow(win);
+				if (n != 1 || selected[0].item.a_int == any.a_int)
+				    goto give_up;		/* Selected quit */
+		
+				k = selected[0].item.a_int - 1;
+				free((genericptr_t) selected),	selected = 0;
+			}
+			flags.initgend = k;
+		}
 	}
-	flags.initgend = k;
 
-	/* Select an alignment */
-	if (!validalign(flags.initrole, flags.initrace, flags.initalign))
-	    /* Pick a random valid alignment */
-	    i = j = k = randalign(flags.initrole, flags.initrace);
-	else
-	    i = j = k = flags.initalign;
-	/* Count the number of valid alignments */
-	n = 0;
-	do {
-	    if (validalign(flags.initrole, flags.initrace, i)) n++;
-	    else if ((i == k) && (++k >= ROLE_ALIGNS)) k = 0;
-	    if (++i >= ROLE_ALIGNS) i = 0;
-	} while (i != j);
-	/* Permit the user to pick, if there is more than one */
-	if (!validalign(flags.initrole, flags.initrace, flags.initalign)) {
-	    if (pick4u == 'n' && n > 1) {
-		win = create_nhwindow(NHW_MENU);
-		start_menu(win);
-		any.a_void = 0;         /* zero out all bits */
-		for (i = 0; i < ROLE_ALIGNS; i++)
-		    if (validalign(flags.initrole, flags.initrace, i)) {
-			any.a_int = i+1;	/* must be non-zero */
-			add_menu(win, NO_GLYPH, &any, aligns[i].adj[0],
-				 0, ATR_NONE, aligns[i].adj, MENU_UNSELECTED);
-		    }
-		any.a_int = randalign(flags.initrole, flags.initrace)+1;
-		add_menu(win, NO_GLYPH, &any , '*', 0, ATR_NONE,
-				"Random", MENU_UNSELECTED);
-		any.a_int = i+1;	/* must be non-zero */
-		add_menu(win, NO_GLYPH, &any , 'q', 0, ATR_NONE,
-				"Quit", MENU_UNSELECTED);
-		Sprintf(pbuf, "Pick the alignment of your %s %s %s",
-				genders[flags.initgend].adj,
-				races[flags.initrace].adj,
-				(flags.initgend && roles[flags.initrole].name.f) ?
-				roles[flags.initrole].name.f :
-				roles[flags.initrole].name.m);
-		end_menu(win, pbuf);
-		n = select_menu(win, PICK_ONE, &selected);
-		destroy_nhwindow(win);
-		if (n != 1 || selected[0].item.a_int == any.a_int)
-		    goto give_up;		/* Selected quit */
-
-		k = selected[0].item.a_int - 1;
-		free((genericptr_t) selected),	selected = 0;
-	    }
+	/* Select an alignment, if necessary */
+	/* force compatibility with role/race/gender */
+	if (flags.initalign < 0 || !validalign(flags.initrole, flags.initrace,
+							flags.initalign)) {
+		/* pre-selected alignment not valid */
+		if (pick4u == 'y') {
+			flags.initalign = pick_align(flags.initrole, flags.initrace,
+								flags.initgend);
+			if (flags.initalign < 0) {
+			    mar_add_message("Incompatible alignment!");
+				 mar_display_nhwindow(WIN_MESSAGE);
+			    flags.initalign = randalign(flags.initrole, flags.initrace);
+			}
+		} else {	/* pick4u == 'n' */
+			/* Count the number of valid alignments */
+			n = 0;	/* number valid */
+			k = 0;	/* valid alignment */
+			for (i = 0; i < ROLE_ALIGNS; i++) {
+			    if (ok_align(flags.initrole, flags.initrace, flags.initgend,
+								i)) {
+				n++;
+				k = i;
+			    }
+			}
+			if (n == 0) {
+			    for (i = 0; i < ROLE_ALIGNS; i++) {
+				if (validalign(flags.initrole, flags.initrace, i)) {
+				    n++;
+				    k = i;
+				}
+			    }
+			}
+	
+			/* Permit the user to pick, if there is more than one */
+			if (n > 1) {
+				win = create_nhwindow(NHW_MENU);
+				start_menu(win);
+				any.a_void = 0;         /* zero out all bits */
+				for (i = 0; i < ROLE_ALIGNS; i++)
+					if (ok_align(flags.initrole, flags.initrace,
+									flags.initgend, i)) {
+						any.a_int = i+1;
+						add_menu(win, NO_GLYPH, &any, aligns[i].adj[0],
+							0, ATR_NONE, aligns[i].adj, MENU_UNSELECTED);
+					}
+				any.a_int = pick_align(flags.initrole, flags.initrace,
+						    flags.initgend)+1;
+				if (any.a_int == 0)	/* must be non-zero */
+					any.a_int = randalign(flags.initrole, flags.initrace)+1;
+				add_menu(win, NO_GLYPH, &any , '*', 0, ATR_NONE,
+						"Random", MENU_UNSELECTED);
+				any.a_int = i+1;	/* must be non-zero */
+				add_menu(win, NO_GLYPH, &any , 'q', 0, ATR_NONE,
+						"Quit", MENU_UNSELECTED);
+				Sprintf(pbuf, "Pick the alignment of your %s %s %s",
+						genders[flags.initgend].adj,
+						races[flags.initrace].adj,
+						(flags.initgend && roles[flags.initrole].name.f) ?
+						roles[flags.initrole].name.f :
+						roles[flags.initrole].name.m);
+				end_menu(win, pbuf);
+				n = select_menu(win, PICK_ONE, &selected);
+				destroy_nhwindow(win);
+				if (n != 1 || selected[0].item.a_int == any.a_int)
+				    goto give_up;		/* Selected quit */
+		
+				k = selected[0].item.a_int - 1;
+				free((genericptr_t) selected),	selected = 0;
+			}
+			flags.initalign = k;
+		}
 	}
-	flags.initalign = k;
 
 	/* Success! */
 	return;
@@ -465,7 +556,6 @@ Gem_clear_nhwindow(window)
 	}
 }
 
-extern void mar_display_nhwindow(winid);
 extern void mar_more(void);
 
 /*ARGSUSED*/
@@ -844,16 +934,20 @@ void
 Gem_raw_print(str)
 	const char *str;
 {
-	if(iflags.window_inited)	mar_raw_print(str);
-	else	printf("%s\n",str);
+	if(str && *str){
+		if(iflags.window_inited)	mar_raw_print(str);
+		else	printf("%s\n",str);
+	}
 }
 
 void
 Gem_raw_print_bold(str)
 	const char *str;
 {
-	if(iflags.window_inited)	mar_raw_print_bold(str);
-	else	printf("%s\n",str);
+	if(str && *str){
+		if(iflags.window_inited)	mar_raw_print_bold(str);
+		else	printf("%s\n",str);
+	}
 }
 
 extern void mar_update_value(void);	/* wingem1.c */

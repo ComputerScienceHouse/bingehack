@@ -48,7 +48,7 @@
 # LFLAGS = -s
 # flags for Atari GCC (3.3)
 # CFLAGS = -mshort -O2 -I../include
-# LFLAGS = -mshort
+# LFLAGS = -mshort -s
 
 # flags for Apollos using their native cc
 # (as long as it claims to be __STDC__ but isn't)

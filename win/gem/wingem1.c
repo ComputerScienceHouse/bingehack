@@ -107,6 +107,7 @@ static const struct pad {
 			{'.', ':', ':'}			/* Del */
 };
 
+#define TBUFSZ 300
 #define BUFSZ 256
 extern int yn_number;							/* from decl.c */
 extern char toplines[TBUFSZ];					/* from decl.c */
@@ -565,12 +566,12 @@ mar_gem_init()
 	static MITEM wish_workaround= {FAIL,key(0,'J'),K_CTRL,W_CYCLE,FAIL};
 	OBJECT *z_ob;
 
-	if(!(i=open_rsc("gem_rsc.rsc",NULL,md,md,md,0,0,0))){
-		char text[128];
-
+	if((i=open_rsc("gem_rsc.rsc",NULL,md,md,md,0,0,0))<=0){
 		graf_mouse(M_OFF,NULL);
-		sprintf(text,"[3][ Fatal Error | File: GEM_RSC.RSC | not found | returnvalue: %i ][ a pity ]",i);
-		form_alert(1,text);
+		if(i<0)
+			form_alert(1,"[3][| Fatal Error | File: GEM_RSC.RSC | not found. ][ grumble ]");
+		else
+			form_alert(1,"[3][| Fatal Error | GEM initialisation | failed. ][ a pity ]");
 		return(0);
 	}
 	if(planes<1 || planes>8){
@@ -604,8 +605,6 @@ mar_gem_init()
 
 	if(planes>0 && planes<9)
 		normal_palette=(short *)m_alloc(3*colors*sizeof(short));
-		if(!normal_palette)
-			return(FALSE);
 		get_colors(x_handle,normal_palette, colors);
 	if(planes<4){
 		bild_fehler=depack_img("NH2.IMG",&tile_image);
@@ -616,6 +615,9 @@ mar_gem_init()
 	}
 
 	if(bild_fehler ){
+		z_ob=zz_oblist[ABOUT];
+		ob_undraw_dialog(z_ob,0,0,0,0);
+		ob_hide(z_ob,OKABOUT,FALSE);
 		img_error(bild_fehler);
 		return(0);
 	}
@@ -639,14 +641,9 @@ mar_gem_init()
 	scroll_menu.px_vline=Fch;
 	scroll_menu.hscroll=
 	scroll_menu.vscroll=1;
-	scroll_menu.tbar_u=1;
-	scroll_menu.tbar_d=2*Fch-1;
+	scroll_menu.tbar_d=2*Fch-2;
 
 	mar_set_dir_keys();
-
-	z_ob=zz_oblist[NAMEGET];
-	z_ob[NETHACKPICTURE].ob_type=G_USERDEF;
-	z_ob[NETHACKPICTURE].ob_spec.userblk=&ub_titel;
 
 	memset(&scroll_map,0,sizeof(scroll_map));
 	scroll_map.scroll=AUTO_SCROLL;
@@ -751,18 +748,15 @@ mar_ask_name()
 	int bild_fehler;
 	char who_are_you[] = "Who are you? ";
 
-	if(planes<4)
-		bild_fehler=depack_img("TITLE2.IMG",&titel_image);
-	else
-		bild_fehler=depack_img("TITLE.IMG",&titel_image);
-
-	if(bild_fehler ){
-		img_error(bild_fehler);
-		mar_exit_nhwindows();
+	bild_fehler=depack_img(planes<4 ? "TITLE2.IMG" : "TITLE.IMG", &titel_image);
+	if(bild_fehler ){	/* MAR -- this isn't lethal */
+		ob_set_text(z_ob,NETHACKPICTURE,"missing title.img.");
+	}else{
+		mfdb(&Titel_bild, (int *)titel_image.addr, titel_image.img_w, titel_image.img_h, 1, titel_image.planes);
+		transform_img(&Titel_bild);
+		z_ob[NETHACKPICTURE].ob_type=G_USERDEF;
+		z_ob[NETHACKPICTURE].ob_spec.userblk=&ub_titel;
 	}
-
-	mfdb(&Titel_bild, (int *)titel_image.addr, titel_image.img_w, titel_image.img_h, 1, titel_image.planes);
-	transform_img(&Titel_bild);
 
 	ob_clear_edit(z_ob);
 	xdialog(z_ob,who_are_you, NULL, NULL, DIA_CENTERED, FALSE, DIALOG_MODE);
@@ -1040,7 +1034,7 @@ mar_add_message(str)
 const char *str;
 {
 	int i, mesg_hist=mar_get_msg_history();
-	char *tmp, *rest, buf[BUFSZ];
+	char *tmp, *rest, buf[TBUFSZ];
 
 	if(WIN_MESSAGE == WIN_ERR)
 		return;
@@ -1334,6 +1328,24 @@ XEVENT *xev;
 				if (Inv_how == PICK_ANY)
 					invert_all_on_page(0, (int)scroll_menu.vsize, 0);
 				break;
+			case MENU_SEARCH:
+				if(Inv_how!=PICK_NONE){
+					char buf[BUFSZ];
+	
+					Gem_getlin("Search for:",buf);
+					if(!*buf || buf[0]=='\033')
+						break;
+					for(it=invent_list;it;it=it->Gmi_next){
+						if(it->Gmi_identifier && strstr(it->Gmi_str,buf)){
+							it->Gmi_selected=TRUE;
+							if(Inv_how!=PICK_ANY){
+								close_dialog(Inv_dialog,FALSE);
+								break;
+							}
+						}
+					}
+				}
+				break;
 			default:
 			find_acc:
 				if(Inv_how==PICK_NONE)
@@ -1357,6 +1369,16 @@ XEVENT *xev;
 			}
 		}	/* !scroll_Inv_dialog */
 	}	/* MU_KEYBD */
+
+	if(Inv_how==PICK_ANY){
+		ob_set_text(Inv_dialog->di_tree,QLINE,strCancel);
+		for(it=invent_list;it;it=it->Gmi_next)
+			if(it->Gmi_identifier && it->Gmi_selected){
+				ob_set_text(Inv_dialog->di_tree,QLINE,strOk);
+				break;
+			}
+		ob_draw_chg(Inv_dialog,QLINE,NULL,FAIL);
+	}
 	return(ev);
 }
 
@@ -1386,6 +1408,10 @@ GRECT *area;
 void mar_menu_set_slider(WIN *p_win){
 	if(p_win){
 		SCROLL *sc=p_win->scroll;
+
+		if(!sc)
+			return;
+
 		if(p_win->gadgets&HSLIDE){
 			long hsize=1000l;
 
@@ -1436,7 +1462,7 @@ void calc_std_winplace(int which, GRECT *place){
 		z_ob[ROOT].ob_width=(status_w+2)*StFcw;
 		z_ob[ROOT].ob_height=
 		z_ob[GRABSTATUS].ob_height=2*StFch;
-		z_ob[GRABSTATUS].ob_width=2*StFcw;
+		z_ob[GRABSTATUS].ob_width=2*StFcw-2;
 		window_border(0,0,0,z_ob->ob_width,z_ob->ob_height,&st);
 
 		/* And last but not least a final test */
@@ -1478,6 +1504,8 @@ winid wind;
 	p_Gw=&Gem_nhwindow[wind];
 	switch(p_Gw->gw_type){
 	case NHW_TEXT:
+		if(WIN_MESSAGE != WIN_ERR && Gem_nhwindow[WIN_MESSAGE].gw_window)
+			mar_display_nhwindow(WIN_MESSAGE);
 		z_ob=zz_oblist[LINES];
 		scroll_menu.vsize=Anz_text_lines;
 		scroll_menu.vpos=0;
@@ -1506,6 +1534,8 @@ winid wind;
 		ob_set_text(z_ob,QLINE,tmp_button);
 		break;
 	case NHW_MENU:
+		if(WIN_MESSAGE != WIN_ERR && Gem_nhwindow[WIN_MESSAGE].gw_window)
+			mar_display_nhwindow(WIN_MESSAGE);
 		z_ob=zz_oblist[LINES];
 		scroll_menu.vsize=Anz_inv_lines;
 		scroll_menu.vpos=0;
@@ -1988,7 +2018,7 @@ char *input;
 	ob_set_text(z_ob,LGPROMPT,tmp_prompt );
 	ob_set_text(z_ob,LGREPLY, tmp_reply);
 
-	if(d_exit==W_CLOSED || d_exit==W_ABANDON || d_exit&NO_CLICK==QLG){
+	if(d_exit==W_CLOSED || d_exit==W_ABANDON || (d_exit&NO_CLICK)==QLG){
 		*input='\033';
 		input[1]=0;
 	}
@@ -2071,7 +2101,7 @@ XEVENT *xev;
 int
 send_yn_esc(char ch)
 {
-	static esc_char=0;
+	static char esc_char=0;
 
 	if(ch<0){
 		if(esc_char){

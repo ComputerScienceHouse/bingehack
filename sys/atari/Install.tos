@@ -41,13 +41,6 @@
        make sure that HACKDIR is defined properly (or not at all)
        make sure that COMPRESS is not defined
 
-    If you want to build a NetHack that will run on a 1 megabyte machine,
-    I'm afraid you're going to have to disable some options.  Just what
-    to disable is a tough choice; NetHack *almost* fits in 1 meg, but
-    almost isn't quite good enough :-(.  On the other hand, if you can
-    compile NetHack, you almost certainly have at least 2 megabytes;
-    certainly gcc won't compile NetHack with less than 4.
-
     Also edit tosconf.h; this shouldn't need much changing. If you are not
     going to include random.c you will need to comment out RANDOM. Gcc users
     don't need RANDOM, since the gcc and MiNT libraries have a Berkeley

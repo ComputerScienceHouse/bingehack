@@ -77,7 +77,7 @@ int convert(MFDB *image, long size){
 
 	/* memory for the device raster */
 	new_size=size*(long)planes;
-	if((new_addr=(char *) malloc(new_size)) == NULL)
+	if((new_addr=(char *) calloc(1,new_size)) == NULL)
 		return(FALSE);
 
 	/* initialize MFDBs */
@@ -111,7 +111,7 @@ int convert(MFDB *image, long size){
 		}
 	free(image->fd_addr);
 		/* convert image line in temp into current device raster format */
-	if((new1_addr=(char *) malloc(new_size)) == NULL)
+	if((new1_addr=(char *) calloc(1,new_size)) == NULL)
 		return(FALSE);
 	dev_form.fd_addr=new1_addr;
 		vr_trnfm(x_handle, &tmp, &dev_form);
@@ -165,7 +165,7 @@ int depack_img(char *name, IMG_header *pic){
 	/* if XIMG, read info */
 	if(pic->magic == XIMG && pic->paltype == 0){
 		pal_size = (1 << pic->planes) * 3 * 2;
-		if((pic->palette = (short *)malloc(pal_size))){
+		if((pic->palette = (short *)calloc(1,pal_size))){
 			fread((char *)pic->palette, 1, pal_size, fp);
 		}
 	}else{
@@ -185,7 +185,7 @@ int depack_img(char *name, IMG_header *pic){
 
 	/* check for header validity & malloc long... */
 	if (pic->length > 7 && pic->planes < 33 && pic->img_w > 0 && pic->img_h > 0){
-		if(!(pic->addr=(char *)malloc(size))){
+		if(!(pic->addr=(char *)calloc(1,size))){
 			error = ERR_ALLOC;
 			goto end_depack;
 		}
