@@ -95,7 +95,7 @@ static void FDECL(write_objects, (int,char *,object ***));
 static void FDECL(write_engravings, (int,char *,engraving ***));
 static void FDECL(write_maze, (int,specialmaze *));
 static void FDECL(write_rooms, (int,splev *));
-static void NDECL(init_objects);
+static void NDECL(init_obj_classes);
 
 static int bases[MAXOCLASSES];
 
@@ -248,7 +248,7 @@ char **argv;
 	objects_init();
 	decl_init();
 	/* this one does something... */
-	init_objects();
+	init_obj_classes();
 
 	init_yyout(stdout);
 	if (argc == 1) {		/* Read standard input */
@@ -419,7 +419,7 @@ char c;		/* class */
 }
 
 static void
-init_objects()
+init_obj_classes()
 {
 	int i, class, prev_class;
 
