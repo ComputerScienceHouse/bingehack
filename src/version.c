@@ -126,7 +126,7 @@ unsigned long
 get_feature_notice_ver(str)
 char *str;
 {
-	int major, minor, patch;
+	int ver_maj, ver_min, patch;
 	char *istr[3];
 	int j = 0;
 
@@ -144,10 +144,11 @@ char *str;
 			return 0L;
 	}
 	if (j != 2) return 0L;
-	major = atoi(istr[0]);
-	minor = atoi(istr[1]);
+	ver_maj = atoi(istr[0]);
+	ver_min = atoi(istr[1]);
 	patch = atoi(istr[2]);
-	return FEATURE_NOTICE_VER(major,minor,patch);	/* macro from hack.h */
+	return FEATURE_NOTICE_VER(ver_maj,ver_min,patch);
+	/* macro from hack.h */
 }
 
 unsigned long
