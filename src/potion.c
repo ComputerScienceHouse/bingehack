@@ -462,7 +462,7 @@ peffects(otmp)
 		}
 		/* FALLTHRU */
 	case POT_INVISIBILITY:
-		if (Invisible || Blind || BInvis) {
+		if (Invis || Blind || BInvis) {
 		    nothing++;
 		} else {
 		    self_invis_message();
