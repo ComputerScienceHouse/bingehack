@@ -69,6 +69,7 @@ gas spores are recognized as having passive damage for purposes of pet attack
 since iron armor can now corrode, don't call all corroded armor "bronze armor"
 properly handle attacking a black pudding with a corrodeable weapon
 do not print "You still cannot see" when blind and removing lenses
+remove possibility of crashes when unseen monster engulfs items
 
 
 Platform- and/or Interface-Specific Fixes
@@ -116,4 +117,6 @@ own race in Gnomish Mines replaced with random monsters
 
 Platform- and/or Interface-Specific New Features
 ------------------------------------------------
-
+X11, tty: offer for player selection only choices consistent with those
+	already made by config file/command line (e.g., only offer roles that
+	are compatible with specified race)
