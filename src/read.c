@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)read.c	3.3	99/03/13	*/
+/*	SCCS Id: @(#)read.c	3.3	1999/11/29	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -396,15 +396,25 @@ int curse_bless;
 			obj->spe = 50;
 		    else if (obj->spe + n <= 75)
 			obj->spe = 75;
-		    else
-			obj->spe += n;
+		    else {
+		    	int chrg = (int)obj->spe;
+			if ((chrg + n) > 127)
+				obj->spe = 127;
+			else
+				obj->spe += n;
+		    }
 		    p_glow2(obj,blue);
 		} else {
 		    n = rn1(5,10);		/* 5..15 */
 		    if (obj->spe + n <= 50)
 			obj->spe = 50;
-		    else
-			obj->spe += n;
+		    else {
+		    	int chrg = (int)obj->spe;
+			if ((chrg + n) > 127)
+				obj->spe = 127;
+			else
+				obj->spe += n;
+		    }
 		    p_glow2(obj,White);
 		}
 		break;
