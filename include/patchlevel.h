@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)patchlevel.h	3.3	2000/07/10	*/
+/*	SCCS Id: @(#)patchlevel.h	3.3	2000/07/22	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -40,11 +40,12 @@
 /*****************************************************************************/
 /* Version 3.3.1 */
 
-/*  Patch 1, July 15, 2000
+/*  Patch 1, August ??, 2000
  *  Many, many general fixes, including a number for riding, twoweapon,
  *	and invisible monsters.
  *  Redo Ranger quest.
  *  Introduction of differentiation between different causes of blindness
+ *  Overhaul of warning
  *  Functionality restored to Amiga (courtesy Janne Salmijarvi) and Atari
  *	(courtesy Christian "Marvin" Bressler) ports
  *  Mac: multiple interface fixes
