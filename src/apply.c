@@ -2273,6 +2273,7 @@ do_break_wand(obj)
 
     current_wand = obj;		/* destroy_item might reset this */
     freeinv(obj);		/* hide it from destroy_item instead... */
+    setnotworn(obj);		/* so we need to do this ourselves */
 
     if (obj->spe <= 0) {
 	pline(nothing_else_happens);
