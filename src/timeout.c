@@ -96,7 +96,7 @@ choke_dialogue()
 	    if (Breathless || !rn2(50))
 		pline(choke_texts2[SIZE(choke_texts2) - i], body_part(NECK));
 	    else {
-		char *str = choke_texts[SIZE(choke_texts)-i];
+		const char *str = choke_texts[SIZE(choke_texts)-i];
 
 		if (strchr(str, '%'))
 		    pline(str, hcolor(blue));
@@ -122,7 +122,7 @@ slime_dialogue()
 
 	if (((Slimed & TIMEOUT) % 2L) && i >= 0
 		&& i < SIZE(slime_texts)) {
-	    char *str = slime_texts[SIZE(slime_texts)-i-1];
+	    const char *str = slime_texts[SIZE(slime_texts)-i-1];
 
 	    if (strchr(str, '%')) {
 		if (i == 4) {
