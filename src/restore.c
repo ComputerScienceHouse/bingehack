@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)restore.c	3.3	99/03/13	*/
+/*	SCCS Id: @(#)restore.c	3.3	1999/11/20	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -629,11 +629,7 @@ register int fd;
 	program_state.something_worth_saving++;	/* useful data now exists */
 
 	/* Success! */
-	pline("%s %s, the %s %s, welcome back to NetHack!", Hello(), plname,
-	    	races[flags.initrace].adj,
-	    	(flags.female && roles[flags.initrole].name.f) ?
-	    	roles[flags.initrole].name.f :
-	    	roles[flags.initrole].name.m);
+	welcome(FALSE);
 	return(1);
 }
 

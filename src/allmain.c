@@ -485,14 +485,37 @@ newgame()
 	program_state.something_worth_saving++;	/* useful data now exists */
 
 	/* Success! */
-	pline("%s %s, welcome to NetHack!  You are a %s %s %s %s.", Hello(), plname,
-	    	aligns[flags.initalign].adj,
-	    	genders[flags.initgend].adj,
-	    	races[flags.initrace].adj,
-	    	(flags.initgend && roles[flags.initrole].name.f) ?
-	    	roles[flags.initrole].name.f :
-	    	roles[flags.initrole].name.m);
+	welcome(TRUE);
 	return;
+}
+
+/* show "welcome [back] to nethack" message at program startup */
+void
+welcome(new_game)
+boolean new_game;	/* false => restoring an old game */
+{
+    char buf[BUFSZ];
+    boolean currentgend = Upolyd ? u.mfemale : flags.female;
+
+    /*
+     * The "welcome back" message always describes your innate form
+     * even when polymorphed or wearing a helm of opposite alignment.
+     * Alignment is shown unconditionally for new games; for restores
+     * it's only shown if it has changed from its original value.
+     * Sex is shown for new games except when it is redundant; for
+     * restores it's only shown if different from its original value.
+     */
+    *buf = '\0';
+    if (new_game || u.ualignbase[1] != u.ualignbase[0])
+	Sprintf(eos(buf), " %s", align_str(u.ualignbase[1]));
+    if (!Role_if(PM_CAVEMAN) && !Role_if(PM_PRIEST) &&
+	    (new_game ? !Role_if(PM_VALKYRIE) : currentgend != flags.initgend))
+	Sprintf(eos(buf), " %s", genders[currentgend].adj);
+
+    pline(new_game ? "%s %s, welcome to NetHack!  You are a%s %s %s."
+		   : "%s %s, the%s %s %s, welcome back to NetHack!",
+	  Hello(), plname, buf, urace.adj,
+	  (currentgend && urole.name.f) ? urole.name.f : urole.name.m);
 }
 
 #ifdef POSITIONBAR
