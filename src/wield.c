@@ -523,6 +523,21 @@ boolean acid_dmg;
 
 	if (target->greased) {
 	    grease_protect(target,(char *)0,FALSE,victim);
+	} else if (target->oclass == SCROLL_CLASS) {
+#ifdef MAIL
+	    if(target->otyp != SCR_MAIL)
+#endif
+	    {
+		if (!Blind) {
+		    if (victim == &youmonst)
+			Your("%s.", aobjnam(target, "fade"));
+		    else if (vismon)
+			pline("%s's %s.", Monnam(victim),
+			      aobjnam(target, "fade"));
+		}
+		target->otyp = SCR_BLANK_PAPER;
+		target->spe = 0;
+	    }
 	} else if (target->oerodeproof ||
 		(acid_dmg ? !is_corrodeable(target) : !is_rustprone(target))) {
 	    if (flags.verbose || !(target->oerodeproof && target->rknown)) {

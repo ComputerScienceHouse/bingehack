@@ -2004,8 +2004,10 @@ register boolean force, here;
 #ifdef MAIL
 		    if (obj->otyp != SCR_MAIL)
 #endif
+		    {
 			obj->otyp = SCR_BLANK_PAPER;
 			obj->spe = 0;
+		    }
 		} else if (obj->oclass == SPBOOK_CLASS) {
 			if (obj->otyp == SPE_BOOK_OF_THE_DEAD)
 				pline("Steam rises from %s.", the(xname(obj)));
