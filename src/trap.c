@@ -390,23 +390,32 @@ int *fail_reason;
 	struct permonst *mptr;
 	struct monst *mon = 0;
 	struct obj *item;
+	coord cc;
 
-	/*
-	 * Guard against someone wishing for a statue of a unique monster
-	 * (which is allowed in normal play) and then tossing it onto the
-	 * [detected or guessed] location of a statue trap.  Normally the
-	 * uppermost statue is the one which would be activated.
-	 */
-	mptr = &mons[statue->corpsenm];
-	if (mptr->geno & G_UNIQ) {
-	    if (fail_reason) *fail_reason = AS_MON_IS_UNIQUE;
-	    return (struct monst *)0;
+	if (statue->oxlth && statue->oattached == OATTACHED_MONST) {
+	    cc.x = x,  cc.y = y;
+	    mon = montraits(statue, &cc);
+	    if (mon && mon->mtame && !mon->isminion)
+		wary_dog(mon, TRUE);
+	} else {
+	    /*
+	     * Guard against someone wishing for a statue of a unique monster
+	     * (which is allowed in normal play) and then tossing it onto the
+	     * [detected or guessed] location of a statue trap.  Normally the
+	     * uppermost statue is the one which would be activated.
+	     */
+	    mptr = &mons[statue->corpsenm];
+	    if (mptr->geno & G_UNIQ) {
+	        if (fail_reason) *fail_reason = AS_MON_IS_UNIQUE;
+	        return (struct monst *)0;
 	    }
+	    mon = makemon(mptr, x, y, NO_MINVENT);
+	}
 
-	if ((mon = makemon(mptr, x, y, NO_MINVENT)) == 0) {
+	if (!mon) {
 	    if (fail_reason) *fail_reason = AS_NO_MON;
 	    return (struct monst *)0;
-	    }
+	}
 
 	/* if statue has been named, give same name to the monster */
 	if (statue->onamelth)

@@ -28,7 +28,6 @@ STATIC_DCL boolean FDECL(zap_updown, (struct obj *));
 STATIC_DCL int FDECL(zhitm, (struct monst *,int,int,struct obj **));
 STATIC_DCL void FDECL(zhitu, (int,int,const char *,XCHAR_P,XCHAR_P));
 STATIC_DCL void FDECL(revive_egg, (struct obj *));
-STATIC_DCL struct monst *FDECL(montraits, (struct obj *, coord *));
 STATIC_DCL boolean FDECL(hits_bars, (int));
 #ifdef STEED
 STATIC_DCL boolean FDECL(zap_steed, (struct obj *));
@@ -402,7 +401,7 @@ int locflags;	/* non-zero means get location even if monster is buried */
 	}
 }
 
-STATIC_OVL
+/* used by revive() and animate_statue() */
 struct monst *
 montraits(obj,cc)
 struct obj *obj;

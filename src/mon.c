@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mon.c	3.3	1999/12/28	*/
+/*	SCCS Id: @(#)mon.c	3.3	2000/01/23	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -99,9 +99,10 @@ STATIC_VAR short cham_to_pm[] = {
 };
 
 /* return TRUE if the monster tends to revive */
-#define REVIVER(num)  ((is_rider(&mons[num]))	\
-				|| (mons[num].mlet == S_TROLL))
+#define REVIVER(ptr)	(is_rider(ptr) || ptr->mlet == S_TROLL)
 
+#define KEEPTRAITS(mon)	(mon->isshk || mon->mtame || \
+			 (mon->data->geno & G_UNIQ) || REVIVER(mon->data))
 
 /* Creates a monster corpse, a "special" corpse, or nothing if it doesn't
  * leave corpses.  Monsters which leave "special" corpses should have
@@ -229,20 +230,10 @@ register struct monst *mtmp;
 	    default_1:
 	    default:
 		if (mvitals[mndx].mvflags & G_NOCORPSE)
-			return (struct obj *)0;
-		else {
-		    /* preserve the unique traits of some creatures */
-		    if (mndx == PM_SHOPKEEPER	  /* a shopkeeper   */
- 		    	|| mtmp->mtame		  /* a pet          */
-		    	|| (mdat->geno & G_UNIQ)  /* unique mon     */
-			|| REVIVER(mndx))         /* reviving mon   */
-			obj = mkcorpstat(CORPSE, mtmp, mdat,
-					 x, y, TRUE);
-		    else
-		    /* general corpse of appropriate type */
-			obj = mkcorpstat(CORPSE, (struct monst *)0,
-					 mdat, x, y, TRUE);
-		}
+		    return (struct obj *)0;
+		else	/* preserve the unique traits of some creatures */
+		    obj = mkcorpstat(CORPSE, KEEPTRAITS(mtmp) ? mtmp : 0,
+				     mdat, x, y, TRUE);
 		break;
 	}
 	/* All special cases should precede the G_NOCORPSE check */
@@ -1394,10 +1385,11 @@ register struct monst *mdef;
 
 	mdef->mtrapped = 0;	/* (see m_detach) */
 
-	if((int)mdef->data->msize > MZ_TINY ||
-	   !rn2(2 + ((int) (mdef->data->geno & G_FREQ) > 2))) {
-		otmp = mk_named_object(STATUE, mdef->data, x, y,
-				       mdef->mnamelth ? NAME(mdef) : (char *)0);
+	if ((int)mdef->data->msize > MZ_TINY ||
+		    !rn2(2 + ((int) (mdef->data->geno & G_FREQ) > 2))) {
+		otmp = mkcorpstat(STATUE, KEEPTRAITS(mdef) ? mdef : 0,
+				  mdef->data, x, y, FALSE);
+		if (mdef->mnamelth) otmp = oname(otmp, NAME(mdef));
 		/* some objects may end up outside the statue */
 		while ((obj = mdef->minvent) != 0) {
 		    obj_extract_self(obj);
