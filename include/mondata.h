@@ -148,9 +148,16 @@
 				 (ptr) == &mons[PM_MASTER_MIND_FLAYER])
 
 #define nonliving(ptr)		(is_golem(ptr) || is_undead(ptr))
-#define is_meat(ptr)		(!mindless(ptr) || is_undead(ptr) || \
-				 (ptr) == &mons[PM_FLESH_GOLEM] || \
-				 (ptr) == &mons[PM_LEATHER_GOLEM] || \
-				 (ptr) == &mons[PM_BLACK_PUDDING])
+
+/* Used for conduct with corpses, tins, and digestion attacks */
+#define nonvegan(ptr)		((ptr)->mlet != S_BLOB && \
+				 (ptr)->mlet != S_JELLY && \
+				 (ptr)->mlet != S_FUNGUS && \
+				 (ptr) != &mons[PM_BLACK_PUDDING])
+#define nonvegetarian(ptr)		((ptr)->mlet != S_BLOB && \
+				 (ptr)->mlet != S_JELLY && \
+				 (ptr)->mlet != S_FUNGUS && \
+				 (ptr)->mlet != S_PUDDING && \
+				 !noncorporeal(ptr))
 
 #endif /* MONDATA_H */

@@ -505,7 +505,7 @@ E void FDECL(morehungry, (int));
 E void FDECL(lesshungry, (int));
 E boolean NDECL(is_fainted);
 E void NDECL(reset_faint);
-E void NDECL(atemeat);
+E void NDECL(violated_vegetarian);
 #if 0
 E void NDECL(sync_hunger);
 #endif
@@ -627,7 +627,7 @@ E void FDECL(dogushforth, (int));
 # ifdef USE_TRAMPOLI
 E void FDECL(gush, (int,int,genericptr_t));
 # endif
-E void FDECL(dryup, (XCHAR_P,XCHAR_P));
+E void FDECL(dryup, (XCHAR_P,XCHAR_P, BOOLEAN_P));
 E void NDECL(drinkfountain);
 E void FDECL(dipfountain, (struct obj *));
 #ifdef SINKS
@@ -1375,7 +1375,7 @@ E int FDECL(ck_bag, (struct obj *));
 E int FDECL(in_container, (struct obj *));
 E int FDECL(out_container, (struct obj *));
 #endif
-E void FDECL(pickup, (int));
+E int FDECL(pickup, (int));
 E int FDECL(pickup_object, (struct obj *, long, BOOLEAN_P));
 E int FDECL(query_category, (const char *, struct obj *, int,
 				menu_item **, int));
