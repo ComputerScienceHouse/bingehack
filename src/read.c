@@ -507,6 +507,9 @@ forget_map(howmuch)
 {
 	register int zx, zy;
 
+	if (In_sokoban(&u.uz))
+	    return;
+
 	known = TRUE;
 	for(zx = 0; zx < COLNO; zx++) for(zy = 0; zy < ROWNO; zy++)
 	    if (howmuch & ALL_MAP || rn2(7)) {
@@ -552,10 +555,21 @@ forget_levels(percent)
 	maxl = maxledgerno();
 
 	/* count & save indices of non-forgotten visited levels */
+	/* Sokoban levels are pre-mapped for the player, and should stay
+	 * so, or they become nearly impossible to solve.  But try to
+	 * shift the forgetting elsewhere by fiddling with percent
+	 * instead of forgetting fewer levels.
+	 */
 	for (count = 0, i = 0; i <= maxl; i++)
 	    if ((level_info[i].flags & VISITED) &&
-			!(level_info[i].flags & FORGOTTEN) && i != this_lev)
-		indices[count++] = i;
+			!(level_info[i].flags & FORGOTTEN) && i != this_lev) {
+		if (ledger_to_dnum(i) == sokoban_dnum)
+		    percent += 2;
+		else
+		    indices[count++] = i;
+	    }
+	
+	if (percent > 100) percent = 100;
 
 	randomize(indices, count);
 
