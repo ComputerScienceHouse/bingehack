@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)pray.c	3.3	1999/11/26	*/
+/*	SCCS Id: @(#)pray.c	3.3	2000/03/31	*/
 /* Copyright (c) Benson I. Margulies, Mike Stephenson, Steve Linhart, 1989. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -222,9 +222,17 @@ register int trouble;
 		    make_sick(0L, (char *) 0, FALSE, SICK_ALL);
 		    break;
 	    case TROUBLE_HIT:
+		    /* "fix all troubles" will keep trying if hero has
+		       5 or less hit points, so make sure they're always
+		       boosted to be more than that */
 		    You_feel("much better.");
-		    if (Upolyd) u.mh = u.mhmax += rnd(5);
+		    if (Upolyd) {
+			u.mhmax += rnd(5);
+			if (u.mhmax <= 5) u.mhmax = 5+1;
+			u.mh = u.mhmax;
+		    }
 		    if (u.uhpmax < u.ulevel * 5 + 11) u.uhpmax += rnd(5);
+		    if (u.uhpmax <= 5) u.uhpmax = 5+1;
 		    u.uhp = u.uhpmax;
 		    flags.botl = 1;
 		    break;
