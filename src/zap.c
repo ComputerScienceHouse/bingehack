@@ -1048,56 +1048,6 @@ struct obj *obj;
 }
 
 /*
- * Insert otmp right after obj in whatever chain(s) it is on.  Then extract
- * obj from the chain(s).  This function does a literal swap.  It is up to
- * the caller to provide a valid context for the swap.  When done, obj will
- * still exist, but not on any chain when done.
- *
- * Note:  Don't use use obj_extract_self() -- we are doing an in-place swap,
- * not actually moving something.
- */
-void
-replace_object(obj, otmp)
-	struct obj *obj;
-	struct obj *otmp;
-{
-	otmp->where = obj->where;
-	switch (obj->where) {
-	    case OBJ_FREE:
-		/* do nothing */
-		break;
-	    case OBJ_INVENT:
-		otmp->nobj = obj->nobj;
-		obj->nobj = otmp;
-		extract_nobj(obj, &invent);
-		break;
-	    case OBJ_CONTAINED:
-		otmp->nobj = obj->nobj;
-		obj->nobj = otmp;
-		extract_nobj(obj, &obj->ocontainer);
-		break;
-	    case OBJ_MINVENT:
-		otmp->nobj = obj->nobj;
-		obj->nobj = otmp;
-		extract_nobj(obj, &obj->ocarry->minvent);
-		break;
-	    case OBJ_FLOOR:
-		otmp->nobj = obj->nobj;
-		otmp->nexthere = obj->nexthere;
-		otmp->ox = obj->ox;
-		otmp->oy = obj->oy;
-		obj->nobj = otmp;
-		obj->nexthere = otmp;
-		extract_nobj(obj, &fobj);
-		extract_nexthere(obj, &level.objects[obj->ox][obj->oy]);
-		break;
-	    default:
-		panic("replace_obj: obj position");
-		break;
-	}
-}
-
-/*
  * Polymorph the object to the given object ID.  If the ID is STRANGE_OBJECT
  * then pick random object from the source's class (this is the standard
  * "polymorph" case).  If ID is set to a specific object, inhibit fusing

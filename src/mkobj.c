@@ -266,6 +266,58 @@ long num;
 }
 
 /*
+ * Insert otmp right after obj in whatever chain(s) it is on.  Then extract
+ * obj from the chain(s).  This function does a literal swap.  It is up to
+ * the caller to provide a valid context for the swap.  When done, obj will
+ * still exist, but not on any chain.
+ *
+ * Note:  Don't use use obj_extract_self() -- we are doing an in-place swap,
+ * not actually moving something.
+ */
+void
+replace_object(obj, otmp)
+struct obj *obj;
+struct obj *otmp;
+{
+    otmp->where = obj->where;
+    switch (obj->where) {
+    case OBJ_FREE:
+	/* do nothing */
+	break;
+    case OBJ_INVENT:
+	otmp->nobj = obj->nobj;
+	obj->nobj = otmp;
+	extract_nobj(obj, &invent);
+	break;
+    case OBJ_CONTAINED:
+	otmp->nobj = obj->nobj;
+	otmp->ocontainer = obj->ocontainer;
+	obj->nobj = otmp;
+	extract_nobj(obj, &obj->ocontainer->cobj);
+	break;
+    case OBJ_MINVENT:
+	otmp->nobj = obj->nobj;
+	otmp->ocarry =  obj->ocarry;
+	obj->nobj = otmp;
+	extract_nobj(obj, &obj->ocarry->minvent);
+	break;
+    case OBJ_FLOOR:
+	otmp->nobj = obj->nobj;
+	otmp->nexthere = obj->nexthere;
+	otmp->ox = obj->ox;
+	otmp->oy = obj->oy;
+	obj->nobj = otmp;
+	obj->nexthere = otmp;
+	extract_nobj(obj, &fobj);
+	extract_nexthere(obj, &level.objects[obj->ox][obj->oy]);
+	break;
+    default:
+	panic("replace_object: obj position");
+	break;
+    }
+}
+
+/*
  * Create a dummy duplicate to put on shop bill.  The duplicate exists
  * only in the billobjs chain.  This function is used when a shop object
  * is being altered, and a copy of the original is needed for billing
