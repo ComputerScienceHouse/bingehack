@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)sp_lev.c	3.3	98/08/05	*/
+/*	SCCS Id: @(#)sp_lev.c	3.3	1999/11/16	*/
 /*	Copyright (c) 1989 by Jean-Christophe Collet */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -739,6 +739,7 @@ struct mkroom	*croom;
     aligntyp amask;
     coord cc;
     struct permonst *pm;
+    unsigned g_mvflags;
 
     if (rn2(100) < m->chance) {
 
@@ -759,15 +760,15 @@ struct mkroom	*croom;
 	    pm = (struct permonst *) 0;
 	else if (m->id != NON_PM) {
 	    pm = &mons[m->id];
-	    if ((pm->geno & G_UNIQ) &&
-			(mvitals[monsndx(pm)].mvflags & G_EXTINCT))
+	    g_mvflags = (unsigned) mvitals[monsndx(pm)].mvflags;
+	    if ((pm->geno & G_UNIQ) && (g_mvflags & G_EXTINCT))
 		goto m_done;
+	    else if (g_mvflags & G_GONE)	/* genocided or extinct */
+		pm = (struct permonst *) 0;	/* make random monster */
 	} else {
 	    pm = mkclass(class,G_NOGEN);
-	    /* if we can't get class for a specific monster type,
-	       it means, that it's extinct, genocided, or unique,
-	       and shouldn't be created. */
-	    if (!pm) goto m_done;	/* release memory before returning */
+	    /* if we can't get a specific monster type (pm == 0) then the
+	       class has been genocided, so settle for a random monster */
 	}
 
 	x = m->x;

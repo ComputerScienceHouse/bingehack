@@ -133,6 +133,7 @@ don't let randomly placed monsters on special levels prevent explicitly
 	trap's spider resulted in no quest nemesis)
 don't let randomly placed stairs on special levels be covered by explicitly
 	placed features such as fountains
+substitute random monsters when special level monsters have been genocided
 fix intrinsic blockage by worn items so that wielding a mummy wrapping or
 	cornuthaum won't have the same special effect as wearing one
 magic markers created via polymorphing tools are flagged as being recharged
