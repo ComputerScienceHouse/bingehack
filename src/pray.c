@@ -310,10 +310,15 @@ register int trouble;
 		    else {
 			    for(otmp=invent; otmp; otmp=otmp->nobj)
 				if ((otmp->otyp==LOADSTONE ||
+	   			     otmp->otyp == LENSES  ||
 				     otmp->otyp==LUCKSTONE) && otmp->cursed)
 					break;
 		    }
 decurse:
+		    if (!otmp) {
+			impossible("fix_worst_trouble: nothing to uncurse.");
+			return;
+		    }
 		    uncurse(otmp);
 		    otmp->bknown = TRUE;
 		    if (!Blind)
