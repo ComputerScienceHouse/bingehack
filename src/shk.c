@@ -1222,8 +1222,10 @@ proceed:
 		    }
 		}
 	    }
+	thanks:
+	    if (!itemize)
+	        update_inventory(); /* Done in dopayobj() if itemize. */
 	}
-thanks:
 	if(!ANGRY(shkp) && paid)
 	    verbalize("Thank you for shopping in %s %s!",
 		s_suffix(shkname(shkp)),
@@ -1324,7 +1326,8 @@ boolean itemize;
 		dealloc_obj(obj);
 		*obj_p = 0;	/* destroy pointer to freed object */
 	    }
-	}
+	} else if (itemize)
+	    update_inventory();	/* Done just once in dopay() if !itemize. */
 	return buy;
 }
 #endif /*OVL3*/

@@ -441,6 +441,7 @@ dotwoweapon()
 	if (u.twoweap) {
 		You("switch to your primary weapon.");
 		u.twoweap = 0;
+		update_inventory();
 		return (0);
 	}
 
@@ -449,6 +450,7 @@ dotwoweapon()
 		/* Success! */
 		You("begin two-weapon combat.");
 		u.twoweap = 1;
+		update_inventory();
 		return (rnd(20) > ACURR(A_DEX));
 	}
 	return (0);
@@ -494,6 +496,7 @@ untwoweapon()
 	if (u.twoweap) {
 		You("can no longer use two weapons at once.");
 		u.twoweap = FALSE;
+		update_inventory();
 	}
 	return;
 }
