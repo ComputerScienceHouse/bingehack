@@ -449,6 +449,7 @@ do_look(quick)
     do {
 	/* Reset some variables. */
 	need_to_look = FALSE;
+	pm = (struct permonst *)0;
 	found = 0;
 	out_str[0] = '\0';
 
@@ -602,7 +603,7 @@ do_look(quick)
 
 	/*
 	 * If we are looking at the screen, follow multiple posibilities or
-	 * an ambigious explanation by something more detailed.
+	 * an ambiguous explanation by something more detailed.
 	 */
 	if (from_screen) {
 	    if (found > 1 || need_to_look) {
