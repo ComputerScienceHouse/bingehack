@@ -1,6 +1,8 @@
-// Qt Binding for NetHack 3.2
+//	SCCS Id: @(#)qt_win.h	3.3	1999/11/19
+// Copyright (c) Warwick Allison, 1999.
+// NetHack may be freely redistributed.  See license for details.
 //
-// Copyright (C) 1996 by Warwick W. Allison (warwick@cs.uq.edu.au)
+// Qt Binding for NetHack 3.3
 //
 // Unfortunately, this doesn't use Qt as well as I would like,
 // primarily because NetHack is fundamentally a getkey-type

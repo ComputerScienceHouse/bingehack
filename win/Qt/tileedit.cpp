@@ -1,3 +1,6 @@
+/*	SCCS Id: @(#)tileedit.cpp	3.3	1999/11/19	*/
+/* Copyright (c) Warwick Allison, 1999. */
+/* NetHack may be freely redistributed.  See license for details. */
 /*
 Build this little utility program if you want to use it to edit the tile
 files.  Move tileedit.cpp and tileedit.h to ../../util, add the
