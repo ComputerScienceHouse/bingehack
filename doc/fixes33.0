@@ -31,7 +31,6 @@ tattered capes should not match ape entry in database
 booze should not match ooze entry in database
 lowered drawbridge should not match werecritter entry
 lengthen option file line length to 4*BUFSZ
--uwizard-{class} counts as -uwizard when allowing debug mode on PCs.
 make zaps of death at polymorphed players work properly
 change way invisibility works, add remembered invis monsters and 'F' command
 don't list pick-axe and unicorn horn as likely candidates for charging
@@ -237,10 +236,15 @@ make sure proper message is given when tinning cockatrice while a flesh golem
 fix punctuation on cancelled cobra's dry rattle message
 leash cannot choke monsters that do not breathe
 rothes are now brown, harder to confuse with much more powerful grey quadrupeds
+defer level change for every schedule_goto() call, not just while monsters
+	are moving (player's move could cause an engulfer to expel character
+	onto a level changing trap, then attempt to access stale monster and
+	possibly trigger relmon panic or crash)
 
 
 Platform- and/or Interface-Specific Fixes
 -----------------------------------------
+micro: -uwizard-{class} counts as -uwizard when allowing debug mode
 micro (assorted): readmail()--don't show fake mail text when blind; also,
 	update the "report bugs to" message to specify devteam@nethack.org
 msdos: fix overlay separations in weapon.c

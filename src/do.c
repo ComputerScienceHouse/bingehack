@@ -1275,9 +1275,6 @@ const char *pre_msg, *post_msg;
 	    dfr_pre_msg = strcpy((char *)alloc(strlen(pre_msg) + 1), pre_msg);
 	if (post_msg)
 	    dfr_post_msg = strcpy((char *)alloc(strlen(post_msg)+1), post_msg);
-
-	/* we don't actually have to wait unless this is a monster's move */
-	if (!flags.mon_moving) deferred_goto();
 }
 
 /* handle something like portal ejection */
