@@ -932,7 +932,7 @@ roguename() /* Name of a Rogue player */
 {
 	char *i, *opts;
 
-	if ((opts = getenv("ROGUEOPTS")) != 0) {
+	if ((opts = nh_getenv("ROGUEOPTS")) != 0) {
 		for (i = opts; *i; i++)
 			if (!strncmp("name=",i,5)) {
 				char *j;

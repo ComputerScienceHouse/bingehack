@@ -719,7 +719,7 @@ makelevel()
 	register int u_depth = depth(&u.uz);
 
 #ifdef WIZARD
-	if(wizard && getenv("SHOPTYPE")) mkroom(SHOPBASE); else
+	if(wizard && nh_getenv("SHOPTYPE")) mkroom(SHOPBASE); else
 #endif
 	if (u_depth > 1 &&
 	    u_depth < depth(&medusa_level) &&

@@ -423,6 +423,17 @@ boolean val_allowed;
 	return (len >= min_length) && !strncmpi(opt_name, user_string, len);
 }
 
+char *nh_getenv(ev)
+const char *ev;
+{
+	char *getev = getenv(ev);
+
+	if (getev && strlen(getev) <= (BUFSZ / 2))
+		return getev;
+	else
+		return (char *)0;
+}
+
 void
 initoptions()
 {
@@ -474,7 +485,7 @@ initoptions()
 	 * config file/environment variable below.
 	 */
 	/* this detects the IBM-compatible console on most 386 boxes */
-	if (!strncmp(getenv("TERM"), "AT", 2)) {
+	if (!strncmp(nh_getenv("TERM"), "AT", 2)) {
 		switch_graphics(IBM_GRAPHICS);
 # ifdef TEXTCOLOR
 		iflags.use_color = TRUE;
@@ -484,7 +495,7 @@ initoptions()
 #if defined(UNIX) || defined(VMS)
 # ifdef TTY_GRAPHICS
 	/* detect whether a "vt" terminal can handle alternate charsets */
-	if (!strncmpi(getenv("TERM"), "vt", 2) && (AS && AE) &&
+	if (!strncmpi(nh_getenv("TERM"), "vt", 2) && (AS && AE) &&
 	    index(AS, '\016') && index(AE, '\017')) {
 		switch_graphics(DEC_GRAPHICS);
 	}
@@ -500,8 +511,8 @@ initoptions()
 	objects[SLIME_MOLD].oc_name_idx = SLIME_MOLD;
 	nmcpy(pl_fruit, OBJ_NAME(objects[SLIME_MOLD]), PL_FSIZ);
 #ifndef MAC
-	opts = getenv("NETHACKOPTIONS");
-	if (!opts) opts = getenv("HACKOPTIONS");
+	opts = nh_getenv("NETHACKOPTIONS");
+	if (!opts) opts = nh_getenv("HACKOPTIONS");
 	if (opts) {
 		if (*opts == '/' || *opts == '\\' || *opts == '@') {
 			if (*opts == '@') opts++;	/* @filename */

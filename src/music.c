@@ -613,7 +613,7 @@ atconsole()
      * difficult given the presence of virtual consoles and other modern
      * UNIX impedimenta...
      */
-    char	*termtype = getenv("TERM");
+    char	*termtype = nh_getenv("TERM");
 
      return(!strcmp(termtype, "AT386") || !strcmp(termtype, "xterm"));
 }

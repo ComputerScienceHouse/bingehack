@@ -84,7 +84,7 @@ static long laststattime;
 void
 getmailstatus()
 {
-	if(!mailbox && !(mailbox = getenv("MAIL"))) {
+	if(!mailbox && !(mailbox = nh_getenv("MAIL"))) {
 #  ifdef MAILPATH
 #   ifdef AMS
 	        struct passwd ppasswd;
@@ -503,7 +503,7 @@ struct obj *otmp;
 	register const char *mr = 0;
 
 	display_nhwindow(WIN_MESSAGE, FALSE);
-	if(!(mr = getenv("MAILREADER")))
+	if(!(mr = nh_getenv("MAILREADER")))
 		mr = DEF_MAILREADER;
 
 	if(child(1)){

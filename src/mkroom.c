@@ -76,7 +76,7 @@ mkshop()
 	/* first determine shoptype */
 	if(wizard){
 #ifndef MAC
-		ep = getenv("SHOPTYPE");
+		ep = nh_getenv("SHOPTYPE");
 		if(ep){
 			if(*ep == 'z' || *ep == 'Z'){
 				mkzoo(ZOO);

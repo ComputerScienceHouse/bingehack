@@ -1115,11 +1115,11 @@ const char *filename;
 		configfile = "nethack.ini";
 		return(fp);
 	}
-	Sprintf(tmp_config, "%s%s", getenv("HOME"), "NetHack.cnf");
+	Sprintf(tmp_config, "%s%s", nh_getenv("HOME"), "NetHack.cnf");
 	if ((fp = fopenp(tmp_config, "r")) != (FILE *)0)
 		return(fp);
 # else	/* should be only UNIX left */
-	Sprintf(tmp_config, "%s/%s", getenv("HOME"), ".nethackrc");
+	Sprintf(tmp_config, "%s/%s", nh_getenv("HOME"), ".nethackrc");
 	if ((fp = fopenp(tmp_config, "r")) != (FILE *)0)
 		return(fp);
 	else if (errno != ENOENT) {

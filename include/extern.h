@@ -1301,6 +1301,7 @@ E int FDECL(choose_classes_menu, (const char *,int,BOOLEAN_P,char *,char *));
 E void FDECL(add_menu_cmd_alias, (CHAR_P, CHAR_P));
 E char FDECL(map_menu_cmd, (CHAR_P));
 E void FDECL(assign_warnings, (uchar *));
+E char *FDECL(nh_getenv, (const char *));
 
 /* ### pager.c ### */
 
