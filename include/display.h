@@ -34,7 +34,8 @@
 )
 
 #ifdef NEW_WARNING
-#define warn_of_mon(mon) (!canseemon(mon) && ((Warn_of_mon &&   			       \
+#define warn_of_mon(mon) (!canseemon(mon) && !cansee((mon)->mx,(mon)->my) &&           \
+			  ((Warn_of_mon &&    			       \
 			    flags.warntype && (flags.warntype & (mon)->data->mflags2)) \
         		|| (Warning && !(mon)->mpeaceful &&                            \
                             distu((mon)->mx, (mon)->my) < 100 &&                       \
