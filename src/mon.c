@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mon.c	3.3	2000/07/24	*/
+/*	SCCS Id: @(#)mon.c	3.3	2000/08/12	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1554,21 +1554,25 @@ xkilled(mtmp, dest)
 	u.uconduct.killer++;
 
 	if (dest & 1) {
-	    if(!wasinside && !canspotmon(mtmp))
-		You("destroy it!");
+	    const char *verb = nonliving(mtmp->data) ? "destroy" : "kill";
+
+	    if (!wasinside && !canspotmon(mtmp))
+		You("%s it!", verb);
 	    else {
-		You("destroy %s!",
-			mtmp->mtame
-			    ? x_monnam(mtmp, ARTICLE_THE, "poor",
-				mtmp->mnamelth ? SUPPRESS_SADDLE : 0, FALSE)
-			    : mon_nam(mtmp));
+		You("%s %s!", verb,
+		    !mtmp->mtame ? mon_nam(mtmp) :
+			x_monnam(mtmp,
+				 mtmp->mnamelth ? ARTICLE_NONE : ARTICLE_THE,
+				 "poor",
+				 mtmp->mnamelth ? SUPPRESS_SADDLE : 0,
+				 FALSE));
 	    }
 	}
 
-	if (mtmp->mtrapped &&
-	    ((t = t_at(x, y)) && (t->ttyp == PIT || t->ttyp == SPIKED_PIT)) &&
-	    sobj_at(BOULDER, x, y))
-		dest ^= 2; /*
+	if (mtmp->mtrapped && (t = t_at(x, y)) != 0 &&
+		(t->ttyp == PIT || t->ttyp == SPIKED_PIT) &&
+		sobj_at(BOULDER, x, y))
+	    dest &= ~2;    /*
 			    * Prevent corpses/treasure being created "on top"
 			    * of the boulder that is about to fall in. This is
 			    * out of order, but cannot be helped unless this
