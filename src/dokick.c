@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)dokick.c	3.3	1999/11/15	*/
+/*	SCCS Id: @(#)dokick.c	3.3	2000/01/11	*/
 /* Copyright (c) Izchak Miller, Mike Stephenson, Steve Linhart, 1989. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -561,9 +561,13 @@ dokick()
 		no_kick = TRUE;
 #ifdef STEED
 	} else if (u.usteed) {
-		You("kick %s.", mon_nam(u.usteed));
-		kick_steed();
-		return (1);
+		if (yn_function("Kick your steed?", ynchars, 'y') == 'y') {
+		    You("kick %s.", mon_nam(u.usteed));
+		    kick_steed();
+		    return 1;
+		} else {
+		    return 0;
+		}
 #endif
 	} else if (Wounded_legs) {
 		/* note: dojump() has similar code */
@@ -658,7 +662,8 @@ dokick()
 
 		mtmp = m_at(x, y);
 		mdat = mtmp->data;
-		flags.forcefight = TRUE; /* attack even if invisible */
+		if (!mtmp->mpeaceful || !canspotmon(mtmp))
+		    flags.forcefight = TRUE; /* attack even if invisible */
 		kick_monster(x, y);
 		flags.forcefight = FALSE;
 		/* see comment in attack_checks() */
