@@ -2,14 +2,13 @@
 /* Copyright (c) Michael Allison, 1997                  */
 /* NetHack may be freely redistributed.  See license for details. */
 
-# ifdef LAN_MAIL
-
 #ifdef MAX_BODY_SIZE
 #undef MAX_BODY_SIZE
 #define MAX_BODY_SIZE           2048    /* largest body held in ram in bytes */
 #endif
 
 #include "hack.h"
+# ifdef LAN_MAIL
 #include "win32api.h"
 #include <mapi.h>
 
