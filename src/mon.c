@@ -824,6 +824,8 @@ struct obj *otmp;
 	int otyp = otmp->otyp, newload = otmp->owt;
 	struct permonst *mdat = mtmp->data;
 
+	if (notake(mdat)) return FALSE;		/* can't carry anything */
+
 	if (otyp == CORPSE && touch_petrifies(&mons[otmp->corpsenm]) &&
 		!(mtmp->misc_worn_check & W_ARMG) && !resists_ston(mtmp))
 	    return FALSE;
