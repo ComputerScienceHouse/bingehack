@@ -456,7 +456,7 @@ initoptions()
 #ifdef NEW_WARNING
 	for (i = 0; i < WARNCOUNT; i++)
 		warnsyms[i] = def_warnsyms[i].sym;
-	flags.warnlevel = 2;
+	flags.warnlevel = 1;
 	flags.warntype = 0L;
 #endif
 
