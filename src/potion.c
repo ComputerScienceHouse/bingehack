@@ -542,7 +542,7 @@ peffects(otmp)
 
 		    if (Detect_monsters) nothing++;
 		    unkn++;
-		    set_itimeout(&HDetect_monsters, 20L+rnd(40));
+		    incr_itimeout(&HDetect_monsters, 20L+rnd(40));
 		    for (x = 1; x < COLNO; x++) {
 			for (y = 0; y < ROWNO; y++) {
 			    if (levl[x][y].glyph == GLYPH_INVISIBLE) {
@@ -553,6 +553,7 @@ peffects(otmp)
 			}
 		    }
 		    see_monsters();
+		    if (unkn) You_feel("lonely.");
 		    break;
 		}
 		if (monster_detect(otmp, 0))
