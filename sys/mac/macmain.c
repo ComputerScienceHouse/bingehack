@@ -268,12 +268,10 @@ finder_file_request(void)
 		if (finder_msg == appOpen && file_count == 1) {
 			OSErr	err;
 			AppFile src;
-			short	src_vol;
-			long	src_dir, nul = 0;
 			FSSpec filespec;
 
 			GetAppFiles(1, &src);
-			err = FSMakeFSSpec(src.vRefNum, 0, src.fName, filespec);
+			err = FSMakeFSSpec(src.vRefNum, 0, src.fName, &filespec);
 			if (err == noErr && src.fType == SAVE_TYPE) {
 				process_openfile (filespec.vRefNum, filespec.parID, filespec.name, src.fType);
 				if (macFlags.gotOpen)
