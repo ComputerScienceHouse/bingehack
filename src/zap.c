@@ -2135,6 +2135,11 @@ register struct	obj	*obj;
 	exercise(A_WIS, TRUE);
 	if (objects[otyp].oc_dir == IMMEDIATE) {
 	    obj_zapped = FALSE;
+#ifdef STEED
+	    if (u.usteed) {
+		(void) bhitm(u.usteed, obj);
+	    } else
+#endif
 	    if (u.uswallow) {
 		(void) bhitm(u.ustuck, obj);
 		/* [how about `bhitpile(u.ustuck->minvent)' effect?] */
@@ -2928,6 +2933,9 @@ register int dx,dy;
 	if (mon) {
 	    if (type == ZT_SPELL(ZT_FIRE)) break;
 	    if (type >= 0) mon->mstrategy &= ~STRAT_WAITMASK;
+#ifdef STEED
+	    buzzmonst:
+#endif
 	    if (zap_hit(find_mac(mon), spell_type)) {
 		if (mon_reflects(mon, (char *)0)) {
 		    if(cansee(mon->mx,mon->my)) {
@@ -3020,6 +3028,12 @@ register int dx,dy;
 	    }
 	} else if (sx == u.ux && sy == u.uy && range >= 0) {
 	    nomul(0);
+#ifdef STEED
+	    if (u.usteed && !rn2(3) && !mon_reflects(u.usteed, (char *)0)) {
+		    mon = u.usteed;
+		    goto buzzmonst;
+	    } else
+#endif
 	    if (zap_hit((int) u.uac, 0)) {
 		range -= 2;
 		pline("%s hits you!", The(fltxt));

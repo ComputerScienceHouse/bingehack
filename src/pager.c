@@ -70,7 +70,7 @@ lookat(x, y, buf, monbuf)
 
 	/* if not polymorphed, show both the role and the race */
 	race[0] = 0;
-	if (u.umonnum == u.umonster) {
+	if (!Upolyd) {
 	    Sprintf(race, "%s ", urace.adj);
 	}
 

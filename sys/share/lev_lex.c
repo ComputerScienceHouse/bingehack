@@ -857,6 +857,7 @@ static int NDECL(input);
 				(yytext[yyleng - 1] == '\n'); \
 	YY_USER_ACTION
 
+int NDECL(yylex);
 int yylex()
 	{
 	register yy_state_type yy_current_state;

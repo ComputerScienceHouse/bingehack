@@ -601,10 +601,6 @@ int thrown;
 			}
 			if(obj->opoisoned && is_poisonable(obj))
 			    ispoisoned = TRUE;
-		    } else if (Race_if(PM_ELF) &&
-		    		objects[obj->otyp].oc_material == IRON) {
-		    	/* Elves are restricted from using iron (ammo excepted) */
-		    	change_luck(-1);
 		    }
 		}
 	    } else if(obj->oclass == POTION_CLASS) {

@@ -185,10 +185,10 @@
 #ifdef STEED
 #define display_self()							\
     show_glyph(u.ux, u.uy,						\
-	u.usteed ?							\
+	(u.usteed && mon_visible(u.usteed)) ?			\
 				ridden_mon_to_glyph(u.usteed) :		\
 	youmonst.m_ap_type == M_AP_NOTHING ?				\
-				monnum_to_glyph(u.umonnum) :		\
+				monnum_to_glyph(Upolyd ? u.umonnum : urace.malenum) :	\
 	youmonst.m_ap_type == M_AP_FURNITURE ?				\
 				cmap_to_glyph(youmonst.mappearance) :	\
 	youmonst.m_ap_type == M_AP_OBJECT ?				\
@@ -198,11 +198,12 @@
 #define display_self()							\
     show_glyph(u.ux, u.uy,						\
 	youmonst.m_ap_type == M_AP_NOTHING ?				\
-				monnum_to_glyph(u.umonnum) :		\
+				monnum_to_glyph(Upolyd ? u.umonnum : urace.malenum) :	\
 	youmonst.m_ap_type == M_AP_FURNITURE ?				\
 				cmap_to_glyph(youmonst.mappearance) :	\
 	youmonst.m_ap_type == M_AP_OBJECT ?				\
 				objnum_to_glyph(youmonst.mappearance) : \
+    !Upolyd ? monnum_to_glyph(urace.malenum) :		\
 	/* else M_AP_MONSTER */ monnum_to_glyph(youmonst.mappearance))
 #endif
 
