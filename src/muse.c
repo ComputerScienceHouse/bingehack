@@ -1295,7 +1295,7 @@ struct monst *mtmp;
 				if (helmet) {
 				    if(is_metallic(helmet)) {
 					if (canspotmon(mtmp2))
-					    pline("Fortunately, %s is wearing a hard helmet.", mon_nam(mtmp));
+					    pline("Fortunately, %s is wearing a hard helmet.", mon_nam(mtmp2));
 					else if (flags.soundok)
 					    You_hear("a clanging sound.");
 					if (mdmg > 2) mdmg = 2;
