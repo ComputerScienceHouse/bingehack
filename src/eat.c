@@ -439,11 +439,9 @@ register int pm;
 	if (touch_petrifies(&mons[pm]) || pm == PM_MEDUSA) {
 	    if (!Stone_resistance &&
 		!(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))) {
-		char kbuf[BUFSZ];
-
-		Sprintf(kbuf, "tasting %s meat", mons[pm].mname);
+		Sprintf(killer_buf, "tasting %s meat", mons[pm].mname);
 		killer_format = KILLED_BY;
-		killer = kbuf;
+		killer = killer_buf;
 		You("turn to stone.");
 		done(STONING);
 		if (victual.piece)
@@ -1603,12 +1601,10 @@ register struct obj *otmp;
 		if (touch_petrifies(&mons[otmp->corpsenm])) {
 		    if (!Stone_resistance &&
 			!(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))) {
-			static char kbuf[BUFSIZ];
-
 			if (!Stoned) Stoned = 5;
 			killer_format = KILLED_BY_AN;
-			Sprintf(kbuf, "%s egg", mons[otmp->corpsenm].mname);
-			delayed_killer = kbuf;
+			Sprintf(killer_buf, "%s egg", mons[otmp->corpsenm].mname);
+			delayed_killer = killer_buf;
 		    }
 		}
 		break;

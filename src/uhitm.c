@@ -1083,7 +1083,7 @@ struct attack *mattk;
 				       doname(otmp), "You steal: ");
 	    if (otmp->otyp == CORPSE &&
 		    touch_petrifies(&mons[otmp->corpsenm]) && !uarmg) {
-		char kbuf[BUFSIZ];
+		char kbuf[BUFSZ];
 
 		Sprintf(kbuf, "stolen %s corpse", mons[otmp->corpsenm].mname);
 		instapetrify(kbuf);
@@ -1214,7 +1214,7 @@ register struct attack *mattk;
 	    case AD_TLPT:
 		if(tmp <= 0) tmp = 1;
 		if(tmp < mdef->mhp) {
-		    char nambuf[BUFSIZ];
+		    char nambuf[BUFSZ];
 		    boolean u_saw_mon = canseemon(mdef);
 		    /* record the name before losing sight of monster */
 		    Strcpy(nambuf, Monnam(mdef));

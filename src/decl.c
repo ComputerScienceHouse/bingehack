@@ -48,6 +48,7 @@ NEARDATA char *save_cm = 0;
 NEARDATA int killer_format = 0;
 const char *killer = 0;
 const char *delayed_killer = 0;
+char killer_buf[BUFSZ] = DUMMY;
 const char *nomovemsg = 0;
 const char nul[40] = DUMMY;			/* contains zeros */
 NEARDATA char plname[PL_NSIZ] = DUMMY;		/* player name */

@@ -243,7 +243,7 @@ Pixel colorpixel;
     if (0!=XReadBitmapFile(dpy, XtWindow(toplevel), filename,
 	    &annotation->width, &annotation->height, &annotation->bitmap,
 	    &annotation->hotx, &annotation->hoty)) {
-	char buf[BUFSIZ];
+	char buf[BUFSZ];
 	Sprintf(buf, "Failed to load %s", filename);
 	X11_raw_print(buf);
     }
@@ -330,7 +330,7 @@ init_tiles(wp)
 
 #ifdef USE_XPM
     {
-	char buf[BUFSIZ];
+	char buf[BUFSZ];
 	XpmAttributes attributes;
 	int errorcode;
 
@@ -363,7 +363,6 @@ init_tiles(wp)
 	}
 
 	if (tile_image->height%total_tiles_used != 0) {
-	    char buf[BUFSIZ];
 	    Sprintf(buf,
 		"%s is not a multiple of %d (the number of tiles) pixels high",
 		appResources.tile_file, total_tiles_used);
@@ -435,7 +434,7 @@ init_tiles(wp)
 	if (!XAllocColor(dpy, DefaultColormapOfScreen(screen), &colors[i]) &&
 	    !nhApproxColor(screen, DefaultColormapOfScreen(screen),
 			   (char *)0, &colors[i])) {
-	    char buf[BUFSIZ];
+	    char buf[BUFSZ];
 	    Sprintf(buf, "%dth out of %ld color allocation failed",
 		i, header.ncolors);
 	    X11_raw_print(buf);

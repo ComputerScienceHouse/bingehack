@@ -611,7 +611,7 @@ struct monst *mon;
 {
 	struct obj *otmp, *otmp2;
 	struct monst *mtmp2;
-	char owner[BUFSIZ], corpse[BUFSIZ];
+	char owner[BUFSZ], corpse[BUFSZ];
 	boolean youseeit;
 	int once = 0, res = 0;
 

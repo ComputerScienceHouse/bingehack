@@ -422,7 +422,7 @@ mattacku(mtmp)
 			an(mons[u.umonnum].mname),
 			plname);
 	    if (multi < 0) {	/* this should always be the case */
-		char buf[BUFSIZ];
+		char buf[BUFSZ];
 		Sprintf(buf, "You appear to be %s again.",
 			Upolyd ? (const char *) an(youmonst.data->mname) :
 			    (const char *) "yourself");

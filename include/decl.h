@@ -167,6 +167,7 @@ E NEARDATA char *save_cm;
 E NEARDATA int killer_format;
 E const char *killer;
 E const char *delayed_killer;
+E char killer_buf[BUFSZ];
 E const char *configfile;
 E NEARDATA char plname[PL_NSIZ];
 E NEARDATA char dogname[];
