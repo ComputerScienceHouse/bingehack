@@ -1466,7 +1466,7 @@ spell points they require.  The `{\tt Z}' (cast) command casts a spell.
 \subsection*{Tools (`{\tt (}')}
 
 %.pg
-Tools are miscellaneous objects with various purposes.  Some tools,
+Tools are miscellaneous objects with various purposes.  Some tools
 have a limited number of uses, akin to wand charges.  For example, lamps burn
 out after a while.  Other tools are containers, which objects can
 be placed into or taken out of.
@@ -1628,13 +1628,13 @@ Some of the options listed may be inactive in your dungeon.
 \blist{}
 %.lp
 \item[\ib{align}]
-Your starting alignment (align:lawful, align:neutral,
-or align:chaotic).  You may specify just the first letter.
+Your starting alignment ({\tt align:lawful}, {\tt align:neutral},
+or {\tt align:chaotic}).  You may specify just the first letter.
 The default is to randomly pick an appropriate alignment.
 Cannot be set with the `{\tt O}' command.
 %.lp
 \item[\ib{autopickup}]
-Pick up things you move onto by default (default on).
+Automatically pick up things onto which you move (default on).
 %.Ip
 \item[\ib{autoquiver}]
 This option controls what happens when you attempt the `f' (fire)
@@ -1695,18 +1695,19 @@ Cannot be set with the `{\tt O}' command.
 %.lp
 \item[\ib{dungeon}]
 Set the graphics symbols for displaying the dungeon (default
-``\verb& |--------||.-|++##.##& \verb&<><>_|\\#{}.}..## #}&'').
+``\verb& |--------||.-|++##& \verb&.##<><>_|\\#{}.}..## #}&'').
 The {\it dungeon\/} option should be
 followed by a string of 1--41
 characters to be used instead of the default map-drawing characters.
 The dungeon map will use the characters you specify instead of the
 default symbols, and default symbols for any you do not specify.
 Remember that you may need to escape some of these characters
-if, for example, you use {\it csh}.
+on a command line if they are special to your shell.
 
-Note that this option string is escape-processed in conventional C
+Note that {\it NetHack\/} escape-processes this option string in conventional C
 fashion.  This means that `\verb+\+' is a prefix to take the following
-character literally, and not as a special prefix.  The special escape form
+character literally.  Thus `\verb+\+' needs to be represented as `\verb+\\+'.
+The special escape form
 `\verb+\m+' switches on the meta bit in the following character, and the
 `{\tt \^{}}' prefix causes the following character to be treated as a control
 character.
@@ -1738,8 +1739,8 @@ This string is subjected to the same processing as the {\it dungeon\/} option.
 
 The order of the symbols is:  vertical beam, horizontal beam, left slant,
 right slant, digging beam, camera flash beam, left boomerang, right boomerang,
-four glyphs giving the sequence for magic resistance displays;
-the eight surrounding glyphs for swallowed display;
+four glyphs giving the sequence for magic resistance displays,
+the eight surrounding glyphs for swallowed display,
 nine glyphs for explosions.
 An explosion consists of three rows (top, middle, and bottom) of three
 characters.  The explosion is centered in the center of this $3 \times 3$
@@ -1771,7 +1772,7 @@ find more appetizing than slime mold.  Apples, oranges, pears, bananas, and
 melons already exist in {\it NetHack}, so don't use those.
 %.Ip
 \item[\ib{gender}]
-Your starting gender (gender:male or gender:female).
+Your starting gender ({\tt gender:male} or {\tt gender:female}).
 You may specify just the first letter.  Although you can
 still denote your gender using the ``{\tt male}'' and ``{\tt female}''
 options, the ``{\tt gender}'' option will take precedence.
@@ -1791,7 +1792,7 @@ In text windowing, use text highlighting when color is turned off;
 with X tiles, display a heart symbol near pets.
 %.lp
 \item[\ib{horsename}]
-Name your starting dog (ex.\ ``{\tt horsename:Trigger}'').
+Name your starting horse (ex.\ ``{\tt horsename:Trigger}'').
 Cannot be set with the `{\tt O}' command.
 %.lp
 \item[\ib{IBMgraphics}]
@@ -1892,9 +1893,9 @@ piercer, quadruped, rodent,
 spider, trapper or lurker above, horse or unicorn,
 vortex, worm, xan or other mythical/fantastic insect,
 light, zruty,
-angelic being, bat, centaur,
+angelic being, bat or bird, centaur,
 dragon, elemental, fungus or mold,
-gnome, giant humanoid, invisible stalker,
+gnome, giant humanoid, invisible monster,
 jabberwock, Keystone Kop, lich,
 mummy, naga, ogre,
 pudding or ooze, quantum mechanic, rust monster,
@@ -1912,10 +1913,10 @@ The number of top line messages to save (and recall with `{\tt \^{}P}')
 %.lp
 \item[\ib{name}]
 Set your character's name (defaults to your user name).  You can also
-set your character class by appending a dash and one or more letters of
-the character class (that is, by suffixing one of
+set your character's role by appending a dash and one or more letters of
+the role (that is, by suffixing one of
 ``{\tt -A -B -C -H -K -M -P -Ra -Ro -S -T -V -W}'').
-If ``{\tt -@}'' is used for the class, then a random one will be
+If ``{\tt -@}'' is used for the role, then a random one will be
 automatically chosen.
 Cannot be set with the `{\tt O}' command.
 %.lp
@@ -1942,8 +1943,9 @@ Cannot be set with the `{\tt O}' command.
 %.lp
 \item[\ib{packorder}]
 Specify the order to list object types in (default
-``\verb&\")[\%?+/=!(*`0_&''). The value of this option should be a string
-containing the symbols for the various object types.
+``\verb&")[%?+!=/(*`0_&''). The value of this option should be a string
+containing the symbols for the various object types.  Any omitted types
+are filled in at the end from the previous order.
 %.lp
 \item[\ib{perm\_invent}]
 If true, always display your current inventory in a window.  This only
@@ -1951,12 +1953,12 @@ makes sense for windowing system interfaces that implement this feature.
 %.lp
 \item[\ib{pettype}]
 Specify the type of your initial pet, if you are playing a character class
-that uses both types of pets.  Possible values are ``{\tt cat}''
+that uses multiple types of pets.  Possible values are ``{\tt cat}''
 and ``{\tt dog}''.
 Cannot be set with the `{\tt O}' command.
 %.Ip
 \item[\ib{pickup\_burden}]
-When you pick up an item that would exceeds this encumberance
+When you pick up an item that would exceed this encumberance
 level (Unburdened, Burdened, streSsed, straiNed, overTaxed,
 or overLoaded), you will be asked if you want to continue.
 (Default `B').
@@ -1975,8 +1977,8 @@ enhances performance of the tile graphics, but uses more memory. (default on).
 Cannot be set with the `{\tt O}' command.
 %.lp
 \item[\ib{pushweapon}]
-When you use the `w' (wield) command and you had been wielding
-something, place the old item in your secondary weapon slot (default off).
+Using the `w' (wield) command when already wielding
+something pushes the old item into your secondary weapon slot (default off).
 %.Ip
 \item[\ib{race}]
 Selects your race (for example, ``{\tt race:human}'').  Default is random.
@@ -1995,7 +1997,8 @@ Make the space bar a synonym for the `{\tt .}' (rest) command (default off).
 Pick your type of character (ex.\ ``{\tt role:Samurai}'');
 synonym for ``{\it character\/}''.  See ``{\it name\/}'' for an alternate method
 of specifying your role.  Normally only the first letter of the
-value is examined; the string ``{\tt random}'' is an exception.
+value is examined; `r' is an exception with ``{\tt Rogue}'', {\tt Ranger}'',
+and ``{\tt random}'' values.
 %.lp
 \item[\ib{safe\_pet}]
 Prevent you from (knowingly) attacking your pets (default on).
@@ -2071,7 +2074,7 @@ Cannot be set with the `{\tt O}' command.
 Set the intensity level of the three gray scales available
 (default dark normal light, {\it PC\/ NetHack\/} only).
 If the game display is difficult to read, try adjusting these scales;
-if this does not correct the problem, try !color.
+if this does not correct the problem, try {\tt !color}.
 Cannot be set with the `{\tt O}' command.
 %.lp
 \item[\ib{windowtype}]
@@ -2118,9 +2121,9 @@ Disable IBMgraphics by commenting out this option.
 \item[\ib{menustyle:traditional}]
 This will assist in the interface to speech synthesizers.
 %.lp
-\item[\ib{!number_pad}]
+\item[\ib{!number\_pad}]
 A lot of speech access programs use the number-pad to review the screen.
-If this is the case, turn off the number_pad option and use the traditional
+If this is the case, turn off the number\_pad option and use the traditional
 Rogue-like commands.
 %.lp
 \item[\ib{Character graphics}]
@@ -2176,7 +2179,7 @@ paltry cost of not getting on the high score list.
 There are two ways of enabling explore mode.  One is to start the game
 with the {\tt -X}
 switch.  The other is to issue the `{\tt X}' command while already playing
-the game.  The other benefits of explore mode are left for the intrepid
+the game.  The other benefits of explore mode are left for the trepid
 reader to discover.
 
 %.hn
@@ -2276,7 +2279,7 @@ and {\it Paul Winner}, ported {\it NetHack\/} 3.1 to the PC.
 
 %.pg
 \medskip
-\nd {\it Jon W\{atte} and {\it Hao-yang Wang},
+\nd {\it Jon W\{tte} and {\it Hao-yang Wang},
 with help from {\it Ross Brown}, {\it Mike Engber}, {\it David Hairston},
 {\it Michael Hamel}, {\it Jonathan Handler}, {\it Johnny Lee},
 {\it Tim Lennan}, {\it Rob Menke}, and {\it Andy Swanson},
@@ -2288,7 +2291,7 @@ Building on their development, {\it Barton House} added a Think C port.
 \nd {\it Timo Hakulinen\/} ported {\it NetHack\/} 3.1 to OS/2.
 {\it Eric Smith\/} ported {\it NetHack\/} 3.1 to the Atari.
 {\it Pat Rankin}, with help from {\it Joshua Delahunty},
-is responsible for the VMS version of {\it NetHack\/} 3.1.
+was responsible for the VMS version of {\it NetHack\/} 3.1.
 {\it Michael Allison} ported {\it NetHack\/} 3.1 to Windows NT.
 
 %.pg
@@ -2309,36 +2312,35 @@ and {\it Paul Winner}, released version 3.2 in April of 1996.
 \nd Version 3.2 marked the tenth anniversary of the formation of the development
 team.  In a testament to their dedication to the game, all thirteen members
 of the original development team remained on the team at the start of work on
-the current release.  During the interval between the release of 3.1.3 and 3.2,
+that release.  During the interval between the release of 3.1.3 and 3.2,
 one of the founding members of the development team, {\it Dr. Izchak Miller},
-was diagnosed with cancer and passed away.  This release of the game was
+was diagnosed with cancer and passed away.  That release of the game was
 dedicated to him by the development and porting teams.
 
 %.pg
 \medskip
-Late in 1999, the dev team released NetHack 3.3.  Along with the usual set
-of bug fixes and minor tweaks (including Y2K proofing), a merge of features
-was added to the game from variants that split off from the 3.2 base code.
-
-%.pg
-\medskip
-During the lifespan of NetHack 3.2, Several enthusiasts of the game added
-their own modifications to the game and made these "variants" publicly
+During the lifespan of {\it NetHack\/} 3.1 and 3.2, several enthusiasts
+of the game added
+their own modifications to the game and made these ``variants'' publicly
 available:
 
 %.pg
 \medskip
-{\it Tom Proudfoot} and {\it Yuval Oren} created NetHack++, which was later renamed
-NetHack$--$.  Working independently, {\it Stephen White} wrote NetHack Plus.
-{\it Tom Proudfoot} later merged NetHack Plus and his own NetHack$--$ to produce
-SLASH.  {\it Larry Stewart-Zerba} and {\it Warwick Allison} improved the spell
+{\it Tom Proudfoot} and {\it Yuval Oren} created {\it NetHack++},
+which was quickly renamed {\it NetHack$--$}.
+Working independently, {\it Stephen White} wrote {\it NetHack Plus}.
+{\it Tom Proudfoot} later merged {\it NetHack Plus}
+and his own {\it NetHack$--$} to produce {\it SLASH}.
+{\it Larry Stewart-Zerba} and {\it Warwick Allison} improved the spell
 casting system with the Wizard Patch.
 
 %.pg
 \medskip
-{\it Warren Cheung} combined SLASH with the Wizard Patch to produce Slash'em, and
-with the help of {\it Kevin Hugo}, added more features.  Kevin later joined the
-DevTeam and incorporated the best of these ideas in NetHack 3.3.
+{\it Warren Cheung} combined {\it SLASH} with the Wizard Patch
+to produce {\it Slash'em\/}, and
+with the help of {\it Kevin Hugo}, added more features.
+Kevin later joined the
+DevTeam and incorporated the best of these ideas into NetHack 3.3.
 
 %.pg
 \medskip
@@ -2351,7 +2353,8 @@ The 3.3 development team consisted of {\it Michael Allison}, {\it Ken Arromdee},
 %.pg
 \medskip
 As with version 3.2, various people contributed to the game as a whole as
-well as supporting ports on the different platforms that NetHack runs on:
+well as supporting ports on the different platforms that {\it NetHack\/}
+runs on:
 
 %.pg
 \medskip

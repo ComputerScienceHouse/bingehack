@@ -1273,7 +1273,7 @@ or align:chaotic).  You may specify just the first letter.
 The default is to randomly pick an appropriate alignment.
 Cannot be set with the `O' command.
 .lp "autopickup  "
-Pick up things you move onto by default (default on).
+Automatically pick up things onto which you move (default on).
 .lp "autoquiver  "
 This option controls what happens when you attempt the `f' (fire)
 command with an empty quiver.  When true, the computer will fill
@@ -1336,11 +1336,12 @@ characters to be used instead of the default map-drawing characters.
 The dungeon map will use the characters you specify instead of the
 default symbols, and default symbols for any you do not specify.
 Remember that you may need to escape some of these characters
-if, for example, you use \fIcsh\fP.
+on a command line if they are special to your shell.
 
-Note that this option string is escape-processed in conventional C
+Note that NetHack escape-processes this option string in conventional C
 fashion.  This means that `\e' is a prefix to take the following
-character literally, and not as a special prefix.  The special escape
+character literally.  Thus `\e' needs to be represented as `\e\e'.
+The special escape
 form `\em' switches on the meta bit in the following character, and the `^'
 prefix causes the following character to be treated as a control
 character.
@@ -1374,8 +1375,8 @@ option.
 
 The order of the symbols is:  vertical beam, horizontal beam, left slant,
 right slant, digging beam, camera flash beam, left boomerang, right boomerang,
-four glyphs giving the sequence for magic resistance displays;
-the eight surrounding glyphs for swallowed display;
+four glyphs giving the sequence for magic resistance displays,
+the eight surrounding glyphs for swallowed display,
 nine glyphs for explosions.
 An explosion consists of three rows (top, middle, and bottom) of three
 characters.  The explosion is centered in the center of this 3 by 3
@@ -1415,7 +1416,7 @@ Visually distinguish pets from similar animals (default off).
 In text windowing, use text highlighting when color is turned off;
 with X tiles, display a heart symbol near pets.
 .lp horsename
-Name your starting dog (ex. ``horsename:Trigger'').
+Name your starting horse (ex. ``horsename:Trigger'').
 Cannot be set with the `O' command.
 .lp IBMgraphics
 Use a predefined selection of IBM extended ASCII characters to display the
@@ -1509,9 +1510,9 @@ piercer, quadruped, rodent,
 spider, trapper or lurker above, horse or unicorn,
 vortex, worm, xan or other mythical/fantastic insect,
 light, zruty,
-angelic being, bat, centaur,
+angelic being, bat or bird, centaur,
 dragon, elemental, fungus or mold,
-gnome, giant humanoid, invisible stalker,
+gnome, giant humanoid, invisible monster,
 jabberwock, Keystone Kop, lich,
 mummy, naga, ogre,
 pudding or ooze, quantum mechanic, rust monster,
@@ -1527,12 +1528,12 @@ The number of top line messages to save (and recall with ^P) (default 20).
 Cannot be set with the `O' command.
 .lp "name    "
 Set your character's name (defaults to your user name).  You can also
-set your character class by appending a dash and one or more letters of
-the character class (that is, by suffixing one of
+set your character's role by appending a dash and one or more letters of
+the role (that is, by suffixing one of
 .op "-A -B -C -H -K -M -P -Ra -Ro -S -T -V -W" ).
 If
 .op "-@"
-is used for the class, then a random one will be automatically chosen.
+is used for the role, then a random one will be automatically chosen.
 Cannot be set with the `O' command.
 .lp "news    "
 Read the NetHack news file, if present (default on).
@@ -1554,18 +1555,19 @@ food, potion, scroll, spell book, wand, gold, gem or rock, boulder or statue,
 iron ball, chain, and venom.
 Cannot be set with the `O' command.
 .lp packorder
-Specify the order to list object types in (default ``\e")[%?+/=!(*`0_'').
+Specify the order to list object types in (default ``")[%?+!=/(*`0_'').
 The value of this option should be a string containing the
-symbols for the various object types.
+symbols for the various object types.  Any omitted types are filled in
+at the end from the previous order.
 .lp perm_invent
 If true, always display your current inventory in a window.  This only
 makes sense for windowing system interfaces that implement this feature.
 .lp pettype
 Specify the type of your initial pet, if you are playing a character class
-that uses both types of pets.  Possible values are ``cat'' and ``dog''.
+that uses multiple types of pets.  Possible values are ``cat'' and ``dog''.
 Cannot be set with the `O' command.
 .lp pickup_burden
-When you pick up an item that would exceeds this encumberance
+When you pick up an item that would exceed this encumberance
 level (Unburdened, Burdened, streSsed, straiNed, overTaxed,
 or overLoaded), you will be asked if you want to continue.
 (Default `B').
@@ -1581,8 +1583,8 @@ get pre-loaded into RAM at the start of the game.  Doing so
 enhances performance of the tile graphics, but uses more memory. (default on).
 Cannot be set with the `O' command.
 .lp pushweapon
-When you use the `w' (wield) command and you had been wielding
-something, place the old item in your secondary weapon slot (default off).
+Using the `w' (wield) command when already wielding
+something pushes the old item into your secondary weapon slot (default off).
 .lp race
 Selects your race (for example, ``race:human'').  Default is random.
 Cannot be set with the `O' command.
@@ -1597,7 +1599,8 @@ Make the space bar a synonym for the `.' (rest) command (default off).
 Pick your type of character (ex. ``role:Samurai'');
 synonym for ``character''.  See ``name'' for an alternate method
 of specifying your role.  Normally only the first letter of the
-value is examined; the string ``random'' is an exception.
+value is examined; `r' is an exception with ``Rogue'', ``Ranger'',
+and ``random'' values.
 .lp safe_pet
 Prevent you from (knowingly) attacking your pets (default on).
 .lp scores
@@ -1746,7 +1749,7 @@ There are two ways of enabling explore mode.  One is to start the game
 with the
 .op -X
 switch.  The other is to issue the `X' command while already playing
-the game.  The other benefits of explore mode are left for the intrepid
+the game.  The other benefits of explore mode are left for the trepid
 reader to discover.
 
 .hn
@@ -1828,7 +1831,7 @@ added a Think C port.
 .pg
 \fBTimo Hakulinen\fP ported NetHack 3.1 to OS/2.  \fBEric Smith\fP
 ported NetHack 3.1 to the Atari.  \fBPat Rankin\fP, with help from
-\fBJoshua Delahunty\fP, is responsible for the VMS version of NetHack 3.1.
+\fBJoshua Delahunty\fP, was responsible for the VMS version of NetHack 3.1.
 \fBMichael Allison\fP ported NetHack 3.1 to Windows NT.
 .pg
 \fBDean Luick\fP, with help from \fBDavid Cohrs\fP, developed NetHack
@@ -1844,27 +1847,27 @@ Luick\fP; \fBPat Rankin\fP; \fBEric Smith\fP; \fBMike Stephenson\fP;
 Version 3.2 marked the tenth anniversary of the formation of the development
 team.  In a testament to their dedication to the game, all thirteen members
 of the original development team remained on the team at the start of work
-on the current release.  During the interval between the release of 3.1.3
+on that release.  During the interval between the release of 3.1.3
 and 3.2, one of the founding members of the development team, \fBDr. Izchak
-Miller\fP, was diagnosed with cancer and passed away.  This release of the
+Miller\fP, was diagnosed with cancer and passed away.  That release of the
 game was dedicated to him by the development and porting teams.
 .pg
-Late in 1999, the dev team released NetHack 3.3.  Along with the usual set
-of bug fixes and minor tweaks (including Y2K proofing), a merge of features
-was added to the game from variants that split off from the 3.2 base code.
-.pg
-During the lifespan of NetHack 3.2, Several enthusiasts of the game added
-their own modifications to the game and made these "variants" publicly
+During the lifespan of NetHack 3.1 and 3.2, several enthusiasts
+of the game added
+their own modifications to the game and made these ``variants'' publicly
 available:
 .pg
-\fBTom Proudfoot\fP and \fBYuval Oren\fP created NetHack++, which was later renamed
-NetHack--.  Working independently, \fBStephen White\fP wrote NetHack Plus.
-\fBTom Proudfoot\fP later merged NetHack Plus and his own NetHack-- to produce
-SLASH.  \fBLarry Stewart-Zerba\fP and \fBWarwick Allison\fP improved the spellcasting
-system with the Wizard Patch.
+\fBTom Proudfoot\fP and \fBYuval Oren\fP created NetHack++,
+which was quickly renamed NetHack--.
+Working independently, \fBStephen White\fP wrote NetHack Plus.
+\fBTom Proudfoot\fP later merged NetHack Plus
+and his own NetHack-- to produce SLASH.
+\fBLarry Stewart-Zerba\fP and \fBWarwick Allison\fP improved the spell
+casting system with the Wizard Patch.
 .pg
-\fBWarren Cheung\fP combined SLASH with the Wizard Patch to produce Slash'em, and
-with the help of \fBKevin Hugo\fP, added more features.  Kevin later joined the
+\fBWarren Cheung\fP combined SLASH with the Wizard Patch to produce Slash'em,
+and with the help of \fBKevin Hugo\fP, added more features.
+Kevin later joined the
 DevTeam and incorporated the best of these ideas in NetHack 3.3.
 .pg
 The 3.3 development team consisted of \fBMichael Allison\fP, \fBKen Arromdee\fP,
