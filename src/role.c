@@ -1054,13 +1054,10 @@ int buflen, rolenum, racenum, gendnum, alignnum;
 	/* <your lawful> */
 
 
-	if (rolenum != ROLE_NONE &&
-		(roles[rolenum].allow & ROLE_GENDMASK) == (ROLE_MALE|ROLE_FEMALE)) {
-		if (gendnum != ROLE_NONE) {
-			Strcat(buf, " ");
-			Strcat(buf, genders[gendnum].adj);
-		} else post_attribs++;
-	}
+	if (gendnum != ROLE_NONE) {
+		Strcat(buf, " ");
+		Strcat(buf, genders[gendnum].adj);
+	} else post_attribs++;
 	/* <your lawful female> */
 
 	if (racenum != ROLE_NONE) {
@@ -1077,6 +1074,7 @@ int buflen, rolenum, racenum, gendnum, alignnum;
 			s_suffix(roles[rolenum].name.f) :
 			s_suffix(roles[rolenum].name.m));
 	} else post_attribs++;
+
 	if (racenum == ROLE_NONE && rolenum == ROLE_NONE) {
 		Strcat(buf, " character's");
 	}
@@ -1105,8 +1103,7 @@ int buflen, rolenum, racenum, gendnum, alignnum;
 			if (!post_attribs) Strcat(buf, conj);
 			Strcat(buf, "alignment");
 		}
-		if (gendnum == ROLE_NONE && (rolenum != ROLE_NONE &&
-		    (roles[rolenum].allow & ROLE_GENDMASK) == (ROLE_MALE|ROLE_FEMALE))) {
+		if (gendnum == ROLE_NONE) {
 			Strcat(buf, (post_attribs == num_post_attribs) ? " " : ", ");
 			--post_attribs;
 			if (!post_attribs) Strcat(buf, conj);
