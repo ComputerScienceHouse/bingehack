@@ -1392,6 +1392,11 @@ boolean retry_inverted;	/* optional extra "of" handling */
 		return fuzzymatch(u_str + 7, o_str + 6, " -", TRUE);
 	    else if (!strncmpi(u_str, "elfin ", 6))
 		return fuzzymatch(u_str + 6, o_str + 6, " -", TRUE);
+	} else if (!strcmp(o_str, "aluminum")) {
+		/* this special case doesn't really fit anywhere else... */
+		/* (note that " wand" will have been stripped off by now) */
+	    if (!strcmpi(u_str, "aluminium"))
+		return fuzzymatch(u_str + 9, o_str + 8, " -", TRUE);
 	}
 
 	return FALSE;
@@ -1761,14 +1766,6 @@ register char *bp;
 		typ = SPE_BLANK_PAPER;
 		goto typfnd;
 	}
-#if 0
-#ifdef TOURIST
-	if (!BSTRCMPI(bp, p-5, "shirt")) {
-		typ = HAWAIIAN_SHIRT;
-		goto typfnd;
-	}
-#endif
-#endif
 	/*
 	 * NOTE: Gold pieces are handled as objects nowadays, and therefore
 	 * this section should probably be reconsidered as well as the entire
