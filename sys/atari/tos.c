@@ -7,7 +7,13 @@
 
 #define NEED_VARARGS
 #include "hack.h"
-#include "tcap.h"
+
+#ifdef TTY_GRAPHICS
+# include "tcap.h"
+#else
+/* To avoid error for tos.c; will be removed later */
+static char *nh_HE="\033q";
+#endif
 
 #ifdef TOS
 

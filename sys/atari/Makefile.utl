@@ -28,63 +28,42 @@
 # if your make doesn't define a default SHELL properly, you may need
 #    the line below (Atari users will need a bourne work-alike)
 # SHELL = /bin/sh
+# SHELL = E:/gemini2/mupfel.ttp
 
 # flags may have to be changed as required
-# flags for 286 Xenix:
-# CFLAGS = -Ml2t16 -O -LARGE -I../include
-# LFLAGS = -Ml -F 4000 -SEG 512
 
-# flags for 286 Microport SysV-AT
-# CFLAGS = -DDUMB -Ml -I../include
-# LFLAGS = -Ml
-
-# flags for Atari GCC
+# flags for Atari GCC (old/3.2.1)
 # CFLAGS = -O -I../include
 # LFLAGS = -s
-
-# flags for Apollos using their native cc
-# (as long as it claims to be __STDC__ but isn't)
-# CFLAGS = -DAPOLLO -O -I../include
-
-# flags for AIX 3.1 cc on IBM RS/6000 to define
-# a suitable subset of standard libraries
-# (note that there is more info regarding the "-qchars=signed"
-# switch in file Install.unx note 8)
-# CFLAGS = -D_NO_PROTO -D_XOPEN_SOURCE -O -I../include -qchars=signed
-# and for AIX 3.2:
-# CFLAGS = -D_NO_PROTO -D_XOPEN_SOURCE -D_ALL_SOURCE -O -I../include -qchars=signed
-
-# flags for A/UX 2.01 using native cc or c89
-# gcc predefines AUX so that's not needed there
-# CFLAGS = -ZS -D_POSIX_SOURCE -O -I../include -DAUX
-
-# flags for IRIX 4.0.x using native cc
-# SGI cc 3.10 will fail to compile makedefs with -O
-# CFLAGS = -I../include -D__STDC__ -woff 100,293
 
 # flags for debugging:
 # CFLAGS = -g -I../include
 
-CFLAGS = -O -I../include
-LFLAGS =
+# CFLAGS = -O -I../include
+# CFLAGS = -mshort -O2 -fomit-frame-pointer -I../include
+
+# flags for Atari GCC (new/3.3.0)
+CFLAGS = -mshort -O -I../include
+LFLAGS = -mshort
  
+LIBS =
 
 # yacc/lex programs to use to generate *_comp.h, *_lex.c, and *_yacc.c.
 # if, instead of yacc/lex you have bison/flex, comment/uncomment the following.
 # YACC     = yacc
 # LEX      = lex
-# YACC     = bison -y
-YACC     = byacc
+YACC     = bison -y
+# YACC     = byacc
 LEX      = flex
  
 # these are the names of the output files from YACC/LEX. Under MS-DOS
 # and similar systems, they may differ
-# YTABC = y.tab.c
-# YTABH = y.tab.h
-# LEXYYC = lex.yy.c
-YTABC = y_tab.c
-YTABH = y_tab.h
-LEXYYC = lexyy.c
+YTABC = y.tab.c
+YTABH = y.tab.h
+LEXYYC = lex.yy.c
+# YTABC = y_tab.c
+# YTABH = y_tab.h
+# LEXYYC = lexyy.c
 
 
 # Nothing below this line should have to be changed.
@@ -129,22 +108,22 @@ YACCDIST =
 #	dependencies for makedefs
 #
 makedefs:	$(MAKEOBJS)
-	$(CC) $(LFLAGS) -o makedefs $(MAKEOBJS)
+	$(CC) $(LFLAGS) -o makedefs $(MAKEOBJS) $(LIBS)
 
 makedefs.o:  ../include/config.h ../include/permonst.h ../include/objclass.h \
 		../include/monsym.h ../include/artilist.h \
 		../include/patchlevel.h ../include/qtext.h
 
 ../include/onames.h: makedefs
-	./makedefs -o
+	makedefs -o
 ../include/pm.h: makedefs
-	./makedefs -p
+	makedefs -p
 ../src/monstr.c: makedefs
-	./makedefs -m
+	makedefs -m
 ../include/vis_tab.h: makedefs
-	./makedefs -z
+	makedefs -z
 ../src/vis_tab.c: makedefs
-	./makedefs -z
+	makedefs -z
 
 lintdefs:
 	@lint -axbh -I../include -DLINT $(MAKESRC) ../src/monst.c ../src/objects.c | sed '/_flsbuf/d'
@@ -153,13 +132,13 @@ lintdefs:
 # we defer this makedefs call to the src Makefile, since it knows all about
 # the main src and include files date.h is a timestamp for
 ../include/date.h::
-	@( cd ../src ; $(MAKE) ../include/date.h )
+	@( cd ..\src ; $(MAKE) ../include/date.h )
 
 
 #	dependencies for lev_comp
 #
 lev_comp:  $(SPLEVOBJS)
-	$(CC) $(LFLAGS) -o lev_comp $(SPLEVOBJS)
+	$(CC) $(LFLAGS) -o lev_comp $(SPLEVOBJS) $(LIBS)
 
 lev_yacc.o:  ../include/hack.h ../include/sp_lev.h
 lev_main.o:  ../include/hack.h ../include/sp_lev.h ../include/tcap.h \
@@ -178,7 +157,7 @@ lev_lex.o:   ../include/hack.h ../include/lev_comp.h ../include/sp_lev.h lev_lex
 lev_yacc.c: lev_comp.y
 	$(YACC) $(YACCDIST) -d lev_comp.y
 	mv $(YTABC) lev_yacc.c
-	mv $(YTABH) ../include/lev_comp.h
+	mv $(YTABH) ..\include\lev_comp.h
 
 lev_lex.c: lev_comp.l
 	$(LEX) $(FLEXDIST) lev_comp.l
@@ -193,7 +172,7 @@ lintlev:
 #	dependencies for dgn_comp
 #
 dgn_comp:  $(DGNCOMPOBJS)
-	$(CC) $(LFLAGS) -o dgn_comp $(DGNCOMPOBJS)
+	$(CC) $(LFLAGS) -o dgn_comp $(DGNCOMPOBJS) $(LIBS)
 
 dgn_yacc.o:  ../include/config.h ../include/dgn_file.h ../include/date.h
 dgn_main.o:  ../include/config.h
@@ -209,7 +188,7 @@ dgn_lex.o:   ../include/config.h ../include/dgn_comp.h ../include/dgn_file.h dgn
 dgn_yacc.c: dgn_comp.y
 	$(YACC) $(YACCDIST) -d dgn_comp.y
 	mv $(YTABC) dgn_yacc.c
-	mv $(YTABH) ../include/dgn_comp.h
+	mv $(YTABH) ..\include\dgn_comp.h
 
 dgn_lex.c: dgn_comp.l
 	$(LEX) $(FLEXDIST) dgn_comp.l
@@ -224,7 +203,7 @@ lintdgn:
 #	dependencies for recover
 #
 recover: $(RECOVOBJS)
-	$(CC) $(LFLAGS) -o recover $(RECOVOBJS)
+	$(CC) $(LFLAGS) -o recover $(RECOVOBJS) $(LIBS)
 
 recover.o: ../include/config.h
 
@@ -232,7 +211,7 @@ recover.o: ../include/config.h
 #	dependencies for dlb
 #
 dlb:	dlb_main.o ../src/dlb.o ../src/alloc.o panic.o
-	$(CC) $(LFLAGS) -o dlb dlb_main.o ../src/dlb.o ../src/alloc.o panic.o
+	$(CC) $(LFLAGS) -o dlb dlb_main.o ../src/dlb.o ../src/alloc.o panic.o $(LIBS)
 
 dlb_main.o: dlb_main.c ../include/config.h ../include/dlb.h
 	$(CC) $(CFLAGS) -c dlb_main.c
@@ -246,20 +225,23 @@ PPMWRITERS = ppmwrite.o ../src/alloc.o panic.o
 tileutils: tilemap gif2txt txt2ppm tile2x11
 
 gif2txt: $(GIFREADERS) $(TEXT_IO)
-	$(CC) $(LFLAGS) -o gif2txt $(GIFREADERS) $(TEXT_IO)
+	$(CC) $(LFLAGS) -o gif2txt $(GIFREADERS) $(TEXT_IO) $(LIBS)
 txt2ppm: $(PPMWRITERS) $(TEXT_IO)
-	$(CC) $(LFLAGS) -o txt2ppm $(PPMWRITERS) $(TEXT_IO)
+	$(CC) $(LFLAGS) -o txt2ppm $(PPMWRITERS) $(TEXT_IO) $(LIBS)
 
 tile2x11: tile2x11.o $(TEXT_IO)
-	$(CC) $(LFLAGS) -o tile2x11 tile2x11.o $(TEXT_IO)
+	$(CC) $(LFLAGS) -o tile2x11 tile2x11.o $(TEXT_IO) $(LIBS)
+
+tile2img.ttp: tile2img.o bitmfile.o $(TEXT_IO)
+	$(CC) $(LFLAGS) -o tile2img.ttp tile2img.o bitmfile.o $(TEXT_IO) $(LIBS)
 
 tilemap: ../win/share/tilemap.c ../include/hack.h
-	$(CC) $(CFLAGS) $(LFLAGS) -o tilemap ../win/share/tilemap.c
+	$(CC) $(CFLAGS) $(LFLAGS) -o tilemap ../win/share/tilemap.c $(LIBS)
 ../src/tile.c: tilemap
-	./tilemap
+	.\tilemap
 
 ../include/tile.h: ../win/share/tile.h
-	cp ../win/share/tile.h ../include/tile.h
+	cp ..\win\share\tile.h ..\include\tile.h
 tiletext.o: ../win/share/tiletext.c ../include/config.h ../include/tile.h
 	$(CC) $(CFLAGS) -c ../win/share/tiletext.c
 tiletxt.o: ../win/share/tilemap.c ../include/hack.h
@@ -273,6 +255,13 @@ ppmwrite.o: ../win/share/ppmwrite.c ../include/config.h ../include/tile.h
 tile2x11.o: ../win/X11/tile2x11.c ../include/hack.h ../include/tile.h \
 						../include/tile2x11.h
 	$(CC) $(CFLAGS) -c ../win/X11/tile2x11.c
+
+tile2img.o: ../win/gem/tile2img.c ../include/hack.h ../include/tile.h \
+						../include/bitmfile.h
+	$(CC) $(CFLAGS) -c ../win/gem/tile2img.c
+
+bitmfile.o: ../win/gem/bitmfile.c ../include/bitmfile.h
+	$(CC) $(CFLAGS) -c ../win/gem/bitmfile.c
 
 
 # using dependencies like
@@ -289,21 +278,21 @@ tile2x11.o: ../win/X11/tile2x11.c ../include/hack.h ../include/tile.h \
 # make sure object files from src are available when needed
 #
 ../src/alloc.o: ../src/alloc.c ../include/config.h
-	@( cd ../src ; $(MAKE) alloc.o )
+	@( cd ..\src ; $(MAKE) alloc.o )
 ../src/drawing.o: ../src/drawing.c ../include/config.h
-	@( cd ../src ; $(MAKE) drawing.o )
+	@( cd ..\src ; $(MAKE) drawing.o )
 ../src/decl.o: ../src/decl.c ../include/config.h
-	@( cd ../src ; $(MAKE) decl.o )
+	@( cd ..\src ; $(MAKE) decl.o )
 ../src/monst.o: ../src/monst.c ../include/config.h
-	@( cd ../src ; $(MAKE) monst.o )
+	@( cd ..\src ; $(MAKE) monst.o )
 ../src/objects.o: ../src/objects.c ../include/config.h
-	@( cd ../src ; $(MAKE) objects.o )
+	@( cd ..\src ; $(MAKE) objects.o )
 ../src/dlb.o:	../src/dlb.c ../include/hack.h ../include/dlb.h
-	@( cd ../src ; $(MAKE) dlb.o )
+	@( cd ..\src ; $(MAKE) dlb.o )
 
 # make sure hack.h dependencies get transitive information
 ../include/hack.h: ../include/config.h
-	@( cd ../src ; $(MAKE) ../include/hack.h )
+	@( cd ..\src ; $(MAKE) ../include/hack.h )
 
 tags: $(UTILSRCS)
 	@ctags -tw $(UTILSRCS)
@@ -313,7 +302,7 @@ clean:
 
 spotless: clean
 	-rm -f lev_lex.c lev_yacc.c dgn_lex.c dgn_yacc.c
-	-rm -f ../include/lev_comp.h ../include/dgn_comp.h
-	-rm -f ../include/tile.h
+	-rm -f ..\include\lev_comp.h ..\include\dgn_comp.h
+	-rm -f ..\include\tile.h
 	-rm -f makedefs lev_comp dgn_comp recover dlb
-	-rm -f gif2txt txt2ppm tile2x11 tilemap
+	-rm -f gif2txt txt2ppm tile2x11 tile2img.ttp tilemap
