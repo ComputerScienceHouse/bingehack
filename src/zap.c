@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)zap.c	3.3	1999/10/10	*/
+/*	SCCS Id: @(#)zap.c	3.3	2000/01/09	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -2107,7 +2107,8 @@ struct obj *obj;	/* wand or spell */
 		    destroy_drawbridge(xx, yy);
 		disclose = TRUE;
 	    } else if (striking && u.dz < 0 && rn2(3) &&
-			!Is_airlevel(&u.uz) && !Is_waterlevel(&u.uz)) {
+			!Is_airlevel(&u.uz) && !Is_waterlevel(&u.uz) &&
+			!Underwater && !Is_qstart(&u.uz)) {
 		/* similar to zap_dig() */
 		pline("A rock is dislodged from the %s and falls on your %s.",
 		      ceiling(x, y), body_part(HEAD));
@@ -2121,9 +2122,12 @@ struct obj *obj;	/* wand or spell */
 	    }
 	    break;
 	case SPE_STONE_TO_FLESH:
-	    if (u.dz < 0)	/* we should do more... */
+	    if (Is_airlevel(&u.uz) || Is_waterlevel(&u.uz) ||
+		     Underwater || (Is_qstart(&u.uz) && u.dz < 0)) {
+		pline(nothing_happens);
+	    } else if (u.dz < 0) {	/* we should do more... */
 		pline("Blood drips on your %s.", body_part(FACE));
-	    else if (u.dz > 0 && !OBJ_AT(u.ux, u.uy)) {
+	    } else if (u.dz > 0 && !OBJ_AT(u.ux, u.uy)) {
 		/*
 		Print this message only if there wasn't an engraving
 		affected here.
@@ -3406,8 +3410,10 @@ boolean *shopdamage;
 	}
 	return rangemod;
 }
+
 #endif /*OVL0*/
 #ifdef OVL3
+
 void
 fracture_rock(obj)	/* fractured by pick-axe or wand of striking */
 register struct obj *obj;		   /* no texts here! */
