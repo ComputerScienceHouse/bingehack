@@ -189,7 +189,9 @@ getlock()
 	}
 	if(c == 'y' || c == 'Y')
 		if(eraseoldlocks()) {
+#if defined(MSDOS) || defined(WIN32CON)
 			clear_screen();		/* display gets fouled up otherwise */
+#endif
 			goto gotlock;
 		} else {
 			unlock_file(HLOCK);
