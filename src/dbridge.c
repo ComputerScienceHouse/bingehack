@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)dbridge.c	3.3	97/05/25	*/
+/*	SCCS Id: @(#)dbridge.c	3.3	2000/02/05	*/
 /*	Copyright (c) 1989 by Jean-Christophe Collet		  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -915,7 +915,7 @@ int x,y;
 		} else {
 			if (e_inview) {
 			    if (!is_u(etmp1) && Hallucination)
-				pline("%s into some heavy metal",
+				pline("%s into some heavy metal!",
 				      E_phrase(etmp1, "get"));
 			    else
 				pline("%s hit by a huge chunk of metal!",
