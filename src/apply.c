@@ -1852,262 +1852,259 @@ STATIC_OVL int
 use_whip(obj)
 struct obj *obj;
 {
-	char buf[BUFSZ];
-	struct monst *mtmp;
-	register int rx, ry;
-	int res = 0;
-	int proficient = 0;
-	const char *msg_slipsfree = "The bullwhip slips free.";
-	const char *msg_snap = "Snap!";
-	struct obj *otmp;
+    char buf[BUFSZ];
+    struct monst *mtmp;
+    struct obj *otmp;
+    int rx, ry, proficient, res = 0;
+    const char *msg_slipsfree = "The bullwhip slips free.";
+    const char *msg_snap = "Snap!";
 
-	if (obj != uwep) {
-	    if (!wield_tool(obj)) return(0);
-	    else res = 1;
-	    /* prevent bashing msg */
-	    unweapon = FALSE;
-	}
-	if(!getdir((char *)0)) return(res);
-	if (Stunned || (Confusion && !rn2(5))) confdir();
-	rx = u.ux + u.dx;
-	ry = u.uy + u.dy;
-	mtmp = m_at(rx, ry);
+    if (obj != uwep) {
+	if (!wield_tool(obj)) return 0;
+	else res = 1;
+	/* prevent bashing msg */
+	unweapon = FALSE;
+    }
+    if (!getdir((char *)0)) return res;
 
-	/* fake some proficiency checks */
-	proficient = 0;
-	if (Role_if(PM_ARCHEOLOGIST)) ++proficient;
-	if (ACURR(A_DEX) < 6) proficient--;
-	else if (ACURR(A_DEX) >= 14) proficient += (ACURR(A_DEX) - 14);
-	if (Fumbling) --proficient;
-	if (proficient > 3) proficient = 3;
-	if (proficient < 0) proficient = 0;
+    if (Stunned || (Confusion && !rn2(5))) confdir();
+    rx = u.ux + u.dx;
+    ry = u.uy + u.dy;
+    mtmp = m_at(rx, ry);
 
-	if (u.uswallow && attack(u.ustuck))
-		There("is not enough room to flick your bullwhip.");
-	else if (Underwater)
-		There("is too much resistance to flick your bullwhip.");
-	else if (u.dz < 0)
-		You("flick a bug off of the %s.",ceiling(u.ux,u.uy));
-	else if((!u.dx && !u.dy) || (u.dz > 0)) {
-		int dam;
+    /* fake some proficiency checks */
+    proficient = 0;
+    if (Role_if(PM_ARCHEOLOGIST)) ++proficient;
+    if (ACURR(A_DEX) < 6) proficient--;
+    else if (ACURR(A_DEX) >= 14) proficient += (ACURR(A_DEX) - 14);
+    if (Fumbling) --proficient;
+    if (proficient > 3) proficient = 3;
+    if (proficient < 0) proficient = 0;
+
+    if (u.uswallow && attack(u.ustuck)) {
+	There("is not enough room to flick your bullwhip.");
+
+    } else if (Underwater) {
+	There("is too much resistance to flick your bullwhip.");
+
+    } else if (u.dz < 0) {
+	You("flick a bug off of the %s.",ceiling(u.ux,u.uy));
+
+    } else if ((!u.dx && !u.dy) || (u.dz > 0)) {
+	int dam;
 
 #ifdef STEED
-		/* Sometimes you hit your steed by mistake */
-		if (u.usteed && !rn2(3)) {
-			You("whip %s!", mon_nam(u.usteed));
-			kick_steed();
-			return (1);
-		}
+	/* Sometimes you hit your steed by mistake */
+	if (u.usteed && !rn2(proficient + 2)) {
+	    You("whip %s!", mon_nam(u.usteed));
+	    kick_steed();
+	    return 1;
+	}
 #endif
-		if (Levitation
+	if (Levitation
 #ifdef STEED
 			|| u.usteed
 #endif
-		   ) {
-			/* Have a shot at snaring something on the floor */
-			otmp = level.objects[u.ux][u.uy];
-			if (otmp && otmp->otyp == CORPSE && otmp->corpsenm == PM_HORSE) {
-				pline("Why beat a dead horse?");
-				return 1;
-			}
-			if (otmp && proficient) {
-				You("wrap your bullwhip around %s on the %s.",
-					an(singular(otmp,xname)),
-					surface(u.ux, u.uy));
-				if (!rnl(6))
-					if (pickup_object(otmp, 1L, TRUE) > 0)
-						return 1;
-				pline(msg_slipsfree);
-				return 1;
-			}
-		}
-		dam = rnd(2) + dbon() + obj->spe;
-		if (dam <= 0) dam = 1;
-		You("hit your %s with your bullwhip.", body_part(FOOT));
-		/* self_pronoun() won't work twice in a sentence */
-		Strcpy(buf, self_pronoun("killed %sself with %%s bullwhip",
-			"him"));
-		losehp(dam, self_pronoun(buf, "his"), NO_KILLER_PREFIX);
-		flags.botl=1;
-		return(1);
-	} else if ((Fumbling || Glib) && !rn2(5)) {
-		pline_The("bullwhip slips out of your %s.",
-			body_part(HAND));
-		dropx(obj);
-		setuwep((struct obj *)0);
+		) {
+	    /* Have a shot at snaring something on the floor */
+	    otmp = level.objects[u.ux][u.uy];
+	    if (otmp && otmp->otyp == CORPSE && otmp->corpsenm == PM_HORSE) {
+		pline("Why beat a dead horse?");
+		return 1;
+	    }
+	    if (otmp && proficient) {
+		You("wrap your bullwhip around %s on the %s.",
+		    an(singular(otmp, xname)), surface(u.ux, u.uy));
+		if (rnl(6) || pickup_object(otmp, 1L, TRUE) < 1)
+		    pline(msg_slipsfree);
+		return 1;
+	    }
 	}
+	dam = rnd(2) + dbon() + obj->spe;
+	if (dam <= 0) dam = 1;
+	You("hit your %s with your bullwhip.", body_part(FOOT));
+	/* self_pronoun() won't work twice in a sentence */
+	Strcpy(buf, self_pronoun("killed %sself with %%s bullwhip", "him"));
+	losehp(dam, self_pronoun(buf, "his"), NO_KILLER_PREFIX);
+	flags.botl = 1;
+	return 1;
+
+    } else if ((Fumbling || Glib) && !rn2(5)) {
+	pline_The("bullwhip slips out of your %s.", body_part(HAND));
+	dropx(obj);
+	setuwep((struct obj *)0);
+
+    } else if (u.utrap && u.utraptype == TT_PIT) {
 	/*
 	 *     Assumptions:
 	 *
-	 *		if you're in a pit
-	 *			- you are attempting to get out of the pit
-	 *			- or, if you are applying it towards a small
-	 *			  monster then it is assumed that you are
-	 *			  trying to hit it.
-	 *		else if the monster is wielding a weapon
-	 *			- you are attempting to disarm a monster
-	 *		else
-	 *			- you are attempting to hit the monster
+	 *	if you're in a pit
+	 *		- you are attempting to get out of the pit
+	 *		- or, if you are applying it towards a small
+	 *		  monster then it is assumed that you are
+	 *		  trying to hit it.
+	 *	else if the monster is wielding a weapon
+	 *		- you are attempting to disarm a monster
+	 *	else
+	 *		- you are attempting to hit the monster
 	 *
-	 *		if you're confused (and thus off the mark)
-	 *			- you only end up hitting.
+	 *	if you're confused (and thus off the mark)
+	 *		- you only end up hitting.
 	 *
 	 */
-	else if(u.utrap && u.utraptype == TT_PIT) {
-		const char *wrapped_what = (char *)0;
+	const char *wrapped_what = (char *)0;
 
-		if (mtmp) {
-			if (bigmonst(mtmp->data)) {
-				Strcpy(buf, mon_nam(mtmp));
-				wrapped_what = buf;
-			} else if (proficient) {
-				if (attack(mtmp)) return(1);
-				else pline(msg_snap);
-			}
+	if (mtmp) {
+	    if (bigmonst(mtmp->data)) {
+		wrapped_what = strcpy(buf, mon_nam(mtmp));
+	    } else if (proficient) {
+		if (attack(mtmp)) return 1;
+		else pline(msg_snap);
+	    }
+	}
+	if (!wrapped_what) {
+	    if (IS_FURNITURE(levl[rx][ry].typ))
+		wrapped_what = something;
+	    else if (sobj_at(BOULDER, rx, ry))
+		wrapped_what = "a boulder";
+	}
+	if (wrapped_what) {
+	    coord cc;
+
+	    cc.x = rx; cc.y = ry;
+	    You("wrap your bullwhip around %s.", wrapped_what);
+	    if (proficient && rn2(proficient + 2)) {
+		if (!mtmp || enexto(&cc, rx, ry, youmonst.data)) {
+		    You("yank yourself out of the pit!");
+		    teleds(cc.x, cc.y);
+		    u.utrap = 0;
+		    vision_full_recalc = 1;
 		}
-		if (!wrapped_what) {
-			if (IS_FURNITURE(levl[rx][ry].typ))
-				wrapped_what = something;
-			else if (sobj_at(BOULDER, rx, ry))
-				wrapped_what = "a boulder";
-		}
-		if (wrapped_what) {
-			coord cc;
+	    } else {
+		pline(msg_slipsfree);
+	    }
+	    if (mtmp) wakeup(mtmp);
+	} else pline(msg_snap);
 
-			cc.x = rx; cc.y = ry;
-			You("wrap your bullwhip around %s.", wrapped_what);
-			if (proficient && rn2(proficient + 2)) {
-				if (!mtmp || enexto(&cc, rx, ry, youmonst.data)) {
-					You("yank yourself out of the pit!");
-					teleds(cc.x, cc.y);
-					u.utrap = 0;
-					vision_full_recalc = 1;
-				}
-			} else
-				pline(msg_slipsfree);
-			if (mtmp) wakeup(mtmp);
-		} else pline(msg_snap);
-	} else if (mtmp) {
-		if (!canspotmon(mtmp) &&
-				    !glyph_is_invisible(levl[rx][ry].glyph)) {
-			pline("A monster is there that you couldn't see.");
-			map_invisible(rx, ry);
-		}
-		otmp = MON_WEP(mtmp);	/* can be null */
-		if (otmp) {
-			char onambuf[BUFSZ];
-			const char *mon_hand;
-			boolean gotit = proficient && (!Fumbling || !rn2(10));
+    } else if (mtmp) {
+	if (!canspotmon(mtmp) &&
+		!glyph_is_invisible(levl[rx][ry].glyph)) {
+	   pline("A monster is there that you couldn't see.");
+	   map_invisible(rx, ry);
+	}
+	otmp = MON_WEP(mtmp);	/* can be null */
+	if (otmp) {
+	    char onambuf[BUFSZ];
+	    const char *mon_hand;
+	    boolean gotit = proficient && (!Fumbling || !rn2(10));
 
-			Strcpy(onambuf, xname(otmp));
-			if (gotit) {
-			    mon_hand = mbodypart(mtmp, HAND);
-			    if (bimanual(otmp))
-				mon_hand = makeplural(mon_hand);
-			} else
-			    mon_hand = 0;	/* lint suppression */
+	    Strcpy(onambuf, xname(otmp));
+	    if (gotit) {
+		mon_hand = mbodypart(mtmp, HAND);
+		if (bimanual(otmp)) mon_hand = makeplural(mon_hand);
+	    } else
+		mon_hand = 0;	/* lint suppression */
 
-			You("wrap your bullwhip around %s %s.",
-				s_suffix(mon_nam(mtmp)), onambuf);
-			if (gotit && otmp->cursed) {
-			    pline("%s welded to %s %s%c",
-				  (otmp->quan == 1L) ? "It is" : "They are",
-				  his[pronoun_gender(mtmp)], mon_hand,
-				  !otmp->bknown ? '!' : '.');
-			    otmp->bknown = 1;
-			    gotit = FALSE;	/* can't pull it free */
-			}
-			if (gotit) {
-			    obj_extract_self(otmp);
-			    possibly_unwield(mtmp);
-			    otmp->owornmask &= ~W_WEP;
-			    switch(rn2(proficient + 1)) {
-				case 2:
-				    /* to floor near you */
-				    You("yank %s %s to the %s!",
-					s_suffix(mon_nam(mtmp)),
-					onambuf,
-					surface(u.ux, u.uy));
-				    if (otmp->otyp == CRYSKNIFE &&
-				    	(!otmp->oerodeproof || !rn2(10))) {
-				    	otmp->otyp = WORM_TOOTH;
-				    	otmp->oerodeproof = 0;
-				    }
-				    place_object(otmp,u.ux, u.uy);
-				    break;
-				case 3:
-				    /* right into your inventory */
-				    if (rn2(25)) {
-					You("snatch %s %s!",
-						s_suffix(mon_nam(mtmp)),
-						onambuf);
-					if (otmp->otyp == CORPSE &&
-					    touch_petrifies(&mons[otmp->corpsenm]))
-					    && !uarmg && !Stone_resistance) {
-						if (!(poly_when_stoned(youmonst.data)
-						    && polymon(PM_STONE_GOLEM))) {
-							char kbuf[BUFSZ];
-							pline(
-						  "Snatching %s corpse is a fatal mistake.",
-							    an(mons[otmp->corpsenm].mname));
-							Sprintf(kbuf, "%s corpse",
-							    an(mons[otmp->corpsenm].mname));
-							instapetrify(kbuf);
-						}
-					}
-					otmp = hold_another_object(otmp,
-						"You drop %s!", doname(otmp),
-						(const char *)0);
-				    /* proficient with whip, but maybe not
-				       so proficient at catching weapons */
-				    }
+	    You("wrap your bullwhip around %s %s.",
+		s_suffix(mon_nam(mtmp)), onambuf);
+	    if (gotit && otmp->cursed) {
+		pline("%s welded to %s %s%c",
+		      (otmp->quan == 1L) ? "It is" : "They are",
+		      his[pronoun_gender(mtmp)], mon_hand,
+		      !otmp->bknown ? '!' : '.');
+		otmp->bknown = 1;
+		gotit = FALSE;	/* can't pull it free */
+	    }
+	    if (gotit) {
+		obj_extract_self(otmp);
+		possibly_unwield(mtmp);
+		otmp->owornmask &= ~W_WEP;
+
+		switch (rn2(proficient + 1)) {
+		case 2:
+		    /* to floor near you */
+		    You("yank %s %s to the %s!", s_suffix(mon_nam(mtmp)),
+			onambuf, surface(u.ux, u.uy));
+		    if (otmp->otyp == CRYSKNIFE &&
+			    (!otmp->oerodeproof || !rn2(10))) {
+			otmp->otyp = WORM_TOOTH;
+			otmp->oerodeproof = 0;
+		    }
+		    place_object(otmp, u.ux, u.uy);
+		    stackobj(otmp);
+		    break;
+		case 3:
+		    /* right to you */
 #if 0
-				    else {
-					int hitu, hitvalu;
+		    if (!rn2(25)) {
+			/* proficient with whip, but maybe not
+			   so proficient at catching weapons */
+			int hitu, hitvalu;
 
-					hitvalu = 8 + otmp->spe;
-					hitu = thitu(hitvalu,
-						     dmgval(otmp, &youmonst),
-						     otmp, (char *)0);
-					if (hitu) {
-				You("The %s hits you as you try to snatch it!",
-						the(onambuf));
-					}
-					place_object(otmp, u.ux, u.uy);
-				    }
+			hitvalu = 8 + otmp->spe;
+			hitu = thitu(hitvalu,
+				     dmgval(otmp, &youmonst),
+				     otmp, (char *)0);
+			if (hitu) {
+			    You("The %s hits you as you try to snatch it!",
+				the(onambuf));
+			}
+			place_object(otmp, u.ux, u.uy);
+			stackobj(otmp);
+			break;
+		    }
 #endif /* 0 */
-				    break;
-				default:
-				    /* to floor beneath mon */
-				    You("yank %s from %s %s!",
-					the(onambuf),
-					s_suffix(mon_nam(mtmp)),
-					mon_hand);
-				    if (otmp->otyp == CRYSKNIFE &&
-				    	(!otmp->oerodeproof || !rn2(10))) {
-				    	otmp->otyp = WORM_TOOTH;
-				    	otmp->oerodeproof = 0;
-				    }
-				    place_object(otmp, mtmp->mx, mtmp->my);
-				    break;
-			    }
-			} else {
-				pline(msg_slipsfree);
-			}
-			wakeup(mtmp);
-		} else {
-			You("flick your bullwhip towards %s.", mon_nam(mtmp));
-			if (proficient) {
-				if (attack(mtmp)) return(1);
-				else pline(msg_snap);
-			}
+		    /* right into your inventory */
+		    You("snatch %s %s!", s_suffix(mon_nam(mtmp)), onambuf);
+		    if (otmp->otyp == CORPSE &&
+			    touch_petrifies(&mons[otmp->corpsenm]) &&
+			    !uarmg && !Stone_resistance &&
+			    !(poly_when_stoned(youmonst.data) &&
+				polymon(PM_STONE_GOLEM))) {
+			char kbuf[BUFSZ];
+
+			Sprintf(kbuf, "%s corpse",
+			        an(mons[otmp->corpsenm].mname));
+			pline("Snatching %s is a fatal mistake.", kbuf);
+			instapetrify(kbuf);
+		    }
+		    otmp = hold_another_object(otmp, "You drop %s!",
+					       doname(otmp), (const char *)0);
+		    break;
+		default:
+		    /* to floor beneath mon */
+		    You("yank %s from %s %s!", the(onambuf),
+			s_suffix(mon_nam(mtmp)), mon_hand);
+		    if (otmp->otyp == CRYSKNIFE &&
+			    (!otmp->oerodeproof || !rn2(10))) {
+			otmp->otyp = WORM_TOOTH;
+			otmp->oerodeproof = 0;
+		    }
+		    place_object(otmp, mtmp->mx, mtmp->my);
+		    stackobj(otmp);
+		    break;
 		}
-	} else if (Is_airlevel(&u.uz) || Is_waterlevel(&u.uz)) {
-		/* it must be air -- water checked above */
-		You("snap your whip through thin air.");
-	} else
-		pline(msg_snap);
-	return(1);
+	    } else {
+		pline(msg_slipsfree);
+	    }
+	    wakeup(mtmp);
+	} else {
+	    You("flick your bullwhip towards %s.", mon_nam(mtmp));
+	    if (proficient) {
+		if (attack(mtmp)) return 1;
+		else pline(msg_snap);
+	    }
+	}
+
+    } else if (Is_airlevel(&u.uz) || Is_waterlevel(&u.uz)) {
+	    /* it must be air -- water checked above */
+	    You("snap your whip through thin air.");
+
+    } else {
+	pline(msg_snap);
+
+    }
+    return 1;
 }
 
 
