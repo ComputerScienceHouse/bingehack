@@ -1537,6 +1537,7 @@ xkilled(mtmp, dest)
 		 * kill it (as opposed to visible lifesaving which always
 		 * appears).
 		 */
+		stoned = FALSE;
 		if (!cansee(x,y)) pline("Maybe not...");
 		return;
 	}
