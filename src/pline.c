@@ -421,6 +421,11 @@ self_invis_message()
 		"can't see yourself");
 }
 
-#endif /* OVLB */
+void
+Never_mind()
+{
+	pline("Never mind.");
+}
 
+#endif /* OVLB */
 /*pline.c*/

@@ -1400,6 +1400,7 @@ E const char *FDECL(align_str, (ALIGNTYP_P));
 E void FDECL(mstatusline, (struct monst *));
 E void NDECL(ustatusline);
 E void NDECL(self_invis_message);
+E void NDECL(Never_mind);
 
 /* ### polyself.c ### */
 

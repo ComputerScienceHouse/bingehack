@@ -706,7 +706,7 @@ struct obj *obj;
     if (flags.verbose) You("may look for an object or monster symbol.");
     ch = yn_function("What do you look for?", (char *)0, '\0');
     if (index(quitchars,ch)) {
-	if (flags.verbose) pline("Never mind.");
+	if (flags.verbose) Never_mind();
 	return;
     }
     You("peer into %s...", the(bname));
