@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)msdos.c	 3.3	 94/02/19		          */
+/*	SCCS Id: @(#)msdos.c	 3.3	 2000/07/30		          */
 /* Copyright (c) NetHack PC Development Team 1990, 1991, 1992, 1993, 1994 */
 /* NetHack may be freely redistributed.  See license for details.         */
 
@@ -198,7 +198,11 @@ static const struct pad {
 #ifdef PC9800
 #define SCANLO		0x5
 #else
+# ifdef NEW_ALT
+#define SCANLO		0x02
+# else
 #define SCANLO		0x10
+# endif
 #endif /* PC9800 */
 
 static const char scanmap[] = { 	/* ... */
@@ -208,6 +212,9 @@ static const char scanmap[] = { 	/* ... */
 	'a','s','d','f','g','h','j','k','l',';',':', ']',
 	'z','x','c','v','b','N','m',',','.','/'	/* ... */
 #else
+# ifdef NEW_ALT
+	'1','2','3','4','5','6','7','8','9','0',0,0,0,0,
+# endif
 	'q','w','e','r','t','y','u','i','o','p','[',']', '\n',
 	0, 'a','s','d','f','g','h','j','k','l',';','\'', '`',
 	0, '\\', 'z','x','c','v','b','n','m',',','.','?'	/* ... */
