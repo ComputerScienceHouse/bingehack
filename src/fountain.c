@@ -285,8 +285,17 @@ drinkfountain()
 
 		case 25: /* See invisible */
 
-			You("see an image of someone stalking you.");
-			pline("But it disappears.");
+			if (Blind) {
+			  if (Invisible) {
+			    You("feel very self-conscious.");
+			    pline("Then it passes.");
+			  } else {
+			    You("feel transparent.");
+			  }
+			} else {
+			   You("see an image of someone stalking you.");
+			   pline("But it disappears.");
+			}
 			HSee_invisible |= FROMOUTSIDE;
 			newsym(u.ux,u.uy);
 			exercise(A_WIS, TRUE);
