@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mhitm.c	3.3	2000/01/22	*/
+/*	SCCS Id: @(#)mhitm.c	3.3	2000/07/29	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -980,7 +980,9 @@ label2:			if (mdef->mhp > 0) return 0;
 	if((mdef->mhp -= tmp) < 1) {
 	    if (m_at(mdef->mx, mdef->my) == magr) {  /* see gulpmm() */
 		remove_monster(mdef->mx, mdef->my);
+		mdef->mhp = 1;	/* otherwise place_monster will complain */
 		place_monster(mdef, mdef->mx, mdef->my);
+		mdef->mhp = 0;
 	    }
 	    monkilled(mdef, "", (int)mattk->adtyp);
 	    if (mdef->mhp > 0) return 0; /* mdef lifesaved */

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)steed.c	3.3	2000/03/05	*/
+/*	SCCS Id: @(#)steed.c	3.3	2000/07/29	*/
 /* Copyright (c) Kevin Hugo, 1998-1999. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -483,7 +483,9 @@ place_monster(mon, x, y)
 struct monst *mon;
 int x, y;
 {
-    if (mon == u.usteed || DEADMONSTER(mon)) {
+    if (mon == u.usteed ||
+	    /* special case is for convoluted vault guard handling */
+	    (DEADMONSTER(mon) && !(mon->isgd && x == 0 && y == 0))) {
 	impossible("placing %s onto map?",
 		   (mon == u.usteed) ? "steed" : "defunct monster");
 	return;
