@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)options.c	3.3	2000/01/04	*/
+/*	SCCS Id: @(#)options.c	3.3	2000/01/29	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -184,6 +184,10 @@ static struct Bool_Opt
 
 /* compound options, for option_help() and external programs like Amiga
  * frontend */
+#define SET_IN_FILE	0 /* config file option only, not visible in game or via program */
+#define SET_VIA_PROG	1 /* may be set via extern options processor, not seen in game   */
+#define DISP_IN_GAME	2 /* may be set via extern options processor, displayed in game  */
+#define SET_IN_GAME	3 /* may be set via extern options processor or set in the game  */
 static struct Comp_Opt
 {
 	const char *name, *descr;
@@ -192,78 +196,85 @@ static struct Comp_Opt
 			 * occasionally maximum reasonable size for
 			 * typing when game maintains information in
 			 * a different format */
+	int optflags;	/* SET_IN_FILE, SET_VIA_PROG, DISP_IN_GAME, or SET_IN_GAME  */
 } compopt[] = {
-	{ "align",    "your starting alignment (lawful, neutral, or chaotic)", 8 },
+	{ "align",    "your starting alignment (lawful, neutral, or chaotic)",
+						8, DISP_IN_GAME},
 #ifdef MAC
-	{ "background", "the color of the background (black or white),", 6 },
+	{ "background", "the color of the background (black or white),",
+						6, SET_IN_FILE },
 #endif
 	{ "catname",  "the name of your (first) cat (e.g., catname:Tabby)",
-						PL_PSIZ },
+						PL_PSIZ , DISP_IN_GAME},
 	{ "disclose", "the kinds of information to disclose at end of game",
-						sizeof(flags.end_disclose) },
+						sizeof(flags.end_disclose), SET_IN_GAME },
 	{ "dogname",  "the name of your (first) dog (e.g., dogname:Fang)",
-						PL_PSIZ },
+						PL_PSIZ , DISP_IN_GAME},
 	{ "dungeon",  "the symbols to use in drawing the dungeon map",
-						MAXDCHARS+1 },
+						MAXDCHARS+1, SET_IN_FILE},
 	{ "effects",  "the symbols to use in drawing special effects",
-						MAXECHARS+1 },
+						MAXECHARS+1, SET_IN_FILE},
 #ifdef MAC
-	{ "fontmap", "the font to use in the map window,", 40 },
-	{ "fontmessage", "the font to use in the message window,", 40 },
-	{ "fonttext", "the font to use in text windows,", 40 },
+	{ "fontmap", "the font to use in the map window,", 40 , SET_IN_FILE},
+	{ "fontmessage", "the font to use in the message window,", 40, SET_IN_FILE},
+	{ "fonttext", "the font to use in text windows,", 40 , FILE_ONLY},
 #endif
-	{ "fruit",    "the name of a fruit you enjoy eating", PL_FSIZ },
-	{ "gender",   "your starting gender (male or female)", 8 },
+	{ "fruit",    "the name of a fruit you enjoy eating",
+						PL_FSIZ , SET_IN_GAME},
+	{ "gender",   "your starting gender (male or female)",
+						8, DISP_IN_GAME },
 	{ "horsename", "the name of your (first) horse (e.g., horsename:Silver)",
-						PL_PSIZ },
-	{ "menustyle", "user interface for object selection", MENUTYPELEN },
-	{ "menu_deselect_all", "deselect all items in a menu", 4},
-	{ "menu_deselect_page", "deselect all items on this page of a menu", 4},
-	{ "menu_first_page", "jump to the first page in a menu", 4},
-	{ "menu_invert_all", "invert all items in a menu", 4},
-	{ "menu_invert_page", "invert all items on this page of a menu", 4},
-	{ "menu_last_page", "jump to the last page in a menu", 4},
-	{ "menu_next_page", "goto the next menu page", 4},
-	{ "menu_previous_page", "goto the previous menu page", 4},
-	{ "menu_search", "search for a menu item", 4},
-	{ "menu_select_all", "select all items in a menu", 4},
-	{ "menu_select_page", "select all items on this page of a menu", 4},
-	{ "monsters", "the symbols to use for monsters", MAXMCLASSES },
-	{ "msghistory", "number of top line messages to save", 5 },
-	{ "name",     "your character's name (e.g., name:Merlin-W)", PL_NSIZ },
-	{ "objects",  "the symbols to use for objects", MAXOCLASSES },
+						PL_PSIZ, DISP_IN_GAME},
+	{ "menustyle", "user interface for object selection", MENUTYPELEN, SET_IN_GAME },
+	{ "menu_deselect_all", "deselect all items in a menu", 4, SET_IN_FILE},
+	{ "menu_deselect_page", "deselect all items on this page of a menu", 4, SET_IN_FILE},
+	{ "menu_first_page", "jump to the first page in a menu", 4, SET_IN_FILE},
+	{ "menu_invert_all", "invert all items in a menu", 4, SET_IN_FILE},
+	{ "menu_invert_page", "invert all items on this page of a menu", 4, SET_IN_FILE},
+	{ "menu_last_page", "jump to the last page in a menu", 4, SET_IN_FILE},
+	{ "menu_next_page", "goto the next menu page", 4, SET_IN_FILE},
+	{ "menu_previous_page", "goto the previous menu page", 4, SET_IN_FILE},
+	{ "menu_search", "search for a menu item", 4, SET_IN_FILE},
+	{ "menu_select_all", "select all items in a menu", 4, SET_IN_FILE},
+	{ "menu_select_page", "select all items on this page of a menu", 4, SET_IN_FILE},
+	{ "monsters", "the symbols to use for monsters", MAXMCLASSES, SET_IN_FILE},
+	{ "msghistory", "number of top line messages to save", 5 , DISP_IN_GAME},
+	{ "name",     "your character's name (e.g., name:Merlin-W)", PL_NSIZ, DISP_IN_GAME },
+	{ "objects",  "the symbols to use for objects", MAXOCLASSES, SET_IN_FILE },
 	{ "packorder", "the inventory order of the items in your pack",
-						MAXOCLASSES },
+						MAXOCLASSES, SET_IN_GAME },
 #ifdef CHANGE_COLOR
 	{ "palette",  "palette (00c/880/-fff is blue/yellow/reverse white)",
-						15 },
+						15 , SET_IN_GAME},
 # if defined(MAC)
-	{ "hicolor",  "same as palette, only order is reversed", 15 },
+	{ "hicolor",  "same as palette, only order is reversed", 15, SET_IN_FILE },
 # endif
 #endif
-	{ "pettype",  "your preferred initial pet type", 4 },
-	{ "pickup_burden",  "maximum burden picked up before prompt", 20 },
+	{ "pettype",  "your preferred initial pet type", 4 , DISP_IN_GAME },
+	{ "pickup_burden",  "maximum burden picked up before prompt", 20, SET_IN_GAME },
 	{ "pickup_types", "types of objects to pick up automatically",
-						MAXOCLASSES },
-	{ "race",     "your starting race (e.g., Human, Elf)", PL_CSIZ },
-	{ "role",     "your starting role (e.g., Barbarian, Valkyrie)", PL_CSIZ },
-	{ "scores",   "the parts of the score list you wish to see", 32 },
+						MAXOCLASSES, SET_IN_GAME },
+	{ "race",     "your starting race (e.g., Human, Elf)", PL_CSIZ, DISP_IN_GAME },
+	{ "role",     "your starting role (e.g., Barbarian, Valkyrie)",
+						PL_CSIZ, DISP_IN_GAME },
+	{ "scores",   "the parts of the score list you wish to see", 32, SET_IN_GAME },
 #ifdef MSDOS
-	{ "soundcard", "type of sound card to use", 20 },
+	{ "soundcard", "type of sound card to use", 20, SET_IN_FILE},
 #endif
-	{ "suppress_alert", "suppress alerts about version-specific features", 6},
-	{ "traps",    "the symbols to use in drawing traps", MAXTCHARS+1 },
+	{ "suppress_alert", "suppress alerts about version-specific features",
+						6, SET_IN_GAME},
+	{ "traps",    "the symbols to use in drawing traps", MAXTCHARS+1, SET_IN_FILE },
 #ifdef MAC
-	{"use_stone", "use stone background patterns", 8},
+	{"use_stone", "use stone background patterns", 8, SET_IN_FILE},
 #endif
 #ifdef MSDOS
-	{ "video",    "method of video updating", 20 },
+	{ "video",    "method of video updating", 20, DISP_IN_GAME },
 #endif
 #ifdef VIDEOSHADES
-	{ "videocolors", "color mappings for internal screen routines", 40 },
-	{ "videoshades", "gray shades to map to black/gray/white", 32 },
+	{ "videocolors", "color mappings for internal screen routines", 40, DISP_IN_GAME},
+	{ "videoshades", "gray shades to map to black/gray/white", 32, DISP_IN_GAME },
 #endif
-	{ "windowtype", "windowing system to use", WINTYPELEN },
+	{ "windowtype", "windowing system to use", WINTYPELEN, DISP_IN_GAME},
 	{ (char *)0, (char *)0, 0 }
 };
 
@@ -280,7 +291,7 @@ extern boolean colors_changed;	/* in tos.c */
 
 #ifdef VIDEOSHADES
 extern char *shade[3];		  /* in sys/msdos/video.c */
-extern char ttycolors[CLR_MAX];	/* in sys/msdos/video.c */
+extern char ttycolors[CLR_MAX];	  /* in sys/msdos/video.c */
 #endif
 
 static char def_inv_order[MAXOCLASSES] = {
@@ -347,7 +358,7 @@ static short n_menu_mapped = 0;
 
 static boolean initial, from_file;
 
-STATIC_DCL void FDECL(doset_add_menu, (winid,const char *,const char *,int));
+STATIC_DCL void FDECL(doset_add_menu, (winid,const char *,int));
 STATIC_DCL void FDECL(nmcpy, (char *, const char *, int));
 STATIC_DCL void FDECL(escapes, (const char *, char *));
 STATIC_DCL int FDECL(boolopt_only_initial, (int));
@@ -360,6 +371,8 @@ STATIC_DCL int FDECL(change_inv_order, (char *));
 STATIC_DCL void FDECL(oc_to_str, (char *, char *));
 STATIC_DCL void FDECL(graphics_opts, (char *,const char *,int,int));
 STATIC_DCL int FDECL(feature_alert_opts, (char *, const char *));
+STATIC_DCL char *FDECL(get_compopt_value, (const char *, char *));
+STATIC_DCL boolean FDECL(special_handling, (const char *, BOOLEAN_P, BOOLEAN_P));
 
 /* check whether a user-supplied option string is a proper leading
    substring of a particular option name; option string might have
@@ -1696,27 +1709,31 @@ map_menu_cmd(ch)
 # define OPTIONS_HEADING "NETHACKOPTIONS"
 #endif
 
+static char fmtstr_doset_add_menu[] = "%s%-15s [%s]   "; 
+
 STATIC_OVL void
-doset_add_menu(win, option, value, indexoffset)
+doset_add_menu(win, option, indexoffset)
     winid win;			/* window to add to */
     const char *option;		/* option name */
-    const char *value;		/* current value */
     int indexoffset;		/* value to add to index in compopt[], or zero
 				   if option cannot be changed */
 {
-    char buf[BUFSZ];
+    const char *value = "unknown";		/* current value */
+    char buf[BUFSZ], buf2[BUFSZ];
     anything any;
     int i;
 
     any.a_void = 0;
     if (indexoffset == 0) {
 	any.a_int = 0;
+	value = get_compopt_value(option, buf2);
     } else {
 	for (i=0; compopt[i].name; i++)
 	    if (strcmp(option, compopt[i].name) == 0) break;
 
 	if (compopt[i].name) {
 	    any.a_int = i + 1 + indexoffset;
+    	    value = get_compopt_value(option, buf2);
 	} else {
 	    /* We are trying to add an option not found in compopt[].
 	       This is almost certainly bad, but we'll let it through anyway
@@ -1724,9 +1741,8 @@ doset_add_menu(win, option, value, indexoffset)
 	    any.a_int = 0;
 	}
     }
-
     /* "    " replaces "a - " -- assumes menus follow that style */
-    Sprintf(buf, "%s%-14s [%s]", (any.a_int ? "" : "    "), option, value);
+    Sprintf(buf, fmtstr_doset_add_menu, (any.a_int ? "" : "    "), option, value);
     add_menu(win, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, MENU_UNSELECTED);
 }
 
@@ -1734,12 +1750,16 @@ doset_add_menu(win, option, value, indexoffset)
 int
 doset()
 {
-	char ocl[MAXOCLASSES+1], buf[BUFSZ], buf2[BUFSZ];
+	char buf[BUFSZ], buf2[BUFSZ];
 	int i, pass, boolcount, pick_cnt, pick_idx, opt_indx;
 	boolean *bool_p;
 	winid tmpwin;
 	anything any;
 	menu_item *pick_list;
+	int indexoffset, startpass, endpass;
+	boolean setinitial = FALSE, fromfile = FALSE;
+	int npasses = 2;
+	int biggest_name = 0;
 
 	tmpwin = create_nhwindow(NHW_MENU);
 	start_menu(tmpwin);
@@ -1749,7 +1769,7 @@ doset()
 		 "Booleans (selecting will toggle value):", MENU_UNSELECTED);
 	any.a_int = 0;
 	/* list male/female first, since it's formatted uniquely */
-	Sprintf(buf, "%s%-13s", "    ", flags.female ? "female" : "male");
+	Sprintf(buf, "%s%s", "    ", flags.female ? "female" : "male");
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, MENU_UNSELECTED);
 	/* next list any other non-modifiable booleans, then modifiable ones */
 	for (pass = 0; pass <= 1; pass++)
@@ -1761,77 +1781,55 @@ doset()
 		    if (bool_p == &iflags.sanity_check && !wizard) continue;
 #endif
 		    any.a_int = (pass == 0) ? 0 : i + 1;
-		    Sprintf(buf, "%s%-13s [%s]", pass == 0 ? "    " : "",
+		    Sprintf(buf, "%s%-13s [%s]",
+			    pass == 0 ? "    " : "",
 			    boolopt[i].name, *bool_p ? "true" : "false");
 		    add_menu(tmpwin, NO_GLYPH, &any, 0, 0,
 			     ATR_NONE, buf, MENU_UNSELECTED);
 		}
 
-	/* This is ugly. We have all the option names in the compopt[] array,
-	   but we need to look at each option individually to get the value. */
 	boolcount = i;
 	any.a_void = 0;
+	indexoffset = 0;
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, "", MENU_UNSELECTED);
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE,
 		 "Compounds (selecting will prompt for new value):",
 		 MENU_UNSELECTED);
-	/* non-modifiable compounds; deliberately put `name' first */
-	doset_add_menu(tmpwin, "name", plname, 0);
-	doset_add_menu(tmpwin, "role", (flags.initrole < 0) ? "(none)" :
-			roles[flags.initrole].name.m, 0);
-	doset_add_menu(tmpwin, "race", (flags.initrace < 0) ? "(none)" :
-			races[flags.initrace].noun, 0);
-	doset_add_menu(tmpwin, "gender", (flags.initgend < 0) ? "(none)" :
-			genders[flags.initgend].adj, 0);
-	doset_add_menu(tmpwin, "align", (flags.initalign < 0) ? "(none)" :
-			aligns[flags.initalign].adj, 0);
-	doset_add_menu(tmpwin, "catname", catname[0] ? catname : "(null)", 0);
-	doset_add_menu(tmpwin, "dogname", dogname[0] ? dogname : "(null)", 0);
-	doset_add_menu(tmpwin, "horsename", horsename[0] ? horsename : "(null)", 0);
-	Sprintf(buf, "%u", iflags.msg_history);
-	doset_add_menu(tmpwin, "msghistory", buf, 0);
-	doset_add_menu(tmpwin, "pettype",
-			(preferred_pet == 'c') ? "cat" :
-			(preferred_pet == 'd') ? "dog" : "random", 0);
-#ifdef VIDEOSHADES
-	Sprintf(buf, "%s-%s-%s", shade[0],shade[1],shade[2]);
-	doset_add_menu(tmpwin, "videoshades", buf, 0);
-	Sprintf(buf, "%d-%d-%d-%d-%d-%d-%d-%d-%d-%d-%d-%d",
-		ttycolors[CLR_RED], ttycolors[CLR_GREEN], ttycolors[CLR_BROWN],
-		ttycolors[CLR_BLUE], ttycolors[CLR_MAGENTA], ttycolors[CLR_CYAN],
-		ttycolors[CLR_ORANGE], ttycolors[CLR_BRIGHT_GREEN],
-		ttycolors[CLR_YELLOW], ttycolors[CLR_BRIGHT_BLUE],
-		ttycolors[CLR_BRIGHT_MAGENTA], ttycolors[CLR_BRIGHT_CYAN]);
-	doset_add_menu(tmpwin, "videocolors", buf, 0);
-#endif /* VIDEOSHADES */
-	doset_add_menu(tmpwin, "windowtype", windowprocs.name, 0);
 
-	/* modifiable compounds */
-	doset_add_menu(tmpwin, "disclose",
-		       flags.end_disclose[0] ? flags.end_disclose : "all",
-		       boolcount);
-	doset_add_menu(tmpwin, "fruit", pl_fruit, boolcount);
-	doset_add_menu(tmpwin, "menustyle", menutype[(int)flags.menu_style],
-		       boolcount);
-	oc_to_str(flags.inv_order, ocl);
-	doset_add_menu(tmpwin, "packorder", ocl, boolcount);
-#ifdef CHANGE_COLOR
-	doset_add_menu(tmpwin, "palette", get_color_string(), boolcount);
-#endif
-	oc_to_str(flags.pickup_types, ocl);
-	doset_add_menu(tmpwin, "pickup_burden", burdentype[flags.pickup_burden],
-			boolcount);
-	doset_add_menu(tmpwin, "pickup_types", ocl[0] ? ocl : "all",
-		       boolcount);
-	Sprintf(buf, "%d top/%d around%s", flags.end_top, flags.end_around,
-		flags.end_own ? "/own" : "");
-	doset_add_menu(tmpwin, "scores", buf, boolcount);
-	Sprintf(buf, "%lu.%lu.%lu", FEATURE_NOTICE_VER_MAJ, FEATURE_NOTICE_VER_MIN,
-			FEATURE_NOTICE_VER_PATCH);
-	doset_add_menu(tmpwin, "suppress_alert", (flags.suppress_alert == 0L) ?
-				"(null)" : buf, boolcount);
+	startpass = DISP_IN_GAME;
+	endpass = SET_IN_GAME;
+
+	/* spin through the options to find the biggest name
+           and adjust the format string accordingly if needed */
+	biggest_name = 0;
+	for (i = 0; compopt[i].name; i++)
+		if (compopt[i].optflags >= startpass &&
+		    strlen(compopt[i].name) > (unsigned) biggest_name)
+			biggest_name = (int) strlen(compopt[i].name);
+	if (biggest_name > 30) biggest_name = 30;
+	Sprintf(fmtstr_doset_add_menu, "%%s%%-%ds [%%s]", biggest_name);
+
+	/* deliberately put `name',`role',`race', `gender' first */
+	doset_add_menu(tmpwin, "name", indexoffset);
+	doset_add_menu(tmpwin, "role", indexoffset);
+	doset_add_menu(tmpwin, "race", indexoffset);
+	doset_add_menu(tmpwin, "gender", indexoffset);
+
+	npasses = (endpass + 1) - startpass;
+	for (pass = startpass; pass <= endpass; pass++) 
+	    for (i = 0; compopt[i].name; i++)
+		if (compopt[i].optflags >= startpass
+		    && (compopt[i].optflags == pass || npasses == 1)) {
+ 		    	if (!strcmp(compopt[i].name, "name") ||
+		    	    !strcmp(compopt[i].name, "role") ||
+		    	    !strcmp(compopt[i].name, "race") ||
+		    	    !strcmp(compopt[i].name, "gender"))
+		    	    	continue;
+		    	else
+				doset_add_menu(tmpwin, compopt[i].name,
+					(pass == DISP_IN_GAME) ? indexoffset : boolcount);
+		}
 	end_menu(tmpwin, "Set what options?");
-
 	need_redraw = FALSE;
 	if ((pick_cnt = select_menu(tmpwin, PICK_ANY, &pick_list)) > 0) {
 	    /*
@@ -1846,59 +1844,20 @@ doset()
 		    /* boolean option */
 		    Sprintf(buf, "%s%s", *boolopt[opt_indx].addr ? "!" : "",
 			    boolopt[opt_indx].name);
-		    parseoptions(buf, FALSE, FALSE);
+		    parseoptions(buf, setinitial, fromfile);
 		} else {
 		    /* compound option */
 		    opt_indx -= boolcount;
 
-		    /* Special handling of menustyle, pickup_burden, and pickup_types. */
-		    if (!strcmp("menustyle", compopt[opt_indx].name)) {
-			const char *style_name;
-			menu_item *style_pick = (menu_item *)0;
-
-			start_menu(tmpwin);
-			for (i = 0; i < SIZE(menutype); i++) {
-			    style_name = menutype[i];
-				/* note: separate `style_name' variable used
-				   to avoid an optimizer bug in VAX C V2.3 */
-			    any.a_int = i + 1;
-			    add_menu(tmpwin, NO_GLYPH, &any, *style_name, 0,
-				     ATR_NONE, style_name, MENU_UNSELECTED);
-			}
-			end_menu(tmpwin, "Select menustyle:");
-			if (select_menu(tmpwin, PICK_ONE, &style_pick) > 0) {
-			    flags.menu_style = style_pick->item.a_int - 1;
-			    free((genericptr_t)style_pick);
-			}
-			} else if (!strcmp("pickup_burden", compopt[opt_indx].name)) {
-				const char *burden_name, *burden_letters = "ubsntl";
-				menu_item *burden_pick = (menu_item *)0;
-
-				start_menu(tmpwin);
-				for (i = 0; i < SIZE(burdentype); i++) {
-				    burden_name = burdentype[i];
-					any.a_int = i + 1;
-				    add_menu(tmpwin, NO_GLYPH, &any, burden_letters[i], 0,
-				             ATR_NONE, burden_name, MENU_UNSELECTED);
-				}
-				end_menu(tmpwin, "Select encumberence level:");
-				if (select_menu(tmpwin, PICK_ONE, &burden_pick) > 0) {
-				    flags.pickup_burden = burden_pick->item.a_int - 1;
-				    free((genericptr_t)burden_pick);
-				}
-		    } else if (!strcmp("pickup_types", compopt[opt_indx].name)) {
-			/* parseoptions will prompt for the list of types */
-			parseoptions(strcpy(buf, "pickup_types"), FALSE, FALSE);
-		    } else {
+		    if (!special_handling(compopt[opt_indx].name, setinitial, fromfile)) {
 			Sprintf(buf, "Set %s to what?", compopt[opt_indx].name);
 			getlin(buf, buf2);
 			Sprintf(buf, "%s:%s", compopt[opt_indx].name, buf2);
 			/* pass the buck */
-			parseoptions(buf, FALSE, FALSE);
+			parseoptions(buf, setinitial, fromfile);
 		    }
 		}
 	    }
-
 	    free((genericptr_t)pick_list);
 	    pick_list = (menu_item *)0;
 	}
@@ -1907,6 +1866,191 @@ doset()
 	if (need_redraw)
 	    (void) doredraw();
 	return 0;
+}
+
+STATIC_OVL boolean
+special_handling(optname, setinitial, setfromfile)
+const char *optname;
+boolean setinitial,setfromfile;
+{
+    winid tmpwin;
+    anything any;
+    int i;
+    char buf[BUFSZ];
+    boolean retval = FALSE;
+    
+    /* Special handling of menustyle, pickup_burden, and pickup_types. */
+    if (!strcmp("menustyle", optname)) {
+	const char *style_name;
+	menu_item *style_pick = (menu_item *)0;
+        tmpwin = create_nhwindow(NHW_MENU);
+	start_menu(tmpwin);
+	for (i = 0; i < SIZE(menutype); i++) {
+		style_name = menutype[i];
+    		/* note: separate `style_name' variable used
+		   to avoid an optimizer bug in VAX C V2.3 */
+		any.a_int = i + 1;
+		add_menu(tmpwin, NO_GLYPH, &any, *style_name, 0,
+			 ATR_NONE, style_name, MENU_UNSELECTED);
+        }
+	end_menu(tmpwin, "Select menustyle:");
+	if (select_menu(tmpwin, PICK_ONE, &style_pick) > 0) {
+		flags.menu_style = style_pick->item.a_int - 1;
+		free((genericptr_t)style_pick);
+        }
+	destroy_nhwindow(tmpwin);
+        retval = TRUE;
+    } else if (!strcmp("pickup_burden", optname)) {
+	const char *burden_name, *burden_letters = "ubsntl";
+	menu_item *burden_pick = (menu_item *)0;
+        tmpwin = create_nhwindow(NHW_MENU);
+	start_menu(tmpwin);
+	for (i = 0; i < SIZE(burdentype); i++) {
+		burden_name = burdentype[i];
+		any.a_int = i + 1;
+		add_menu(tmpwin, NO_GLYPH, &any, burden_letters[i], 0,
+			 ATR_NONE, burden_name, MENU_UNSELECTED);
+        }
+	end_menu(tmpwin, "Select encumberence level:");
+	if (select_menu(tmpwin, PICK_ONE, &burden_pick) > 0) {
+		flags.pickup_burden = burden_pick->item.a_int - 1;
+		free((genericptr_t)burden_pick);
+	}
+	destroy_nhwindow(tmpwin);
+	retval = TRUE;
+    } else if (!strcmp("pickup_types", optname)) {
+	/* parseoptions will prompt for the list of types */
+	parseoptions(strcpy(buf, "pickup_types"), setinitial, setfromfile);
+	retval = TRUE;
+    }
+    return retval;
+}
+	
+/* This is ugly. We have all the option names in the compopt[] array,
+   but we need to look at each option individually to get the value. */
+STATIC_OVL char *
+get_compopt_value(optname, buf)
+const char *optname;
+char *buf;
+{
+	char tbuf[BUFSZ];
+	char ocl[MAXOCLASSES+1];
+	const char *none = "(none)";
+	const char *to_be_done = "(to be done)";
+
+	buf[0] = '\0';
+	if (!strcmp(optname,"align"))
+		Sprintf(buf, "%s",
+			(flags.initalign < 0) ? none : aligns[flags.initalign].adj );
+	else if (!strcmp(optname, "catname")) 
+		Sprintf(buf, "%s", catname[0] ? catname : none );
+	else if (!strcmp(optname, "disclose")) 
+		Sprintf(buf, "%s", flags.end_disclose[0] ? flags.end_disclose : "all" );
+	else if (!strcmp(optname, "dogname")) 
+		Sprintf(buf, "%s", dogname[0] ? dogname : none );
+	else if (!strcmp(optname, "dungeon"))
+		Sprintf(buf, "%s", "(to be done)");
+	else if (!strcmp(optname, "effects"))
+		Sprintf(buf, "%s", "(to be done)");
+	else if (!strcmp(optname, "fruit")) 
+		Sprintf(buf, "%s", pl_fruit);
+	else if (!strcmp(optname, "gender"))
+		Sprintf(buf, "%s",
+			(flags.initgend < 0) ? none : genders[flags.initgend].adj );
+	else if (!strcmp(optname, "horsename")) 
+		Sprintf(buf, "%s", horsename[0] ? horsename : none);
+	else if (!strcmp(optname, "menustyle")) 
+		Sprintf(buf, "%s", menutype[(int)flags.menu_style] );
+	else if (!strcmp(optname, "menu_deselect_all"))
+		Sprintf(buf, "%s", to_be_done);
+	else if (!strcmp(optname, "menu_deselect_page"))
+		Sprintf(buf, "%s", to_be_done);
+	else if (!strcmp(optname, "menu_first_page"))
+		Sprintf(buf, "%s", to_be_done);
+	else if (!strcmp(optname, "menu_invert_all"))
+		Sprintf(buf, "%s", to_be_done);
+	else if (!strcmp(optname, "menu_invert_page"))
+		Sprintf(buf, "%s", to_be_done);
+	else if (!strcmp(optname, "menu_last_page"))
+		Sprintf(buf, "%s", to_be_done);
+	else if (!strcmp(optname, "menu_next_page"))
+		Sprintf(buf, "%s", to_be_done);
+	else if (!strcmp(optname, "menu_previous_page"))
+		Sprintf(buf, "%s", to_be_done);
+	else if (!strcmp(optname, "menu_search"))
+		Sprintf(buf, "%s", to_be_done);
+	else if (!strcmp(optname, "menu_select_all"))
+		Sprintf(buf, "%s", to_be_done);
+	else if (!strcmp(optname, "menu_select_page"))
+		Sprintf(buf, "%s", to_be_done);
+	else if (!strcmp(optname, "monsters"))
+		Sprintf(buf, "%s", to_be_done);
+	else if (!strcmp(optname, "msghistory"))
+		Sprintf(buf, "%u", iflags.msg_history);
+	else if (!strcmp(optname, "name"))
+		Sprintf(buf, "%s",plname);
+	else if (!strcmp(optname, "objects"))
+		Sprintf(buf, "%s", to_be_done);
+	else if (!strcmp(optname, "packorder")) {
+		oc_to_str(flags.inv_order, ocl);
+		Sprintf(buf, "%s", ocl);
+	     }
+#ifdef CHANGE_COLOR
+	else if (!strcmp(optname, "palette")) 
+		Sprintf(buf, "%s", get_color_string());
+#endif
+	else if (!strcmp(optname, "pettype")) 
+		Sprintf(buf, "%s",
+	       (preferred_pet == 'c') ? "cat" : (preferred_pet == 'd') ? "dog" : "random" );
+	else if (!strcmp(optname, "pickup_burden"))
+		Sprintf(buf, "%s", burdentype[flags.pickup_burden] );
+	else if (!strcmp(optname, "pickup_types")) {
+		oc_to_str(flags.pickup_types, ocl);
+		Sprintf(buf, "%s", ocl[0] ? ocl : "all" );
+	     }
+	else if (!strcmp(optname, "race"))
+		Sprintf(buf, "%s",
+			(flags.initrace < 0) ? none : races[flags.initrace].noun );
+	else if (!strcmp(optname, "role")) 
+		Sprintf(buf, "%s",
+			(flags.initrole < 0) ? none : roles[flags.initrole].name.m);
+	else if (!strcmp(optname, "scores")) {
+		Sprintf(buf, "%d top/%d around%s",
+			flags.end_top, flags.end_around, flags.end_own ? "/own" : "");
+	     }
+#ifdef MSDOS
+	else if (!strcmp(optname, "soundcard"))
+		Sprintf(buf, "%s", to_be_done);
+#endif
+	else if (!strcmp(optname, "suppress_alert")) {
+		Sprintf(tbuf, "%lu.%lu.%lu",
+			FEATURE_NOTICE_VER_MAJ,
+			FEATURE_NOTICE_VER_MIN,
+			FEATURE_NOTICE_VER_PATCH);
+		Sprintf(buf, "%s", (flags.suppress_alert == 0L) ? none : tbuf);
+	     }
+	else if (!strcmp(optname, "traps"))
+		Sprintf(buf, "%s", "(to be done)");
+#ifdef MSDOS
+	else if (!strcmp(optname, "video"))
+		Sprintf(buf, "%s", to_be_done);
+#endif
+#ifdef VIDEOSHADES
+	else if (!strcmp(optname, "videoshades"))
+		Sprintf(buf, "%s-%s-%s", shade[0],shade[1],shade[2]);
+	else if (!strcmp(optname, "videocolors"))
+		Sprintf(buf, "%d-%d-%d-%d-%d-%d-%d-%d-%d-%d-%d-%d",
+			ttycolors[CLR_RED], ttycolors[CLR_GREEN], ttycolors[CLR_BROWN],
+			ttycolors[CLR_BLUE], ttycolors[CLR_MAGENTA], ttycolors[CLR_CYAN],
+			ttycolors[CLR_ORANGE], ttycolors[CLR_BRIGHT_GREEN],
+			ttycolors[CLR_YELLOW], ttycolors[CLR_BRIGHT_BLUE],
+			ttycolors[CLR_BRIGHT_MAGENTA], ttycolors[CLR_BRIGHT_CYAN]);
+#endif /* VIDEOSHADES */
+	else if (!strcmp(optname, "windowtype"))
+		Sprintf(buf, "%s", windowprocs.name);
+
+	if (buf[0]) return buf;
+	else return "unknown";
 }
 
 int
