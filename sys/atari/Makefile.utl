@@ -112,6 +112,8 @@ makedefs:	$(MAKEOBJS)
 
 makedefs.o:  ../include/config.h ../include/permonst.h ../include/objclass.h \
 		../include/monsym.h ../include/artilist.h \
+		../include/dungeon.h ../include/obj.h ../include/monst.h \
+		../include/you.h ../include/flag.h ../include/dlb.h \
 		../include/patchlevel.h ../include/qtext.h
 
 ../include/onames.h: makedefs
@@ -175,7 +177,7 @@ dgn_comp:  $(DGNCOMPOBJS)
 	$(CC) $(LFLAGS) -o dgn_comp $(DGNCOMPOBJS) $(LIBS)
 
 dgn_yacc.o:  ../include/config.h ../include/dgn_file.h ../include/date.h
-dgn_main.o:  ../include/config.h
+dgn_main.o:  ../include/config.h ../include/dlb.h
 
 # see dgn_comp.l for WEIRD_LEX discussion
 dgn_lex.o:   ../include/config.h ../include/dgn_comp.h ../include/dgn_file.h dgn_lex.c

@@ -184,9 +184,11 @@ update: $(GAME) $(VARDAT) dungeon spec_levs
 
 install: $(GAME) $(VARDAT) dungeon spec_levs
 # set up the directories
-	-mkdir $(SHELLDIR)
+# not all mkdirs have -p; those that don't will create a -p directory
+	-mkdir -p $(SHELLDIR)
 	-rm -rf $(GAMEDIR)
-	-mkdir $(GAMEDIR) $(GAMEDIR)/save
+	-mkdir -p $(GAMEDIR) $(GAMEDIR)/save
+	-rmdir ./-p
 	-$(CHOWN) $(GAMEUID) $(GAMEDIR) $(GAMEDIR)/save
 	$(CHGRP) $(GAMEGRP) $(GAMEDIR) $(GAMEDIR)/save
 	chmod $(DIRPERM) $(GAMEDIR) $(GAMEDIR)/save
