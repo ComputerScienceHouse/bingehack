@@ -135,6 +135,7 @@ typedef xchar	boolean;		/* 0 or 1 */
 #define Getchar pgetchar
 #endif
 
+
 #include "coord.h"
 /*
  * Automatic inclusions for the subsidiary files.
@@ -249,6 +250,16 @@ typedef xchar	boolean;		/* 0 or 1 */
 # ifndef USE_TILES
 #  define USE_TILES		/* glyph2tile[] will be available */
 # endif
+#endif
+
+
+#define Sprintf  (void) sprintf
+#define Strcat   (void) strcat
+#define Strcpy   (void) strcpy
+#ifdef NEED_VARARGS
+#define Vprintf  (void) vprintf
+#define Vfprintf (void) vfprintf
+#define Vsprintf (void) vsprintf
 #endif
 
 

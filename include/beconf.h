@@ -29,12 +29,6 @@ void regularize(char *);
 
 
 /* instead of including system.h... */
-#define Sprintf (void) sprintf
-#define Strcat	(void) strcat
-#define Strcpy	(void) strcpy
-#define Vprintf (void) vprintf
-#define Vfprintf (void) vfprintf
-#define Vsprintf (void) vsprintf
 #include <string.h>
 #include <stdlib.h>
 #include <termcap.h>

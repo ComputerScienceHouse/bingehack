@@ -1564,7 +1564,7 @@ $(O)amitty.o:	$(AMI)amitty.c $(HDEP)
 $(O)rip.o:	$(NHS)rip.c $(HDEP)
 
 
-$(I)config.h:  $(I)tradstdc.h $(I)global.h
+$(I)config.h:  $(I)config1.h $(I)tradstdc.h $(I)global.h
 	-setdate $(I)config.h
 	-wait 2
 

@@ -482,19 +482,6 @@ E int FDECL(vprintf, (const char *, va_list));
 #endif /* NEED_VARARGS */
 #endif
 
-#endif /* __GO32__ */
-
-#define Sprintf (void) sprintf
-#define Strcat	(void) strcat
-#define Strcpy	(void) strcpy
-
-#ifdef NEED_VARARGS
-# define Vprintf (void) vprintf
-# define Vfprintf (void) vfprintf
-# define Vsprintf (void) vsprintf
-#endif
-
-#ifndef __GO32__
 
 #ifdef MICRO
 E int FDECL(tgetent, (const char *,const char *));

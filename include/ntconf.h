@@ -47,12 +47,6 @@
 #include <stdlib.h>
 
 #define NO_SIGNAL
-#define Strcpy   (void) strcpy
-#define Strcat   (void) strcat
-#define Sprintf  (void) sprintf
-#define Vfprintf (void) vfprintf
-#define Vsprintf (void) vsprintf
-#define Vprintf  (void) vprintf
 #define index	strchr
 #define rindex	strrchr
 #include <time.h>

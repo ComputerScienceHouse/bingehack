@@ -36,15 +36,9 @@
 #  define TEXTCOLOR		/* For Mac TTY interface */
 #  define CHANGE_COLOR
 
-/* Use these two includes and six macros instead of system.h. */
+/* Use these two includes instead of system.h. */
 #include <string.h>
 #include <stdlib.h>
-#define Sprintf (void) sprintf		/* These macros are unconditional */
-#define Strcat (void) strcat		/* in system.h and should be pulled */
-#define Strcpy (void) strcpy		/* out of there. */
-#define Vprintf (void) vprintf
-#define Vfprintf (void) vfprintf
-#define Vsprintf (void) vsprintf
 
 /* Uncomment this line if your headers don't already define off_t */
 /*typedef long off_t;*/

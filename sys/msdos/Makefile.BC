@@ -858,7 +858,8 @@ YOU_H	    = $(INCL)\attrib.h $(INCL)\monst.h $(YOUPROP_H) $(INCL)\align.h
 DECL_H      = $(INCL)\quest.h $(INCL)\spell.h $(INCL)\color.h \
 	      $(INCL)\obj.h $(YOU_H) $(INCL)\onames.h $(INCL)\pm.h
 
-CONFIG_H    = $(INCL)\tradstdc.h $(INCL)\coord.h $(PCCONF_H) $(INCL)\config.h
+CONFIG_H    = $(INCL)\config1.h $(INCL)\tradstdc.h $(INCL)\coord.h $(PCCONF_H) \
+	      $(INCL)\config.h
 HACK_H      = $(CONFIG_H) $(INCL)\dungeon.h $(INCL)\align.h $(INCL)\monsym.h \
               $(INCL)\mkroom.h $(INCL)\objclass.h $(DECL_H) \
 	      $(INCL)\timeout.h $(INCL)\trap.h $(INCL)\flag.h $(INCL)\rm.h \

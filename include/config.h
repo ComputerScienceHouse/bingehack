@@ -7,7 +7,7 @@
 
 
 /*
- * Section 1:	OS selection.
+ * Section 1:	Operating and window systems selection.
  *		Select the version of the OS you are using.
  *		For "UNIX" select BSD, ULTRIX, SYSV, or HPUX in unixconf.h.
  *		A "VMS" option is not needed since the VMS C-compilers
@@ -16,113 +16,7 @@
 
 #define UNIX		/* delete if no fork(), exec() available */
 
-/*
- * MS DOS - compilers
- *
- * Microsoft C auto-defines MSDOS,
- * Borland C   auto-defines __MSDOS__,
- * DJGPP       auto-defines MSDOS.
- */
-
-/* #define MSDOS */	/* use if not defined by compiler or cases below */
-
-#ifdef __MSDOS__	/* for Borland C */
-# ifndef MSDOS
-# define MSDOS
-# endif
-#endif
-
-#ifdef __TURBOC__
-# define __MSC		/* increase Borland C compatibility in libraries */
-#endif
-
-#ifdef MSDOS
-# undef UNIX
-#endif
-
-/*
- * Mac Stuff.
- */
-#ifdef applec		/*	MPW auto-defined symbol */
-# define MAC
-#endif
-
-#ifdef THINK_C		/* Think C auto-defined symbol */
-# define MAC
-# define NEED_VARARGS
-#endif
-
-#ifdef __MWERKS__	/* defined by Metrowerks compiler */
-# ifndef __BEOS__	/* BeOS */
-#  define MAC
-# endif
-# define NEED_VARARGS
-# define USE_STDARG
-#endif
-
-#if defined(MAC) || defined(__BEOS__)
-# define DLB
-# undef UNIX
-#endif
-
-
-/*
- * Amiga setup.
- */
-#ifdef AZTEC_C	/* Manx auto-defines this */
-# ifdef MCH_AMIGA	/* Manx auto-defines this for AMIGA */
-#  ifndef AMIGA
-#define AMIGA		/* define for Commodore-Amiga */
-#  endif		/* (SAS/C auto-defines AMIGA) */
-#define AZTEC_50	/* define for version 5.0 of manx */
-# endif
-#endif
-#ifdef __SASC_60
-# define NEARDATA __near /* put some data close */
-#else
-# ifdef _DCC
-# define NEARDATA __near /* put some data close */
-# else
-# define NEARDATA
-# endif
-#endif
-#ifdef AMIGA
-# define NEED_VARARGS
-# undef UNIX
-# define DLB
-# define HACKDIR "NetHack:"
-# define NO_MACRO_CPATH
-#endif
-
-/*
- * Atari auto-detection
- */
-
-#ifdef atarist
-# undef UNIX
-# define TOS
-#else
-# ifdef __MINT__
-#  undef UNIX
-#  define TOS
-# endif
-#endif
-
-/*
- * Windows NT Autodetection
- */
-
-#ifdef WIN32
-# undef UNIX
-# undef MSDOS
-# define NHSTDC
-# define STRNCMPI
-# define USE_STDARG
-#endif
-
-/*
- * and other systems...
- */
+/* #define MSDOS */	/* in case it's not auto-detected */
 
 /* #define OS2 */	/* define for OS/2 */
 
@@ -141,71 +35,8 @@
 			/* Hint: if you're not developing code, don't define
 			   ULTRIX_PROTO. */
 
-#ifdef VMS	/* really old compilers need special handling, detected here */
-# undef UNIX
-# ifdef __DECC
-#  ifndef __DECC_VER	/* buggy early versions want widened prototypes */
-#   define NOTSTDC	/* except when typedefs are involved		*/
-#   define USE_VARARGS
-#  else
-#   define NHSTDC
-#   define USE_STDARG
-#   define POSIX_TYPES
-#   define _DECC_V4_SOURCE	/* avoid some incompatible V5.x changes */
-#  endif
-#  undef __HIDE_FORBIDDEN_NAMES /* need non-ANSI library support functions */
-# else
-#  ifdef VAXC	/* must use CC/DEFINE=ANCIENT_VAXC for vaxc v2.2 or older */
-#   ifdef ANCIENT_VAXC	/* vaxc v2.2 and earlier [lots of warnings to come] */
-#    define KR1ED	/* simulate defined() */
-#    define USE_VARARGS
-#   else		/* vaxc v2.3,2.4,or 3.x, or decc in vaxc mode */
-#     if defined(USE_PROTOTYPES) /* this breaks 2.2 (*forces* use of ANCIENT)*/
-#      define __STDC__ 0 /* vaxc is not yet ANSI compliant, but close enough */
-#      define signed	/* well, almost close enough */
-#include <stddef.h>
-#      define UNWIDENED_PROTOTYPES
-#     endif
-#     define USE_STDARG
-#   endif
-#  endif /*VAXC*/
-# endif /*__DECC*/
-# ifdef VERYOLD_VMS	/* v4.5 or earlier; no longer available for testing */
-#  define USE_OLDARGS	/* <varargs.h> is there, vprintf & vsprintf aren't */
-#  ifdef USE_VARARGS
-#   undef USE_VARARGS
-#  endif
-#  ifdef USE_STDARG
-#   undef USE_STDARG
-#  endif
-# endif
-#endif /*VMS*/
+#include "config1.h"	/* should auto-detect MSDOS, MAC, AMIGA, and WIN32 */
 
-#ifdef vax
-/* just in case someone thinks a DECstation is a vax. It's not, it's a mips */
-# ifdef ULTRIX_PROTO
-#  undef ULTRIX_PROTO
-# endif
-# ifdef ULTRIX_CC20
-#  undef ULTRIX_CC20
-# endif
-#endif
-
-#ifdef KR1ED		/* For compilers which cannot handle defined() */
-#define defined(x) (-x-1 != -1)
-/* Because:
- * #define FOO => FOO={} => defined( ) => (-1 != - - 1) => 1
- * #define FOO 1 or on command-line -DFOO
- *	=> defined(1) => (-1 != - 1 - 1) => 1
- * if FOO isn't defined, FOO=0. But some compilers default to 0 instead of 1
- * for -DFOO, oh well.
- *	=> defined(0) => (-1 != - 0 - 1) => 0
- *
- * But:
- * defined("") => (-1 != - "" - 1)
- *   [which is an unavoidable catastrophe.]
- */
-#endif
 
 /* Windowing systems...
  * Define all of those you want supported in your binary.
@@ -266,6 +97,7 @@
 #  define GRAPHIC_TOMBSTONE	/* Use graphical tombstone (rip.xpm) */
 # endif
 #endif
+
 
 /*
  * Section 2:	Some global parameters and filenames.

@@ -99,7 +99,7 @@ extern "C" {
 #endif
 
 #ifdef USER_SOUNDS
-#include "qaudio.h"
+#include <qaudio.h>
 #endif
 
 

@@ -289,8 +289,8 @@ CSOURCES = $(HACKCSRC) $(SYSSRC) $(WINCSRC) monstr.c vis_tab.c
 # cause dependency loops if run through "make depend"
 # and dgn_comp.h, dgn_file.h, lev_comp.h, special level & dungeon files.
 #
-HACKINCL = align.h amiconf.h artifact.h artilist.h attrib.h beconf.h \
-	color.h config.h coord.h decl.h def_os2.h display.h dlb.h dungeon.h \
+HACKINCL = align.h amiconf.h artifact.h artilist.h attrib.h beconf.h color.h \
+	config.h config1.h coord.h decl.h def_os2.h display.h dlb.h dungeon.h \
 	edog.h emin.h engrave.h epri.h eshk.h extern.h flag.h func_tab.h \
 	global.h hack.h lev.h macconf.h mfndpos.h micro.h mkroom.h \
 	monattk.h mondata.h monflag.h monst.h monsym.h obj.h objclass.h \
@@ -472,12 +472,12 @@ depend: ../sys/unix/depend.awk $(SYSCSRC) $(WINCSRC) $(WINCXXSRC) $(HACKCSRC)
 # DO NOT DELETE THIS LINE OR CHANGE ANYTHING BEYOND IT
 
 # config.h timestamp
-$(CONFIG_H): ../include/config.h ../include/tradstdc.h ../include/global.h \
-		../include/coord.h ../include/vmsconf.h ../include/system.h \
-		../include/unixconf.h ../include/os2conf.h ../include/micro.h \
-		../include/pcconf.h ../include/tosconf.h ../include/amiconf.h \
-		../include/macconf.h ../include/beconf.h ../include/ntconf.h \
-		../include/nhlan.h
+$(CONFIG_H): ../include/config.h ../include/config1.h ../include/tradstdc.h \
+		../include/global.h ../include/coord.h ../include/vmsconf.h \
+		../include/system.h ../include/unixconf.h ../include/os2conf.h \
+		../include/micro.h ../include/pcconf.h ../include/tosconf.h \
+		../include/amiconf.h ../include/macconf.h ../include/beconf.h \
+		../include/ntconf.h ../include/nhlan.h
 	touch $(CONFIG_H)
 # hack.h timestamp
 $(HACK_H): ../include/hack.h $(CONFIG_H) ../include/align.h \
@@ -500,7 +500,7 @@ tos.o: ../sys/atari/tos.c $(HACK_H) ../include/tcap.h
 pcmain.o: ../sys/share/pcmain.c $(HACK_H) ../include/dlb.h \
 		#../include/win32api.h
 	$(CC) $(CFLAGS) -c ../sys/share/pcmain.c
-pcsys.o: ../sys/share/pcsys.c $(HACK_H) ../include/mthread.h
+pcsys.o: ../sys/share/pcsys.c $(HACK_H)
 	$(CC) $(CFLAGS) -c ../sys/share/pcsys.c
 pctty.o: ../sys/share/pctty.c $(HACK_H)
 	$(CC) $(CFLAGS) -c ../sys/share/pctty.c
