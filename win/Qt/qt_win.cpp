@@ -2038,14 +2038,7 @@ void NetHackQtStatusWindow::updateStats()
     }
     name.setLabel(buf,NetHackQtLabelledIcon::NoNum,u.ulevel);
 
-    if (Is_knox(&u.uz)) {
-	Sprintf(buf, "%s", dungeons[u.uz.dnum].dname);
-	dlevel.setLabel(buf,TRUE);
-    } else if (In_quest(&u.uz)) {
-	Sprintf(buf, "Home, level ");
-	dlevel.setLabel(buf,(long)dunlev(&u.uz));
-    } else if (In_endgame(&u.uz)) {
-	Strcpy(buf, (Is_astralevel(&u.uz) ? "Astral Plane":"End Game"));
+    if (describe_level(buf)) {
 	dlevel.setLabel(buf,TRUE);
     } else {
 	Sprintf(buf, "%s, level ", dungeons[u.uz.dnum].dname);
