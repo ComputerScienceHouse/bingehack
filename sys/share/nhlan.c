@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)nhlan.c	3.3	97/04/12	*/
+/*	SCCS Id: @(#)nhlan.c	3.3	99/11/21	*/
 /* Copyright (c) Michael Allison, 1997                  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -11,6 +11,7 @@
  *
  * 	Network Username of player
  *	Mail
+ * Futures
  *	Shared bones
  *		To implement this: code, data files, and configuration
  *		files need to be separated from writeable files such
@@ -104,6 +105,9 @@ struct lan_mail_struct *msg;
 	     	putstr(datawin, 0, buf);
 	     	put = buf;
 	     	get++;
+		ccount = 0;
+	     } else if (!isprint(*get)) {
+		get++;
 	     } else {
 	 	*put++ = *get++;
 		ccount++;
