@@ -789,9 +789,11 @@ int rolenum, racenum, gendnum, alignnum;
 }
 
 /* pick a random role subject to any racenum/gendnum/alignnum constraints */
+/* If pickhow == PICK_RIGID a role is returned only if there is  */
+/* a single possibility */
 int
-pick_role(racenum, gendnum, alignnum)
-int racenum, gendnum, alignnum;
+pick_role(racenum, gendnum, alignnum, pickhow)
+int racenum, gendnum, alignnum, pickhow;
 {
     int i;
     int roles_ok = 0;
@@ -800,7 +802,7 @@ int racenum, gendnum, alignnum;
 	if (ok_role(i, racenum, gendnum, alignnum))
 	    roles_ok++;
     }
-    if (roles_ok == 0)
+    if (roles_ok == 0 || (roles_ok > 1 && pickhow == PICK_RIGID))
 	return ROLE_NONE;
     roles_ok = rn2(roles_ok);
     for (i = 0; i < SIZE(roles)-1; i++) {
@@ -853,9 +855,11 @@ int rolenum, racenum, gendnum, alignnum;
 }
 
 /* pick a random race subject to any rolenum/gendnum/alignnum constraints */
+/* If pickhow == PICK_RIGID a race is returned only if there is  */
+/* a single possibility */
 int
-pick_race(rolenum, gendnum, alignnum)
-int rolenum, gendnum, alignnum;
+pick_race(rolenum, gendnum, alignnum, pickhow)
+int rolenum, gendnum, alignnum, pickhow;
 {
     int i;
     int races_ok = 0;
@@ -864,7 +868,7 @@ int rolenum, gendnum, alignnum;
 	if (ok_race(rolenum, i, gendnum, alignnum))
 	    races_ok++;
     }
-    if (races_ok == 0)
+    if (races_ok == 0 || (races_ok > 1 && pickhow == PICK_RIGID))
 	return ROLE_NONE;
     races_ok = rn2(races_ok);
     for (i = 0; i < SIZE(races)-1; i++) {
@@ -913,9 +917,11 @@ int rolenum, racenum, gendnum, alignnum;
 
 /* pick a random gender subject to any rolenum/racenum/alignnum constraints */
 /* gender and alignment are not comparable (and also not constrainable) */
+/* If pickhow == PICK_RIGID a gender is returned only if there is  */
+/* a single possibility */
 int
-pick_gend(rolenum, racenum, alignnum)
-int rolenum, racenum, alignnum;
+pick_gend(rolenum, racenum, alignnum, pickhow)
+int rolenum, racenum, alignnum, pickhow;
 {
     int i;
     int gends_ok = 0;
@@ -924,7 +930,7 @@ int rolenum, racenum, alignnum;
 	if (ok_gend(rolenum, racenum, i, alignnum))
 	    gends_ok++;
     }
-    if (gends_ok == 0)
+    if (gends_ok == 0 || (gends_ok > 1 && pickhow == PICK_RIGID))
 	return ROLE_NONE;
     gends_ok = rn2(gends_ok);
     for (i = 0; i < ROLE_GENDERS; i++) {
@@ -973,9 +979,11 @@ int rolenum, racenum, gendnum, alignnum;
 
 /* pick a random alignment subject to any rolenum/racenum/gendnum constraints */
 /* alignment and gender are not comparable (and also not constrainable) */
+/* If pickhow == PICK_RIGID an alignment is returned only if there is  */
+/* a single possibility */
 int
-pick_align(rolenum, racenum, gendnum)
-int rolenum, racenum, gendnum;
+pick_align(rolenum, racenum, gendnum, pickhow)
+int rolenum, racenum, gendnum, pickhow;
 {
     int i;
     int aligns_ok = 0;
@@ -984,7 +992,7 @@ int rolenum, racenum, gendnum;
 	if (ok_align(rolenum, racenum, gendnum, i))
 	    aligns_ok++;
     }
-    if (aligns_ok == 0)
+    if (aligns_ok == 0 || (aligns_ok > 1 && pickhow == PICK_RIGID))
 	return ROLE_NONE;
     aligns_ok = rn2(aligns_ok);
     for (i = 0; i < ROLE_ALIGNS; i++) {
@@ -998,6 +1006,28 @@ int rolenum, racenum, gendnum;
     return ROLE_NONE;
 }
 
+void
+rigid_role_checks()
+{
+    /* Some roles are limited to a single race, alignment, or gender and
+     * calling this routine prior to XXX_player_selection() will help
+     * prevent an extraneous prompt that actually doesn't allow
+     * you to choose anything further. Note the use of PICK_RIGID which
+     * causes the pick_XX() routine to return a value only if there is one
+     * single possible selection, otherwise it returns ROLE_NONE.
+     */
+    if (flags.initrole != ROLE_NONE) {
+	if (flags.initrace == ROLE_NONE)
+	     flags.initrace = pick_race(flags.initrole, flags.initgend,
+						flags.initalign, PICK_RIGID);
+	if (flags.initalign == ROLE_NONE)
+	     flags.initalign = pick_align(flags.initrole, flags.initrace,
+						flags.initgend, PICK_RIGID);
+	if (flags.initgend == ROLE_NONE)
+	     flags.initgend = pick_gend(flags.initrole, flags.initrace,
+						flags.initalign, PICK_RIGID);
+    }
+}
 
 void
 plnamesuffix()

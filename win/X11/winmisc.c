@@ -268,10 +268,13 @@ X11_player_selection()
     const char *namep;
     char qbuf[QBUFSZ];
 
+    /* avoid unnecessary prompts further down */
+    rigid_role_checks();
+
     while (flags.initrole < 0) {
 	if (flags.initrole == ROLE_RANDOM) {
 	    flags.initrole = pick_role(flags.initrace,
-				       flags.initgend, flags.initalign);
+				       flags.initgend, flags.initalign, PICK_RANDOM);
 	    break;
 	}
 	/* select a role */
@@ -328,7 +331,7 @@ X11_player_selection()
     while (!validrace(flags.initrole, flags.initrace)) {
 	if (flags.initrace == ROLE_RANDOM) {
 	    flags.initrace = pick_race(flags.initrole,
-				       flags.initgend, flags.initalign);
+				       flags.initgend, flags.initalign, PICK_RANDOM);
 	    break;
 	}
 	/* select a race */
@@ -395,7 +398,7 @@ X11_player_selection()
     while (!validgend(flags.initrole, flags.initrace, flags.initgend)) {
 	if (flags.initgend == ROLE_RANDOM) {
 	    flags.initgend = pick_gend(flags.initrole, flags.initrace,
-				       flags.initalign);
+				       flags.initalign, PICK_RANDOM);
 	    break;
 	}
 	/* select a gender */
@@ -462,7 +465,7 @@ X11_player_selection()
     while (!validalign(flags.initrole, flags.initrace, flags.initalign)) {
 	if (flags.initalign == ROLE_RANDOM) {
 	    flags.initalign = pick_align(flags.initrole, flags.initrace,
-					 flags.initgend);
+					 flags.initgend, PICK_RANDOM);
 	    break;
 	}
 	/* select an alignment */

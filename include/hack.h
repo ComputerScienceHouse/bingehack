@@ -149,6 +149,10 @@ NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
 #define FM_MYDOGS      0x04	/* search mydogs */
 #define FM_EVERYWHERE  (FM_FMON | FM_MIGRATE | FM_MYDOGS)
 
+/* Flags to control pick_[race,role,gend,align] routines in role.c */
+#define PICK_RANDOM	0
+#define PICK_RIGID	1
+
 /*** some utility macros ***/
 #define yn(query) yn_function(query,ynchars, 'n')
 #define ynq(query) yn_function(query,ynqchars, 'q')

@@ -157,6 +157,9 @@ Gem_player_selection()
 	anything any;
 	menu_item *selected=NULL;
 
+	/* avoid unnecessary prompts further down */
+	rigid_role_checks();
+
 	/* Should we randomly pick for the player? */
 	if (flags.initrole == ROLE_NONE || flags.initrace == ROLE_NONE || 
 		flags.initgend == ROLE_NONE || flags.initalign == ROLE_NONE) {
@@ -177,7 +180,7 @@ give_up:		/* Just quit */
 		if(pick4u=='y' || flags.initrole == ROLE_RANDOM) {
 			/* Pick a random role */
 			flags.initrole = pick_role(flags.initrace, flags.initgend,
-							flags.initalign);
+							flags.initalign, PICK_RANDOM);
 			if (flags.initrole < 0) {
 				mar_add_message("Incompatible role!");
 				mar_display_nhwindow(WIN_MESSAGE);
@@ -201,7 +204,7 @@ give_up:		/* Just quit */
 				}
 			}
 			any.a_int = pick_role(flags.initrace, flags.initgend,
-					    flags.initalign)+1;
+					    flags.initalign, PICK_RANDOM)+1;
 			if (any.a_int == 0)	/* must be non-zero */
 			    any.a_int = randrole()+1;
 			add_menu(win, NO_GLYPH, &any , '*', 0, ATR_NONE,
@@ -229,7 +232,7 @@ give_up:		/* Just quit */
 		/* pre-selected race not valid */
 		if (pick4u == 'y' || flags.initrace == ROLE_RANDOM) {
 			flags.initrace = pick_race(flags.initrole, flags.initgend,
-								flags.initalign);
+							flags.initalign, PICK_RANDOM);
 			if (flags.initrace < 0) {
 				mar_add_message("Incompatible race!");
 				mar_display_nhwindow(WIN_MESSAGE);
@@ -268,7 +271,7 @@ give_up:		/* Just quit */
 							0, ATR_NONE, races[i].noun, MENU_UNSELECTED);
 					}
 				any.a_int = pick_race(flags.initrole, flags.initgend,
-					flags.initalign)+1;
+					flags.initalign, PICK_RANDOM)+1;
 				if (any.a_int == 0)	/* must be non-zero */
 					any.a_int = randrace(flags.initrole)+1;
 				add_menu(win, NO_GLYPH, &any , '*', 0, ATR_NONE,
@@ -299,7 +302,7 @@ give_up:		/* Just quit */
 		/* pre-selected gender not valid */
 		if (pick4u == 'y' || flags.initgend == ROLE_RANDOM) {
 			flags.initgend = pick_gend(flags.initrole, flags.initrace,
-							flags.initalign);
+							flags.initalign, PICK_RANDOM);
 			if (flags.initgend < 0) {
 				mar_add_message("Incompatible gender!");
 				mar_display_nhwindow(WIN_MESSAGE);
@@ -338,7 +341,7 @@ give_up:		/* Just quit */
 							0, ATR_NONE, genders[i].adj, MENU_UNSELECTED);
 					}
 				any.a_int = pick_gend(flags.initrole, flags.initrace,
-						    flags.initalign)+1;
+						    flags.initalign, PICK_RANDOM)+1;
 				if (any.a_int == 0)	/* must be non-zero */
 					any.a_int = randgend(flags.initrole, flags.initrace)+1;
 				add_menu(win, NO_GLYPH, &any , '*', 0, ATR_NONE,
@@ -369,7 +372,7 @@ give_up:		/* Just quit */
 		/* pre-selected alignment not valid */
 		if (pick4u == 'y' || flags.initalign == ROLE_RANDOM) {
 			flags.initalign = pick_align(flags.initrole, flags.initrace,
-								flags.initgend);
+							flags.initgend, PICK_RANDOM);
 			if (flags.initalign < 0) {
 			    mar_add_message("Incompatible alignment!");
 				 mar_display_nhwindow(WIN_MESSAGE);
@@ -408,7 +411,7 @@ give_up:		/* Just quit */
 							0, ATR_NONE, aligns[i].adj, MENU_UNSELECTED);
 					}
 				any.a_int = pick_align(flags.initrole, flags.initrace,
-						    flags.initgend)+1;
+						    flags.initgend, PICK_RANDOM)+1;
 				if (any.a_int == 0)	/* must be non-zero */
 					any.a_int = randalign(flags.initrole, flags.initrace)+1;
 				add_menu(win, NO_GLYPH, &any , '*', 0, ATR_NONE,
