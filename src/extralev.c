@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)extralev.c	3.3	97/05/25	*/
+/*	SCCS Id: @(#)extralev.c	3.3	1999/11/26	*/
 /*	Copyright 1988, 1989 by Ken Arromdee				*/
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -299,7 +299,7 @@ makerogueghost()
 	if (!(ghost = makemon(&mons[PM_GHOST], x, y, NO_MM_FLAGS)))
 		return;
 	ghost->msleeping = 1;
-	Strcpy((char *)ghost->mextra, roguename());
+	ghost = christen_monst(ghost, roguename());
 
 	if (rn2(4)) {
 		ghostobj = mksobj_at(FOOD_RATION,x,y,FALSE);
