@@ -1286,19 +1286,7 @@ void arti_speak(obj)
 	if (!oart || !(oart->spfx & SPFX_SPEAK))
 		return;
 
-	/* Get a rumor.  Kludge: do not include rumors that specifically refer
-	 * to fortune cookies.  Such rumors are always false rumors, so this
-	 * problem doesn't happen when, for instance, getting Oracle
-	 * pronouncements.  This is an awful hack because it relies on knowing
-	 * exactly what text is in the cookie files.
-	 */
-	{
-	    int count=0;
-
-	    do {
-		line = getrumor(obj->blessed ? 1 : obj->cursed ? -1 : 0, buf);
-	    } while (line && (strstri(line, "fortune") || strstri(line, "pity")) && ++count < 30);
-	}
+	line = getrumor(obj->blessed ? 1 : obj->cursed ? -1 : 0, buf, TRUE);
 	if (!*line)
 		line = "NetHack rumors file closed for renovation.";
 	pline("%s whispers:", The(xname(obj)));

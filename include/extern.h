@@ -1617,7 +1617,7 @@ E const char *NDECL(Goodbye);
 
 /* ### rumors.c ### */
 
-E char *FDECL(getrumor, (int,char *));
+E char *FDECL(getrumor, (int,char *, BOOLEAN_P));
 E void FDECL(outrumor, (int,int));
 E void FDECL(outoracle, (BOOLEAN_P, BOOLEAN_P));
 E void FDECL(save_oracles, (int,int));

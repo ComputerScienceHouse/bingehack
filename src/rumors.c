@@ -58,10 +58,16 @@ dlb *fp;
 	    true_rumor_size = -1L;	/* init failed */
 }
 
+/* exclude_cookie is a hack used because we sometimes want to get rumors in a
+ * context where messages such as "You swallowed the fortune!" that refer to
+ * cookies should not appear.  This has no effect for true rumors since none
+ * of them contain such references anyway.
+ */
 char *
-getrumor(truth, rumor_buf)
+getrumor(truth, rumor_buf, exclude_cookie)
 int truth; /* 1=true, -1=false, 0=either */
 char *rumor_buf;
+boolean exclude_cookie; 
 {
 	dlb	*rumors;
 	long tidbit, beginning;
@@ -74,6 +80,9 @@ char *rumor_buf;
 	rumors = dlb_fopen(RUMORFILE, "r");
 
 	if (rumors) {
+	    int count = 0;
+
+	    do {
 		if (true_rumor_size == 0L) {	/* if this is 1st outrumor() */
 		    init_rumors(rumors);
 		    if (true_rumor_size < 0L) {	/* init failed */
@@ -112,6 +121,9 @@ char *rumor_buf;
 		Strcat(rumor_buf, xcrypt(line, xbuf));
 		(void) dlb_fclose(rumors);
 		exercise(A_WIS, (truth > 0));
+	    } while(count++ < 50 && exclude_cookie && (strstri(rumor_buf, "fortune") || strstri(rumor_buf, "pity")));
+	    if (count >= 50)
+		impossible("Can't find non-cookie rumor?");
 	} else {
 		pline("Can't open rumors file!");
 		true_rumor_size = -1;	/* don't try to open it again */
@@ -137,7 +149,7 @@ int mechanism;
 		pline("What a pity that you cannot read it!");
 		return;
 	}
-	line = getrumor(truth, buf);
+	line = getrumor(truth, buf, reading ? FALSE : TRUE);
 	if (!*line)
 		line = "NetHack rumors file closed for renovation.";
 	switch (mechanism) {
