@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)muse.c	3.3	2000/01/27	*/
+/*	SCCS Id: @(#)muse.c	3.3	2000/06/02	*/
 /*	Copyright (C) 1990 by Ken Arromdee			   */
 /* NetHack may be freely redistributed.  See license for details.  */
 
@@ -287,8 +287,10 @@ struct monst *mtmp;
 	 * is peaceful; then we don't want to flee the player, and by
 	 * coincidence healing is all there is that doesn't involve fleeing.
 	 * These would be hard to combine because of the control flow.
+	 * Pestilence won't use healing even when blind.
 	 */
-	if (!mtmp->mcansee && !nohands(mtmp->data)) {
+	if (!mtmp->mcansee && !nohands(mtmp->data) &&
+		mtmp->data != &mons[PM_PESTILENCE]) {
 	    if ((obj = m_carrying(mtmp, POT_FULL_HEALING)) != 0) {
 		m.defensive = obj;
 		m.has_defense = MUSE_POT_FULL_HEALING;
@@ -441,6 +443,8 @@ struct monst *mtmp;
 			m.defensive = obj;
 			m.has_defense = MUSE_SCR_TELEPORTATION;
 		}
+
+	    if (mtmp->data != &mons[PM_PESTILENCE]) {
 		nomore(MUSE_POT_FULL_HEALING);
 		if(obj->otyp == POT_FULL_HEALING) {
 			m.defensive = obj;
@@ -461,6 +465,18 @@ struct monst *mtmp;
 			m.defensive = obj;
 			m.has_defense = MUSE_POT_HEALING;
 		}
+	    } else {	/* Pestilence */
+		nomore(MUSE_POT_FULL_HEALING);
+		if (obj->otyp == POT_SICKNESS) {
+			m.defensive = obj;
+			m.has_defense = MUSE_POT_FULL_HEALING;
+		}
+		nomore(MUSE_WAN_CREATE_MONSTER);
+		if (obj->otyp == WAN_CREATE_MONSTER && obj->spe > 0) {
+			m.defensive = obj;
+			m.has_defense = MUSE_WAN_CREATE_MONSTER;
+		}
+	    }
 		nomore(MUSE_SCR_CREATE_MONSTER);
 		if(obj->otyp == SCR_CREATE_MONSTER) {
 			m.defensive = obj;
@@ -809,14 +825,15 @@ mon_tele:
 		return 2;
 	case MUSE_POT_FULL_HEALING:
 		mquaffmsg(mtmp, otmp);
+		if (otmp->otyp == POT_SICKNESS) unbless(otmp); /* Pestilence */
 		mtmp->mhp = (mtmp->mhpmax += (otmp->blessed ? 8 : 4));
-		if (!mtmp->mcansee) {
+		if (!mtmp->mcansee && otmp->otyp != POT_SICKNESS) {
 			mtmp->mcansee = 1;
 			mtmp->mblinded = 0;
 			if (vismon) pline(mcsa, Monnam(mtmp));
 		}
 		if (vismon) pline("%s looks completely healed.", Monnam(mtmp));
-		if (oseen) makeknown(POT_FULL_HEALING);
+		if (oseen) makeknown(otmp->otyp);
 		m_useup(mtmp, otmp);
 		return 2;
 	case 0: return 0; /* i.e. an exploded wand */
@@ -854,7 +871,8 @@ struct monst *mtmp;
 		case 2: return SCR_CREATE_MONSTER;
 		case 3: return POT_HEALING;
 		case 4: return POT_EXTRA_HEALING;
-		case 5: return POT_FULL_HEALING;
+		case 5: return (mtmp->data != &mons[PM_PESTILENCE]) ?
+				POT_FULL_HEALING : POT_SICKNESS;
 		case 7: if (is_floater(pm) || mtmp->isshk || mtmp->isgd
 						|| mtmp->ispriest
 									)

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)zap.c	3.3	2000/02/04	*/
+/*	SCCS Id: @(#)zap.c	3.3	2000/06/02	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -244,8 +244,9 @@ struct obj *otmp;
 		break;
 	case SPE_HEALING:
 	case SPE_EXTRA_HEALING:
-		wake = FALSE;		/* wakeup() makes the target angry */
 		reveal_invis = TRUE;
+	    if (mtmp->data != &mons[PM_PESTILENCE]) {
+		wake = FALSE;		/* wakeup() makes the target angry */
 		mtmp->mhp += d(6, otyp == SPE_EXTRA_HEALING ? 8 : 4);
 		if (mtmp->mhp > mtmp->mhpmax)
 		    mtmp->mhp = mtmp->mhpmax;
@@ -255,6 +256,11 @@ struct obj *otmp;
 		if (mtmp->mtame || mtmp->mpeaceful) {
 		    adjalign(Role_if(PM_HEALER) ? 1 : sgn(u.ualign.type));
 		}
+	    } else {	/* Pestilence */
+		/* Pestilence will always resist; damage is half of 3d{4,8} */
+		(void) resist(mtmp, otmp->oclass,
+			      d(3, otyp == SPE_EXTRA_HEALING ? 8 : 4), TELL);
+	    }
 		break;
 	case WAN_LIGHT:	/* (broken wand) */
 		if (flash_hits_mon(mtmp, otmp)) {

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)makemon.c	3.3	2000/01/28	*/
+/*	SCCS Id: @(#)makemon.c	3.3	2000/06/02	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -912,6 +912,8 @@ register int	mmflags;
 		mitem = TWO_HANDED_SWORD;
 	} else if (ptr->msound == MS_NEMESIS) {
 		mitem = BELL_OF_OPENING;
+	} else if (mndx == PM_PESTILENCE) {
+		mitem = POT_SICKNESS;
 	}
 	if (mitem && allow_minvent) (void) mongets(mtmp, mitem);
 

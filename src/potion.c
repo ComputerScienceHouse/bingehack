@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)potion.c	3.3	1999/12/14	*/
+/*	SCCS Id: @(#)potion.c	3.3	2000/06/02	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -908,11 +908,14 @@ boolean your_fault;
 
 	if (!your_fault) angermon = FALSE;
 	switch (obj->otyp) {
-	case POT_RESTORE_ABILITY:
-	case POT_GAIN_ABILITY:
 	case POT_HEALING:
 	case POT_EXTRA_HEALING:
 	case POT_FULL_HEALING:
+		if (mon->data == &mons[PM_PESTILENCE]) goto do_illness;
+		/*FALLTHRU*/
+	case POT_RESTORE_ABILITY:
+	case POT_GAIN_ABILITY:
+ do_healing:
 		angermon = FALSE;
 		if(mon->mhp < mon->mhpmax) {
 		    mon->mhp = mon->mhpmax;
@@ -921,6 +924,15 @@ boolean your_fault;
 		}
 		break;
 	case POT_SICKNESS:
+		if (mon->data == &mons[PM_PESTILENCE]) goto do_healing;
+		if (dmgtype(mon->data, AD_DISE) ||
+			   dmgtype(mon->data, AD_PEST) ||
+			   resists_poison(mon)) {
+		    if (canseemon(mon))
+			pline("%s looks unharmed.", Monnam(mon));
+		    break;
+		}
+ do_illness:
 		if((mon->mhpmax > 3) && !resist(mon, POTION_CLASS, 0, NOTELL))
 			mon->mhpmax /= 2;
 		if((mon->mhp > 2) && !resist(mon, POTION_CLASS, 0, NOTELL))
