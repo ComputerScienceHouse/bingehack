@@ -1179,12 +1179,16 @@ register struct obj	*sobj;
 		break;
 	case SCR_STINKING_CLOUD: {
 	        coord cc;
-		pline("Where ?");
+		pline("Where do you want to cast the spell?");
 		cc.x = u.ux;
 		cc.y = u.uy;
 		if (getpos(&cc, TRUE, "the desired position") < 0) /* force valid */
 		    return 0;	/* abort */
-		if (!cansee(cc.x, cc.y) || distu(cc.x, cc.y) >= 32)
+		if (distu(cc.x, cc.y) >= 32) {
+		    You("smell rotten eggs.");
+		    return 0;
+		}
+		if (!cansee(cc.x, cc.y))
 		    return 0;
 		known = TRUE;
 		(void) create_gas_cloud(cc.x, cc.y, 3, 10);
