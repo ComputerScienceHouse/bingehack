@@ -1626,7 +1626,7 @@ register struct attack *mattk;
 	    } else {
 		char kbuf[BUFSZ];
 
-		You("bite into %s", mon_nam(mdef));
+		You("bite into %s.", mon_nam(mdef));
 		Sprintf(kbuf, "swallowing %s whole", an(mdef->data->mname));
 		instapetrify(kbuf);
 	    }

@@ -274,7 +274,7 @@ learn()
 			    pline("This spellbook is too faint to be read any more.");
 			    book->otyp = booktype = SPE_BLANK_PAPER;
 			} else if (spellknow(i) <= 1000) {
-			    Your("knowledge of %s is keener", splname);
+			    Your("knowledge of %s is keener.", splname);
 			    incrnknow(i);
 			    book->spestudied++;
 			    exercise(A_WIS,TRUE);       /* extra study */
@@ -625,7 +625,7 @@ boolean atme;
 	} else if (spellknow(spell) <= 100) {
 	    You("strain to recall the spell.");
 	} else if (spellknow(spell) <= 1000) {
-	    Your("knowledge of this spell is growing faint");
+	    Your("knowledge of this spell is growing faint.");
 	}
 	energy = (spellev(spell) * 5);    /* 5 <= energy <= 35 */
 
