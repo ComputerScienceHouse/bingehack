@@ -1261,8 +1261,9 @@ no_unwear:
 	    addinv_core2(otmp);
 	}
 
-	if (get_obj_location(otmp, &ox, &oy, BURIED_TOO|CONTAINED_TOO)
-		&& costly_spot(ox, oy)) {
+	if ((otmp->where != OBJ_INVENT || obj->unpaid) &&
+		get_obj_location(otmp, &ox, &oy, BURIED_TOO|CONTAINED_TOO) &&
+		costly_spot(ox, oy)) {
 	    register struct monst *shkp =
 		shop_keeper(*in_rooms(ox, oy, SHOPBASE));
 
