@@ -143,6 +143,8 @@ CXXFLAGS = -g $(CFLAGS) -I. -I$(QTDIR)/include
 
 # Set the WINSRC, WINOBJ, and WINLIB lines to correspond to your desired
 # combination of windowing systems.  Also set windowing systems in config.h.
+# Note that if you are including both the X11 and Qt window systems, you don't
+# want two copies of tile.o, so use the alternate WINQTOBJ line.
 #
 # files for a straight tty port using no native windowing system
 WINTTYSRC = ../win/tty/getline.c ../win/tty/termcap.c ../win/tty/topl.c \
@@ -162,6 +164,7 @@ WINX11OBJ = Window.o dialogs.o winX.o winmap.o winmenu.o winmesg.o \
 #
 WINQTSRC = ../win/Qt/qt_win.cpp ../win/Qt/qt_clust.cpp
 WINQTOBJ = qt_win.o qt_clust.o tile.o
+# WINQTOBJ = qt_win.o qt_clust.o # tile.o
 
 #
 # 
