@@ -628,8 +628,8 @@ gnmenu.o: ../win/gnome/gnmenu.c ../win/gnome/gnmenu.h ../win/gnome/gnmain.h \
 	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnmenu.c
 gnmesg.o: ../win/gnome/gnmesg.c ../win/gnome/gnmesg.h ../win/gnome/gnsignal.h
 	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnmesg.c
-gnopts.o: ../win/gnome/gnopts.c ../win/gnome/gnopts.h ../win/gnome/gnmain.h \
-		$(HACK_H)
+gnopts.o: ../win/gnome/gnopts.c ../win/gnome/gnopts.h ../win/gnome/gnglyph.h \
+		../win/gnome/gnmain.h ../win/gnome/gnmap.h $(HACK_H)
 	$(CC) $(CFLAGS) $(GNOMEINC) -c ../win/gnome/gnopts.c
 gnplayer.o: ../win/gnome/gnplayer.c ../win/gnome/gnplayer.h \
 		../win/gnome/gnmain.h $(HACK_H)
