@@ -849,23 +849,24 @@ water_prayer(bless_water)
 {
     register struct obj* otmp;
     register long changed = 0;
-    boolean other = FALSE;
+    boolean other = FALSE, bc_known = !(Blind || Hallucination);
 
     for(otmp = level.objects[u.ux][u.uy]; otmp; otmp = otmp->nexthere) {
 	/* turn water into (un)holy water */
-	if (otmp->otyp == POT_WATER) {
+	if (otmp->otyp == POT_WATER && (boolean)otmp->blessed != bless_water) {
 	    otmp->blessed = bless_water;
 	    otmp->cursed = !bless_water;
-	    otmp->bknown = !Blind;
+	    otmp->bknown = bc_known;
 	    changed += otmp->quan;
 	} else if(otmp->oclass == POTION_CLASS)
 	    other = TRUE;
     }
     if(!Blind && changed) {
 	pline("%s potion%s on the altar glow%s %s for a moment.",
-	      ((other && changed > 1L) ? "Some of the" : (other ? "A" : "The")),
-	      (changed > 1L ? "s" : ""), (changed > 1L ? "" : "s"),
-	      (bless_water ? amber : Black));
+	      ((other && changed > 1L) ? "Some of the" :
+					(other ? "One of the" : "The")),
+	      ((other || changed > 1L) ? "s" : ""), (changed > 1L ? "" : "s"),
+	      (bless_water ? hcolor(amber) : hcolor(Black)));
     }
     return((boolean)(changed > 0L));
 }

@@ -243,6 +243,8 @@ defer level change for every schedule_goto() call, not just while monsters
 	possibly trigger relmon panic or crash)
 fix obscure worm bug which did not consider the tail tip to be visible.  Bug
     produced "You miss it" on 3.2 and a blatantly obvious 'I' in prerelease 3.3.
+water prayer: treat already blessed potions as `other' rather than as `water'
+water prayer: hallucination affects the color seen when changed potions glow
 
 
 Platform- and/or Interface-Specific Fixes
