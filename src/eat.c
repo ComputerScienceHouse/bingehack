@@ -978,6 +978,7 @@ opentin()		/* called during each move whilst opening a tin */
 			mons[tin.tin->corpsenm].mname);
 
 	    /* KMH, conduct */
+	    u.uconduct.food++;
 	    u.uconduct.flesh++;
 	    if (is_meaty(&mons[tin.tin->corpsenm])) {
 	    	u.uconduct.meat++;
@@ -1019,6 +1020,7 @@ opentin()		/* called during each move whilst opening a tin */
 		      Hallucination ? "Swee'pea" : "Popeye");
 	    lesshungry(600);
 	    gainstr(tin.tin, 0);
+	    u.uconduct.food++;
 	}
 	tin.tin->dknown = tin.tin->known = TRUE;
 use_me:
@@ -1660,9 +1662,6 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 	    return 1;
 	}
 
-	/* KMH, conduct */
-	u.uconduct.food++;
-
 	if(otmp == victual.piece) {
 	/* If they weren't able to choke, they don't suddenly become able to
 	 * choke just because they were interrupted.  On the other hand, if
@@ -1681,10 +1680,14 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 
 	/* nothing in progress - so try to find something. */
 	/* tins are a special case */
+	/* tins must also check conduct separately in case they're discarded */
 	if(otmp->otyp == TIN) {
 	    start_tin(otmp);
 	    return(1);
 	}
+
+	/* KMH, conduct */
+	u.uconduct.food++;
 
 	victual.piece = otmp = touchfood(otmp);
 	victual.usedtime = 0;
