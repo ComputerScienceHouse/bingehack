@@ -1015,7 +1015,11 @@ plnamesuffix()
 	    askname();
 	    plnamesuffix();
 	}
-	return;
+
+	/* commas in the plname confuse the record file, convert to spaces */
+	for (sptr = plname; *sptr; sptr++) {
+		if (*sptr == ',') *sptr = ' ';
+	}
 }
 
 
