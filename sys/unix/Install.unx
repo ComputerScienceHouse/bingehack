@@ -11,7 +11,6 @@
     about those things too).
 
 1.  Make sure all the NetHack files are in the appropriate directory
-
     structure.  You should have a main directory with subdirectories
     dat, doc, include, src, util, sys/share, sys/unix, win/tty, win/X11,
     and win/Qt.  You may have other subdirectories under sys and win,
@@ -20,10 +19,10 @@
     The .c files for the main program belong in src, those for utility
     programs in util, and UNIX-specific ones in sys/unix.  All the .h
     files belong in include, the documentation in doc, and assorted
-    data files in dat.  Some UNIX's random.c or its lex/yacc output,
-    as explained in note 11.  (A more detailed explanation of the
-    directory structure may be found in Files, which should be in the
-    top directory.)
+    data files in dat.  Some UNIX versions may also be interested in
+    sys/share's random.c or its lex/yacc output, as explained in note 11.
+    (A more detailed explanation of the directory structure may be found
+    in Files, which should be in the top directory.)
 
 2.  Your Makefiles may still be in sys/unix with tags on the end of them.
     If so, run setup.sh in that directory to distribute the Makefiles to
