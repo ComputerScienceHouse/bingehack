@@ -29,6 +29,9 @@ STATIC_DCL int FDECL(zhitm, (struct monst *,int,int,struct obj **));
 STATIC_DCL void FDECL(zhitu, (int,int,const char *,XCHAR_P,XCHAR_P));
 STATIC_DCL void FDECL(revive_egg, (struct obj *));
 STATIC_DCL struct monst *FDECL(montraits, (struct obj *, coord *));
+#ifdef STEED
+STATIC_DCL boolean FDECL(zap_steed, (struct obj *));
+#endif
 
 #ifdef OVLB
 STATIC_DCL int FDECL(zap_hit, (int,int));
@@ -1931,6 +1934,61 @@ boolean ordinary;
 	return(damage);
 }
 
+#ifdef STEED
+/* you've zapped a wand downwards while riding 
+ * Return TRUE if the steed was hit by the wand.
+ * Return FALSE if the steed was not hit by the wand.
+ */
+STATIC_OVL boolean
+zap_steed(obj)
+struct obj *obj;	/* wand or spell */
+{
+	int otyp = obj->otyp;
+	boolean disclose = FALSE, was_unkn = !objects[otyp].oc_name_known;
+	int steedhit = FALSE;
+	
+	switch (obj->otyp) {
+
+           /*
+            * Wands that are allowed to hit the steed
+            * Carefully test the results of any that are
+            * moved here from the bottom section.
+            */
+		case WAN_PROBING:
+		    probe_monster(u.usteed);
+		    makeknown(WAN_PROBING);
+		    steedhit = TRUE;
+		    break;
+		case WAN_TELEPORTATION:
+		case SPE_TELEPORT_AWAY:
+		    /* you go together */
+		    tele();
+		    if(Teleport_control || !couldsee(u.ux0, u.uy0) ||
+			(distu(u.ux0, u.uy0) >= 16))
+				makeknown(obj->otyp);
+		    steedhit = TRUE;
+		    break;
+
+		/* Default processing via bhitm() for these */
+		case SPE_CURE_SICKNESS:
+		case WAN_MAKE_INVISIBLE:
+		case WAN_CANCELLATION:
+		case SPE_CANCELLATION:
+		case WAN_STRIKING:
+		case WAN_SLOW_MONSTER:
+		case SPE_SLOW_MONSTER:
+		    (void) bhitm(u.usteed, obj);
+		    steedhit = TRUE;
+		    break;
+
+		default:
+		    steedhit = FALSE;
+		    break;
+	}
+	return steedhit;
+}
+#endif
+
 #endif /*OVL0*/
 #ifdef OVL3
 
@@ -2015,9 +2073,6 @@ struct obj *obj;	/* wand or spell */
 	    if (u.dz < 0) {
 		You("probe towards the %s.", ceiling(x,y));
 	    } else {
-#ifdef STEED
-		if (u.usteed) probe_monster(u.usteed), ++ptmp;
-#endif
 		ptmp += bhitpile(obj, bhito, x, y);
 		You("probe beneath the %s.", surface(x,y));
 		ptmp += display_binventory(x, y, TRUE);
@@ -2143,13 +2198,15 @@ register struct	obj	*obj;
 	boolean disclose = FALSE, was_unkn = !objects[otyp].oc_name_known;
 
 	exercise(A_WIS, TRUE);
+#ifdef STEED
+	if (u.usteed && (objects[otyp].oc_dir != NODIR) &&
+	    !u.dx && !u.dy && (u.dz > 0) && zap_steed(obj)) {
+		disclose = TRUE;
+	} else
+#endif
 	if (objects[otyp].oc_dir == IMMEDIATE) {
 	    obj_zapped = FALSE;
-#ifdef STEED
-	    if (u.usteed && !u.dx && !u.dy && u.dz >= 0) {
-		(void) bhitm(u.usteed, obj);
-	    } else
-#endif
+
 	    if (u.uswallow) {
 		(void) bhitm(u.ustuck, obj);
 		/* [how about `bhitpile(u.ustuck->minvent)' effect?] */
@@ -2182,7 +2239,6 @@ register struct	obj	*obj;
 		impossible("weffects: unexpected spell or wand");
 	    disclose = TRUE;
 	}
-
 	if (disclose && was_unkn) {
 	    makeknown(otyp);
 	    more_experienced(0,10);
