@@ -602,8 +602,10 @@ register int after;	/* this is extra fast monster movement */
 		    if (mstatus & MM_AGR_DIED) return 2;
 
 		    if ((mstatus & MM_HIT) && !(mstatus & MM_DEF_DIED) &&
-			rn2(4) && mtmp2->mlstmv != monstermoves &&
-			!onscary(mtmp->mx, mtmp->my, mtmp2)) {
+			    rn2(4) && mtmp2->mlstmv != monstermoves &&
+			    !onscary(mtmp->mx, mtmp->my, mtmp2) &&
+			    /* monnear check needed: long worms hit on tail */
+			    monnear(mtmp2, mtmp->mx, mtmp->my)) {
 			mstatus = mattackm(mtmp2, mtmp);  /* return attack */
 			if (mstatus & MM_DEF_DIED) return 2;
 		    }
