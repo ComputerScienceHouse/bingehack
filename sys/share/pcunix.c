@@ -112,7 +112,7 @@ int fd;
 }
 #endif
 
-#if defined(WIN32) || defined(MSDOS)
+#ifdef PC_LOCKING
 static int
 eraseoldlocks()
 {
@@ -137,6 +137,9 @@ getlock()
 {
 	register int i = 0, fd, c, ci, ct;
 	char tbuf[BUFSZ];
+# if defined(MSDOS) && defined(NO_TERMS)
+	int grmode;
+# endif
 	
 	/* we ignore QUIT and INT at this point */
 	if (!lock_file(HLOCK, 10)) {
@@ -158,12 +161,16 @@ getlock()
 	}
 
 	(void) close(fd);
-	unlock_file(HLOCK);
+
 	if(iflags.window_inited) { 
 	  pline("There is already a game in progress under your name.");
 	  pline(tbuf,"You may be able to use \"recover %s\" to get it back.\n",lock);
 	  c = yn("Do you want to destroy the old game?");
 	} else {
+# if defined(MSDOS) && defined(NO_TERMS)
+		grmode = iflags.grmode;
+		if (grmode) gr_finish();
+# endif
 		c = 'n';
 		ct = 0;
 		msmsg("\nThere is already a game in progress under your name.\n");
@@ -189,9 +196,9 @@ getlock()
 	}
 	if(c == 'y' || c == 'Y')
 		if(eraseoldlocks()) {
-#if defined(MSDOS) || defined(WIN32CON)
+# if defined(WIN32CON)
 			clear_screen();		/* display gets fouled up otherwise */
-#endif
+# endif
 			goto gotlock;
 		} else {
 			unlock_file(HLOCK);
@@ -221,8 +228,11 @@ gotlock:
 			error("cannot close lock");
 		}
 	}
-}	
+# if defined(MSDOS) && defined(NO_TERMS)
+	if (grmode) gr_init();
 # endif
+}	
+# endif /* PC_LOCKING */
 
 # ifndef WIN32
 void

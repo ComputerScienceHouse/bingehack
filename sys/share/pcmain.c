@@ -116,9 +116,7 @@ char *argv[];
 #endif
 		hname = "NetHack";      /* used for syntax messages */
 
-#ifndef WIN32_GRAPHICS
 	choose_windows(DEFAULT_WINDOW_SYS);
-#endif
 
 #if !defined(AMIGA) && !defined(GNUDOS)
 	/* Save current directory and make sure it gets restored when

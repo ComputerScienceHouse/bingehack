@@ -79,11 +79,16 @@ dosh()
 	extern char orgdir[];
 	char *comspec;
 	int spawnstat;
-
+#if defined(MSDOS) && defined(NO_TERMS)
+	int grmode;
+#endif
 	if (comspec = getcomspec()) {
 #  ifndef TOS	/* TOS has a variety of shells */
 		suspend_nhwindows("To return to NetHack, enter \"exit\" at the system prompt.\n");
 #  else
+#   if defined(MSDOS) && defined(NO_TERMS)
+		grmode = iflags.grmode;
+#   endif
 		suspend_nhwindows((char *)0);
 #  endif /* TOS */
 		chdirx(orgdir, 0);
@@ -113,6 +118,9 @@ dosh()
 #  endif
 		chdirx(hackdir, 0);
 		get_scr_size(); /* maybe the screen mode changed (TH) */
+#  if defined(MSDOS) && defined(NO_TERMS)
+		if (grmode) gr_init();
+#  endif
 		resume_nhwindows();
 	} else
 		pline("Can't find %s.",COMSPEC);
