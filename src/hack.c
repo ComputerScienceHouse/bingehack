@@ -1,9 +1,12 @@
-/*	SCCS Id: @(#)hack.c	3.3	1999/08/16	*/
+/*	SCCS Id: @(#)hack.c	3.3	2000/02/11	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 
+#ifdef OVL1
+static void NDECL(maybe_wail);
+#endif /*OVL1*/
 STATIC_DCL int NDECL(moverock);
 STATIC_DCL int FDECL(still_chewing,(XCHAR_P,XCHAR_P));
 #ifdef SINKS
@@ -1612,6 +1615,37 @@ const char *msg_override;
 #endif /* OVL2 */
 #ifdef OVL1
 
+static void
+maybe_wail()
+{
+    static short powers[] = { TELEPORT, SEE_INVIS, POISON_RES, COLD_RES,
+			      SHOCK_RES, FIRE_RES, SLEEP_RES, DISINT_RES,
+			      TELEPORT_CONTROL, STEALTH, FAST, INVIS };
+
+    if (moves <= wailmsg + 50) return;
+
+    wailmsg = moves;
+    if (Role_if(PM_WIZARD) || Race_if(PM_ELF) || Role_if(PM_VALKYRIE)) {
+	const char *who;
+	int i, powercnt;
+
+	who = (Role_if(PM_WIZARD) || Role_if(PM_VALKYRIE)) ?
+		urole.name.m : "Elf";
+	if (u.uhp == 1) {
+	    pline("%s is about to die.", who);
+	} else {
+	    for (i = 0, powercnt = 0; i < SIZE(powers); ++i)
+		if (u.uprops[powers[i]].intrinsic & INTRINSIC) ++powercnt;
+
+	    pline(powercnt >= 4 ? "%s, all your powers will be lost..."
+				: "%s, your life force is running out.", who);
+	}
+    } else {
+	You_hear(u.uhp == 1 ? "the wailing of the Banshee..."
+			    : "the howling of the CwnAnnwn...");
+    }
+}
+
 void
 losehp(n, knam, k_format)
 register int n;
@@ -1622,7 +1656,10 @@ boolean k_format;
 		u.mh -= n;
 		if (u.mhmax < u.mh) u.mhmax = u.mh;
 		flags.botl = 1;
-		if (u.mh < 1) rehumanize();
+		if (u.mh < 1)
+		    rehumanize();
+		else if (n > 0 && u.mh*10 < u.mhmax && Unchanging)
+		    maybe_wail();
 		return;
 	}
 
@@ -1635,38 +1672,8 @@ boolean k_format;
 		killer = knam;		/* the thing that killed you */
 		You("die...");
 		done(DIED);
-	} else if (u.uhp*10 < u.uhpmax && moves-wailmsg > 50 && n > 0) {
-		wailmsg = moves;
-		if (Role_if(PM_WIZARD) || Race_if(PM_ELF) || Role_if(PM_VALKYRIE)) {
-			if (u.uhp == 1)
-				pline("%s is about to die.",
-			    		(Role_if(PM_WIZARD) || Role_if(PM_VALKYRIE)) ?
-			    		urole.name.m : "Elf");
-			else if (4 <= (!!(HTeleportation & INTRINSIC)) +
-				    (!!(HSee_invisible & INTRINSIC)) +
-				    (!!(HPoison_resistance & INTRINSIC)) +
-				    (!!(HCold_resistance & INTRINSIC)) +
-				    (!!(HShock_resistance & INTRINSIC)) +
-				    (!!(HFire_resistance & INTRINSIC)) +
-				    (!!(HSleep_resistance & INTRINSIC)) +
-				    (!!(HDisint_resistance & INTRINSIC)) +
-				    (!!(HTeleport_control & INTRINSIC)) +
-				    (!!(HStealth & INTRINSIC)) +
-				    (!!(HFast & INTRINSIC)) +
-				    (!!(HInvis & INTRINSIC)))
-				pline("%s, all your powers will be lost...",
-			    		(Role_if(PM_WIZARD) || Role_if(PM_VALKYRIE)) ?
-			    		urole.name.m : "Elf");
-			else
-				pline("%s, your life force is running out.",
-			    		(Role_if(PM_WIZARD) || Role_if(PM_VALKYRIE)) ?
-			    		urole.name.m : "Elf");
-		} else {
-			if(u.uhp == 1)
-				You_hear("the wailing of the Banshee...");
-			else
-				You_hear("the howling of the CwnAnnwn...");
-		}
+	} else if (n > 0 && u.uhp*10 < u.uhpmax) {
+		maybe_wail();
 	}
 }
 
