@@ -743,7 +743,7 @@ void ghack_status_window_update_stats()
 	    gtk_label_set( GTK_LABEL( hungerLabel), "      ");
 	    gnome_pixmap_load_xpm_d( GNOME_PIXMAP(hungerPix), nothing_xpm);
 	} else 
-	if (u.uhs == SATIATED) {
+	  if (u.uhs == 0 /* SATIATED */) {
 	    gtk_label_set( GTK_LABEL( hungerLabel), hung);
 	    gnome_pixmap_load_xpm_d( GNOME_PIXMAP(hungerPix), satiated_xpm);
 	} else {

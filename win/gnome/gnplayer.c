@@ -23,20 +23,21 @@
 #include "gnmain.h"
 #include <gnome.h>
 #include <ctype.h>
+#include "hack.h"
 
 static gint role_number;                                                      
-static GtkWidget* clist;                                                      
-                                                                              
+static GtkWidget* clist;
+
 static void                                                                   
 player_sel_key_hit (GtkWidget *widget, GdkEventKey *event, gpointer data)     
 {                                                                             
       const char** roles = data;                                              
       int i;                                                                  
       for (i = 0; roles[i] != 0; ++i) {                                       
-              if (roles[i][0] == toupper(event->keyval)) {                    
-                      role_number = i;                                        
-                      gtk_clist_select_row( GTK_CLIST (clist), i, 0);         
-              }                                                               
+	      if (roles[i][0] == toupper(event->keyval)) {                    
+		      role_number = i;                                        
+		      gtk_clist_select_row( GTK_CLIST (clist), i, 0);         
+	      }                                                               
       }                                                                       
 }                                                                             
 
@@ -61,7 +62,7 @@ ghack_player_sel_dialog( const char** roles)
 			    NULL);
     gnome_dialog_close_hides (GNOME_DIALOG (dialog), FALSE);
     gtk_signal_connect (GTK_OBJECT (dialog), "key_press_event",               
-                      GTK_SIGNAL_FUNC (player_sel_key_hit), roles );          
+		      GTK_SIGNAL_FUNC (player_sel_key_hit), roles );          
 
     frame1 = gtk_frame_new (_("Choose one of the following roles:"));
     gtk_object_set_data (GTK_OBJECT (dialog), "frame1", frame1);

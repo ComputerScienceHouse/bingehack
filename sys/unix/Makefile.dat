@@ -40,6 +40,9 @@ pet_mark.xbm: ../win/X11/pet_mark.xbm
 rip.xpm: ../win/X11/rip.xpm
 	cp ../win/X11/rip.xpm rip.xpm
 
+mapbg.xpm: ../win/gnome/mapbg.xpm
+	cp ../win/gnome/mapbg.xpm mapbg.xpm
+
 ../util/tile2img.ttp:
 	(cd ../util ; make tile2img.ttp)
 

@@ -139,7 +139,7 @@ SYSOBJ = ioctl.o unixmain.o unixtty.o unixunix.o
 # directories.  The ones given below is the usual spot for linux systems.
 # The paths are for glibconfig.h and gnomesupport.h respectively.
 #
-GNOMEINC=-I/usr/lib/glib/include -I/usr/lib/gnome-libs/include -I../win/gnome -DGNOME_GRAPHICS=1
+GNOMEINC=-I/usr/lib/glib/include -I/usr/lib/gnome-libs/include -I../win/gnome
 
 # flags for debugging:
 # CFLAGS = -g -I../include

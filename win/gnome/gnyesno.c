@@ -50,7 +50,9 @@ int ghack_yes_no_dialog( const char *question,
 	    else if (choices[i]=='n') {
 		sprintf( button_name, GNOME_STOCK_BUTTON_NO);
 	    }
-	    else {
+	    else if (choices[i] == 'q') {
+	        sprintf( button_name, "Quit");
+	    } else {
 		sprintf( button_name, "%c", choices[i]);
 	    }
 	    if (def==choices[i])

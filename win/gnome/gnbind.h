@@ -55,11 +55,6 @@ typedef struct gnome_nhwindow_data {
 } GNHWinData;
 
 
-/* Declare some external variables */ 
-extern const char *roles[];    /* from u_init.c */
-
-
-
 /* Some prototypes */
 void gnome_init_nhwindows(int* argc, char** argv);
 void gnome_player_selection();

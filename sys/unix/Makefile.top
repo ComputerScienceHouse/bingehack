@@ -47,6 +47,8 @@ VARDATND =
 # VARDATND = nh16.img title.img GEM_RSC.RSC
 # for BeOS
 # VARDATND = beostiles
+# for Gnome
+# VARDATND = x11tiles pet_mark.xbm rip.xpm mapbg.xpm
 
 VARDATD = data oracles options quest.dat rumors
 VARDAT = $(VARDATD) $(VARDATND)
@@ -132,6 +134,9 @@ pet_mark.xbm:
 
 rip.xpm:
 	( cd dat ; $(MAKE) rip.xpm )
+
+mapbg.xpm:
+	(cd dat ; $(MAKE) mapbg.xpm )
 
 nh16.img:
 	( cd util ; $(MAKE) tile2img.ttp )

@@ -126,39 +126,47 @@ void gnome_init_nhwindows(int* argc, char** argv)
 */
 void gnome_player_selection()
 {
-    extern const char *roles[];    /* from u_init.c */
+  int num_roles, availcount, i, nRole;
+  const char** choices;
 
-    /* In time honored tradition, use a char named pc to
-       play with the nethack globals pl_character and pl_classes
-    */
-    char pc=highc(pl_character[0]);
-    if (pc != 0)
-      {
-    	if (!index(pl_classes, pc))
-	  {
-	    pl_character[0] = pc = 0;
-	  }
+  /* select a role */
+  for (num_roles = 0; roles[num_roles].name.m; ++num_roles) continue;
+  choices = (const char **)alloc(sizeof(char *) * (num_roles+1));
+  for (;;) {
+    availcount = 0;
+    for (i = 0; i < num_roles; i++) {
+      choices[i] = 0;
+      if (ok_role(i, flags.initrace,
+		  flags.initgend, flags.initalign)) {
+	choices[i] = roles[i].name.m;
+	if (flags.initgend >= 0 && flags.female && roles[i].name.f)
+	  choices[i] = roles[i].name.f;
+	++availcount;
       }
-    if (!pc)
-      {
-        int nRole=ghack_player_sel_dialog( roles);
-	
-        /* Quit */
-	if ( nRole == -1 )
-	  {
-	    clearlocks();
-            gnome_exit_nhwindows(0);
-	  }
-        /* Random role */
-	if ( nRole == -2)
-	  {
-	    nRole = rn2(strlen(pl_classes));
-	    pline("This game you will be %s", an(roles[nRole]));
-	  }
-	pc=pl_classes[nRole];
-      }
-
-    pl_character[0]=pc;
+    }
+    if (availcount > 0) break;
+    else if (flags.initalign >= 0) flags.initalign = -1;    /* reset */
+    else if (flags.initgend >= 0) flags.initgend = -1;
+    else if (flags.initrace >= 0) flags.initrace = -1;
+    else panic("no available ROLE+race+gender+alignment combinations");
+  }
+  choices[num_roles] = (const char *) 0;
+  nRole=ghack_player_sel_dialog(choices);
+  
+  /* Quit */
+  if ( nRole == -1 )
+    {
+      clearlocks();
+      gnome_exit_nhwindows(0);
+    }
+  /* Random role */
+  if ( nRole == -2)
+    {
+      nRole = rn2(num_roles);
+      pline("This game you will be %s", an(choices[nRole]));
+    }
+  
+  flags.initrole = nRole;
 }
 
 

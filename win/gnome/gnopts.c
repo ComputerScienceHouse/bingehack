@@ -23,6 +23,7 @@
 #include "gnmain.h"
 #include <gnome.h>
 #include <ctype.h>
+#include "hack.h"
 
 static gint tileset;                                                      
 static GtkWidget* clist;                                                      

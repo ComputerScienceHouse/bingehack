@@ -28,7 +28,8 @@
 #include <gdk/gdk.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include "../../include/extern.h"
+#include "hack.h"
+#include "date.h"
 
 static GtkWidget* mainWindow=NULL;
 static GtkWidget *about=NULL;
@@ -148,12 +149,12 @@ ghack_about_cb(GtkWidget *widget, gpointer data)
     }
 
     getversionstring(buf);
-    strcat( buf1, VERSION);
+    strcat( buf1, VERSION_STRING);
     strcat( buf, 
-      _("\nSend comments and bug reports to: other-gnomehack@lists.debian.org\n"
-      "This game is free software per the GNU General Public License."));
-    about = gnome_about_new(_("GnomeHack -- Nethack for Gnome"), 
-	    buf1, "(C) 1998,1999 Erik Andersen", (const char **)authors, buf,
+      _("\nSend comments and bug reports to: nethack-bugs@nethack.org\n"
+      "This game is free software. See License for details."));
+    about = gnome_about_new(_("Nethack"), 
+	    buf1, "(C) 1985-2000 Mike Stephenson", (const char **)authors, buf,
 	    NULL);
 
     gtk_signal_connect (GTK_OBJECT (about), "destroy",
@@ -355,6 +356,14 @@ GnomeUIInfo action_menu[] = {
 	       ghack_accelerator_selected, 
 	       GINT_TO_POINTER(M('j')), NULL, GNOME_APP_PIXMAP_NONE, NULL, 'j',GDK_MOD1_MASK
 	   },
+#ifdef STEED
+	   { 
+	       GNOME_APP_UI_ITEM, N_("Ride"), 
+	       N_("Ride (or stop riding) a monster"),
+	       doride, 
+	       GINT_TO_POINTER(M('r')), NULL, GNOME_APP_PIXMAP_NONE, NULL, 'R',GDK_MOD1_MASK
+	   },
+#endif
 	   { 
 	       GNOME_APP_UI_ITEM, N_("Wipe face"), 
 	       N_("wipe off your face"),
@@ -630,7 +639,7 @@ parse_args (int argc, char *argv[])
         exit(0);
         break;
       case 'v':
-        g_print (_("GnomeHack %s.\n"), VERSION);
+        g_print (_("NetHack %s.\n"), VERSION_STRING);
         exit(0);
         break;
       case ':':
@@ -663,6 +672,7 @@ parse_args (int argc, char *argv[])
 void ghack_init_main_window( int argc, char** argv)
 {
     struct timeval tv;
+    uid_t uid, euid;
 
     /* It seems that the authors of gnome_score_init() drop group
      * priveledges.  We need group priveledges, so until we change the
@@ -675,7 +685,11 @@ void ghack_init_main_window( int argc, char** argv)
     gettimeofday(&tv, NULL);
     srand(tv.tv_usec);
 
-    gnome_init ("gnomehack", VERSION, argc, argv);
+    uid = getuid();
+    euid = geteuid();
+    if (uid != euid)
+      setuid(uid);
+    gnome_init ("nethack", VERSION_STRING, argc, argv);
     parse_args (argc, argv);
 
     /* Initialize the i18n stuff (not that gnomehack supperts it yet...) */
@@ -685,8 +699,8 @@ void ghack_init_main_window( int argc, char** argv)
     gdk_imlib_init();
 
     /* Main window */
-    mainWindow = gnome_app_new("gnomehack", 
-	    N_("GnomeHack -- Nethack for Gnome"));
+    mainWindow = gnome_app_new("nethack", 
+	    N_("Nethack for Gnome"));
     gtk_widget_realize(mainWindow);
     if (restarted) {
 	gtk_widget_set_uposition (mainWindow, os_x, os_y);
@@ -713,6 +727,8 @@ void ghack_init_main_window( int argc, char** argv)
     /* DONT show the main window yet, due to a Gtk bug that causes it
      * to not refresh the window when adding widgets after the window 
      * has already been shown */
+    if (uid != euid)
+      setuid(euid);
 }
 
 void ghack_main_window_add_map_window(GtkWidget* win) 
