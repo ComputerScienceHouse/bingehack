@@ -578,6 +578,8 @@ struct obj *obj;
 	    setuwep(obj);
 	}
 	if (uwep != obj) return(FALSE); /* rewielded old object after dying */
+	if (!can_twoweapon())
+		untwoweapon();
 	if (obj->oclass != WEAPON_CLASS)
 		unweapon = TRUE;
 	return(TRUE);

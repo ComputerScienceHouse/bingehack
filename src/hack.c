@@ -432,7 +432,7 @@ dosinkfall()
 		    }
 	}
 
-	ELevitation &= W_ARTI;
+	ELevitation &= ~W_ARTI;
 	HLevitation &= ~(I_SPECIAL|TIMEOUT);
 	HLevitation++;
 	if(uleft && uleft->otyp == RIN_LEVITATION) {

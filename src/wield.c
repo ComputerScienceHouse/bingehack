@@ -384,23 +384,24 @@ dowieldquiver()
 int
 can_twoweapon()
 {
+#define NOT_WEAPON(obj) (!is_weptool(obj) && obj->oclass != WEAPON_CLASS)
 	if (Upolyd)
 		You("can only use two weapons in your normal form.");
 	else if (!uwep || !uswapwep)
-		Your("%s%s%s empty", uwep ? "left " : uswapwep ? "right " : "",
+		Your("%s%s%s empty.", uwep ? "left " : uswapwep ? "right " : "",
 			body_part(HAND), (!uwep && !uswapwep) ? "s are" : " is");
-	else if (uwep->oclass != WEAPON_CLASS || bimanual(uwep))
+	else if (NOT_WEAPON(uwep) || bimanual(uwep))
 		pline("%s isn't %s%s%s.", Yname2(uwep),
-			(uwep->oclass != WEAPON_CLASS) ? "a ": "",
+			NOT_WEAPON(uwep) ? "a ": "",
 			bimanual(uwep) ? "one-handed": "",
-			(uwep->oclass != WEAPON_CLASS) ? "weapon": "");
-	else if (uswapwep->oclass != WEAPON_CLASS || bimanual(uswapwep))
+			NOT_WEAPON(uwep) ? "weapon": "");
+	else if (NOT_WEAPON(uswapwep) || bimanual(uswapwep))
 		pline("%s isn't %s%s%s.", Yname2(uswapwep),
-			(uswapwep->oclass != WEAPON_CLASS) ? "a ": "",
+			NOT_WEAPON(uswapwep) ? "a ": "",
 			bimanual(uswapwep) ? "one-handed": "",
-			(uswapwep->oclass != WEAPON_CLASS) ? "weapon": "");
+			NOT_WEAPON(uswapwep) ? "weapon": "");
 	else if (uarms)
-		You("can't use two weapons while carrying a shield.");
+		You("can't use two weapons while wearing a shield.");
 	else if (uswapwep->oartifact)
 		pline("%s resists being held second to another weapon!",
 			Yname2(uswapwep));

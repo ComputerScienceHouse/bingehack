@@ -53,6 +53,7 @@ getlin_hook_proc hook;
 	ttyDisplay->toplin = 3; /* special prompt state */
 	ttyDisplay->inread++;
 	pline("%s ", query);
+	*obufp = 0;
 	for(;;) {
 		(void) fflush(stdout);
 		Sprintf(toplines, "%s ", query);
