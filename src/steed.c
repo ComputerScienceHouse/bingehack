@@ -304,13 +304,12 @@ exercise_steed()
 void
 kick_steed()
 {
-	int tmptame;
 	if (!u.usteed)
 	    return;
 
 	/* Make the steed less tame and check if it resists */
-	tmptame = u.usteed->mtame ? u.usteed->mtame - 1 : 0;
-	if (!tmptame || (u.ulevel+tmptame < rnd(MAXULEV/2+5))) {
+	if (u.usteed->mtame) u.usteed->mtame--;
+	if (!u.usteed->mtame || (u.ulevel+u.usteed->mtame < rnd(MAXULEV/2+5))) {
 	    dismount_steed(DISMOUNT_THROWN);
 	    return;
 	}
@@ -324,7 +323,7 @@ kick_steed()
 /* Stop riding the current steed */
 void
 dismount_steed(reason)
-	int reason;		/* Player was thrown off */
+	int reason;		/* Player was thrown off etc. */
 {
 	struct monst *mtmp;
 	struct obj *otmp;
@@ -342,7 +341,6 @@ dismount_steed(reason)
 	switch (reason) {
 	    case DISMOUNT_THROWN:
 		verb = "are thrown";
-		if (mtmp->mtame) mtmp->mtame--;
 	    case DISMOUNT_FELL:
 		You("%s off of %s!", verb, mon_nam(mtmp));
 		losehp(rn1(10,10), "riding accident", KILLED_BY_AN);
