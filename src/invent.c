@@ -1413,7 +1413,18 @@ boolean want_reply;
 	} else
 	    win = WIN_INVEN;
 
-	if (!invent) {
+	/*
+	Exit early if no inventory -- but keep going if we are doing
+	a permanent inventory update.  We need to keep going so the
+	permanent inventory window updates itself to remove the last
+	item(s) dropped.  One down side:  the addition of the exception
+	for permanent inventory window updates _can_ pop the window
+	up when its not displayed -- even if its empty -- because we
+	don't know at this level if its up or not.  This may not be
+	an issue if emty checks are done before hand and the call
+	to here is short circuited away.
+	*/
+	if (!invent && !(flags.perm_invent && !lets && !want_reply)) {
 	    pline("Not carrying anything%s.", u.ugold ? " except gold" : "");
 	    return 0;
 	}
