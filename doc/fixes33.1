@@ -81,6 +81,7 @@ leave two-weapon combat mode if either weapon is stolen or otherwise unwielded
 use worse of (two weapon skill, current weapon skill) when figuring skill
 	bonuses and penaltys while fighting with two weapons
 never give back-stabbing or weapon-shattering bonus when using two weapons
+engulfing monster will not engulf your pony while you are riding
 
 
 Platform- and/or Interface-Specific Fixes
@@ -95,6 +96,7 @@ MSDOS: fix clearlocks() to look for the right file names,
 	and not LEVELS.* (MFLOPPY only)
 MSDOS: remove djgpp stuff from the Microsoft C Makefile
 MSDOS: change NetHack.cnf to defaults.nh in NHAccess.nh comments
+MSDOS: add missing files to gcc 'make spotless'
 NT: WIN32 specific code in tty_nh_poskey() was missing the
 	necessary code to clear window flags so after hitting ESC 
 	messages that should have displayed did not

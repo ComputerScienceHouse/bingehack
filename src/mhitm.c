@@ -295,6 +295,12 @@ mattackm(magr, mdef)
 		break;
 
 	    case AT_ENGL:
+#ifdef STEED
+		if (u.usteed && (mdef == u.usteed)) {
+		    strike = 0;
+		    break;
+		} 
+#endif
 		/* Engulfing attacks are directed at the hero if
 		 * possible. -dlc
 		 */
