@@ -1108,6 +1108,9 @@ boolean at_stairs, falling, portal;
 	 *  Move all plines beyond the screen reset.
 	 */
 
+	/* give room entrance message, if any */
+	check_special_room(FALSE);
+
 	/* Check whether we just entered Gehennom. */
 	if (!In_hell(&u.uz0) && Inhell) {
 	    if (Is_valley(&u.uz)) {
@@ -1183,8 +1186,7 @@ boolean at_stairs, falling, portal;
 	save_currentstate();
 #endif
 
-	/* give room entrance message, if any, and do pickup()*/
-	spoteffects();
+	pickup(1);
 }
 
 STATIC_OVL void

@@ -1049,7 +1049,7 @@ domove()
 	if (Punished)				/* put back ball and chain */
 	    move_bc(0,bc_control,ballx,bally,chainx,chainy);
 
-	spoteffects();
+	spoteffects(TRUE);
 
 	/* delay next move because of ball dragging */
 	/* must come after we finished picking up, in spoteffects() */
@@ -1078,7 +1078,8 @@ invocation_message()
 #ifdef OVL2
 
 void
-spoteffects()
+spoteffects(pick)
+boolean pick;
 {
 	register struct trap *trap;
 	register struct monst *mtmp;
@@ -1125,7 +1126,7 @@ stillinwater:;
 	if(IS_SINK(levl[u.ux][u.uy].typ) && Levitation)
 		dosinkfall();
 #endif
-	if (!in_steed_dismounting)
+	if (pick && !in_steed_dismounting)
 		(void) pickup(1);
 	if ((trap = t_at(u.ux,u.uy)) != 0)
 		dotrap(trap);	/* fall into pit, arrow trap, etc. */

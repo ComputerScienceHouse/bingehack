@@ -540,6 +540,8 @@ int ttyp;
 		    newlevel.dnum = u.uz.dnum;
 		    newlevel.dlevel = u.uz.dlevel + 1;
 		    goto_level(&newlevel, FALSE, TRUE, FALSE);
+		    /* messages for arriving in special rooms */
+		    spoteffects(FALSE);
 		}
 	    } else {
 		if (shopdoor && madeby_u) pay_for_damage("ruin");

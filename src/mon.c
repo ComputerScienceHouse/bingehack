@@ -1605,7 +1605,7 @@ xkilled(mtmp, dest)
 	if(!accessible(x, y) && !is_pool(x, y)) {
 	    /* might be mimic in wall or corpse in lava */
 	    redisp = TRUE;
-	    if(wasinside) spoteffects();
+	    if(wasinside) spoteffects(TRUE);
 	} else if(x != u.ux || y != u.uy) {
 		/* might be here after swallowed */
 		if (!rn2(6) && !(mvitals[mndx].mvflags & G_NOCORPSE)

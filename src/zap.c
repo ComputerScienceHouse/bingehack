@@ -3289,7 +3289,7 @@ xchar x, y;
 	    newsym(x,y);
 	}
 	if (x == u.ux && y == u.uy)
-		spoteffects();	/* possibly drown, notice objects */
+		spoteffects(TRUE);	/* possibly drown, notice objects */
 }
 
 /* Burn floor scrolls, evaporate pools, etc...  in a single square.  Used

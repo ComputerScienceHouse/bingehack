@@ -645,7 +645,7 @@ E boolean FDECL(bad_rock, (struct permonst *,XCHAR_P,XCHAR_P));
 E boolean FDECL(invocation_pos, (XCHAR_P,XCHAR_P));
 E void NDECL(domove);
 E void NDECL(invocation_message);
-E void NDECL(spoteffects);
+E void FDECL(spoteffects, (BOOLEAN_P));
 E char *FDECL(in_rooms, (XCHAR_P,XCHAR_P,int));
 E void FDECL(check_special_room, (BOOLEAN_P));
 E int NDECL(dopickup);
@@ -1563,6 +1563,9 @@ E NhRegion *FDECL(visible_region_at, (XCHAR_P,XCHAR_P));
 E void FDECL(show_region, (NhRegion*, XCHAR_P, XCHAR_P));
 E void FDECL(save_regions, (int,int));
 E void FDECL(rest_regions, (int));
+E void FDECL(remove_region, (NhRegion*));
+E NhRegion* FDECL(find_obj_region, (unsigned));
+E NhRegion* FDECL(find_mon_region, (unsigned));
 E NhRegion* FDECL(create_gas_cloud, (XCHAR_P, XCHAR_P, int, int));
 
 /* ### restore.c ### */

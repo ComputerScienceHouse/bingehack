@@ -1731,7 +1731,7 @@ float_up()
 	else if(Is_waterlevel(&u.uz))
 		pline("It feels as though you've lost some weight.");
 	else if(u.uinwater)
-		spoteffects();
+		spoteffects(TRUE);
 	else if(u.uswallow)
 		You(is_animal(u.ustuck->data) ?
 			"float away from the %s."  :
@@ -2380,7 +2380,7 @@ struct trap *ttmp;
 	    vision_recalc(1);
 	    check_leash(u.ux0, u.uy0);
 	    if (Punished) move_bc(0, bc, bx, by, cx, cy);
-	    spoteffects();	/* dotrap() */
+	    spoteffects(TRUE);	/* dotrap() */
 	    exercise(A_WIS, FALSE);
 	}
 }

@@ -91,7 +91,7 @@ const char *fmt, *arg;
 
 	if(!Levitation && !u.ustuck &&
 	   (is_pool(u.ux,u.uy) || is_lava(u.ux,u.uy)))
-		spoteffects();
+		spoteffects(TRUE);
 
 	see_monsters();
 }
@@ -496,7 +496,7 @@ int	mntmp;
 	if((!Levitation && !u.ustuck && !Flying &&
 	    (is_pool(u.ux,u.uy) || is_lava(u.ux,u.uy))) ||
 	   (Underwater && !Swimming))
-	    spoteffects();
+	    spoteffects(TRUE);
 	if (Passes_walls && u.utrap && u.utraptype == TT_INFLOOR) {
 	    u.utrap = 0;
 	    pline_The("rock seems to no longer trap you.");

@@ -248,7 +248,7 @@ register int nux,nuy;
 	see_monsters();
 	vision_full_recalc = 1;
 	nomul(0);
-	spoteffects();
+	spoteffects(TRUE);
 	invocation_message();
 }
 

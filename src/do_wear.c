@@ -91,7 +91,7 @@ Boots_on()
 	case KICKING_BOOTS:
 		break;
 	case WATER_WALKING_BOOTS:
-		if (u.uinwater) spoteffects();
+		if (u.uinwater) spoteffects(TRUE);
 		break;
 	case SPEED_BOOTS:
 		/* Speed boots are still better than intrinsic speed, */
@@ -147,7 +147,7 @@ Boots_off()
 			    && !Flying && !is_clinger(youmonst.data)) {
 			makeknown(otyp);
 			/* make boots known in case you survive the drowning */
-			spoteffects();
+			spoteffects(TRUE);
 		}
 		break;
 	case ELVEN_BOOTS:

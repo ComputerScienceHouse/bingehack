@@ -439,7 +439,7 @@ boolean *cause_delay;
 		*ballx = uchain->ox;
 		*bally = uchain->oy;
 		move_bc(0, *bc_control, *ballx, *bally, *chainx, *chainy);
-		spoteffects();
+		spoteffects(TRUE);
 		return FALSE;
 	    }
 	}
@@ -541,7 +541,7 @@ xchar x, y;
 	}
 	newsym(u.ux0,u.uy0);		/* clean up old position */
 	if (u.ux0 != u.ux || u.uy0 != u.uy) {
-	    spoteffects();
+	    spoteffects(TRUE);
 	    if (In_sokoban(&u.uz))
 		change_luck(-1);	/* Sokoban guilt */
 	}
