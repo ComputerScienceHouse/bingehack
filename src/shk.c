@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)shk.c	3.3	99/03/22	*/
+/*	SCCS Id: @(#)shk.c	3.3	2000/03/28	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -75,9 +75,10 @@ next_shkp(shkp, withbill)
 register struct monst *shkp;
 register boolean withbill;
 {
-	for (; shkp; shkp = shkp->nmon)
-	    if (shkp->isshk)
-		if (ESHK(shkp)->billct || !withbill) break;
+	for (; shkp; shkp = shkp->nmon) {
+	    if (DEADMONSTER(shkp)) continue;
+	    if (shkp->isshk && (ESHK(shkp)->billct || !withbill)) break;
+	}
 
 	if (shkp) {
 	    if (NOTANGRY(shkp)) {

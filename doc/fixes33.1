@@ -173,7 +173,9 @@ avoid possible crash when casting fireball spell while engulfed or near the
 	edge of the map
 prevent observation of dust clouds in rogue level doorways when blind
 cans of grease will no longer rust
-added DEADMONSTER(mon) checks to many for-loops involving fmon chain
+skip already dead monsters when scanning the full monster list; avoids
+	monsndx panic and other potential trouble
+skip already dead shopkeepers when checking for tended shops
 level teleport high in the air while lifesaved should result in an escape
 the "stoned" flag wasn't reset when a monster was lifesaved from turning to
 	stone, so the next monster you killed would always turn to stone
