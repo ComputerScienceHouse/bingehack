@@ -268,7 +268,7 @@ moveloop()
 		    /* vision while buried done here */
 		    else if (u.uburied) under_ground(0);
 
-		    /* when immoble, count is in turns */
+		    /* when immobile, count is in turns */
 		    if(multi < 0) {
 			if (++multi == 0)	/* finished yet? */
 			    unmul((char *)0);

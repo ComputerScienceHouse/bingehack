@@ -2020,7 +2020,7 @@ boolean by_you;
 		    		distant_name(obj,doname));
 		    obj->quan = save_quan;
 		} else if (flags.soundok)
-		    You("hear %s.", (obj->otyp == POT_ACID) ? "drinking" : "chewing");
+		    You_hear("%s.", (obj->otyp == POT_ACID) ? "drinking" : "chewing");
 		m_useup(mon, obj);
 		if (((obj->otyp == POT_ACID) || acidic(&mons[obj->corpsenm])) &&
 				!resists_acid(mon)) {
