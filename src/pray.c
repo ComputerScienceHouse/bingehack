@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)pray.c	3.3	1999/08/16	*/
+/*	SCCS Id: @(#)pray.c	3.3	1999/11/26	*/
 /* Copyright (c) Benson I. Margulies, Mike Stephenson, Steve Linhart, 1989. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1554,17 +1554,20 @@ u_gname()  /* returns the name of the player's deity */
 
 const char *
 align_gname(alignment)
-	register aligntyp alignment;
+aligntyp alignment;
 {
-	switch (alignment) {
-	case A_NONE:	return (Moloch);
-	case A_LAWFUL:	return (urole.lgod);
-	case A_NEUTRAL:	return (urole.ngod);
-	case A_CHAOTIC:	return (urole.cgod);
-	default:
-	    impossible("unknown alignment.");
-	    return("somone");
-	}
+    const char *gnam;
+
+    switch (alignment) {
+     case A_NONE:	gnam = Moloch; break;
+     case A_LAWFUL:	gnam = urole.lgod; break;
+     case A_NEUTRAL:	gnam = urole.ngod; break;
+     case A_CHAOTIC:	gnam = urole.cgod; break;
+     default:		impossible("unknown alignment.");
+			gnam = "someone"; break;
+    }
+    if (*gnam == '_') ++gnam;
+    return gnam;
 }
 
 /* hallucination handling for priest/minion names: select a random god
@@ -1573,17 +1576,37 @@ const char *
 halu_gname(alignment)
 aligntyp alignment;
 {
-	int which;
+    const char *gnam;
+    int which;
 
-	if (!Hallucination) return align_gname(alignment);
+    if (!Hallucination) return align_gname(alignment);
 
-	which = randrole();
-	switch (rn2(3) - 1) {
-	case A_LAWFUL:	return (roles[which].lgod);
-	case A_NEUTRAL:	return (roles[which].ngod);
-	case A_CHAOTIC:	return (roles[which].cgod);
-	}
-	return (Moloch);
+    which = randrole();
+    switch (rn2(3)) {
+     case 0:	gnam = roles[which].lgod; break;
+     case 1:	gnam = roles[which].ngod; break;
+     case 2:	gnam = roles[which].cgod; break;
+     default:	gnam = 0; break;		/* lint suppression */
+    }
+    if (*gnam == '_') ++gnam;
+    return gnam;
+}
+
+/* deity's title */
+const char *
+align_gtitle(alignment)
+aligntyp alignment;
+{
+    const char *gnam, *result = "god";
+
+    switch (alignment) {
+     case A_LAWFUL:	gnam = urole.lgod; break;
+     case A_NEUTRAL:	gnam = urole.ngod; break;
+     case A_CHAOTIC:	gnam = urole.cgod; break;
+     default:		gnam = 0; break;
+    }
+    if (gnam && *gnam == '_') result = "goddess";
+    return result;
 }
 
 void

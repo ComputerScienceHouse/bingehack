@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)role.c	3.3	1999/07/03	*/
+/*	SCCS Id: @(#)role.c	3.3	1999/11/26	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985-1999. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -85,7 +85,7 @@ const struct Role roles[] = {
 	{"Nomad",       0},
 	{"Rover",       0},
 	{"Pioneer",     0} },
-	"Anu", "Ishtar", "Anshar", /* Babylonian */
+	"Anu", "_Ishtar", "Anshar", /* Babylonian */
 	"Cav", "the Caves of the Ancestors", "the Dragon's Lair",
 	PM_CAVEMAN, PM_CAVEWOMAN, PM_LITTLE_DOG,
 	PM_SHAMAN_KARNOV, PM_NEANDERTHAL, PM_CHROMATIC_DRAGON,
@@ -111,7 +111,7 @@ const struct Role roles[] = {
 	{"Magister",       0},
 	{"Physician",      0},
 	{"Chirurgeon",     0} },
-	"Athena", "Hermes", "Poseidon", /* Greek */
+	"_Athena", "Hermes", "Poseidon", /* Greek */
 	"Hea", "the Temple of Epidaurus", "the Temple of Coeus",
 	PM_HEALER, NON_PM, NON_PM,
 	PM_HIPPOCRATES, PM_ATTENDANT, PM_CYCLOPS,
@@ -136,7 +136,7 @@ const struct Role roles[] = {
 	{"Chevalier",   0},
 	{"Seignieur",   0},
 	{"Paladin",     0} },
-	"Lugh", "Brigit", "Manannan Mac Lir", /* Celtic */
+	"Lugh", "_Brigit", "Manannan Mac Lir", /* Celtic */
 	"Kni", "Camelot Castle", "the Isle of Glass",
 	PM_KNIGHT, NON_PM, PM_PONY,
 	PM_KING_ARTHUR, PM_PAGE, PM_IXOTH,
@@ -155,7 +155,7 @@ const struct Role roles[] = {
 	{"Candidate",                 0},
 	{"Novice",                    0},
 	{"Initiate",                  0},
-	{"Student of the Stone path", 0}, 
+	{"Student of the Stone path", 0},
 	{"Student of the Waters",     0},
 	{"Student of Metals",         0},
 	{"Student of the Winds",      0},
@@ -256,7 +256,7 @@ const struct Role roles[] = {
 	{"Archer",        0},
 	{"Sharpshooter",  0},
 	{"Marksman",      "Markswoman"} },
-	"Mercury", "Venus", "Mars", /* Roman/planets */
+	"Mercury", "_Venus", "Mars", /* Roman/planets */
 	"Ran", "Orion's camp", "the cave of the wumpus",
 	PM_RANGER, NON_PM, PM_LITTLE_DOG /* Orion & canis major */,
 	PM_ORION, PM_HUNTER, PM_SCORPIUS,
@@ -282,7 +282,7 @@ const struct Role roles[] = {
 	{"Daimyo",      0},  /* a samurai lord */
 	{"Kuge",        0},  /* Noble of the Court */
 	{"Shogun",      0} },/* supreme commander, warlord */
-	"Amaterasu Omikami", "Raijin", "Susanowo", /* Japanese */
+	"_Amaterasu Omikami", "Raijin", "Susanowo", /* Japanese */
 	"Sam", "the Castle of the Taro Clan", "the Shogun's Castle",
 	PM_SAMURAI, NON_PM, PM_LITTLE_DOG,
 	PM_LORD_SATO, PM_ROSHI, PM_ASHIKAGA_TAKAUJI,
@@ -308,7 +308,7 @@ const struct Role roles[] = {
 	{"Voyager",     0},
 	{"Explorer",    0},
 	{"Adventurer",  0} },
-	"Blind Io", "The Lady", "Offler", /* Discworld */
+	"Blind Io", "_The Lady", "Offler", /* Discworld */
 	"Tou", "Ankh-Morpork", "the Thieves' Guild Hall",
 	PM_TOURIST, NON_PM, NON_PM,
 	PM_TWOFLOWER, PM_GUIDE, PM_MASTER_OF_THIEVES,

@@ -56,6 +56,7 @@ make setting bear traps and land mines be a multi-turn occupation
 make lava be properly lit on special levels
 add orig.female flag to handle E quest monster situation
 clean up inconsistent quest text
+in initial legacy message, use "goddess" when appropriate
 allow FIRSTNEMESIS message to actually be printed
 taking a peaceful monster's weapon with applied bullwhip will anger victim
 applying an unpaid magic lamp will charge a low lighting fee instead of the

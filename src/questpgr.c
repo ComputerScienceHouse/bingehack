@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)questpgr.c	3.3	97/02/02	*/
+/*	SCCS Id: @(#)questpgr.c	3.3	1999/11/26	*/
 /*	Copyright 1991, M. Stephenson		  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -262,6 +262,8 @@ char c;
 	    case 'n':	str = neminame();
 			break;
 	    case 'g':	str = guardname();
+			break;
+	    case 'G':	str = align_gtitle(u.ualignbase[1]);
 			break;
 	    case 'H':	str = homebase();
 			break;

@@ -1,4 +1,4 @@
-#	SCCS Id: @(#)quest.txt	3.3	99/10/24
+#	SCCS Id: @(#)quest.txt	3.3	99/11/26
 #	Copyright (c) 1991 by M. Stephenson
 # NetHack may be freely redistributed.  See license for details.
 #
@@ -1195,7 +1195,7 @@ that is the way I like my %c for dinner."
 "Thy strength wanes, %p.  The time of thy death draws near."
 %E
 %Cp Kni 00069
-"Call upon thy precious %d, %p.  It shalt not avail thee."
+"Call upon thy precious %d, %p.  It shall not avail thee."
 %E
 %Cc Kni 00070
 As you pick up %o, you feel its protective fields
@@ -2346,7 +2346,7 @@ your teaching."
 As you pick up %o, you feel the strength of its karma.
 You realize at once why so many good samurai had to die to defend it.
 You are humbled knowing that you hold one of the artifacts of the
-sun god.
+sun goddess.
 %E
 %Cc Sam 00080
 Your healing skills tell you that %ns wounds are mortal.
@@ -3113,7 +3113,7 @@ It is written in the Book of %d:
     and he hid it in the dark cavities of Gehennom, the
     Under World, where he now lurks, and bides his time.
 
-Your god %d seeks to possess the Amulet, and with it
+Your %G %d seeks to possess the Amulet, and with it
 to gain deserved ascendance over the other gods.
 
 You, a newly trained %r, have been heralded
@@ -3253,6 +3253,7 @@ essential in locating the Amulet of Yendor."
  %o:	return(artiname());
  %n:	return((char *)neminame());
  %g:	return((char *)guardname());
+ %G:	return((char *)align_gtitle(u.ualignbase[1]));
  %H:	return((char *)homebase());
  %a:	return(Alignnam(u.ualignbase[1]));
  %A:	return(Alignnam(u.ualign.type));
