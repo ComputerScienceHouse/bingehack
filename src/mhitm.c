@@ -123,7 +123,12 @@ fightm(mtmp)		/* have monsters fight each other */
 	for(mon = fmon; mon; mon = nmon) {
 	    nmon = mon->nmon;
 	    if(nmon == mtmp) nmon = mtmp->nmon;
-	    if(mon != mtmp) {
+	    /* Be careful to ignore monsters that are already dead, since we
+	     * might be calling this before we've cleaned them up.  This can
+	     * happen if the monster attacked a cockatrice bare-handedly, for
+	     * instance.
+	     */
+	    if(mon != mtmp && mon->mhp > 0) {
 		if(monnear(mtmp,mon->mx,mon->my)) {
 		    if(!u.uswallow && (mtmp == u.ustuck)) {
 			if(!rn2(4)) {
@@ -718,7 +723,7 @@ label2:			if (mdef->mhp > 0) return 0;
 		       we'll get "it" in the suddenly disappears message */
 		    if (vis) Strcpy(mdef_Monnam, Monnam(mdef));
 		    rloc(mdef);
-		    if (vis && !cansee(mdef->mx, mdef->my))
+		    if (vis && !canspotmon(mdef))
 			pline("%s suddenly disappears!", mdef_Monnam);
 		}
 		break;
@@ -816,10 +821,12 @@ label2:			if (mdef->mhp > 0) return 0;
 		magr->mgold += mdef->mgold;
 		mdef->mgold = 0;
 		if (vis) {
-			Strcpy(buf, Monnam(magr));
-			pline("%s steals some gold from %s.", buf,
-								mon_nam(mdef));
+		    Strcpy(buf, Monnam(magr));
+		    pline("%s steals some gold from %s.", buf, mon_nam(mdef));
 		}
+		rloc(magr);
+		if (vis && !canspotmon(magr))
+		    pline("%s suddenly disappears!", buf);
 		break;
 	    case AD_DRLI:
 		if (rn2(2) && !resists_drli(mdef)) {
@@ -862,6 +869,11 @@ label2:			if (mdef->mhp > 0) return 0;
 			if (mdef->mhp <= 0)
 				return (MM_DEF_DIED | (grow_up(magr,mdef) ?
 							0 : MM_AGR_DIED));
+			if (magr->data->mlet == S_NYMPH) {
+			    rloc(magr);
+			    if (vis && !canspotmon(magr))
+				pline("%s suddenly disappears!", buf);
+			}
 		}
 		tmp = 0;
 		break;
