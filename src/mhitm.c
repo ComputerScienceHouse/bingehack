@@ -777,10 +777,10 @@ label2:			if (mdef->mhp > 0) return 0;
 		}
 		break;
 	    case AD_BLND:
-		if (!magr->mcan && !resists_blnd(mdef)) {
+		if (can_blnd(magr, mdef, mattk->aatyp, (struct obj*)0)) {
 		    register unsigned rnd_tmp;
 
-		    if (vis)
+		    if (vis && mdef->mcansee)
 			pline("%s is blinded.", Monnam(mdef));
 		    rnd_tmp = d((int)mattk->damn, (int)mattk->damd);
 		    if ((rnd_tmp += mdef->mblinded) > 127) rnd_tmp = 127;

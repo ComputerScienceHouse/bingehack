@@ -82,7 +82,8 @@ struct monst *mon;
 	if (o && o->oartifact && defends(AD_MAGM, o))
 	    return TRUE;
 	/* check for magic resistance granted by worn or carried items */
-	for (o = mon->minvent; o; o = o->nobj)
+	o = (mon == &youmonst) ? invent : mon->minvent;
+	for ( ; o; o = o->nobj)
 	    if ((o->owornmask && objects[o->otyp].oc_oprop == ANTIMAGIC) ||
 		    (o->oartifact && protects(AD_MAGM, o)))
 		return TRUE;
@@ -104,8 +105,9 @@ struct monst *mon;
 			    paralysis does too, we can't check it */
 		    mon->msleeping))
 	    return TRUE;
-	/* AD_BLND => yellow light, dust vortex, ki-rin (?), Archon */
-	if (dmgtype(ptr, AD_BLND) && !attacktype(ptr, AT_SPIT))
+	/* AD_BLND => yellow light, Archon, !cobra, !raven */
+	if (dmgtype(ptr, AD_BLND) &&
+	    !attacktype(ptr, AT_SPIT) && !attacktype(ptr, AT_CLAW))
 	    return TRUE;
 	o = is_you ? uwep : MON_WEP(mon);
 	if (o && o->oartifact && defends(AD_BLND, o))
@@ -116,6 +118,87 @@ struct monst *mon;
 		    (o->oartifact && protects(AD_BLND, o)))
 		return TRUE;
 	return FALSE;
+}
+
+/* TRUE iff monster can be blinded by the given attack */
+/* Note: may return TRUE when mdef is blind (e.g. new cream-pie attack) */
+boolean
+can_blnd(magr, mdef, aatyp, obj)
+struct monst *magr;		/* NULL == no specific aggressor */
+struct monst *mdef;
+uchar aatyp;
+struct obj *obj;		/* aatyp == AT_WEAP, AT_SPIT */
+{
+	boolean is_you = (mdef == &youmonst);
+	boolean check_visor = FALSE;
+	struct obj *o;
+	const char *s;
+
+	/* no eyes protect against all attacks for now */
+	if (!haseyes(mdef->data))
+	    return FALSE;
+
+	switch(aatyp) {
+	case AT_EXPL: case AT_BOOM: case AT_GAZE: case AT_MAGC:
+	case AT_BREA: /* assumed to be lightning */
+	    /* light-based attacks may be cancelled or resisted */
+	    if (magr && magr->mcan)
+		return FALSE;
+	    return !resists_blnd(mdef);
+
+	case AT_WEAP: case AT_SPIT: case AT_NONE:
+	    /* an object is used (thrown/spit/other) */
+	    if (obj && (obj->otyp == CREAM_PIE)) {
+		if (is_you && Blindfolded)
+		    return FALSE;
+	    } else if (obj && (obj->otyp == BLINDING_VENOM)) {
+		/* all ublindf, including LENSES, protect, cream-pies too */
+		if (is_you && (ublindf || u.ucreamed))
+		    return FALSE;
+		check_visor = TRUE;
+	    } else if (obj && (obj->otyp == POT_BLINDNESS)) {
+		return TRUE;	/* no defense */
+	    } else
+		return FALSE;	/* other objects cannot cause blindness yet */
+	    if ((magr == &youmonst) && u.uswallow)
+		return FALSE;	/* can't affect eyes while inside monster */
+	    break;
+
+	case AT_ENGL:
+	    if (is_you && (Blindfolded || u.usleep || u.ucreamed))
+		return FALSE;
+	    if (!is_you && mdef->msleeping)
+		return FALSE;
+	    break;
+
+	case AT_CLAW:
+	    /* e.g. raven: all ublindf, including LENSES, protect */
+	    if (is_you && ublindf)
+		return FALSE;
+	    check_visor = TRUE;
+	    break;
+
+	case AT_TUCH: case AT_STNG:
+	    /* some physical, blind-inducing attacks can be cancelled */
+	    if (magr && magr->mcan)
+		return FALSE;
+	    break;
+
+	default:
+	    break;
+	}
+
+	/* check if wearing a visor (only checked if visor might help) */
+	if (check_visor) {
+	    o = (mdef == &youmonst) ? invent : mdef->minvent;
+	    for ( ; o; o = o->nobj)
+		if ((o->owornmask & W_ARMH) &&
+		    (s = OBJ_DESCR(objects[o->otyp])) != (char *)0 &&
+		    !strcmp(s, "visored helmet"))
+		    return FALSE;
+	}
+
+	return TRUE;
 }
 
 #endif /* OVLB */
@@ -433,7 +516,7 @@ static const short grownups[][2] = {
 	{PM_MASTER_LICH, PM_ARCH_LICH},
 	{PM_VAMPIRE, PM_VAMPIRE_LORD}, {PM_BAT, PM_GIANT_BAT},
 	{PM_BABY_GRAY_DRAGON, PM_GRAY_DRAGON},
-	{PM_BABY_SILVER_DRAGON, PM_SILVER_DRAGON},        
+	{PM_BABY_SILVER_DRAGON, PM_SILVER_DRAGON},
 #if 0	/* DEFERRED */
 	{PM_BABY_SHIMMERING_DRAGON, PM_SHIMMERING_DRAGON},
 #endif
@@ -476,7 +559,7 @@ int montype;
 {
 #ifndef AIXPS2_BUG
 	register int i;
-	
+
 	for (i = 0; grownups[i][0] >= LOW_PM; i++)
 		if(montype == grownups[i][0]) return grownups[i][1];
 	return montype;
@@ -502,7 +585,7 @@ big_to_little(montype)
 int montype;
 {
 	register int i;
-	
+
 	for (i = 0; grownups[i][0] >= LOW_PM; i++)
 		if(montype == grownups[i][1]) return grownups[i][0];
 	return montype;

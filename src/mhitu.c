@@ -952,9 +952,9 @@ hitmu(mtmp, mattk)
 		}
 		break;
 	    case AD_BLND:
-		if (!resists_blnd(&youmonst) && !Blind) {
-		    pline("%s blinds you!", Monnam(mtmp));
-		    make_blinded((long)dmg,FALSE);
+		if (can_blnd(mtmp, &youmonst, mattk->aatyp, (struct obj*)0)) {
+		    if (!Blind) pline("%s blinds you!", Monnam(mtmp));
+		    make_blinded(Blinded+(long)dmg,FALSE);
 		}
 		dmg = 0;
 		break;
@@ -1572,7 +1572,7 @@ gulpmu(mtmp, mattk)	/* monster swallows you, or damage if u.uswallow */
 		    }
 		    break;
 		case AD_BLND:
-		    if (!resists_blnd(&youmonst)) {
+		    if (can_blnd(mtmp, &youmonst, mattk->aatyp, (struct obj*)0)) {
 			if(!Blind) {
 			    You_cant("see in here!");
 			    make_blinded((long)tmp,FALSE);
@@ -1692,8 +1692,7 @@ common:
 		    if (mon_visible(mtmp) || (rnd(tmp /= 2) > u.ulevel)) {
 			You("are blinded by a blast of light!");
 			make_blinded((long)tmp, FALSE);
-		    } else
-			if (flags.verbose)
+		    } else if (flags.verbose)
 			You("get the impression it was not terribly bright.");
 		}
 		break;
@@ -1814,18 +1813,20 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 	    	    	destroy_item(SPBOOK_CLASS, AD_FIRE);
 	    	    if (dmg) mdamageu(mtmp, dmg);
 	    	}
-        break;
+		break;
 #ifdef PM_BEHOLDER /* work in progress */
 	    case AD_SLEE:
-		if(multi >= 0 && !rn2(5) && !Sleep_resistance) {
+		if(!mtmp->mcan && canseemon(mtmp) && mtmp->mcansee &&
+		   multi >= 0 && !rn2(5) && !Sleep_resistance) {
 		    fall_asleep(-rnd(10), TRUE);
 		    pline("%s gaze makes you very sleepy...",
 			  s_suffix(Monnam(mtmp)));
 		}
 		break;
 	    case AD_SLOW:
-		if((Fast & (INTRINSIC|TIMEOUT)) &&
-					!defends(AD_SLOW, uwep) && !rn2(4))
+		if(!mtmp->mcan && canseemon(mtmp) && mtmp->mcansee &&
+		   (Fast & (INTRINSIC|TIMEOUT)) &&
+		   !defends(AD_SLOW, uwep) && !rn2(4))
 		    u_slow_down();
 		break;
 #endif

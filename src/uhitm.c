@@ -730,27 +730,33 @@ int thrown;
 			break;
 		    case CREAM_PIE:
 		    case BLINDING_VENOM:
-			/* note: resists_blnd() does not apply here */
-			if (Blind || !haseyes(mdat) || u.uswallow) {
-			    pline(obj->otyp==CREAM_PIE ? "Splat!" : "Splash!");
-			} else if (obj->otyp == BLINDING_VENOM) {
-			    pline_The("venom blinds %s%s!", mon_nam(mon),
-					mon->mcansee ? "" : " further");
-			} else {
-			    char *whom = mon_nam(mon);
-			    /* note: s_suffix returns a modifiable buffer */
-			    if (haseyes(mdat) && mdat != &mons[PM_FLOATING_EYE])
-				whom = strcat(s_suffix(whom), " face");
-			    pline_The("cream pie splashes over %s!", whom);
-			}
-			if (mon->msleeping) mon->msleeping = 0;
-			setmangry(mon);
-			if (haseyes(mon->data) && !u.uswallow) {
+			mon->msleeping = 0;
+			if (can_blnd(&youmonst, mon, obj->otyp == BLINDING_VENOM
+				     ? AT_SPIT : AT_WEAP, obj)) {
+			    if (Blind) {
+				pline(obj->otyp == CREAM_PIE ?
+				      "Splat!" : "Splash!");
+			    } else if (obj->otyp == BLINDING_VENOM) {
+				pline_The("venom blinds %s%s!", mon_nam(mon),
+					  mon->mcansee ? "" : " further");
+			    } else {
+				char *whom = mon_nam(mon);
+				/* note: s_suffix returns a modifiable buffer */
+				if (haseyes(mdat)
+				    && mdat != &mons[PM_FLOATING_EYE])
+				    whom = strcat(s_suffix(whom), " face");
+				pline_The("%s splashes over %s!",
+					  xname(obj), whom);
+			    }
+			    setmangry(mon);
 			    mon->mcansee = 0;
 			    tmp = rn1(25, 21);
 			    if(((int) mon->mblinded + tmp) > 127)
 				mon->mblinded = 127;
 			    else mon->mblinded += tmp;
+			} else {
+			    pline(obj->otyp==CREAM_PIE ? "Splat!" : "Splash!");
+			    setmangry(mon);
 			}
 			if (thrown) obfree(obj, (struct obj *)0);
 			else useup(obj);
@@ -1218,10 +1224,13 @@ register struct attack *mattk;
 		}
 		break;
 	    case AD_BLND:
-		if (!resists_blnd(mdef)) {
-		    if(!Blind) pline("%s is blinded.", Monnam(mdef));
+		if (can_blnd(&youmonst, mdef, mattk->aatyp, (struct obj*)0)) {
+		    if(!Blind && mdef->mcansee)
+			pline("%s is blinded.", Monnam(mdef));
 		    mdef->mcansee = 0;
-		    mdef->mblinded += tmp;
+		    tmp += mdef->mblinded;
+		    if (tmp > 127) tmp = 127;
+		    mdef->mblinded = tmp;
 		}
 		tmp = 0;
 		break;
@@ -1554,7 +1563,7 @@ register struct attack *mattk;
 			}
 			break;
 		    case AD_BLND:
-			if (!resists_blnd(mdef)) {
+			if (can_blnd(&youmonst, mdef, mattk->aatyp, (struct obj *)0)) {
 			    if (mdef->mcansee)
 				pline("%s can't see in there!", Monnam(mdef));
 			    mdef->mcansee = 0;
@@ -2076,7 +2085,8 @@ struct monst *mon;
 	u.umconf--;
 }
 
-int flash_hits_mon(mtmp, otmp)
+int
+flash_hits_mon(mtmp, otmp)
 struct monst *mtmp;
 struct obj *otmp;	/* source of flash */
 {
