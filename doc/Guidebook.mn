@@ -4,7 +4,7 @@
 .ds vr "NetHack 3.3
 .ds f0 "\*(vr
 .ds f1
-.ds f2 "December 2, 1999
+.ds f2 "June 28, 2000
 .mt
 A Guide to the Mazes of Menace
 (Guidebook for NetHack 3.3)
@@ -741,7 +741,8 @@ Jump to another location.  Same as ``#jump'' or ``M-j''.
 .lp k
 Kick something (usually a door).  Same as `^D'.
 .lp l
-Loot a box on the floor.  Same as ``#loot'' or ``M-l''.
+Loot a box or bag on the floor beneath you, or the saddle 
+from a horse standing next to you.  Same as ``#loot'' or ``M-l''.
 .lp N
 Name an item or type of object.  Same as ``#name'' or ``M-N''.
 .lp u
