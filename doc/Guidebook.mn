@@ -650,7 +650,8 @@ Invoke an object's special powers.
 .lp #jump
 Jump to another location.
 .lp #loot
-Loot a box on the floor.
+Loot a box or bag on the floor beneath you, or the saddle 
+from a horse standing next to you.
 .lp #monster
 Use a monster's special ability (when polymorphed into monster form).
 .lp #name
