@@ -1,6 +1,8 @@
-/*      SCCS Id: @(#)mapimail.c 3.3     1999/10/28        */
+/*      SCCS Id: @(#)mapimail.c 3.3     2000/04/25        */
 /* Copyright (c) Michael Allison, 1997                  */
 /* NetHack may be freely redistributed.  See license for details. */
+
+# ifdef LAN_MAIL
 
 #ifdef MAX_BODY_SIZE
 #undef MAX_BODY_SIZE
@@ -476,4 +478,6 @@ int DeInitMAPI()
     FreeLibrary(hLibrary);
     return 0;
 }
+
+#endif /*LAN_MAIL*/
 
