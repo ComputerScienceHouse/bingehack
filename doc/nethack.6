@@ -100,11 +100,21 @@ run-time options described there,
 and are provided purely for convenience on systems
 supporting multiple types of terminals.)
 .PP
+Because the option list can be very long (particularly when specifying
+graphics characters), options may also be included in a configuration
+file.
+The default is located in your home directory and
+named .nethackrc on Unix systems.  On other systems, the default may be
+different, usually NetHack.cnf or on the Macintosh
+or BeOS, NetHack Defaults.
+The configuration file's location may be specified by setting NETHACKOPTIONS
+to a string consisting of an @ character followed by the filename.
+.PP
 The
 .B \-u
 .I playername
 option supplies the answer to the question "Who are you?".
-It overrides any name from NETHACKOPTIONS, HACKOPTIONS, USER, LOGNAME,
+It overrides any name from the options or configuration file, USER, LOGNAME,
 or getlogin(), which will otherwise be tried in order.
 If none of these provides a useful name, the player will be asked for one.
 Player names (in conjunction with uids) are used to identify save files,
@@ -120,7 +130,7 @@ can be used to determine the character role.  You can specify either the
 male or female name for the character role, or the first three characters
 of the role as an abbreviation.
 .B "\-p \@"
-has be retained to explicitly request that a random role be chosen.
+has been retained to explicitly request that a random role be chosen.
 It may need to be quoted with a backslash (\\@) if @
 is the "kill" character (see "stty") for the terminal, in order
 to prevent the current input line from being cleared.
