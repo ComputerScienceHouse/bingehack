@@ -3420,7 +3420,7 @@ NetHackQtGlyphs::NetHackQtGlyphs()
 	tile_file = "nhtiles.bmp";
 	if (!img.load(tile_file)) {
 	    QString msg;
-	    msg.sprintf("Cannot load tiles.xpm or nhtiles.bmp");
+	    msg.sprintf("Cannot load x11tiles or nhtiles.bmp");
 	    QMessageBox::warning(0, "IO Error", msg);
 	} else {
 	    tiles_per_row = 40;
