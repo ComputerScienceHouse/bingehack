@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)dokick.c	3.3	2000/01/11	*/
+/*	SCCS Id: @(#)dokick.c	3.3	2000/02/07	*/
 /* Copyright (c) Izchak Miller, Mike Stephenson, Steve Linhart, 1989. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -840,6 +840,10 @@ dokick()
 		}
 #ifdef SINKS
 		if(IS_SINK(maploc->typ)) {
+		    int gend = poly_gender();
+		    short washerndx = (gend == 1 || (gend == 2 && rn2(2))) ?
+					PM_INCUBUS : PM_SUCCUBUS;
+
 		    if(Levitation) goto dumb;
 		    if(rn2(5)) {
 			if(flags.soundok)
@@ -861,13 +865,11 @@ dokick()
 			maploc->looted |= S_LPUDDING;
 			return(1);
 		    } else if(!(maploc->looted & S_LDWASHER) && !rn2(3) &&
-			      !(mvitals[poly_gender() == 1 ? PM_INCUBUS
-					: PM_SUCCUBUS].mvflags & G_GONE)) {
+			      !(mvitals[washerndx].mvflags & G_GONE)) {
 			/* can't resist... */
 			pline("%s returns!", (Blind ? Something :
 							"The dish washer"));
-			if (makemon(&mons[poly_gender() == 1 ?
-				PM_INCUBUS : PM_SUCCUBUS], x, y, NO_MM_FLAGS))
+			if (makemon(&mons[washerndx], x, y, NO_MM_FLAGS))
 			    newsym(x,y);
 			maploc->looted |= S_LDWASHER;
 			exercise(A_DEX, TRUE);

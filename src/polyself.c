@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)polyself.c	3.3	2000/01/20	*/
+/*	SCCS Id: @(#)polyself.c	3.3	2000/02/07	*/
 /*	Copyright (C) 1987, 1988, 1989 by Ken Arromdee */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1098,7 +1098,7 @@ poly_gender()
  *	- Shopkeeper messages (since referred to as "creature" and not "sir"
  *	  or "lady" when polymorphed)
  */
-	if (!humanoid(youmonst.data)) return 2;
+	if (is_neuter(youmonst.data) || !humanoid(youmonst.data)) return 2;
 	return flags.female;
 }
 
