@@ -305,7 +305,7 @@ tile2img.ttp: tile2img.o bitmfile.o $(TEXT_IO)
 	$(CC) $(LFLAGS) -o tile2img.ttp tile2img.o bitmfile.o $(TEXT_IO) $(LIBS)
 
 tile2beos: tile2beos.o $(TEXT_IO)
-	$(CC) $(LDFLAGS) -o tile2beos tile2beos.o $(TEXT_IO) -lbe
+	$(CC) $(LFLAGS) -o tile2beos tile2beos.o $(TEXT_IO) -lbe
 
 tilemap: ../win/share/tilemap.c $(HACK_H)
 	$(CC) $(CFLAGS) $(LFLAGS) -o tilemap ../win/share/tilemap.c $(LIBS)
