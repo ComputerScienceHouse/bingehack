@@ -540,8 +540,11 @@ xchar x, y;
 	    u.bc_order = bc_order();
 	}
 	newsym(u.ux0,u.uy0);		/* clean up old position */
-	if (u.ux0 != u.ux || u.uy0 != u.uy)
+	if (u.ux0 != u.ux || u.uy0 != u.uy) {
 	    spoteffects();
+	    if (In_sokoban(&u.uz))
+		change_luck(-1);	/* Sokoban guilt */
+	}
     }
 }
 

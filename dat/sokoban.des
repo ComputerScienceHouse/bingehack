@@ -7,12 +7,14 @@
 # consuming.  Some players may wish to skip this branch.
 #
 # The following actions are permitted:
-#   Breaking boulders.
+#   Breaking boulders (including by other monsters).
+#   Stone-to-fleshing boulders.
 #   Creating new boulders (e.g., with a scroll of earth).
 #   Carrying or throwing a boulder already in inventory
 #     (player or nonplayer).
 #   Teleporting boulders.
-#   Jumping (note: you won't get far enough across the pits/holes).
+#   Jumping or hurtling (note: you won't get far enough across the pits/holes).
+#   Squeezing past boulders when naked.
 #   Digging in the floor.
 # These actions are not permitted:
 #   Moving diagonally between two boulders and/or walls.
@@ -385,7 +387,7 @@ MAP
   ------------------
 ENDMAP
 STAIR:(06,11),down
-STAIR:(15,07),up
+STAIR:(15,06),up
 DOOR:locked,(18,10)
 REGION:(00,00,19,12),lit,"ordinary"
 NON_DIGGABLE:(00,00,19,12)

@@ -1072,6 +1072,8 @@ register struct obj	*sobj;
 	    	pline_The("%s rumbles %s you!", ceiling(u.ux,u.uy),
 	    			sobj->blessed ? "around" : "above");
 	    	known = 1;
+	    	if (In_sokoban(&u.uz))
+	    	    change_luck(-1);	/* Sokoban guilt */
 
 	    	/* Loop through the surrounding squares */
 	    	if (!sobj->cursed) for (x = u.ux-1; x <= u.ux+1; x++) {
