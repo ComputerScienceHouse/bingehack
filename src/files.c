@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)files.c	3.3	97/01/26	*/
+/*	SCCS Id: @(#)files.c	3.3	2000/04/27	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -48,7 +48,7 @@ char lock[PL_NSIZ+17] = "1lock"; /* long enough for _uid+name+.99;1 */
 # endif
 # if defined(WIN32)
 char bones[] = "bonesnn.xxx";
-char lock[PL_NSIZ+25];		/* long enough for username+.+name+.99 */
+char lock[PL_NSIZ+25];		/* long enough for username+-+name+.99 */
 # endif
 #endif
 
@@ -99,7 +99,9 @@ STATIC_DCL char *FDECL(make_lockname, (const char *,char *));
 STATIC_DCL FILE *FDECL(fopen_config_file, (const char *));
 STATIC_DCL int FDECL(get_uchars, (FILE *,char *,char *,uchar *,int,const char *));
 int FDECL(parse_config_line, (FILE *,char *,char *,char *));
-
+#ifdef NOCWD_ASSUMPTIONS
+STATIC_DCL void FDECL(adjust_prefix, (char *, int));
+#endif
 
 const char *
 fqname(basename, whichprefix, buffnum)
@@ -1180,6 +1182,25 @@ gi_error:
     /*NOTREACHED*/
 }
 
+#ifdef NOCWD_ASSUMPTIONS
+STATIC_OVL void
+adjust_prefix(bufp, prefixid)
+char *bufp;
+int prefixid;
+{
+	char *ptr;
+
+	if (!bufp) return;
+	/* Backward compatibility, ignore trailing ;n */ 
+	if ((ptr = index(bufp, ';')) != 0) *ptr = '\0';
+	if (strlen(bufp) > 0) {
+		fqn_prefix[prefixid] = (char *)alloc(strlen(bufp)+2);
+		Strcpy(fqn_prefix[prefixid], bufp);
+		append_slash(fqn_prefix[prefixid]);
+	}
+}
+#endif
+
 #define match_varname(INP,NAM,LEN) match_optname(INP, NAM, LEN, TRUE)
 
 /*ARGSUSED*/
@@ -1229,47 +1250,22 @@ char		*tmp_levels;
 			plnamesuffix();	/* set the character class */
 #ifdef NOCWD_ASSUMPTIONS
 	} else if (match_varname(buf, "HACKDIR", 4)) {
-		fqn_prefix[HACKPREFIX] = (char *)alloc(strlen(bufp)+2);
-		Strcpy(fqn_prefix[HACKPREFIX], bufp);
-		append_slash(fqn_prefix[HACKPREFIX]);
+		adjust_prefix(bufp, HACKPREFIX);
 	} else if (match_varname(buf, "LEVELDIR", 4) ||
 		   match_varname(buf, "LEVELS", 4)) {
-		char *ptr;
-		/* Backward compatibility, ignore trailing ;n */ 
-		if ((ptr = index(bufp, ';')) != 0) *ptr = '\0';
-		fqn_prefix[LEVELPREFIX] = (char *)alloc(strlen(bufp)+2);
-		Strcpy(fqn_prefix[LEVELPREFIX], bufp);
-		append_slash(fqn_prefix[LEVELPREFIX]);
+		adjust_prefix(bufp, LEVELPREFIX);
 	} else if (match_varname(buf, "SAVE", 4)) {
-		char *ptr;
-		/* Backward compatibility, ignore trailing ;n */ 
-		if ((ptr = index(bufp, ';')) != 0) *ptr = '\0';
-		fqn_prefix[SAVEPREFIX] = (char *)alloc(strlen(bufp)+2);
-		Strcpy(fqn_prefix[SAVEPREFIX], bufp);
-		append_slash(fqn_prefix[SAVEPREFIX]);
+		adjust_prefix(bufp, SAVEPREFIX);
 	} else if (match_varname(buf, "BONESDIR", 5)) {
-		char *ptr;
-		/* Backward compatibility, ignore trailing ;n */ 
-		if ((ptr = index(bufp, ';')) != 0) *ptr = '\0';
-		fqn_prefix[BONESPREFIX] = (char *)alloc(strlen(bufp)+2);
-		Strcpy(fqn_prefix[BONESPREFIX], bufp);
-		append_slash(fqn_prefix[BONESPREFIX]);		
+		adjust_prefix(bufp, BONESPREFIX);
 	} else if (match_varname(buf, "DATADIR", 4)) {
-		fqn_prefix[DATAPREFIX] = (char *)alloc(strlen(bufp)+2);
-		Strcpy(fqn_prefix[DATAPREFIX], bufp);
-		append_slash(fqn_prefix[DATAPREFIX]);
+		adjust_prefix(bufp, DATAPREFIX);
 	} else if (match_varname(buf, "SCOREDIR", 4)) {
-		fqn_prefix[SCOREPREFIX] = (char *)alloc(strlen(bufp)+2);
-		Strcpy(fqn_prefix[SCOREPREFIX], bufp);
-		append_slash(fqn_prefix[SCOREPREFIX]);
+		adjust_prefix(bufp, SCOREPREFIX);
 	} else if (match_varname(buf, "LOCKDIR", 4)) {
-		fqn_prefix[LOCKPREFIX] = (char *)alloc(strlen(bufp)+2);
-		Strcpy(fqn_prefix[LOCKPREFIX], bufp);
-		append_slash(fqn_prefix[LOCKPREFIX]);
+		adjust_prefix(bufp, LOCKPREFIX);
 	} else if (match_varname(buf, "CONFIGDIR", 4)) {
-		fqn_prefix[CONFIGPREFIX] = (char *)alloc(strlen(bufp)+2);
-		Strcpy(fqn_prefix[CONFIGPREFIX], bufp);
-		append_slash(fqn_prefix[CONFIGPREFIX]);
+		adjust_prefix(bufp, CONFIGPREFIX);
 #else /*NOCWD_ASSUMPTIONS*/
 # ifdef MICRO
 	} else if (match_varname(buf, "HACKDIR", 4)) {
