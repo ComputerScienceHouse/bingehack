@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)zap.c	3.3	2000/06/02	*/
+/*	SCCS Id: @(#)zap.c	3.3	2000/08/01	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -3491,7 +3491,7 @@ fracture_rock(obj)	/* fractured by pick-axe or wand of striking */
 register struct obj *obj;		   /* no texts here! */
 {
 	/* A little Sokoban guilt... */
-	if (obj->otyp == BOULDER && In_sokoban(&u.uz))
+	if (obj->otyp == BOULDER && In_sokoban(&u.uz) && !flags.mon_moving)
 	    change_luck(-1);
 
 	obj->otyp = ROCK;
