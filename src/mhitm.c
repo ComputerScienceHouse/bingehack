@@ -253,7 +253,7 @@ mattackm(magr, mdef)
 	    case AT_BUTT:
 	    case AT_TENT:
 		/* Monsters won't attack cockatrices physically if they
-		 * have a weapon instead.  This instict doesn't work for
+		 * have a weapon instead.  This instinct doesn't work for
 		 * players, or under conflict or confusion. 
 		 */
 		if (!magr->mconf && !Conflict && otmp &&
