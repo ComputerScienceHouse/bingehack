@@ -1819,10 +1819,10 @@ The very act of doing so will infuriate him, and give you advantage."
 %Cc Ran 00030
 This must be %i.
 
-You're in a cave with 20 rooms and 3 tunnels leading from each
-room. There are 4 bats and 2 bottomless pits scattered throughout
-the cave, and your quiver holds custom super anti-evil-wumpus
-arrows.  Good luck.
+You are in a cave built of many different rooms, all interconnected
+by tunnels.  Your quest is to find and shoot the evil wumpus that
+resides elsewhere in the cave without running into any bottomless
+pits or using up your limited supply of arrows.  Good luck.
 
 You are in room 9 of the cave.  There are tunnels to rooms
 5, 8, and 10.
