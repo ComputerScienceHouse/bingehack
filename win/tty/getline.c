@@ -98,7 +98,7 @@ getlin_hook_proc hook;
 #endif
 			*bufp = 0;
 			break;
-		} else if(' ' <= c && c < '\177' &&
+		} else if(' ' <= (unsigned char) c && c != '\177' &&
 			    (bufp-obufp < BUFSZ-1 && bufp-obufp < COLNO)) {
 				/* avoid isprint() - some people don't have it
 				   ' ' is not always a printing char */
