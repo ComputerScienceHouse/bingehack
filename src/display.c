@@ -763,6 +763,8 @@ shieldeff(x,y)
  *	(DISP_CHANGE, glyph)	change glyph
  *	(DISP_END,    0)	close & clean up (second argument doesn't
  *				matter)
+ *	(DISP_FREEMEM, 0)	only used to prevent memory leak during
+ *				exit)
  *	(x, y)			display the glyph at the location
  *
  * DISP_BEAM  - Display the given glyph at each location, but do not erase
@@ -771,61 +773,97 @@ shieldeff(x,y)
  *		previous location's glyph.
  * DISP_ALWAYS- Like DISP_FLASH, but vision is not taken into account.
  */
+
+static struct tmp_glyph {
+    coord saved[COLNO];	/* prev positions, only for DISP_BEAM */
+    int sidx;		/* index of saved previous positions */
+    int sx,sy;		/* previous position, only for DISP_FLASH */
+    int status;		/* either DISP_BEAM or DISP_FLASH */
+    int glyph;		/* glyph to use when printing */
+    struct tmp_glyph *prev;
+} tgfirst;
+
 void
 tmp_at(x, y)
     int x, y;
 {
-    static coord saved[COLNO];	/* prev positions, only for DISP_BEAM */
-    static int sidx = 0;	/* index of saved previous positions */
-    static int sx = -1, sy;	/* previous position, only for DISP_FLASH */
-    static int status;		/* either DISP_BEAM or DISP_FLASH */
-    static int glyph;		/* glyph to use when printing */
+    static struct tmp_glyph *tglyph = (struct tmp_glyph *)0;
+    static int tgcnt = 0;
+    struct tmp_glyph *tmp;
 
     switch (x) {
 	case DISP_BEAM:
 	case DISP_FLASH:
 	case DISP_ALWAYS:
-	    status = x;
-	    glyph  = y;
+	    tgcnt++;
+	    if (tgcnt == 1) {
+	    	tmp = &tgfirst;
+		tmp->prev = (struct tmp_glyph *)0;
+	    } else if (tgcnt > 1) {
+	    	/* now we need dynamic memory */
+	    	tmp = (struct tmp_glyph *)alloc(sizeof(struct tmp_glyph));
+		tmp->prev = tglyph;
+	    } else
+	    	impossible("tgcnt is zero or negative? %d", tgcnt);
+	    tglyph = tmp;
+	    tglyph->sidx = 0;
+	    tglyph->sx = -1;
+	    tglyph->status = x;
+	    tglyph->glyph  = y;
 	    flush_screen(0);	/* flush buffered glyphs */
 	    break;
 
 	case DISP_CHANGE:
-	    glyph = y;
+	    tglyph->glyph = y;
 	    break;
 
 	case DISP_END:
-	    if (status == DISP_BEAM) {
+	    if (tglyph->status == DISP_BEAM) {
 		register int i;
 
 		/* Erase (reset) from source to end */
-		for (i = 0; i < sidx; i++)
-		    newsym(saved[i].x,saved[i].y);
-		sidx = 0;
+		for (i = 0; i < tglyph->sidx; i++)
+		    newsym(tglyph->saved[i].x,tglyph->saved[i].y);
+		tglyph->sidx = 0;
 		
-	    } else if (sx >= 0) { /* DISP_FLASH/ALWAYS (called at least once) */
-		newsym(sx,sy);	/* reset the location */
-		sx = -1;	/* reset sx to an illegal pos for next time */
+	    } else if (tglyph->sx >= 0) {     /* DISP_FLASH/ALWAYS (called at least once) */
+		newsym(tglyph->sx,tglyph->sy);	/* reset the location */
+		tglyph->sx = -1;		/* reset sx to an illegal pos for next time */
 	    }
+	    tgcnt--;
+	    tmp = tglyph;
+	    tglyph = tglyph->prev;
+	    if (tgcnt > 0 && tmp != &tgfirst)
+		free((genericptr_t)tmp);
 	    break;
 
+	case DISP_FREEMEM:
+	    tgcnt--;
+	    while (tgcnt > 0) {
+	    	tmp = tglyph;
+	    	tglyph = tglyph->prev;
+	    	free((genericptr_t)tmp);
+		tgcnt--;
+	    }
+	    break;
+	    
 	default:	/* do it */
-	    if (!cansee(x,y) && status != DISP_ALWAYS) break;
+	    if (!cansee(x,y) && tglyph->status != DISP_ALWAYS) break;
 
-	    if (status == DISP_BEAM) {
-		saved[sidx  ].x = x;	/* save pos for later erasing */
-		saved[sidx++].y = y;
+	    if (tglyph->status == DISP_BEAM) {
+		tglyph->saved[tglyph->sidx  ].x = x;	/* save pos for later erasing */
+		tglyph->saved[tglyph->sidx++].y = y;
 	    }
 
 	    else {	/* DISP_FLASH/ALWAYS */
-		if (sx >= 0)		/* not first call */
-		    newsym(sx,sy);	/* update the old position */
-		sx = x;		/* save previous pos for next call */
-		sy = y;
+		if (tglyph->sx >= 0)			/* not first call */
+		    newsym(tglyph->sx,tglyph->sy);	/* update the old position */
+		tglyph->sx = x;			/* save previous pos for next call */
+		tglyph->sy = y;
 	    }
 
-	    show_glyph(x,y,glyph);	/* show it */
-	    flush_screen(0);		/* make sure it shows up */
+	    show_glyph(x,y,tglyph->glyph);	/* show it */
+	    flush_screen(0);			/* make sure it shows up */
 	    break;
     } /* end case */
 }
