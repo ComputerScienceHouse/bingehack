@@ -332,7 +332,7 @@ int how;
 #endif
 
 #ifdef LOGFILE		/* used for debugging (who dies of what, where) */
-	if (lock_file(LOGFILE, 10)) {
+	if (lock_file(LOGFILE, SCOREPREFIX, 10)) {
 	    if(!(lfile = fopen_datafile(LOGFILE, "a", TRUE))) {
 		HUP raw_print("Cannot open log file!");
 	    } else {
@@ -355,7 +355,7 @@ int how;
 	    goto showwin;
 	}
 
-	if (!lock_file(RECORD, 60))
+	if (!lock_file(RECORD, SCOREPREFIX, 60))
 		goto destroywin;
 
 #ifdef UPDATE_RECORD_IN_PLACE

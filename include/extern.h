@@ -613,7 +613,7 @@ E int NDECL(delete_savefile);
 E int NDECL(restore_saved_game);
 E void FDECL(compress, (const char *));
 E void FDECL(uncompress, (const char *));
-E boolean FDECL(lock_file, (const char *,int));
+E boolean FDECL(lock_file, (const char *,int,int));
 E void FDECL(unlock_file, (const char *));
 E void FDECL(read_config_file, (const char *));
 E void FDECL(check_recordfile, (const char *));

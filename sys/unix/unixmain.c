@@ -237,7 +237,9 @@ char *argv[];
 		 */
 		boolean remember_wiz_mode = wizard;
 #endif
-		(void) chmod(SAVEF,0);	/* disallow parallel restores */
+		const char *fq_save = fqname(SAVEF, SAVEPREFIX, 0);
+
+		(void) chmod(fq_save,0);	/* disallow parallel restores */
 		(void) signal(SIGINT, (SIG_RET_TYPE) done1);
 #ifdef NEWS
 		if(iflags.news) {
@@ -259,8 +261,8 @@ char *argv[];
 			if(yn("Do you want to keep the save file?") == 'n')
 			    (void) delete_savefile();
 			else {
-			    (void) chmod(SAVEF,FCMASK); /* back to readable */
-			    compress(SAVEF);
+			    (void) chmod(fq_save,FCMASK); /* back to readable */
+			    compress(fq_save);
 			}
 		}
 		flags.move = 0;

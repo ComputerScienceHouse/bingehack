@@ -182,7 +182,7 @@ getlock()
 #endif
 
 	/* we ignore QUIT and INT at this point */
-	if (!lock_file(HLOCK, 10)) {
+	if (!lock_file(HLOCK, LOCKPREFIX, 10)) {
 		wait_synch();
 		error("%s", "");
 	}

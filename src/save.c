@@ -112,12 +112,14 @@ int sig_unused;
 int
 dosave0()
 {
+	const char *fq_save;
 	register int fd, ofd;
 	xchar ltmp;
 	d_level uz_save;
 
 	if (!SAVEF[0])
 		return 0;
+	fq_save = fqname(SAVEF, SAVEPREFIX, 1);	/* level files take 0 */
 
 #if defined(UNIX) || defined(VMS)
 	(void) signal(SIGHUP, SIG_IGN);
@@ -131,14 +133,14 @@ dosave0()
 #endif
 
 	HUP if (iflags.window_inited) {
-	    uncompress(SAVEF);
+	    uncompress(fq_save);
 	    fd = open_savefile();
 	    if (fd > 0) {
 		(void) close(fd);
 		clear_nhwindow(WIN_MESSAGE);
 		There("seems to be an old save file.");
 		if (yn("Overwrite the old file?") == 'n') {
-		    compress(SAVEF);
+		    compress(fq_save);
 		    return 0;
 		}
 	    }
@@ -184,9 +186,9 @@ dosave0()
 		if (ltmp != ledger_no(&u.uz) && level_info[ltmp].where)
 		    needed += level_info[ltmp].size + (sizeof ltmp);
 # ifdef AMIGA
-	    needed += ami_wbench_iconsize(SAVEF);
+	    needed += ami_wbench_iconsize(fq_save);
 # endif
-	    fds = freediskspace(SAVEF);
+	    fds = freediskspace(fq_save);
 	    if (needed > fds) {
 		HUP {
 		    There("is insufficient space on SAVE disk.");
@@ -248,9 +250,9 @@ dosave0()
 	/* get rid of current level --jgm */
 	delete_levelfile(ledger_no(&u.uz));
 	delete_levelfile(0);
-	compress(SAVEF);
+	compress(fq_save);
 #ifdef AMIGA
-	ami_wbench_iconwrite(SAVEF);
+	ami_wbench_iconwrite(fq_save);
 #endif
 	return(1);
 }

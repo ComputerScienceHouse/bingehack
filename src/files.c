@@ -861,8 +861,9 @@ char *lockname;
 
 /* lock a file */
 boolean
-lock_file(filename, retryct)
+lock_file(filename, whichprefix, retryct)
 const char *filename;
+int whichprefix;
 int retryct;
 {
 #if defined(applec) || defined(__MWERKS__)
@@ -878,7 +879,7 @@ int retryct;
 	}
 
 	lockname = make_lockname(filename, locknambuf);
-	filename = fqname(filename, LOCKPREFIX, 0);
+	filename = fqname(filename, whichprefix, 0);
 #ifndef NO_FILE_LINKS	/* LOCKDIR should be subsumed by LOCKPREFIX */
 	lockname = fqname(lockname, LOCKPREFIX, 1);
 #endif
@@ -984,7 +985,7 @@ const char *filename;
 	if (nesting == 1) {
 		lockname = make_lockname(filename, locknambuf);
 #ifndef NO_FILE_LINKS	/* LOCKDIR should be subsumed by LOCKPREFIX */
-		lockname = fqname(lockname, LOCKPREFIX, 0);
+		lockname = fqname(lockname, LOCKPREFIX, 1);
 #endif
 
 #if defined(UNIX) || defined(VMS)
@@ -1524,7 +1525,7 @@ const char *dir;
 
 #if defined(UNIX) || defined(VMS)
 	fq_record = fqname(RECORD, SCOREPREFIX, 0);
-	fd = open(RECORD, O_RDWR, 0);
+	fd = open(fq_record, O_RDWR, 0);
 	if (fd >= 0) {
 # ifdef VMS	/* must be stream-lf to use UPDATE_RECORD_IN_PLACE */
 		if (!file_is_stmlf(fd)) {
