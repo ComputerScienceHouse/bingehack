@@ -164,10 +164,12 @@ You_hear VA_DECL(const char *,line)
 	char *tmp;
 	VA_START(line);
 	VA_INIT(line, const char *);
-	if (!Underwater)
-		YouPrefix(tmp, "You hear ", line);
-	else
+	if (Underwater)
 		YouPrefix(tmp, "You barely hear ", line);
+	else if (u.usleep)
+		YouPrefix(tmp, "You dream that you hear ", line);
+	else
+		YouPrefix(tmp, "You hear ", line);
 	vpline(strcat(tmp, line), VA_ARGS);
 	VA_END();
 }
