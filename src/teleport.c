@@ -485,6 +485,7 @@ level_tele()
 	register int newlev;
 	d_level newlevel;
 	const char *escape_by_flying = 0;	/* when surviving dest of -N */
+	char buf[BUFSZ];
 
 	if ((u.uhave.amulet || In_endgame(&u.uz) || In_sokoban(&u.uz))
 #ifdef WIZARD
@@ -596,8 +597,6 @@ level_tele()
 		} else if (Flying) {
 		    escape_by_flying = "fly down to the ground";
 		} else {
-		    char buf[BUFSZ];
-
 		    pline("Unfortunately, you don't know how to fly.");
 		    You("plummet a few thousand feet to your death.");
 		    Sprintf(buf,
