@@ -185,4 +185,4 @@
  */
 #endif
 
-#endif	/* CONFIG1_H
+#endif	/* CONFIG1_H */
