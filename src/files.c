@@ -147,11 +147,13 @@ boolean use_scoreprefix;
 	filename = fqname(filename,
 				use_scoreprefix ? SCOREPREFIX : DATAPREFIX, 0);
 # ifdef VMS	/* essential to have punctuation, to avoid logical names */
+    {
 	char tmp[BUFSIZ];
 
 	if (!index(filename, '.') && !index(filename, ';'))
 		filename = strcat(strcpy(tmp, filename), ";0");
 	fp = fopen(filename, mode, "mbc=16");
+    }
 # else
 	fp = fopen(filename, mode);
 # endif
