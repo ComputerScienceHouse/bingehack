@@ -137,7 +137,7 @@ public:
 
 private:
 	enum { maxclick=64 };
-	struct {
+	struct ClickRec {
 		int x,y,mod;
 	} click[maxclick];
 	int in,out;
@@ -589,13 +589,14 @@ private slots:
 private:
 	NetHackQtKeyBuffer& keysource;
 
-	NetHackQtRIP rip;
 	bool use_rip;
 	bool str_fixed;
 
 	QPushButton ok;
 	QPushButton search;
 	NetHackQtTextListBox* lines;
+
+	NetHackQtRIP rip;
 };
 
 class NetHackQtMenuOrTextWindow : public NetHackQtWindow {

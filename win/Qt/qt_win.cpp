@@ -2683,16 +2683,16 @@ void NetHackQtRIP::paintEvent(QPaintEvent* event)
 NetHackQtTextWindow::NetHackQtTextWindow(NetHackQtKeyBuffer& ks) :
     QDialog(0,0,FALSE),
     keysource(ks),
-    rip(this),
+    use_rip(FALSE),
+    str_fixed(FALSE),
     ok("Dismiss",this),
     search("Search",this),
-    lines(new NetHackQtTextListBox(this))
+    lines(new NetHackQtTextListBox(this)),
+    rip(this)
 {
     ok.setDefault(TRUE);
     connect(&ok,SIGNAL(clicked()),this,SLOT(accept()));
     connect(&search,SIGNAL(clicked()),this,SLOT(Search()));
-    use_rip=FALSE;
-    str_fixed=FALSE;
 
     connect(qt_settings,SIGNAL(fontChanged()),this,SLOT(doUpdate()));
 }
@@ -4115,8 +4115,10 @@ bool NetHackQtBind::notify(QObject *receiver, QEvent *event)
 	    }
 	    char ch=key_event->ascii();
 	    if (!macro && ch) {
-		keybuffer.Put(key_event->key(),ch
-		    + ((key_event->state()&AltButton) ? 128 : 0),
+		int k = key_event->key();
+		bool alt = (key_event->state()&AltButton) ||
+		   (k >= Key_0 && k <= Key_9 && (key_event->state()&ControlButton));
+		keybuffer.Put(key_event->key(),ch + (alt ? 128 : 0),
 		    key_event->state());
 		key_event->accept();
 		result=TRUE;
