@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)region.c	3.3	1999/11/29	*/
+/*	SCCS Id: @(#)region.c	3.3	1999/12/29	*/
 /* Copyright (c) 1996 by Jean-Christophe Collet	 */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -395,21 +395,15 @@ run_regions()
 	    for (j = 0; j < regions[i]->n_monst; j++) {
 		struct monst *mtmp = find_mid(regions[i]->monsters[j]);
 
-		if (mtmp && (*callbacks[f_indx])(regions[i], mtmp)) {
+		if (!mtmp) continue;
+		if (mtmp->mhp <= 0 || (*callbacks[f_indx])(regions[i], mtmp)) {
 		    /* The monster died, remove it from list */
-		    regions[i]->monsters[j] = 0;
+		    k = (regions[i]->n_monst -= 1);
+		    regions[i]->monsters[j] = regions[i]->monsters[k];
+		    regions[i]->monsters[k] = 0;
+		    --j;    /* current slot has been reused; recheck it next */
 		}
 	    }
-	    /* clean up monster list */
-	    for (j = 0, k = 0; j < regions[i]->n_monst; j++)
-		if (regions[i]->monsters[j] == 0) {
-		    k++;
-		    if (j != regions[i]->n_monst) {
-			regions[i]->monsters[j] = regions[i]->monsters[j + 1];
-			regions[i]->monsters[j + 1] = 0;
-		    }
-		}
-	    regions[i]->n_monst -= k;
 	}
     }
 }
