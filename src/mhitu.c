@@ -1002,7 +1002,7 @@ dopois:
 		    break;
 		}
 		if (Half_physical_damage) dmg = (dmg+1) / 2;
-		losehp(dmg, mon_nam(mtmp), KILLED_BY_AN);
+		mdamageu(mtmp, dmg);
 
 		if (!uarmh || uarmh->otyp != DUNCE_CAP) {
 		    Your("brain is eaten!");
