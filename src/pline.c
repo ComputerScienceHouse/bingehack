@@ -369,7 +369,7 @@ ustatusline()
 	if (Glib)		Sprintf(eos(info), ", slippery %s",
 					makeplural(body_part(HAND)));
 	if (u.utrap)		Strcat(info, ", trapped");
-	if (Fast)		Strcat(info, (Fast & ~INTRINSIC) ?
+	if (Fast)		Strcat(info, Very_fast ?
 						", very fast" : ", fast");
 	if (u.uundetected)	Strcat(info, ", concealed");
 	if (Invis)		Strcat(info, ", invisible");

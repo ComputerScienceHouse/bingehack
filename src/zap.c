@@ -1821,7 +1821,7 @@ boolean ordinary;
 
 		case WAN_SLOW_MONSTER:
 		case SPE_SLOW_MONSTER:
-		    if(Fast & (TIMEOUT | INTRINSIC)) {
+		    if(HFast & (TIMEOUT | INTRINSIC)) {
 			u_slow_down();
 			makeknown(obj->otyp);
 		    }

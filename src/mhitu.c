@@ -1825,7 +1825,7 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 		break;
 	    case AD_SLOW:
 		if(!mtmp->mcan && canseemon(mtmp) && mtmp->mcansee &&
-		   (Fast & (INTRINSIC|TIMEOUT)) &&
+		   (HFast & (INTRINSIC|TIMEOUT)) &&
 		   !defends(AD_SLOW, uwep) && !rn2(4))
 		    u_slow_down();
 		break;
