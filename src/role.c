@@ -737,6 +737,254 @@ str2align(str)
 	return (-1);
 }
 
+/* is rolenum compatible with any racenum/gendnum/alignnum constraints? */
+boolean
+ok_role(rolenum, racenum, gendnum, alignnum)
+int rolenum, racenum, gendnum, alignnum;
+{
+    int i;
+    short allow;
+
+    if (rolenum >= 0 && rolenum < SIZE(roles)-1) {
+	allow = roles[rolenum].allow;
+	if (racenum >= 0 && racenum < SIZE(races)-1 &&
+		!(allow & races[racenum].allow & ROLE_RACEMASK))
+	    return FALSE;
+	if (gendnum >= 0 && gendnum < ROLE_GENDERS &&
+		!(allow & genders[gendnum].allow & ROLE_GENDMASK))
+	    return FALSE;
+	if (alignnum >= 0 && alignnum < ROLE_ALIGNS &&
+		!(allow & aligns[alignnum].allow & ROLE_ALIGNMASK))
+	    return FALSE;
+	return TRUE;
+    } else {
+	for (i = 0; i < SIZE(roles)-1; i++) {
+	    allow = roles[i].allow;
+	    if (racenum >= 0 && racenum < SIZE(races)-1 &&
+		    !(allow & races[racenum].allow & ROLE_RACEMASK))
+		continue;
+	    if (gendnum >= 0 && gendnum < ROLE_GENDERS &&
+		    !(allow & genders[gendnum].allow & ROLE_GENDMASK))
+		continue;
+	    if (alignnum >= 0 && alignnum < ROLE_ALIGNS &&
+		    !(allow & aligns[alignnum].allow & ROLE_ALIGNMASK))
+		continue;
+	    return TRUE;
+	}
+	return FALSE;
+    }
+}
+
+/* pick a random role subject to any racenum/gendnum/alignnum constraints */
+int
+pick_role(racenum, gendnum, alignnum)
+int racenum, gendnum, alignnum;
+{
+    int i;
+    int roles_ok = 0;
+
+    for (i = 0; i < SIZE(roles)-1; i++) {
+	if (ok_role(i, racenum, gendnum, alignnum))
+	    roles_ok++;
+    }
+    if (roles_ok == 0)
+	return -1;
+    roles_ok = rn2(roles_ok);
+    for (i = 0; i < SIZE(roles)-1; i++) {
+	if (ok_role(i, racenum, gendnum, alignnum)) {
+	    if (roles_ok == 0)
+		return i;
+	    else
+		roles_ok--;
+	}
+    }
+    return -1;
+}
+
+/* is racenum compatible with any rolenum/gendnum/alignnum constraints? */
+boolean
+ok_race(rolenum, racenum, gendnum, alignnum)
+int rolenum, racenum, gendnum, alignnum;
+{
+    int i;
+    short allow;
+
+    if (racenum >= 0 && racenum < SIZE(races)-1) {
+	allow = races[racenum].allow;
+	if (rolenum >= 0 && rolenum < SIZE(roles)-1 &&
+		!(allow & roles[rolenum].allow & ROLE_RACEMASK))
+	    return FALSE;
+	if (gendnum >= 0 && gendnum < ROLE_GENDERS &&
+		!(allow & genders[gendnum].allow & ROLE_GENDMASK))
+	    return FALSE;
+	if (alignnum >= 0 && alignnum < ROLE_ALIGNS &&
+		!(allow & aligns[alignnum].allow & ROLE_ALIGNMASK))
+	    return FALSE;
+	return TRUE;
+    } else {
+	for (i = 0; i < SIZE(races)-1; i++) {
+	    allow = races[i].allow;
+	    if (rolenum >= 0 && rolenum < SIZE(roles)-1 &&
+		    !(allow & roles[rolenum].allow & ROLE_RACEMASK))
+		continue;
+	    if (gendnum >= 0 && gendnum < ROLE_GENDERS &&
+		    !(allow & genders[gendnum].allow & ROLE_GENDMASK))
+		continue;
+	    if (alignnum >= 0 && alignnum < ROLE_ALIGNS &&
+		    !(allow & aligns[alignnum].allow & ROLE_ALIGNMASK))
+		continue;
+	    return TRUE;
+	}
+	return FALSE;
+    }
+}
+
+/* pick a random race subject to any rolenum/gendnum/alignnum constraints */
+int
+pick_race(rolenum, gendnum, alignnum)
+int rolenum, gendnum, alignnum;
+{
+    int i;
+    int races_ok = 0;
+
+    for (i = 0; i < SIZE(races)-1; i++) {
+	if (ok_race(rolenum, i, gendnum, alignnum))
+	    races_ok++;
+    }
+    if (races_ok == 0)
+	return -1;
+    races_ok = rn2(races_ok);
+    for (i = 0; i < SIZE(races)-1; i++) {
+	if (ok_race(rolenum, i, gendnum, alignnum)) {
+	    if (races_ok == 0)
+		return i;
+	    else
+		races_ok--;
+	}
+    }
+    return -1;
+}
+
+/* is gendnum compatible with any rolenum/racenum/alignnum constraints? */
+/* gender and alignment are not comparable (and also not constrainable) */
+boolean
+ok_gend(rolenum, racenum, gendnum, alignnum)
+int rolenum, racenum, gendnum, alignnum;
+{
+    int i;
+    short allow;
+
+    if (gendnum >= 0 && gendnum < ROLE_GENDERS) {
+	allow = genders[gendnum].allow;
+	if (rolenum >= 0 && rolenum < SIZE(roles)-1 &&
+		!(allow & roles[rolenum].allow & ROLE_GENDMASK))
+	    return FALSE;
+	if (racenum >= 0 && racenum < SIZE(races)-1 &&
+		!(allow & races[racenum].allow & ROLE_GENDMASK))
+	    return FALSE;
+	return TRUE;
+    } else {
+	for (i = 0; i < ROLE_GENDERS; i++) {
+	    allow = genders[i].allow;
+	    if (rolenum >= 0 && rolenum < SIZE(roles)-1 &&
+		    !(allow & roles[rolenum].allow & ROLE_GENDMASK))
+		continue;
+	    if (racenum >= 0 && racenum < SIZE(races)-1 &&
+		    !(allow & races[racenum].allow & ROLE_GENDMASK))
+		continue;
+	    return TRUE;
+	}
+	return FALSE;
+    }
+}
+
+/* pick a random gender subject to any rolenum/racenum/alignnum constraints */
+/* gender and alignment are not comparable (and also not constrainable) */
+int
+pick_gend(rolenum, racenum, alignnum)
+int rolenum, racenum, alignnum;
+{
+    int i;
+    int gends_ok = 0;
+
+    for (i = 0; i < ROLE_GENDERS; i++) {
+	if (ok_gend(rolenum, racenum, i, alignnum))
+	    gends_ok++;
+    }
+    if (gends_ok == 0)
+	return -1;
+    gends_ok = rn2(gends_ok);
+    for (i = 0; i < ROLE_GENDERS; i++) {
+	if (ok_gend(rolenum, racenum, i, alignnum)) {
+	    if (gends_ok == 0)
+		return i;
+	    else
+		gends_ok--;
+	}
+    }
+    return -1;
+}
+
+/* is alignnum compatible with any rolenum/racenum/gendnum constraints? */
+/* alignment and gender are not comparable (and also not constrainable) */
+boolean
+ok_align(rolenum, racenum, gendnum, alignnum)
+int rolenum, racenum, gendnum, alignnum;
+{
+    int i;
+    short allow;
+
+    if (alignnum >= 0 && alignnum < ROLE_ALIGNS) {
+	allow = aligns[alignnum].allow;
+	if (rolenum >= 0 && rolenum < SIZE(roles)-1 &&
+		!(allow & roles[rolenum].allow & ROLE_ALIGNMASK))
+	    return FALSE;
+	if (racenum >= 0 && racenum < SIZE(races)-1 &&
+		!(allow & races[racenum].allow & ROLE_ALIGNMASK))
+	    return FALSE;
+	return TRUE;
+    } else {
+	for (i = 0; i < ROLE_ALIGNS; i++) {
+	    allow = races[i].allow;
+	    if (rolenum >= 0 && rolenum < SIZE(roles)-1 &&
+		    !(allow & roles[rolenum].allow & ROLE_ALIGNMASK))
+		continue;
+	    if (racenum >= 0 && racenum < SIZE(races)-1 &&
+		    !(allow & races[racenum].allow & ROLE_ALIGNMASK))
+		continue;
+	    return TRUE;
+	}
+	return FALSE;
+    }
+}
+
+/* pick a random alignment subject to any rolenum/racenum/gendnum constraints */
+/* alignment and gender are not comparable (and also not constrainable) */
+int
+pick_align(rolenum, racenum, gendnum)
+int rolenum, racenum, gendnum;
+{
+    int i;
+    int aligns_ok = 0;
+
+    for (i = 0; i < ROLE_ALIGNS; i++) {
+	if (ok_align(rolenum, racenum, gendnum, i))
+	    aligns_ok++;
+    }
+    if (aligns_ok == 0)
+	return -1;
+    aligns_ok = rn2(aligns_ok);
+    for (i = 0; i < ROLE_ALIGNS; i++) {
+	if (ok_align(rolenum, racenum, gendnum, i)) {
+	    if (aligns_ok == 0)
+		return i;
+	    else
+		aligns_ok--;
+	}
+    }
+    return -1;
+}
+
 
 void
 plnamesuffix()
