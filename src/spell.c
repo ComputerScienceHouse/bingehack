@@ -801,16 +801,12 @@ boolean atme;
 
 	/* these are all duplicates of scroll effects */
 	case SPE_REMOVE_CURSE:
-		/*
-		 * When the hero is skilled enough the spell is equivalent
-		 * to a blessed scroll.
-		 */
-		if (role_skill >= P_SKILLED)
-		    pseudo->blessed=1;
-		/* fall through */
 	case SPE_CONFUSE_MONSTER:
 	case SPE_DETECT_FOOD:
 	case SPE_CAUSE_FEAR:
+		/* high skill yields effect equivalent to blessed scroll */
+		if (role_skill >= P_SKILLED) pseudo->blessed = 1;
+		/* fall through */
 	case SPE_CHARM_MONSTER:
 	case SPE_MAGIC_MAPPING:
 	case SPE_CREATE_MONSTER:
@@ -824,6 +820,9 @@ boolean atme;
 	case SPE_DETECT_MONSTERS:
 	case SPE_LEVITATION:
 	case SPE_RESTORE_ABILITY:
+		/* high skill yields effect equivalent to blessed potion */
+		if (role_skill >= P_SKILLED) pseudo->blessed = 1;
+		/* fall through */
 	case SPE_INVISIBILITY:
 		(void) peffects(pseudo);
 		break;
@@ -854,7 +853,7 @@ boolean atme;
 		cast_protection();
 		break;
 	case SPE_JUMPING:
-		if (!jump(role_skill))
+		if (!jump(max(role_skill,1)))
 			pline(nothing_happens);
 		break;
 	default:
