@@ -87,6 +87,10 @@ static struct trobj Monk[] = {
 	{ FOOD_RATION, 0, FOOD_CLASS, 3, 0 },
 	{ APPLE, 0, FOOD_CLASS, 5, UNDEF_BLESS },
 	{ ORANGE, 0, FOOD_CLASS, 5, UNDEF_BLESS },
+	/* Yes, we know fortune cookies aren't really from China.  They were
+	 * invented by George Jung in Los Angeles, California, USA in 1916.
+	 */
+	{ FORTUNE_COOKIE, 0, FOOD_CLASS, 3, UNDEF_BLESS },
 	{ 0, 0, 0, 0, 0 }
 };
 static struct trobj Priest[] = {
@@ -128,7 +132,6 @@ static struct trobj Samurai[] = {
 	{ YUMI, 0, WEAPON_CLASS, 1, UNDEF_BLESS },
 	{ YA, 0, WEAPON_CLASS, 25, UNDEF_BLESS }, /* variable quan */
 	{ SPLINT_MAIL, 0, ARMOR_CLASS, 1, UNDEF_BLESS },
-	{ FORTUNE_COOKIE, 0, FOOD_CLASS, 3, 0 },
 	{ 0, 0, 0, 0, 0 }
 };
 #ifdef TOURIST
