@@ -128,6 +128,7 @@ static struct Bool_Opt
 #else
 	{"popup_dialog", (boolean *)0, FALSE},
 #endif
+	{"prayconfirm", &flags.prayconfirm, TRUE},
 #if defined(MSDOS) && defined(USE_TILES)
 	{"preload_tiles", &iflags.preload_tiles, TRUE},
 #else
