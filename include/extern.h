@@ -1482,7 +1482,6 @@ E void FDECL(restpriest, (struct monst *,BOOLEAN_P));
 
 /* ### quest.c ### */
 
-E void NDECL(quest_init);
 E void NDECL(onquest);
 E void NDECL(nemdead);
 E void NDECL(artitouch);

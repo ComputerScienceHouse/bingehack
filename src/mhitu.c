@@ -1500,7 +1500,7 @@ gulpmu(mtmp, mattk)	/* monster swallows you, or damage if u.uswallow */
 			 * are swallowed. Pretend purple worms don't
 			 * like horses for now :-)
 			 */
-			strcpy(buf, mon_nam(u.usteed));
+			Strcpy(buf, mon_nam(u.usteed));
 			pline ("%s lunges forward and plucks you off %s!",
 				Monnam(mtmp), buf);
 			dismount_steed(DISMOUNT_ENGULFED);

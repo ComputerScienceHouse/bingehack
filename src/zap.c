@@ -1417,7 +1417,7 @@ struct obj *obj, *otmp;
 			} else if (obj->otyp == STATUE) {
 			    xchar oox, ooy;
 
-			    get_obj_location(obj, &oox, &ooy, 0);
+			    (void) get_obj_location(obj, &oox, &ooy, 0);
 			    if (!animate_statue(obj, oox, ooy,
 						ANIMATE_SPELL, (int *)0)) {
 makecorpse:			if (mvitals[obj->corpsenm].mvflags & (G_NOCORPSE|G_UNIQ)) {
@@ -1444,7 +1444,7 @@ makecorpse:			if (mvitals[obj->corpsenm].mvflags & (G_NOCORPSE|G_UNIQ)) {
 			    res = 0;
 			    break;
 			}
-			get_obj_location(obj, &oox, &ooy, 0);
+			(void) get_obj_location(obj, &oox, &ooy, 0);
 			mon = makemon(&mons[obj->corpsenm],
 				      oox, ooy, NO_MM_FLAGS);
 			if (mon) {
@@ -2545,9 +2545,9 @@ struct obj **ootmp;	/* to return worn armor for caller to disintegrate */
 			spell_damage_bonus());
 #endif
 		if (burnarmor(mon)) {
-		    if (!rn2(3)) destroy_mitem(mon, POTION_CLASS, AD_FIRE);
-		    if (!rn2(3)) destroy_mitem(mon, SCROLL_CLASS, AD_FIRE);
-		    if (!rn2(5)) destroy_mitem(mon, SPBOOK_CLASS, AD_FIRE);
+		    if (!rn2(3)) (void)destroy_mitem(mon, POTION_CLASS, AD_FIRE);
+		    if (!rn2(3)) (void)destroy_mitem(mon, SCROLL_CLASS, AD_FIRE);
+		    if (!rn2(5)) (void)destroy_mitem(mon, SPBOOK_CLASS, AD_FIRE);
 		}
 		break;
 	case ZT_COLD:
@@ -2564,7 +2564,7 @@ struct obj **ootmp;	/* to return worn armor for caller to disintegrate */
 		    pline("Damage = %d + %d", tmp-spell_damage_bonus(),
 			spell_damage_bonus());
 #endif
-		if (!rn2(3)) destroy_mitem(mon, POTION_CLASS, AD_COLD);
+		if (!rn2(3)) (void)destroy_mitem(mon, POTION_CLASS, AD_COLD);
 		break;
 	case ZT_SLEEP:
 		tmp = 0;
@@ -2636,9 +2636,9 @@ struct obj **ootmp;	/* to return worn armor for caller to disintegrate */
 				mon->mblinded = 127;
 			else mon->mblinded += rnd_tmp;
 		}
-		if (!rn2(3)) destroy_mitem(mon, WAND_CLASS, AD_ELEC);
+		if (!rn2(3)) (void)destroy_mitem(mon, WAND_CLASS, AD_ELEC);
 		/* not actually possible yet */
-		if (!rn2(3)) destroy_mitem(mon, RING_CLASS, AD_ELEC);
+		if (!rn2(3)) (void)destroy_mitem(mon, RING_CLASS, AD_ELEC);
 		break;
 	case ZT_POISON_GAS:
 		if (resists_poison(mon)) {

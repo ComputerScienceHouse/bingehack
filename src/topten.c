@@ -568,7 +568,7 @@ boolean so;
 	if (t1->plalign[0] != '?')
 		Sprintf(eos(linebuf), "-%s ", t1->plalign);
 	else
-		strcat(linebuf, " ");
+		Strcat(linebuf, " ");
 	if (!strncmp("escaped", t1->death, 7)) {
 	    Sprintf(eos(linebuf), "escaped the dungeon %s[max level %d]",
 		    !strncmp(" (", t1->death + 7, 2) ? t1->death + 7 + 2 : "",

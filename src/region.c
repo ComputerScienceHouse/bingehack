@@ -25,16 +25,20 @@ void FDECL(add_rect_to_reg, (NhRegion *, NhRect *));
 void FDECL(add_mon_to_reg, (NhRegion *, struct monst *));
 void FDECL(remove_mon_from_reg, (NhRegion *, struct monst *));
 boolean FDECL(mon_in_region, (NhRegion *, struct monst *));
+#if 0
 NhRegion * FDECL(clone_region, (NhRegion *));
+#endif
 void FDECL(free_region, (NhRegion *));
 void FDECL(add_region, (NhRegion *));
 void FDECL(remove_region, (NhRegion *));
+#if 0
 void FDECL(replace_mon_regions, (struct monst *, struct monst *));
 void FDECL(remove_mon_from_regions, (struct monst *));
 NhRegion * FDECL(create_msg_region, (XCHAR_P, XCHAR_P,
 	XCHAR_P, XCHAR_P, const char *, const char *));
 boolean FDECL(enter_force_field, (genericptr, genericptr));
 NhRegion * FDECL(create_force_field, (XCHAR_P, XCHAR_P, int, int));
+#endif
 
 
 static callback_proc callbacks[] = {
@@ -222,6 +226,8 @@ struct monst* mon;
   return FALSE;
 }
 
+#if 0
+/* not yet used */
 /*
  * Clone (make a standalone copy) the region.
  */
@@ -252,6 +258,7 @@ NhRegion* reg;
     ret_reg->monsters = NULL;
   return ret_reg;
 }
+#endif
 
 /*
  * Free mem from region.
@@ -553,6 +560,8 @@ struct monst* mon;
   }
 }
 
+#if 0
+/* not yet used */
 /* 
  * Change monster pointer in regions
  * This happens, for instance, when a monster grows and
@@ -584,6 +593,7 @@ struct monst* mon;
     if (mon_in_region(regions[i], mon))
       remove_mon_from_reg(regions[i], mon);
 }
+#endif
 
 /* 
  * Check if a spot is under a visible region (eg: gas cloud).
@@ -733,6 +743,8 @@ int fd;
       remove_region(regions[i]);      
 }
 
+#if 0
+/* not yet used */
 /*--------------------------------------------------------------*
  *								*
  *			Create Region with just a message	*
@@ -818,6 +830,7 @@ int radius, ttl;
   add_region(ff);
   return ff;
 }
+#endif
 
 /*--------------------------------------------------------------*
  *								*
