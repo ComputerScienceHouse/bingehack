@@ -182,7 +182,7 @@ const char *monexplain[MAXMCLASSES] = {
     "vampire",			"wraith",		"xorn",
     "yeti, ape or other large beast", "zombie",
 
-    "human/demihuman",		"ghost",		"golem",
+    "human or elf",		"ghost",		"golem",
     "major demon",		"sea monster",		"lizard",
     "long worm tail",		"mimic"
 };
@@ -419,15 +419,15 @@ static uchar dec_graphics[MAXPCHARS] = {
 	0xe1,	/* S_hodoor:	meta-a, solid block */
 	g_FILLER(S_vcdoor),
 	g_FILLER(S_hcdoor),
-	252,	/* S_bars:	small pi */
-	231,	/* S_tree:	plus-or-minus */
+	0xfb,	/* S_bars:	meta-{, small pi */
+	0xe7,	/* S_tree:	meta-g, plus-or-minus */
 	0xfe,	/* S_room:	meta-~, centered dot */
 /*20*/	g_FILLER(S_corr),
 	g_FILLER(S_litcorr),
 	g_FILLER(S_upstair),
 	g_FILLER(S_dnstair),
-	g_FILLER(S_upladder),
-	g_FILLER(S_dnladder),
+	0xf9,	/* S_upladder:	meta-y, greater-than-or-equals */
+	0xfa,	/* S_dnladder:	meta-z, less-than-or-equals */
 	g_FILLER(S_altar),	/* 0xc3, \E)3: meta-C, dagger */
 	g_FILLER(S_grave),
 	g_FILLER(S_throne),
