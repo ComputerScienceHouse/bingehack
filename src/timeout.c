@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)timeout.c	3.3	1999/02/13	*/
+/*	SCCS Id: @(#)timeout.c	3.3	2000/02/20	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -550,6 +550,8 @@ long timeout;
 		    (void) start_timer((long)rnd(12), TIMER_OBJECT,
 					HATCH_EGG, (genericptr_t)egg);
 		}
+	    } else if (egg->where == OBJ_INVENT) {
+		useup(egg);
 	    } else {
 		/* free egg here because we use it above */
 		obj_extract_self(egg);
