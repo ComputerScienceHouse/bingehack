@@ -132,7 +132,7 @@ dungeon    a list of symbols to be used in place of the default ones for
            vodbridge hodbridge     (vertical, horizontal open drawbridge)
            vcdbridge hcdbridge   (vertical, horizontal closed drawbridge)
            air cloud water
-           default:  \ |--------||.-|++.##<><>_\\#{}.}..##\ #}
+           default:  \ |--------||.-|++##.##<><>_\\#{}.}..##\ #}
 effects    like dungeon, but for special effects symbols
            vbeam hbeam lslant rslant                  (generic zap beams)
            digbeam flashbeam      (special beams for digging and cameras)
