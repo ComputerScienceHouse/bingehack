@@ -851,7 +851,9 @@ register struct obj *otmp;
 	off_msg(otmp);
 
 	if (Blind) {
-	    if (was_blind)
+	    if (otmp->otyp == LENSES)
+		; /* "still cannot see" makes no sense for lenses; do nothing */
+	    else if (was_blind)
 		You("still cannot see.");
 	    else
 		You("cannot see anything now!");
