@@ -1416,14 +1416,20 @@ gotit:
 	    if (container_at(x, y, FALSE)) {
 		if (mtmp) {
 		    You("can't loot anything %sthere with %s in the way.",
-			    saddled_there ? "else " : "", mon_nam(mtmp));
+#ifdef STEED
+			    saddled_there ? "else " :
+#endif
+			    "", mon_nam(mtmp));
 		    return timepassed;
 		} else {
 		    You("have to be at a container to loot it.");
 		}
 	    } else {
 		You("%s %sthere to loot.", dont_find_anything,
-			(saddled_there || got_saddle) ? "else " : "");
+#ifdef STEED
+			(saddled_there || got_saddle) ? "else " :
+#endif
+			"");
 		return timepassed;
 	    }
 	}

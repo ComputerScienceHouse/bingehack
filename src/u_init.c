@@ -868,7 +868,9 @@ int otyp;
      case PM_RANGER:		skills = Skill_Ran; break;
      case PM_ROGUE:		skills = Skill_R; break;
      case PM_SAMURAI:		skills = Skill_S; break;
+#ifdef TOURIST
      case PM_TOURIST:		skills = Skill_T; break;
+#endif
      case PM_VALKYRIE:		skills = Skill_V; break;
      case PM_WIZARD:		skills = Skill_W; break;
      default:			skills = 0; break;	/* lint suppression */
