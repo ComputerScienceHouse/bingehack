@@ -258,16 +258,21 @@ moverock()
 	cannot_push:
 	    if (throws_rocks(youmonst.data)) {
 #ifdef STEED
-		if (u.usteed && P_SKILL(P_RIDING) < P_BASIC)
+		if (u.usteed && P_SKILL(P_RIDING) < P_BASIC) {
 		    You("aren't skilled enough to %s %s from %s.",
 			(flags.pickup && !In_sokoban(&u.uz))
 			    ? "pick up" : "push aside",
 			the(xname(otmp)), mon_nam(u.usteed));
-		else
+		} else
 #endif
+		{
 		    pline("However, you can easily %s.",
 			(flags.pickup && !In_sokoban(&u.uz))
 			    ? "pick it up" : "push it aside");
+		    if (In_sokoban(&u.uz))
+			change_luck(-1);	/* Sokoban guilt */
+		    break;
+		}
 		break;
 	    }
 
@@ -280,6 +285,8 @@ moverock()
 				     && IS_ROCK(levl[sx][u.uy].typ))))
 		|| verysmall(youmonst.data))) {
 		pline("However, you can squeeze yourself into a small opening.");
+		if (In_sokoban(&u.uz))
+		    change_luck(-1);	/* Sokoban guilt */
 		break;
 	    } else
 		return (-1);
@@ -691,6 +698,8 @@ domove()
 		if(mtmp->m_ap_type && !Protection_from_shape_changers
 						    && !sensemon(mtmp))
 		    stumble_onto_mimic(mtmp);
+		else if (mtmp->mpeaceful)
+		    pline("Pardon me, %s.", m_monnam(mtmp));
 		else
 		    You("move right into %s.", mon_nam(mtmp));
 		return;
@@ -1341,7 +1350,8 @@ register boolean newlev;
 		    break;
 		case DELPHI:
 		    if(monstinroom(&mons[PM_ORACLE], roomno))
-			verbalize("%s, %s, welcome to Delphi!", Hello(), plname);
+			verbalize("%s, %s, welcome to Delphi!",
+					Hello((struct monst *) 0), plname);
 		    break;
 		case TEMPLE:
 		    intemple(roomno + ROOMOFFSET);
@@ -1415,6 +1425,16 @@ dopickup()
 	    } else if (!Underwater) {
 		You_cant("even see the bottom, let alone pick up %s.",
 				something);
+		return(1);
+	    }
+	}
+	if (is_lava(u.ux, u.uy)) {
+	    if (Wwalking || is_floater(youmonst.data) || is_clinger(youmonst.data)
+			|| (Flying && !Breathless)) {
+		You_cant("reach the bottom to pick things up.");
+		return(1);
+	    } else if (!likes_lava(youmonst.data)) {
+		You("would burn to a crisp trying to pick things up.");
 		return(1);
 	    }
 	}

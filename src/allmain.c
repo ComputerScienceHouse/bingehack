@@ -102,7 +102,7 @@ moveloop()
 #ifdef STEED
 		    if (u.usteed && flags.mv) {
 			/* your speed doesn't augment steed's speed */
-			moveamt = u.usteed->movement;
+			moveamt = u.usteed->data->mmove;
 		    } else
 #endif
 		    {
@@ -532,7 +532,7 @@ boolean new_game;	/* false => restoring an old game */
 
     pline(new_game ? "%s %s, welcome to NetHack!  You are a%s %s %s."
 		   : "%s %s, the%s %s %s, welcome back to NetHack!",
-	  Hello(), plname, buf, urace.adj,
+	  Hello((struct monst *) 0), plname, buf, urace.adj,
 	  (currentgend && urole.name.f) ? urole.name.f : urole.name.m);
 }
 

@@ -381,7 +381,8 @@ struct mail_info *info;
     if (!md_rush(md, stop.x, stop.y)) goto go_back;
 
     message_seen = TRUE;
-    verbalize("%s, %s!  %s.", Hello(), plname, info->display_txt);
+    verbalize("%s, %s!  %s.",
+    		Hello((struct monst *) 0), plname, info->display_txt);
 
     if (info->message_typ) {
 	struct obj *obj = mksobj(SCR_MAIL, FALSE, FALSE);

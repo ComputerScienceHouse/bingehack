@@ -390,7 +390,8 @@ struct attack *uattk;
 	    int oldhp = mon->mhp;
 
 		/* KMH, conduct */
-		if (uwep) u.uconduct.weaphit++;
+		if (uwep && (uwep->oclass == WEAPON_CLASS || is_weptool(uwep)))
+		    u.uconduct.weaphit++;
 
 	    /* we hit the monster; be careful: it might die! */
 	    notonhead = (mon->mx != u.ux+u.dx || mon->my != u.uy+u.dy);
@@ -1532,6 +1533,9 @@ register struct attack *mattk;
 			u.uconduct.food++;
 			u.uconduct.flesh++;
 			if (is_meaty(mdef->data)) u.uconduct.meat++;
+
+			/* Use up amulet of life saving */
+			if (!!(otmp = mlifesaver(mdef))) m_useup(mdef, otmp);
 
 			newuhs(FALSE);
 			xkilled(mdef,2);

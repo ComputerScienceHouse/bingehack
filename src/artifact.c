@@ -532,18 +532,8 @@ struct monst *mtmp;
 	} else if (weap->spfx & SPFX_DFLAG1) {
 	    return ((ptr->mflags1 & weap->mtype) != 0L);
 	} else if (weap->spfx & SPFX_DFLAG2) {
-	    if (yours) {
-		if ((weap->mtype & M2_HUMAN) != 0 &&
-				maybe_polyd(is_human(ptr),  Race_if(PM_HUMAN)))
-			return 1;
-		if ((weap->mtype & M2_ELF) != 0 &&
-				maybe_polyd(is_elf(ptr), Race_if(PM_ELF)))
-			return 1;
-		if ((weap->mtype & M2_ORC) != 0 &&
-				maybe_polyd(is_orc(ptr), Race_if(PM_ORC)))
-			return 1;
-	    }
-	    return ((ptr->mflags2 & weap->mtype) != 0L);
+	    return ((ptr->mflags2 & weap->mtype) ||
+		(yours && !Upolyd && (urace.selfmask & weap->mtype)));
 	} else if (weap->spfx & SPFX_DALIGN) {
 	    return yours ? (u.ualign.type != weap->alignment) :
 			   (ptr->maligntyp == A_NONE ||

@@ -424,7 +424,7 @@ register char *enterstring;
 	    pline("%s mutters imprecations against shoplifters.", shkname(shkp));
 	} else {
 	    verbalize("%s, %s!  Welcome%s to %s %s!",
-		      Hello(), plname,
+		      Hello(shkp), plname,
 		      eshkp->visitct++ ? " again" : "",
 		      s_suffix(shkname(shkp)),
 		      shtypes[rt - SHOPBASE].name);
@@ -2862,13 +2862,13 @@ register struct monst *shkp;
 		if(eshkp->following) {
 			if(strncmp(eshkp->customer, plname, PL_NSIZ)) {
 			    verbalize("%s, %s!  I was looking for %s.",
-				    Hello(), plname, eshkp->customer);
+				    Hello(shkp), plname, eshkp->customer);
 				    eshkp->following = 0;
 			    return(0);
 			}
 			if(moves > followmsg+4) {
 			    verbalize("%s, %s!  Didn't you forget to pay?",
-				    Hello(), plname);
+				    Hello(shkp), plname);
 			    followmsg = moves;
 			    if (!rn2(9)) {
 			      pline("%s doesn't like customers who don't pay.",
@@ -3323,10 +3323,10 @@ register struct monst *shkp;
 	else if (eshk->following) {
 		if (strncmp(eshk->customer, plname, PL_NSIZ)) {
 		    verbalize("%s %s!  I was looking for %s.",
-			    Hello(), plname, eshk->customer);
+			    Hello(shkp), plname, eshk->customer);
 		    eshk->following = 0;
 		} else {
-		    verbalize("%s %s!  Didn't you forget to pay?", Hello(), plname);
+		    verbalize("%s %s!  Didn't you forget to pay?", Hello(shkp), plname);
 		}
 	} else if (eshk->billct) {
 		register long total = addupbill(shkp) + eshk->debit;

@@ -319,7 +319,7 @@ mattacku(mtmp)
 			i = mattackm(mtmp, u.usteed);
 			if ((i & MM_AGR_DIED))
 				return (1);
-			if (i & MM_DEF_DIED)
+			if (i & MM_DEF_DIED || u.ux != u.ux0 || u.uy != u.uy0)
 				return (0);
 			/* Let your steed retaliate */
 			return (!!(mattackm(u.usteed, mtmp) & MM_DEF_DIED));

@@ -1608,7 +1608,7 @@ E boolean FDECL(ok_align, (int, int, int, int));
 E int FDECL(pick_align, (int, int, int));
 E void NDECL(role_init);
 E void NDECL(plnamesuffix);
-E const char *NDECL(Hello);
+E const char *FDECL(Hello, (struct monst *));
 E const char *NDECL(Goodbye);
 
 /* ### rumors.c ### */

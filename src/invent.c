@@ -1830,7 +1830,7 @@ boolean picked_some;
 	if (dfeature)
 		Sprintf(fbuf, "There is %s here.", an(dfeature));
 
-	if (!otmp || (is_pool(u.ux,u.uy) && !Underwater)) {
+	if (!otmp || is_lava(u.ux,u.uy) || (is_pool(u.ux,u.uy) && !Underwater)) {
 		if (dfeature) pline(fbuf);
 		read_engr_at(u.ux, u.uy); /* Eric Backus */
 		if (!skip_objects && (Blind || !dfeature))

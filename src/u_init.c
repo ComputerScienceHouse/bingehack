@@ -935,6 +935,9 @@ register struct trobj *trop;
 				|| obj->otyp == RIN_AGGRAVATE_MONSTER
 				|| obj->otyp == RIN_HUNGER
 				|| obj->otyp == WAN_NOTHING
+				/* Monks don't use weapons */
+				|| (obj->otyp == SCR_ENCHANT_WEAPON &&
+				    Role_if(PM_MONK))
 				/* wizard patch -- they already have one */
 				|| (obj->otyp == SPE_FORCE_BOLT &&
 				    Role_if(PM_WIZARD))

@@ -858,9 +858,10 @@ struct obj *obj;
 		You("swing your %s through thin air.", aobjnam(obj, (char *)0));
 	} else if (!can_reach_floor()) {
 		You_cant("reach the %s.", surface(u.ux,u.uy));
-	} else if (is_pool(u.ux, u.uy)) {
+	} else if (is_pool(u.ux, u.uy) || is_lava(u.ux, u.uy)) {
 		/* Monsters which swim also happen not to be able to dig */
-		You("cannot stay underwater long enough.");
+		You("cannot stay under%s long enough.",
+				is_pool(u.ux, u.uy) ? "water" : " the lava");
 	} else {
 		if (digging.pos.x != u.ux || digging.pos.y != u.uy ||
 			!on_level(&digging.level, &u.uz) || !digging.down) {

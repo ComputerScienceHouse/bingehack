@@ -1141,19 +1141,25 @@ role_init()
 }
 
 const char *
-Hello()
+Hello(mtmp)
+struct monst *mtmp;
 {
 	switch (Role_switch) {
 	case PM_KNIGHT:
 	    return ("Salutations"); /* Olde English */
 	case PM_SAMURAI:
-	    return ("Konnichi wa"); /* Japanese */
+	    return (mtmp && mtmp->data == &mons[PM_SHOPKEEPER] ?
+	    		"Irasshaimase" : "Konnichi wa"); /* Japanese */
 #ifdef TOURIST
 	case PM_TOURIST:
 	    return ("Aloha");       /* Hawaiian */
 #endif
 	case PM_VALKYRIE:
-	    return ("Velkommen");   /* Norse */
+	    return (
+#ifdef MAIL
+	    		mtmp && mtmp->data == &mons[PM_MAIL_DAEMON] ? "Hallo" :
+#endif
+	    		"Velkommen");   /* Norse */
 	default:
 	    return ("Hello");
 	}

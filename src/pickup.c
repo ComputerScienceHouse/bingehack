@@ -333,7 +333,7 @@ int what;		/* should be a long */
 
 	/* no auto-pick if no-pick move, nothing there, or in a pool */
 	if (autopickup && (flags.nopick || !OBJ_AT(u.ux, u.uy) ||
-			(is_pool(u.ux, u.uy) && !Underwater))) {
+			(is_pool(u.ux, u.uy) && !Underwater) || is_lava(u.ux, u.uy))) {
 	    read_engr_at(u.ux, u.uy);
 	    return;
 	}

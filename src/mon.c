@@ -1415,6 +1415,9 @@ register struct monst *mdef;
 			add_to_container(otmp, au);
 			mdef->mgold = 0;
 		}
+		/* Archeologists should not break unique statues */
+		if (mdef->data->geno & G_UNIQ)
+			otmp->spe = 1;
 		otmp->owt = weight(otmp);
 	} else
 		otmp = mksobj_at(ROCK, x, y, TRUE);
@@ -1845,9 +1848,11 @@ register struct monst *mtmp;
 		else adjalign(2);
 	} else
 		adjalign(-1);		/* attacking peaceful monsters is bad */
-	if(humanoid(mtmp->data) || mtmp->isshk || mtmp->isgd)
-		pline("%s gets angry!", Monnam(mtmp));
-	else if (flags.verbose && flags.soundok) growl(mtmp);
+	if (couldsee(mtmp->mx, mtmp->my)) {
+		if (humanoid(mtmp->data) || mtmp->isshk || mtmp->isgd)
+		    pline("%s gets angry!", Monnam(mtmp));
+		else if (flags.verbose && flags.soundok) growl(mtmp);
+	}
 
 	/* attacking your own quest leader will anger his or her guardians */
 	if (!flags.mon_moving &&	/* should always be the case here */

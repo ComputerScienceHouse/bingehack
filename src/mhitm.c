@@ -521,6 +521,7 @@ mdamagem(magr, mdef, mattk)
 {
 	struct	permonst *pa = magr->data, *pd = mdef->data;
 	int	tmp = d((int)mattk->damn,(int)mattk->damd);
+	struct obj *obj;
 	char buf[BUFSZ];
 
 	if (touch_petrifies(pd) && !resists_ston(magr) &&
@@ -558,6 +559,8 @@ mdamagem(magr, mdef, mattk)
 		}
 		if(flags.verbose && flags.soundok) verbalize("Burrrrp!");
 		tmp = mdef->mhp;
+		/* Use up amulet of life saving */
+		if (!!(obj = mlifesaver(mdef))) m_useup(mdef, obj);
 		break;
 	    case AD_STUN:
 		if (magr->mcan) break;
@@ -733,7 +736,11 @@ label2:			if (mdef->mhp > 0) return 0;
 		       we'll get "it" in the suddenly disappears message */
 		    if (vis) Strcpy(mdef_Monnam, Monnam(mdef));
 		    rloc(mdef);
-		    if (vis && !canspotmon(mdef))
+		    if (vis && !canspotmon(mdef)
+#ifdef STEED
+		    	&& mdef != u.usteed
+#endif
+		    	)
 			pline("%s suddenly disappears!", mdef_Monnam);
 		}
 		break;
