@@ -15,6 +15,7 @@ static int n_regions = 0;
 static int max_regions = 0;
 
 #define NO_CALLBACK (-1)
+#define OUT_OF_BOUNDS(x,y) ((x)<=0 || (y)<0 || (x)>COLNO-1 || (y)>ROWNO-1)
 
 boolean FDECL(inside_gas_cloud, (genericptr,genericptr));
 boolean FDECL(expire_gas_cloud, (genericptr,genericptr));
@@ -302,6 +303,9 @@ NhRegion *reg;
     /* Check for monsters inside the region */
     for (i = reg->bounding_box.lx; i <= reg->bounding_box.hx; i++)
 	for (j = reg->bounding_box.ly; j <= reg->bounding_box.hy; j++) {
+	    /* Some regions can cross the level boundaries */
+	    if (OUT_OF_BOUNDS(i,j))
+	      continue;
 	    if (MON_AT(i, j) && inside_region(reg, i, j))
 		add_mon_to_reg(reg, level.monsters[i][j]);
 	    if (reg->visible && cansee(i, j))
@@ -330,7 +334,8 @@ NhRegion *reg;
     if (reg->visible)
 	for (x = reg->bounding_box.lx; x <= reg->bounding_box.hx; x++)
 	    for (y = reg->bounding_box.ly; y <= reg->bounding_box.hy; y++)
-		if (inside_region(reg, x, y) && cansee(x, y))
+		if (!OUT_OF_BOUNDS(x,y) && inside_region(reg, x, y) 
+		    && cansee(x, y))
 		    newsym(x, y);
 
     free_region(reg);
