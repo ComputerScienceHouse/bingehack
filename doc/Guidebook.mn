@@ -477,7 +477,7 @@ you should type zero or more object symbols possibly followed by
 .sd
 .si
 Da  - drop all objects, without asking for confirmation.
-Dm  - examine your inventory before dropping anything.
+Di  - examine your inventory before dropping anything.
 Du  - drop only unpaid objects (when in a shop).
 Dm  - use a menu to pick which object(s) to drop.
 D%u - drop only unpaid food.
