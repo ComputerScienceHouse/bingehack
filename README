@@ -9,8 +9,8 @@ To give more would be cheating, wouldn't it?
 
 o Many, many bug fixes and minor tweaks
 o New warning system that is more pleasant than the old one
-o The Amiga, Atari, and OS/2 ports are resurrected
-o A Gnome toolkit interface is now supported, though experimental
+o The Amiga and Atari ports are resurrected
+o The Gnome toolkit interface is now offered as an experimental option
 
 
                         - - - - - - - - - - -
@@ -139,6 +139,9 @@ Please read items (1), (2) and (3) BEFORE doing anything with your new code.
     Unless otherwise mentioned, the compiler used was the OS-vendor's
     C compiler.
 
+    The Atari and Amiga ports are struggling to stay supported due to a
+    lack of people with machines and time.
+
     Support for Intel 80286 machines and DOS "real mode" versions has been
     suspended.  Builds have not been attempted in quite a while.  The
     overlay mechanism is still present in the code if someone wishes to
@@ -155,7 +158,7 @@ When sending correspondence, please observe the following:
 o Please be sure to include your machine type, OS, and patchlevel.
 o Never send binary files (e.g. save files or bones files) to the
   nethack-bugs address.  Whichever platform you are using, only a small
-  minority of the development team has access to it, and you will rapdily
+  minority of the development team has access to it, and you will rapidly
   annoy the others.  If you have found a bug and think that your save file
   would aid in solving the problem, send us a description in words of the
   problem, your machine type, your operating system, and the version of
