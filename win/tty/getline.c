@@ -17,6 +17,7 @@ STATIC_DCL boolean FDECL(ext_cmd_getlin_hook, (char *));
 typedef boolean FDECL((*getlin_hook_proc), (char *));
 
 STATIC_DCL void FDECL(hooked_tty_getlin, (const char*,char*,getlin_hook_proc));
+extern int NDECL(extcmd_via_menu);	/* cmd.c */
 
 extern char erase_char, kill_char;	/* from appropriate tty.c file */
 
@@ -189,6 +190,7 @@ tty_get_ext_cmd()
 	int i;
 	char buf[BUFSZ];
 
+	if (iflags.extmenu) return extcmd_via_menu();
 	/* maybe a runtime option? */
 	/* hooked_tty_getlin("#", buf, flags.cmd_comp ? ext_cmd_getlin_hook : (getlin_hook_proc) 0); */
 #ifdef REDO

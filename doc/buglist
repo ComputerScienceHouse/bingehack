@@ -181,6 +181,10 @@ Unix
 	parent rewrites the whole screen without pausing for acknowledgement.
 X11
       - It is possible to get a prompt which does not vanish from the screen.
+      - Anything which gives two prompts in a row at which one may type a single
+        character, has a several second delay between when the single character is
+        read for the first prompt and the first prompt is erased, and the second prompt
+        is printed.
 
 tty   - The messages about version incompatibility look really bad. They
         use pline, but show up at a time when things are being written 

@@ -825,7 +825,7 @@ register int	mmflags;
 
 	place_monster(mtmp, x, y);
 	mtmp->mcansee = mtmp->mcanmove = TRUE;
-	mtmp->mpeaceful = peace_minded(ptr);
+	mtmp->mpeaceful = (mmflags & MM_ANGRY) ? FALSE : peace_minded(ptr);
 
 	switch(ptr->mlet) {
 		case S_MIMIC:

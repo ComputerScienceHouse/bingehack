@@ -255,6 +255,12 @@ extern uchar showsyms[MAXPCHARS];
 #define T_LOOTED	1
 
 /*
+ * Trees have more than one kick result.
+ */
+#define TREE_LOOTED	1
+#define TREE_SWARM	2
+
+/*
  * Fountains have limits, and special warnings.
  */
 #define F_LOOTED	1

@@ -765,6 +765,13 @@ register struct obj *obj;
 	return(wt ? wt*(int)obj->quan : ((int)obj->quan + 1)>>1);
 }
 
+static int treefruits[] = {APPLE,ORANGE,PEAR,MELON,BANANA};
+
+struct obj *
+rnd_treefruit_at(x,y)
+{
+	return mksobj_at(treefruits[rn2(SIZE(treefruits)-1)],x,y,TRUE);
+}
 #endif /* OVL0 */
 #ifdef OVLB
 

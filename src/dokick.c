@@ -528,6 +528,8 @@ char *buf;
 	else if (IS_ROCK(maploc->typ)) what = "a rock";
 	else if (IS_THRONE(maploc->typ)) what = "a throne";
 	else if (IS_FOUNTAIN(maploc->typ)) what = "a fountain";
+	else if (IS_GRAVE(maploc->typ)) what = "a headstone";
+	else if (IS_TREE(maploc->typ)) what = "a tree";
 #ifdef SINKS
 	else if (IS_SINK(maploc->typ)) what = "a sink";
 #endif
@@ -535,6 +537,7 @@ char *buf;
 	else if (IS_DRAWBRIDGE(maploc->typ)) what = "the drawbridge";
 	else if (maploc->typ == STAIRS) what = "the stairs";
 	else if (maploc->typ == LADDER) what = "a ladder";
+	else if (maploc->typ == IRONBARS) what = "an iron bar";
 	else what = "something weird";
 	return strcat(strcpy(buf, "kicking "), what);
 }
@@ -795,6 +798,37 @@ dokick()
 		}
 		if(IS_GRAVE(maploc->typ))
 		    goto ouch;
+		if(IS_TREE(maploc->typ)) {
+		    struct obj *treefruit;
+		    if (rn2(8)) goto ouch;
+		    /* fruit or trouble ? */
+		    if (!rn2(2) && !(maploc->looted & TREE_LOOTED) &&
+			  (treefruit = rnd_treefruit_at(x, y))) {
+			treefruit->quan = (long)(8 - rnl(8));
+			if (treefruit->quan > 1L)
+				pline("Some %s fall from the tree!", xname(treefruit));
+			else
+				pline("%s falls from the tree!", An(xname(treefruit)));
+			scatter(x,y,2,MAY_HIT,treefruit);
+			exercise(A_DEX, TRUE);
+			exercise(A_WIS, TRUE);	/* discovered a new food source! */
+			newsym(x, y);
+			maploc->looted |= TREE_LOOTED;
+			return(1);
+		    } else if (!rn2(15) && !(maploc->looted & TREE_SWARM)){
+		    	int cnt = rnl(5);
+		    	coord mm;
+		    	mm.x = x; mm.y = y;
+			pline("You've disturbed the occupants!");
+			while (cnt--)
+				if (enexto(&mm, mm.x, mm.y, &mons[PM_KILLER_BEE]))
+				    (void) makemon(&mons[PM_KILLER_BEE],
+						mm.x, mm.y, MM_ANGRY);
+			maploc->looted |= TREE_SWARM;
+			return(1);
+		    }
+		    goto ouch;
+		}
 #ifdef SINKS
 		if(IS_SINK(maploc->typ)) {
 		    if(Levitation) goto dumb;

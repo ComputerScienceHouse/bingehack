@@ -110,6 +110,7 @@ NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
 #define MM_NOWAIT	  0x02	/* don't set STRAT_WAITMASK flags */
 #define MM_EDOG		  0x04	/* add edog structure */
 #define MM_EMIN		  0x08	/* add emin structure */
+#define MM_ANGRY	  0x10  /* monster is created angry */
 
 /* flags to control query_objlist() */
 #define BY_NEXTHERE	  0x1	/* follow objlist by nexthere field */

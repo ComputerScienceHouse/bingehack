@@ -33,7 +33,7 @@ lowered drawbridge should not match werecritter entry
 lengthen option file line length to 4*BUFSZ
 -uwizard-{class} counts as -uwizard when allowing debug mode on PCs.
 make zaps of death at polymorphed players work properly
-change way invisibility works, add remembered invis monsters and 'f' command
+change way invisibility works, add remembered invis monsters and 'F' command
 don't list pick-axe and unicorn horn as likely candidates for charging
 give more accurate message when nymph steals multi-turn armor from female char
 fix splitting merged group of wielded weapons for menu mode version of #loot
@@ -333,7 +333,6 @@ add two weapon combat, second weapon slot, and "pushweapon"
 	option
 add quiver and fire command
 add multishot ammunition
-add "pickup_burden" option to control when to prompt during pickup
 add graves, iron bars, trees, and arboreal levels
 dwarvish mattocks can be used to dig
 add leprechaun, cockatrice, and anthole special rooms
@@ -356,4 +355,5 @@ some #monster commands now consume energy.
 Platform- and/or Interface-Specific New Features
 ------------------------------------------------
 WinNT: implement mail support
+WinNT: console mouse support added to TTY port
 

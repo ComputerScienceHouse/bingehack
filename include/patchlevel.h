@@ -43,7 +43,18 @@
 /* Version 3.3 */
 
 /*****************************************************************************/
-/* Version 3.2.2 */
+/* Version 3.2.3 */
+
+/*  Patch 3, November 20, 1999
+ *  Released simultaneously with 3.3.0 for the benefit of
+ *  ports and platforms that were unable to get working
+ *  versions of 3.3.0 ready prior to the year 2000. It
+ *  consisted of just a few bug fixes and offered no new
+ *  functionality changes over 3.2.2.
+ *  
+ *  Y2K fix: use 4 digit year values for the dates in the score file
+ *  updated COPYRIGHT_BANNER_A to reflect year of release
+ */
 
 /*  Patch 2, December 10, 1996
  *  fix the `recover' utility

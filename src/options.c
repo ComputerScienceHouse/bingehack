@@ -66,6 +66,9 @@ static struct Bool_Opt
 #else
 	{"DECgraphics", (boolean *)0, FALSE},
 #endif
+#ifdef TTY_GRAPHICS
+	{"extmenu", &iflags.extmenu, FALSE},
+#endif
 #ifdef OPT_DISPMAP
 	{"fast_map", &flags.fast_map, TRUE},
 #else
