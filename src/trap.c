@@ -1666,7 +1666,7 @@ float_up()
 		}
 	}
 	else if(Is_waterlevel(&u.uz))
-		pline("It feels as though you'd lost some weight.");
+		pline("It feels as though you've lost some weight.");
 	else if(u.uinwater)
 		spoteffects();
 	else if(u.uswallow)
