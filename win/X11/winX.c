@@ -499,7 +499,8 @@ X11_putstr(window, attr, str)
 
     switch (wp->type) {
 	case NHW_MESSAGE:
-	    Strcpy(toplines, str);	/* for Norep(). */
+	    (void) strncpy(toplines, str, TBUFSZ);	/* for Norep(). */
+	    toplines[TBUFSZ - 1] = 0;
 	    append_message(wp, str);
 	    break;
 	case NHW_STATUS:

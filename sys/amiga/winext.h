@@ -34,7 +34,7 @@ extern winid amii_rawprwin;
 extern struct Screen *HackScreen;
 /* extern struct Library *ConsoleDevice; */
 extern char Initialized;
-extern char toplines[ BUFSZ ];
+extern char toplines[ TBUFSZ ];
 extern NEARDATA winid WIN_MESSAGE;
 extern NEARDATA winid WIN_MAP;
 extern NEARDATA winid WIN_STATUS;

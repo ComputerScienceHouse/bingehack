@@ -312,6 +312,8 @@ struct version_info {
 
 #define BUFSZ		256	/* for getlin buffers */
 #define QBUFSZ		128	/* for building question text */
+#define TBUFSZ		300	/* toplines[] buffer max msg: 3 81char names */
+				/* plus longest prefix plus a few extra words */
 
 #define PL_NSIZ		32	/* name of player, ghost, shopkeeper */
 #define PL_CSIZ		32	/* sizeof pl_character */

@@ -76,8 +76,8 @@ amii_putstr(window,attr,str)
 	
 	amii_scrollmsg( w, cw );
 
-	strncpy( toplines, str, BUFSZ );
-	toplines[ BUFSZ - 1 ] = 0;
+	strncpy( toplines, str, TBUFSZ );
+	toplines[ TBUFSZ - 1 ] = 0;
 
 	/* For initial message to be visible, we need to explicitly position the
 	 * cursor.  This flag, cw->curx == -1 is set elsewhere to force the
