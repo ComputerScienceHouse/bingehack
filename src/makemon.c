@@ -1258,6 +1258,11 @@ struct monst *mtmp, *victim;
 	    lev_limit, hp_threshold;
 	struct permonst *ptr = mtmp->data;
 
+	/* monster died after killing enemy but before calling this function */
+	/* currently possible if killing a gas spore */
+	if (mtmp->mhp <= 0)
+	    return ((struct permonst *)0);
+
 	/* growth limits differ depending on method of advancement */
 	if (victim) {		/* killed a monster */
 	    /*
