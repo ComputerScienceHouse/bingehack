@@ -255,6 +255,7 @@ E void FDECL(bury_obj, (struct obj *));
 #ifdef INVISIBLE_OBJECTS
 E struct obj * FDECL(vobj_at, (XCHAR_P,XCHAR_P));
 #endif /* INVISIBLE_OBJECTS */
+E void FDECL(magic_map_background, (XCHAR_P,XCHAR_P,int));
 E void FDECL(map_background, (XCHAR_P,XCHAR_P,int));
 E void FDECL(map_trap, (struct trap *,int));
 E void FDECL(map_object, (struct obj *,int));

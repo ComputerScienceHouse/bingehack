@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)display.c	3.3	97/01/24	*/
+/*	SCCS Id: @(#)display.c	3.3	00/01/12	*/
 /* Copyright (c) Dean Luick, with acknowledgements to Kevin Darcy */
 /* and Dave Cohrs, 1990.					  */
 /* NetHack may be freely redistributed.  See license for details. */
@@ -154,6 +154,36 @@ vobj_at(x,y)
     return ((struct obj *) 0);
 }
 #endif	/* else vobj_at() is defined in display.h */
+
+/*
+ * magic_map_background()
+ *
+ * This function is similar to map_background (see below) except we pay
+ * attention to and correct unexplored, lit ROOM and CORR spots.
+ */
+void
+magic_map_background(x, y, show)
+    xchar x,y;
+    int  show;
+{
+    int glyph = back_to_glyph(x,y);	/* assumes hero can see x,y */
+    struct rm *lev = &levl[x][y];
+
+    /*
+     * Correct for out of sight lit corridors and rooms that the hero
+     * doesn't remember as lit.
+     */
+    if (!cansee(x,y) && !lev->waslit) {
+	/* Floor spaces are dark if unlit.  Corridors are dark if unlit. */
+	if (lev->typ == ROOM && glyph == cmap_to_glyph(S_room))
+	    glyph = cmap_to_glyph(S_stone);
+	else if (lev->typ == CORR && glyph == cmap_to_glyph(S_litcorr))
+	    glyph = cmap_to_glyph(S_corr);
+    }
+    if (level.flags.hero_memory)
+	lev->glyph = glyph;
+    if (show) show_glyph(x,y, glyph);
+}
 
 /*
  * The routines map_background(), map_object(), and map_trap() could just

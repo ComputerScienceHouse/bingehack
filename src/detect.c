@@ -753,10 +753,10 @@ register int x, y;
 		glyph_to_cmap(lev->glyph) != ROOM) :
 	    (!glyph_is_object(lev->glyph) && !glyph_is_trap(lev->glyph))) {
 	if (level.flags.hero_memory) {
-	    map_background(x,y,0);
-	    newsym(x,y);		/* show it, if not blocked */
+	    magic_map_background(x,y,0);
+	    newsym(x,y);			/* show it, if not blocked */
 	} else {
-	    map_background(x,y,1);	/* display it */
+	    magic_map_background(x,y,1);	/* display it */
 	}
     }
 }
@@ -1078,7 +1078,6 @@ sokoban_detect()
 	register struct trap *ttmp;
 	register struct obj *obj;
 
-
 	/* Map the background and boulders */
 	for (x = 1; x < COLNO; x++)
 	    for (y = 0; y < ROWNO; y++) {
@@ -1095,8 +1094,6 @@ sokoban_detect()
 	    ttmp->tseen = 1;
 	    map_trap(ttmp, 1);
 	}
-
-	return;
 }
 
 
