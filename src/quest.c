@@ -42,7 +42,7 @@ on_locate()
   if(!Qstat(first_locate)) {
     qt_pager(QT_FIRSTLOCATE);
     Qstat(first_locate) = TRUE;
-  } else if(u.uz0.dlevel < u.uz.dlevel)
+  } else if(u.uz0.dlevel < u.uz.dlevel && !Qstat(killed_nemesis))
 	qt_pager(QT_NEXTLOCATE);
 }
 

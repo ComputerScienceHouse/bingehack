@@ -1698,13 +1698,13 @@ the Astral plane.  I suspect that I shall never see you again in this
 life, but I hope to at %ds feet."
 %E
 #
-#	Ranger (formerly Elf)
+#	Ranger
 #
 %Cc Ran 00001
 You arrive in familiar surroundings.  In the distance, you %x the
-great stone Circle, the place of worship to %d.
+ancient forest grove, the place of worship to %d.
 
-Something is wrong, though.  Surrounding the circle are centaurs!
+Something is wrong, though.  Surrounding the grove are centaurs!
 And they've noticed you!
 %E
 %Cp Ran 00002
@@ -1715,17 +1715,17 @@ You have the oddest feeling that this may be the last time you
 are to enter %H.
 %E
 %Cp Ran 00005
-"%pC!  I have not seen you in many cycles.  How do you fare?"
+"%pC!  I have not seen you in many moons.  How do you fare?"
 %E
 %Cp Ran 00006
-"%nC continues to threaten the circle.  But we hold fast."
+"%nC continues to threaten the grove.  But we hold fast."
 %E
 %Cp Ran 00007
-"%lC is growing weak.  The magic required to defend the circle drains us."
+"%lC is growing weak.  The magic required to defend the grove drains us."
 %E
 %Cp Ran 00008
-"Remember %i is hard to enter.  Seek the secret
-passageways."
+"Remember %i is hard to enter.  Beware the
+distraction of leatherwings."
 %E
 %Cp Ran 00009
 "We must regain %o.  Without it we will be overrun."
@@ -1744,7 +1744,7 @@ required abilities to take on this responsibility."
 %E
 %Cc Ran 00013
 "%pC!  You have doomed us all.  You fairly radiate %L influences
-and weaken the power we have raised in this circle as a result!
+and weaken the power we have raised in this grove as a result!
 
 "Begone!  We renounce your %shood with us!  You are an outcast now!"
 %E
@@ -1770,7 +1770,7 @@ leader is now only a figurehead, and serves %n.
 
 "During our last gathering of worship here, we were beset by hordes of
 hostile centaurs, as you witnessed.  In the first onslaught a group,
-headed by %n himself, managed to breach the circle and
+headed by %n himself, managed to breach the grove and
 steal %o.
 
 "Since then, we have been besieged.  We do not know how much longer
@@ -1802,11 +1802,10 @@ to reach us."
 The very act of doing so will infuriate him, and give you advantage."
 %E
 %Cp Ran 00025
-"Though %n is as %C as we, he and his kind have always
-hated us."
+"%n and his kind have always hated us."
 %E
 %Cp Ran 00026
-"We cannot hold the circle much longer, %p.  Hurry!"
+"We cannot hold the grove much longer, %p.  Hurry!"
 %E
 %Cp Ran 00027
 "To infiltrate %i, you must be very stealthy."
@@ -1820,9 +1819,6 @@ hated us."
 %Cc Ran 00030
 You descend into the outer regions of %i.  You can hear
 clattering sounds in the corridors, and vague mumblings in the distance.
-
-You remember that %ga once told you that there were many secret
-passageways in this complex.
 %E
 %Cp Ran 00031
 Once again, you descend into %i.
@@ -1866,7 +1862,7 @@ kill you."
 "I shall display your head as a trophy.  What do you think about that wall?"
 %E
 %Cp Ran 00064
-"I shall break your %ls circle, and destroy all the %gP!"
+"I shall break your %ls grove, and destroy all the %gP!"
 %E
 %Cp Ran 00065
 "%d has abandoned you, %c.  You are doomed."
