@@ -1831,7 +1831,7 @@ join with smooth, finished ones, as if someone was in the midst of
 finishing off the construction of a subterranean complex.
 
 Off in the distance, you hear a sound like the clattering of many
-hoves on rock.
+hooves on rock.
 %E
 %Cp Ran 00041
 Once again, you enter the distorted castle of %n.

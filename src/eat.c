@@ -429,6 +429,21 @@ register int pm;
 		change_luck(-rn1(4,2));		/* -5..-2 */
 	}
 
+	if (touch_petrifies(&mons[pm]) || pm == PM_MEDUSA) {
+	    if (!Stone_resistance &&
+		!(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))) {
+		char kbuf[BUFSZ];
+
+		Sprintf(kbuf, "tasting %s meat", mons[pm].mname);
+		killer_format = KILLED_BY;
+		killer = kbuf;
+		You("turn to stone.");
+		done(STONING);
+		victual.eating = FALSE;
+		return; /* lifesaved */
+	    }
+	}
+
 	switch(pm) {
 	    case PM_LITTLE_DOG:
 	    case PM_DOG:
@@ -438,19 +453,6 @@ register int pm;
 	    case PM_LARGE_CAT:
 		You_feel("that eating the %s was a bad idea.", mons[pm].mname);
 		HAggravate_monster |= FROMOUTSIDE;
-		break;
-	    case PM_COCKATRICE:
-	    case PM_MEDUSA:
-		if (!Stone_resistance &&
-		    !(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))) {
-		    char kbuf[BUFSZ];
-
-		    Sprintf(kbuf, "tasting %s meat", mons[pm].mname);
-		    killer_format = KILLED_BY;
-		    killer = kbuf;
-		    You("turn to stone.");
-		    done(STONING);
-		}
 		break;
 	    case PM_LIZARD:
 		if (Stoned) fix_petrification();

@@ -1035,6 +1035,8 @@ doengrave()
 	    make_blinded((long)rnd(50),FALSE);
 	}
 
+	u.uconduct.literate++;
+
 	return(1);
 }
 

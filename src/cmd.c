@@ -978,7 +978,7 @@ int final;
 	    you_have_been("illiterate");
 #ifdef WIZARD
 	else if (wizard) {
-	    Sprintf(buf, "read %ld item%s",
+	    Sprintf(buf, "read items or engraved %ld time%s",
 		    u.uconduct.literate, plur(u.uconduct.literate));
 	    you_have_X(buf);
 	}
