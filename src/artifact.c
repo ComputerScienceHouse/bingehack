@@ -539,6 +539,9 @@ struct monst *mtmp;
 		if ((weap->mtype & M2_ELF) != 0 &&
 				maybe_polyd(is_elf(ptr), Race_if(PM_ELF)))
 			return 1;
+		if ((weap->mtype & M2_ORC) != 0 &&
+				maybe_polyd(is_orc(ptr), Race_if(PM_ORC)))
+			return 1;
 	    }
 	    return ((ptr->mflags2 & weap->mtype) != 0L);
 	} else if (weap->spfx & SPFX_DALIGN) {
