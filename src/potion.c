@@ -539,6 +539,8 @@ peffects(otmp)
 		if (otmp->blessed) {
 		    int x, y;
 
+		    if (Detect_monsters) nothing++;
+		    unkn++;
 		    set_itimeout(&HDetect_monsters, 20L+rnd(40));
 		    for (x = 1; x < COLNO; x++) {
 			for (y = 0; y < ROWNO; y++) {
@@ -546,6 +548,7 @@ peffects(otmp)
 				unmap_object(x, y);
 				newsym(x,y);
 			    }
+			    if (MON_AT(x,y)) unkn = 0;
 			}
 		    }
 		    see_monsters();
@@ -838,9 +841,10 @@ const char *bottlenames[] = {
 };
 
 void
-potionhit(mon, obj)
+potionhit(mon, obj, your_fault)
 register struct monst *mon;
 register struct obj *obj;
+boolean your_fault;
 {
 	register const char *botlnam = bottlenames[rn2(SIZE(bottlenames))];
 	boolean isyou = (mon == &youmonst);
@@ -890,6 +894,7 @@ register struct obj *obj;
     } else {
 	boolean angermon = TRUE;
 
+	if (!your_fault) angermon = FALSE;
 	switch (obj->otyp) {
 	case POT_RESTORE_ABILITY:
 	case POT_GAIN_ABILITY:

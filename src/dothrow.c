@@ -436,7 +436,7 @@ boolean hitsroof;
     /* object now hits you */
 
     if (obj->oclass == POTION_CLASS) {
-	potionhit(&youmonst, obj);
+	potionhit(&youmonst, obj, TRUE);
     } else if (breaktest(obj)) {
 	int otyp = obj->otyp, ocorpsenm = obj->corpsenm;
 	int blindinc;
@@ -980,7 +980,7 @@ register struct obj   *obj;
 
 	} else if (obj->oclass == POTION_CLASS &&
 		(guaranteed_hit || ACURR(A_DEX) > rnd(25))) {
-	    potionhit(mon, obj);
+	    potionhit(mon, obj, TRUE);
 	    return 1;
 
 	} else if (obj->oclass == FOOD_CLASS &&
