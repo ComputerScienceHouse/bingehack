@@ -1,4 +1,4 @@
-\" @(#)$Id: tmac.n,v 1.1 1999/11/12 04:02:13 warwick Exp $
+\" @(#)$Id: tmac.n,v 1.1.1.1 1999/11/12 04:02:13 warwick Exp $
 .\" The News macro package
 .\"
 .\" This  is  the macro package that is used to format news documents.  It
