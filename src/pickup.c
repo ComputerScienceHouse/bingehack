@@ -1285,7 +1285,7 @@ verbalize("Thank you for your contribution to reduce the debt.");
 		    }
 		}
 	    } else if (IS_GRAVE(levl[u.ux][u.uy].typ)) {
-		You("need to dig up a grave in order to properly loot it...");
+		You("need to dig up a grave in order to effectively loot it...");
 	    } else {
 		You("don't find anything here to loot.");
 	    }
