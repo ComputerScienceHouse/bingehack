@@ -815,7 +815,7 @@ Steeds
 Some types of creatures in the dungeon can actually be ridden if you
 have the right equipment and skill.  Convincing a wild beast to let
 you saddle it up is difficult to say the least.  Many a dungeoneer 
-has had resort to magic and wizardry in order to forge the alliance.
+has had to resort to magic and wizardry in order to forge the alliance.
 Once you do have the beast under your control however, you can 
 easily climb in and out of the saddle with the #ride command. Lead
 the beast around the dungeon when riding, in the same manner as 
@@ -1884,7 +1884,7 @@ well as supporting ports on the different platforms that NetHack runs on:
 .pg
 \fBPat Rankin\fP maintained 3.3 for VMS.
 .pg
-\fBMichael Allison\fP ported NetHack 3.3 for the MS-DOS platform.  \fBPaul Winner\fP
+\fBMichael Allison\fP maintained NetHack 3.3 for the MS-DOS platform.  \fBPaul Winner\fP
 and \fBYitzhak Sapir\fP provided encouragement.
 .pg
 \fBElvis\fP was seen playing NetHack on an Amiga.  That is to say, like Elvis, it
@@ -1895,7 +1895,7 @@ Macintosh port of 3.3.
 .pg
 The Atari port of NetHack was discontinued.
 .pg
-\fBMichael Allison\fP ported 3.3 for the Microsoft Windows NT platform.
+\fBMichael Allison\fP maintained and enhanced 3.3 for the Microsoft Windows NT platform.
 .pg
 \fBRon Van Iwaarden\fP took over responsibility for the OS/2 port.
 			   - - - - - - - - - -
