@@ -2366,7 +2366,7 @@ void
 mac_add_menu (winid win, int glyph, const anything *any, CHAR_P menuChar, CHAR_P groupAcc, int attr, const char *inStr, int preselected) {
 	NhWindow *aWin = &theWindows [win];
 	const char *str;
-	char locStr[BUFSZ];
+	char locStr[4+BUFSZ];
 	MacMHMenuItem *item;
 
 	if (!inStr) return;

@@ -612,7 +612,8 @@ X11_add_menu(window, glyph, identifier, ch, gch, attr, str, preselected)
     item->pick_count = -1L;
 
     if (identifier->a_void) {
-	char buf[QBUFSZ];
+	char buf[4+BUFSZ];
+	int len = strlen(str);
 
 	if (!ch) {
 	    /* Supply a keyboard accelerator.  Only the first 52 get one. */
@@ -626,7 +627,14 @@ X11_add_menu(window, glyph, identifier, ch, gch, attr, str, preselected)
 	    }
 	}
 
-	Sprintf(buf, "%c - %s", ch ? ch : ' ', str);
+	if (len >= BUFSZ) {
+	    /* We *think* everything's coming in off at most BUFSZ bufs... */
+	    impossible("Menu item too long (%d).", len);
+	    len = BUFSZ - 1;
+	}
+	Sprintf(buf, "%c - ", ch ? ch : ' ');
+	(void) strncpy(buf+4, str, len);
+	buf[4+len] = '\0';
 	item->str = copy_of(buf);
     } else {
 	/* no keyboard accelerator */
