@@ -337,6 +337,7 @@ register int x,y;
 	    	unsigned maxelen = BUFSZ - sizeof("You feel the words: \"\". ");
 	    	if (strlen(ep->engr_txt) > maxelen) {
 	    		strncpy(buf,  ep->engr_txt, maxelen);
+			buf[maxelen] = '\0';
 			et = buf;
 		} else
 			et = ep->engr_txt;
