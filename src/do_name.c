@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)do_name.c	3.3	1999/10/10	*/
+/*	SCCS Id: @(#)do_name.c	3.3	2000/01/11	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -322,8 +322,6 @@ register struct obj *obj;
 		You("engrave: \"%s\".",buf);
 	}
 	obj = oname(obj, buf);
-	if (obj->where == OBJ_INVENT)
-		update_inventory();
 }
 
 /*
@@ -424,6 +422,8 @@ const char *name;
 			      (genericptr_t)obj->oextra, lth, name);
 	}
 	if (lth) artifact_exists(obj, name, TRUE);
+	if (obj->oartifact && obj == uswapwep) untwoweapon();
+	if (obj->where == OBJ_INVENT) update_inventory();
 	return obj;
 }
 
