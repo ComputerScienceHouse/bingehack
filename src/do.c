@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)do.c	3.3	1999/10/29	*/
+/*	SCCS Id: @(#)do.c	3.3	1999/11/29	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -720,7 +720,7 @@ doup()
 		You("are held back by your pet!");
 		return(0);
 	}
-	if (levl[u.ux][u.uy].typ == LADDER) at_ladder = TRUE;
+	at_ladder = (boolean) (levl[u.ux][u.uy].typ == LADDER);
 	prev_level(TRUE);
 	at_ladder = FALSE;
 	return(1);
