@@ -645,10 +645,10 @@ newsym(x,y)
 
 	    if (canseeself()) display_self();
 	}
-	else if ((mon = m_at(x,y)) &&
-		(sensemon(mon) ||
-		    (see_with_infrared(mon) && mon_visible(mon))) &&
-		!((x != mon->mx) || (y != mon->my))) {
+	else if ((mon = m_at(x,y))
+		&& (sensemon(mon)
+		    || (see_with_infrared(mon) && mon_visible(mon)))
+		&& !((x != mon->mx) || (y != mon->my))) {
 	    /* Monsters are printed every time. */
 	    /* This also gets rid of any invisibility glyph */
 	    display_monster(x,y,mon,0,0);
