@@ -1,4 +1,4 @@
-#	SCCS Id: @(#)quest.txt	3.3	99/11/26
+#	SCCS Id: @(#)quest.txt	3.3	1999/11/28
 #	Copyright (c) 1991 by M. Stephenson
 # NetHack may be freely redistributed.  See license for details.
 #
@@ -3222,7 +3222,7 @@ essential in locating the Amulet of Yendor."
 "Twixt thy cousin and thee, Medusa is the prettier."
 %E
 %Cp - 00045
-"Methinks thou wert unnaturally interested in yon corpse back there, eh, varlet?"
+"Methinks thou wert unnaturally stirred by yon corpse back there, eh, varlet?"
 %E
 %Cp - 00046
 "Up thy nose with a rubber hose!"
