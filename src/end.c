@@ -907,9 +907,15 @@ list_vanquished()
 			Sprintf(buf, "%s%s",
 				!type_is_pname(&mons[i]) ? "The " : "",
 				mons[i].mname);
-			if (nkilled > 1)
-			    Sprintf(eos(buf)," (%d time%s)",
-				    nkilled, plur(nkilled));
+			if (nkilled > 1) {
+			    switch (nkilled) {
+	    			case 2:  Sprintf(eos(buf)," (twice)");  break;
+	    			case 3:  Sprintf(eos(buf)," (thrice)");  break;
+	    			default: Sprintf(eos(buf)," (%d time%s)",
+				    		nkilled, plur(nkilled));
+				break;
+			    }
+			}
 		    } else {
 			/* trolls or undead might have come back,
 			   but we don't keep track of that */
