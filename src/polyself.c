@@ -1019,7 +1019,10 @@ int part;
 	*snake_parts[] = { "vestigial limb", "eye", "face", "large scale",
 		"large scale tip", "rear region", "scale gap", "scale gapped",
 		"head", "rear region", "light headed", "neck", "length",
-		"rear scale", "scales", "blood" };
+		"rear scale", "scales", "blood" },
+	*fish_parts[] = { "fin", "eye", "premaxillary", "pelvic axillary",
+		"pelvic fin", "anal fin", "pectoral fin", "finned", "head", "peduncle",
+		"played out", "gills", "dorsal fin", "caudal fin", "scales", "blood" };
 	/* claw attacks are overloaded in mons[]; most humanoids with
 	   such attacks should still reference hands rather than claws */
 	static const char not_claws[] = {
@@ -1040,6 +1043,8 @@ int part;
 		    mptr != &mons[PM_INCUBUS] && mptr != &mons[PM_SUCCUBUS])
 		return part == HAND ? "claw" : "clawed";
 	}
+	if (mptr == &mons[PM_SHARK] && part == HAIR)
+	    return "skin";	/* sharks don't have scales */
 	if (humanoid(mptr) &&
 		(part == ARM || part == FINGER || part == FINGERTIP ||
 		    part == HAND || part == HANDED))
@@ -1047,12 +1052,14 @@ int part;
 	if (mptr->mlet == S_CENTAUR || mptr->mlet == S_UNICORN ||
 		(mptr == &mons[PM_ROTHE] && part != HAIR))
 	    return horse_parts[part];
+	if (mptr->mlet == S_EEL && mptr != &mons[PM_JELLYFISH])
+	    return fish_parts[part];
 	if (slithy(mptr))
 	    return snake_parts[part];
 	if (mptr->mlet == S_EYE)
 	    return sphere_parts[part];
 	if (mptr->mlet == S_JELLY || mptr->mlet == S_PUDDING ||
-		mptr->mlet == S_BLOB)
+		mptr->mlet == S_BLOB || mptr == &mons[PM_JELLYFISH])
 	    return jelly_parts[part];
 	if (mptr->mlet == S_VORTEX || mptr->mlet == S_ELEMENTAL)
 	    return vortex_parts[part];
