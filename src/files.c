@@ -99,6 +99,11 @@ int FDECL(parse_config_line, (FILE *,char *,char *,char *));
 extern void NDECL(dircheck);
 #endif
 
+#ifdef MAC
+extern void FDECL(C2P,(const char *c, unsigned char *p));
+#endif
+
+
 /* fopen a file, with OS-dependent bells and whistles */
 /* NOTE: a simpler version of this routine also exists in util/dlb_main.c */
 FILE *
@@ -1500,13 +1505,13 @@ const char *dir;
 #else /* MICRO */
 
 # ifdef MAC
-	int fd = macopen ( RECORD , O_RDWR | O_CREAT , TEXT_TYPE ) ;
+	Str255 filename;
+	FInfo info;
 
-	if ( fd < 0 ) {
-		raw_printf ( "Warning: cannot write %s" , RECORD ) ;
-	} else {
-		close ( fd ) ;
-	}
+	/* Create the "record" file, if necessary */
+	C2P(RECORD, filename);
+	if (HGetFInfo(theDirs.dataRefNum, theDirs.dataDirID, filename, &info) != noErr)
+	    HCreate(theDirs.dataRefNum, theDirs.dataDirID, filename, 'ttxt', 'TEXT');
 # endif /* MAC */
 
 #endif /* MICRO */

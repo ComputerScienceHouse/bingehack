@@ -36,8 +36,8 @@ static void select_offscreen_port (tty_record *record);
  * Convenience macro for most functions - put last in declaration
  */
 #define RECORD_EXISTS(record) \
-tty_record * record = (tty_record *) GetWRefCon (window); \
-	if (!window || !record) \
+	tty_record * record; \
+	if (!window || !(record = (tty_record *) GetWRefCon (window))) \
 		return general_failure; 
 
 

@@ -417,6 +417,10 @@ InitMac(void) {
 	BlockMove (volName, theDirs.levelName, l);
 	theDirs.saveRefNum = theDirs.levelRefNum = theDirs.dataRefNum;
 	theDirs.saveDirID = theDirs.levelDirID = theDirs.dataDirID;
+
+	/* Create the "record" file, if necessary */
+	check_recordfile("");
+	return;
 }
 
 

@@ -640,6 +640,10 @@ const char *opts;
 		pline("Bad syntax: %s.  Enter \"?g\" for help.", opts);
 	    return;
 	}
+#ifdef MAC
+	else return;
+#endif
+
 # ifdef AMIGA
 	if(ami_wbench_badopt(opts)) {
 # endif
