@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)pickup.c	3.3	1999/11/01	*/
+/*	SCCS Id: @(#)pickup.c	3.3	1999/12/15	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1771,6 +1771,8 @@ boolean put_in;
 			otmp2 = splitobj(otmp, count);
 			/* special split case also handled by askchain() */
 			if (otmp == uwep) setuwep(otmp2);
+			if (otmp == uquiver) setuqwep(otmp2);
+			if (otmp == uswapwep) setuswapwep(otmp2);
 		    }
 		    res = put_in ? in_container(otmp) : out_container(otmp);
 		    if (res < 0)
