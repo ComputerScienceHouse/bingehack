@@ -2177,6 +2177,12 @@ drown()
 
 	if (u.umonnum == PM_GREMLIN && rn2(3))
 	    (void)split_mon(&youmonst, (struct monst *)0);
+	else if (u.umonnum == PM_IRON_GOLEM) {
+	    You("rust!");
+	    i = d(2,6);
+	    if (u.mhmax > i) u.mhmax -= i;
+	    losehp(i, "rusting away", KILLED_BY);
+	}
 	if (inpool_ok) return(FALSE);
 
 	if ((i = number_leashed()) > 0) {
@@ -2195,11 +2201,6 @@ drown()
 					Your("keel hits the bottom.");
 				else
 					You("touch bottom.");
-			}
-			if (u.umonnum == PM_IRON_GOLEM) {
-				You("are covered with rust!");
-				rehumanize();
-				return(!is_pool(u.ux,u.uy));
 			}
 		}
 		if (Punished) {

@@ -329,19 +329,28 @@ register struct monst *mtmp;
 	    dryup(mtmp->mx, mtmp->my);
 	if (inpool) water_damage(mtmp->minvent, FALSE, FALSE);
 	return (0);
+    } else if (mtmp->data == &mons[PM_IRON_GOLEM] && inpool && !rn2(5)) {
+	int dam = d(2,6);
+	if (cansee(mtmp->mx,mtmp->my))
+	    pline("%s rusts.", Monnam(mtmp));
+	mtmp->mhp -= dam;
+	if (mtmp->mhpmax > dam) mtmp->mhpmax -= dam;
+	if (mtmp->mhp < 1) {
+	    mondead(mtmp);
+	    if (mtmp->mhp < 1) return (1);
+	}
+	water_damage(mtmp->minvent, FALSE, FALSE);
+	return (0);
     }
+
     if (inpool) {
 	/* Most monsters drown in pools.  flooreffects() will take care of
 	 * water damage to dead monsters' inventory, but survivors need to
 	 * be handled here.  Swimmers are able to protect their stuff...
 	 */
-	if ((!is_clinger(mtmp->data)
-	     && !is_swimmer(mtmp->data) && !amphibious(mtmp->data))
-	    || (mtmp->data == &mons[PM_IRON_GOLEM])) {
+	if (!is_clinger(mtmp->data)
+	    && !is_swimmer(mtmp->data) && !amphibious(mtmp->data)) {
 	    if (cansee(mtmp->mx,mtmp->my)) {
-		if (mtmp->data == &mons[PM_IRON_GOLEM])
-		    pline("%s falls to pieces!", Monnam(mtmp));
-		else
 		    pline("%s drowns.", Monnam(mtmp));
 	    }
 	    mondead(mtmp);

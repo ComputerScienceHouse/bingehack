@@ -225,10 +225,7 @@ drinkfountain()
 		return;
 	}
 
-	if (u.umonnum == PM_IRON_GOLEM) {
-		You("rust from the inside out!");
-		rehumanize();
-	} else if (fate < 10) {
+	if (fate < 10) {
 		pline_The("cool draught refreshes you.");
 		u.uhunger += rnd(10); /* don't choke on water */
 		newuhs(FALSE);
@@ -554,10 +551,6 @@ drinksink()
 			}
 		default: You("take a sip of %s water.",
 			rn2(3) ? (rn2(2) ? "cold" : "warm") : "hot");
-	}
-	if (u.umonnum == PM_IRON_GOLEM) {
-		You("rust from the inside out!");
-		rehumanize();
 	}
 }
 #endif /* SINKS */
