@@ -143,7 +143,7 @@
 
 /* #define AMS */		/* use Andrew message system for mail */
 
-/* NO_MAILREADER is for kerberos authentcating filesystems where it is
+/* NO_MAILREADER is for kerberos authenticating filesystems where it is
  * essentially impossible to securely exec child processes, like mail
  * readers, when the game is running under a special token.
  *
