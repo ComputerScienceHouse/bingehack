@@ -619,11 +619,11 @@ DoMenuScroll( win, blocking, how, retmip )
 			wheight = 2;
 
 		    /*
-		     * Clear the right side & bottom . Parts of letters are not erased by
+		     * Clear the right side & bottom. Parts of letters are not erased by
 		     * amii_cl_end if window shrinks and columns decrease.
 		     */
 
-		    if ( WINVERS_AMII || WINVERS_AMIV ) { /* Don't do tty-mode ... */
+		    if ( WINVERS_AMII || WINVERS_AMIV ) {
 			amii_setfillpens(w, cw->type);
 			SetDrMd(w->RPort, JAM2);
 			x2 = w->Width - w->BorderRight;
@@ -1376,13 +1376,14 @@ DisplayData( win, start )
 	cw->cols = ( w->Width - w->BorderLeft - w->BorderRight - 4 ) / txwd;
     }
 
+    /* Get the real line to display at */
+    start = FindLine( win, start );
+
     mip = cw->menu.items;
     for( i = 0; mip && i < start; ++i )
     {
 	mip = mip->next;
     }
-    /* Get the real line to display at */
-    start = FindLine( win, start );
 
     /* Skip any initial response to a previous line */
     if( cw->type == NHW_MESSAGE && mip && mip->selected < 0 )

@@ -214,7 +214,7 @@ ASM	= asm
 #
 #DEBUG=debug=sf
 OPTFLAGS=opt opttime optpeep optgo optinl optcomp=10 optdep=5 optrdep=5 #optalias +OPTTIME -OPTSIZE
-CFLAGS	= data=far nminc $(DEBUG) idir=$(I) cpu=any nostkchk nover \
+CFLAGS	= data=far nominc $(DEBUG) idir=$(I) cpu=any nostkchk nover \
 	codename=none strmerge ppbuf=8000 $(OPTFLAGS) $(TILES) $(SAVEDS) \
 	afp $(ERRREXX) $(GST)
 # for files that are too large for the standard flags:
@@ -285,7 +285,7 @@ AOBJSPEC = -o
 
 #[SAS6]
 
-LINK	= slink noicons verbose maxhunk 65536 stripdebug
+LINK	= slink noicons verbose stripdebug
 LIN	= from lib:catch.o
 LLINK	= with $(AMI)ami.lnk
 LLIB	= lib lib:scnb.lib BATCH #lib lib:amiga.lib BATCH #scnb.lib or sc.lib
@@ -510,8 +510,9 @@ INSTDUNGEONFILES= $(NETHACK)NetHack.cnf $(INSTDUNGEONFILES1)
 
 INSTDATAFILES= \
 	$(NETHACK)license	$(NETHACK)logfile	$(NETHACK)record \
-	$(NETHACK)HackWB.hlp	$(NETHACK)WBDefaults.def $(NETHACK)amii.hlp \
-	$(NETHACK)tomb.iff
+	$(NETHACK)tomb.iff	$(NETHACK)amii.hlp 	$(NETHACK)Recover.txt \
+	$(NETHACK)GuideBook.txt	$(NETHACK)NetHack.txt	\
+#	$(NETHACK)HackWB.hlp	$(NETHACK)WBDefaults.def
 
 LIBFILES= \
 	$(INSTDUNGEONFILES1) \
@@ -526,14 +527,18 @@ LIBFILES= \
 
 #SFD_INSTEAD all:  $(SBIN)lev_comp $(SBIN)dgn_comp $(SBIN)NetHack \
 all:  $(COMPACT_HEADERS) $(SBIN)lev_comp $(SBIN)dgn_comp $(SBIN)NetHack \
-	$(NETHACK)HackWB $(NETHACK)recover $(NETHACK)HackCli $(SBIN)splitter \
-	$(SBIN)dlb
+	$(SBIN)dlb $(NETHACK)recover #$(NETHACK)HackCli $(SBIN)splitter \
+#	$(NETHACK)HackWB 
 
-install: inst-data inst-dungeon inst-icons inst-fonts inst-sounds inst-tiles \
-	 $(NETHACK)NetHack.dir $(NETHACK)nhdat
+install: inst-data inst-dungeon inst-fonts inst-sounds inst-tiles \
+	 $(NETHACK)recover $(NETHACK)NetHack $(NETHACK)nhdat
+	#$(NETHACK)NetHack.dir inst-icons
 
 $(SBIN)NetHack:  $(HOBJ) $(AMI)ami.lnk
 	$(LINK) $(LNSPEC) $(SBIN)NetHack $(LIN) $(LLINK) $(LLIB)
+
+$(NETHACK)NetHack: $(SBIN)NetHack
+	copy $(SBIN)NetHack $(NETHACK)NetHack
 
 link:
 	$(LINK) $(LNSPEC) $(SBIN)NetHack $(LIN) $(LLINK) $(LLIB)
@@ -714,7 +719,7 @@ $(OO)lev_main.o:  $(UTIL)lev_main.c $(HDEP) $(I)pm.h $(I)onames.h $(I)date.h
 	$(CC) $(DEFSPEC)LEV_LEX_C $(DEFSPEC)AMIGA $(CFLAGS) $(OBJSPEC)$@ \
 		$(UTIL)lev_main.c
 
-$(OO)dgn_yacc.o:  $(UTIL)dgn_yacc.c $(HDEP) $(I)dgn_file.h
+$(OO)dgn_yacc.o:  $(UTIL)dgn_yacc.c $(HDEP) $(I)dgn_file.h $(I)patchlevel.h
 	$(CC) $(DEFSPEC)LEV_LEX_C $(CFLAGS) $(DEFSPEC)alloca=malloc \
 		$(OBJSPEC)$@ $(UTIL)dgn_yacc.c
 
@@ -740,9 +745,9 @@ $(NETHACK)recover: $(OO)recover.o
 # comment them out and be careful! (You're not guaranteed to have the most
 # up to date *_comp.c, *_comp.h and *_lex.c)
 
-$(I)lev_comp.h: $(UTIL)lev_yacc.c
+$(I)lev_comp.h: $(UTIL)lev_yacc.c $(I)patchlevel.h
 
-$(UTIL)lev_yacc.c:  $(UTIL)lev_comp.y
+$(UTIL)lev_yacc.c:  $(UTIL)lev_comp.y $(I)patchlevel.h
 	$(BISON) -d $(UTIL)lev_comp.y
 #	copy y.tab.c $(UTIL)lev_yacc.c
 #	copy y.tab.h $(I)lev_comp.h
@@ -753,14 +758,14 @@ $(UTIL)lev_yacc.c:  $(UTIL)lev_comp.y
 	delete $(UTIL)lev_comp.tab.c
 	delete $(UTIL)lev_comp.tab.h
 
-$(UTIL)lev_lex.c:  $(UTIL)lev_comp.l
+$(UTIL)lev_lex.c:  $(UTIL)lev_comp.l $(I)patchlevel.h
 	$(FLEX) $(UTIL)lev_comp.l
 	copy lex.yy.c $(UTIL)lev_lex.c
 	delete lex.yy.c
 
-$(I)dgn_comp.h: $(UTIL)dgn_yacc.c
+$(I)dgn_comp.h: $(UTIL)dgn_yacc.c $(I)patchlevel.h
 
-$(UTIL)dgn_yacc.c:  $(UTIL)dgn_comp.y
+$(UTIL)dgn_yacc.c:  $(UTIL)dgn_comp.y $(I)patchlevel.h
 	$(BISON) -d $(UTIL)dgn_comp.y
 #	copy y.tab.c $(UTIL)dgn_yacc.c
 #	copy y.tab.h $(I)dgn_comp.h
@@ -771,7 +776,7 @@ $(UTIL)dgn_yacc.c:  $(UTIL)dgn_comp.y
 	delete $(UTIL)dgn_comp.tab.c
 	delete $(UTIL)dgn_comp.tab.h
 
-$(UTIL)dgn_lex.c:  $(UTIL)dgn_comp.l
+$(UTIL)dgn_lex.c:  $(UTIL)dgn_comp.l $(I)patchlevel.h
 	$(FLEX) $(UTIL)dgn_comp.l
 	copy lex.yy.c $(UTIL)dgn_lex.c
 	delete lex.yy.c
@@ -791,7 +796,7 @@ $(UTIL)dgn_lex.c:  $(UTIL)dgn_comp.l
 #
 
 #SFD_INSTEAD $(I)date.h $(DAT)options::  $(HDEP) $(SBIN)makedefs $(AMIGAOBJ)
-$(I)date.h $(DAT)options:  $(HDEP) $(SBIN)makedefs $(AMIGAOBJ)
+$(I)date.h $(DAT)options:  $(HDEP) $(SBIN)makedefs $(AMIGAOBJ) $(I)patchlevel.h
 	$(SBIN)makedefs -v
 	$(EXECUTE) $(AMI)ifchange MOVE $(I)t.date.h $(I)date.h
 	-wait 2
@@ -1239,6 +1244,15 @@ $(NETHACK)license:  $(DAT)license
 $(SLIB)opthelp:  $(DAT)opthelp
 	copy $(DAT)opthelp $@
 
+$(NETHACK)Recover.txt: $(DOC)Recover.txt
+	copy $(DOC)Recover.txt $@
+
+$(NETHACK)GuideBook.txt: $(DOC)GuideBook.txt
+	copy $(DOC)GuideBook.txt $@
+
+$(NETHACK)NetHack.txt: $(DOC)NetHack.txt
+	copy $(DOC)NetHack.txt $@
+
 #SFD_INSTEAD $(NETHACK)logfile: $(NETHACK)logfile
 $(NETHACK)logfile:
 	echo to $@
@@ -1253,8 +1267,8 @@ $(SLIB)wizhelp: $(DAT)wizhelp
 # Create the directories here because NetHack.cnf puts them there by default
 $(NETHACK)NetHack.cnf:  $(AMI)NetHack.cnf
 	copy $(AMI)NetHack.cnf $@
-	-makedir nethack:save
-	-makedir nethack:levels
+	-makedir $(NETHACK)save
+	-makedir $(NETHACK)levels
 
 #SFD_BEGIN
 #SFD_ELSE
@@ -1275,8 +1289,8 @@ $(NETHACK)hack/8:  $(AMI)amifont8.uu $(NETHACK)hack
 
 $(NETHACK)hack.font:  $(AMI)amifont.uu
 	$(UUDEC) $(AMI)amifont.uu
-#	copy hack.font $(NETHACK)hack.font
-#	delete hack.font
+	copy hack.font $(NETHACK)hack.font
+	delete hack.font
 
 #SFD_INSTEAD $(NETHACK)hack: $(NETHACK)hack
 $(NETHACK)hack:
