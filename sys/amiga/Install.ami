@@ -9,7 +9,7 @@
 0. Pre-intro for NetHack 3.3.1:
    Amiga-specific changes for 3.3.1:
      Most (around 99%) known bugs fixed (volunteers welcome).
-     HackWB and HackCli are no longer supported. Use the main binary.
+     HackWB and HackCli are no longer supported.  Use the main binary.
 
    We would like to thank each and every one of the people who took
    the time and effort to report bugs to us.  THANK YOU!
@@ -57,8 +57,8 @@ I.C. Credits
     amigaport for 3.3.
 
 II. Using Amiga NetHack 3.3
-    Run Nethack from the shell or from some tool that allows that,
-    ie. ToolManager. See the Nethack.txt file for command line options
+    Run NetHack from the shell or from some tool that allows that,
+    ie. ToolManager.  See the NetHack.txt file for command line options
     and other usage.
 
 II.A. Sources of Information
@@ -71,12 +71,12 @@ II.A. Sources of Information
     menu or by pressing Help key.
 
 II.B. The Amiga NetHack WorkBench Front End
-    3.3.1 once more doesn't include HackWB. It's no longer supported.
+    3.3.1 no longer supports HackWB.
 
 II.C. The Amiga NetHack CLI Front End
     3.3.1 no longer supports CLI Front End either.
 
-    Insteads use the main binary.  See NetHack.txt file for the standard Unix
+    Instead, use the main binary.  See NetHack.txt file for the standard Unix
     flags for NetHack.  In addition to those flags, Amiga NetHack accepts
     the flags -l to force non-interlaced mode and -L to force interlaced mode.
 
@@ -92,14 +92,14 @@ II.D. Amiga-Specific Information for NetHack
                 which limits typeahead accidents.  The default is !flush.
     silent      turn off the audio output.  The default is silent.
 
-    Current version of Amiga Nethack also supports menu accelerators.
-    See Guidebook.txt for detailed description. Also supported is
-    selecting the number of stacked objects to drop. Used with (D)rop
-    command. Type the number and then select item (or items with
-    accelerators). Items with count associated with them are denoted
-    with # in place of -. Ie. 'd - 3 blessed daggers' becomes
-    'd # 3 blessed daggers'. You can clear the count by hitting esc
-    while counting or deselect and select the item. The default
+    The current version of Amiga NetHack also supports menu accelerators.
+    See Guidebook.txt for a detailed description.  Also supported is
+    selecting the number of stacked objects to drop, used with the (D)rop
+    command.  Type the number and then select an item (or items with
+    accelerators).  Items with a count associated with them are denoted
+    with # in place of -.  I.e. 'd - 3 blessed daggers' becomes
+    'd # 3 blessed daggers'.  You can clear the count by hitting esc
+    while counting or deselect and reselect the item.  The default
     is to drop all selected items (as before).
 
 
@@ -107,14 +107,14 @@ III. Installing Amiga NetHack 3.3
 
 III.A. General Installation
     Installation should be easy - basically it consists of putting files
-    where they belong and adding assign to your startup.  If you are
+    where they belong and adding an assign to your startup.  If you are
     installing from the official binary distribution, simply unpacking
     the archive in the appropriate directory will put the files in the
     places they belong.
 
     IF YOU ALREADY HAVE A PREVIOUS VERSION INSTALLED YOU MUST DELETE THE
     OLD SAVE AND BONES FILES - THEY WILL NOT WORK!  This includes save
-    and bones files from all previous version Nethack (Yes, even 3.3.0).
+    and bones files from all previous versions of NetHack (yes, even 3.3.0).
     If you have a game in progress and want to finish it, use your
     current version and then update.
 
@@ -127,9 +127,9 @@ Will NetHack fit on your machine?
       recommended.
 
 Hard Disk Installation:
-    Unpack the archive to your place of choice. Since you are reading this
-    you've probably done that already. Now just assign Nethack: to
-    Nethack directory containing the executable and datafiles and other needed
+    Unpack the archive to your place of choice.  Since you are reading this
+    you've probably done that already.  Now just assign NetHack: to
+    NetHack directory containing the executable and datafiles and other needed
     directories.
 
     Use the table in the next section to see where things should end up.
@@ -161,7 +161,7 @@ NetHack:tiles
 IV. BBS Interface
 
     [Since HackCli and split binary is no longer supported the following
-    probably doesn't apply anymore. Due to lack of suitable environment
+    probably doesn't apply anymore.  Due to lack of a suitable environment
     it is also untested.]
 
     The BBS mode is based on the standard NetHack tty port and is designed
