@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)u_init.c	3.3	1999/08/16	*/
+/*	SCCS Id: @(#)u_init.c	3.3	1999/11/26	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -471,7 +471,7 @@ u_init()
 {
 	register int i;
 
-
+	flags.pantheon = -1;		/* role_init() will reset this */
 	/* Initialize the role, race, gender, and alignment */
 	role_init();
 	flags.female = flags.initgend;

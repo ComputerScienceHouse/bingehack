@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)flag.h	3.3	98/03/28	*/
+/*	SCCS Id: @(#)flag.h	3.3	1999/11/26	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -130,6 +130,7 @@ struct flag {
 	int	 initrace;	/* starting race      (index into races[])   */
 	int	 initgend;	/* starting gender    (index into genders[]) */
 	int	 initalign;	/* starting alignment (index into aligns[])  */
+	int	 pantheon;	/* deity selection for priest character */
 };
 
 /*

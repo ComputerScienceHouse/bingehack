@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)patchlevel.h	3.3	1999/07/17	*/
+/*	SCCS Id: @(#)patchlevel.h	3.3	1999/11/26	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -13,7 +13,7 @@
  * Incrementing EDITLEVEL can be used to force invalidation of old bones
  * and save files.
  */
-#define EDITLEVEL	16
+#define EDITLEVEL	17
 
 #define COPYRIGHT_BANNER_A \
 "NetHack, Copyright 1985-1999"
@@ -42,7 +42,7 @@
 
 /*
  *  NetHack 3.3.0, November 30, 1999
- *  
+ *
  *  Implement the differentiation of character class or role from the
  *  character race.
  *  Removal of the Elf class, in preference to the Elf as a race.
@@ -68,7 +68,7 @@
  *  versions of 3.3.0 ready prior to the year 2000. It
  *  consisted of just a few bug fixes and offered no new
  *  functionality changes over 3.2.2.
- *  
+ *
  *  Y2K fix: use 4 digit year values for the dates in the score file
  *  updated COPYRIGHT_BANNER_A to reflect year of release
  */

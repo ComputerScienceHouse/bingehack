@@ -22,7 +22,7 @@
  * to the roles has been reduced by the amount allocated to
  * humans.  --KMH
  */
-const struct Role roles[] = {
+struct Role roles[] = {
 {	{"Archeologist", 0}, {
 	{"Digger",      0},
 	{"Field Worker",0},
@@ -188,7 +188,7 @@ const struct Role roles[] = {
 	{"Lama",        0},
 	{"Patriarch",   "Matriarch"},
 	{"High Priest", "High Priestess"} },
-	"Shan Lai Ching", "Chih Sung-tzu", "Huan Ti", /* Chinese */
+	0, 0, 0,	/* chosen randomly from among the other roles */
 	"Pri", "the Great Temple", "the Temple of Nalzok",
 	PM_PRIEST, PM_PRIESTESS, NON_PM,
 	PM_ARCH_PRIEST, PM_ACOLYTE, PM_NALZOK,
@@ -825,6 +825,18 @@ role_init()
 	    /* Pick a random alignment */
 	    flags.initalign = randalign(flags.initrole, flags.initrace);
 	alignmnt = aligns[flags.initalign].value;
+
+	/* Fix up the god names (before initializing urole) */
+	if (flags.pantheon == -1) {		/* new game */
+	    flags.pantheon = flags.initrole;	/* use own gods */
+	    while (!roles[flags.pantheon].lgod)	/* unless they're missing */
+		flags.pantheon = randrole();
+	}
+	if (!roles[flags.initrole].lgod) {
+	    roles[flags.initrole].lgod = roles[flags.pantheon].lgod;
+	    roles[flags.initrole].ngod = roles[flags.pantheon].ngod;
+	    roles[flags.initrole].cgod = roles[flags.pantheon].cgod;
+	}
 
 	/* Initialize urole and urace */
 	urole = roles[flags.initrole];

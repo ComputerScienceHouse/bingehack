@@ -1588,6 +1588,7 @@ aligntyp alignment;
      case 2:	gnam = roles[which].cgod; break;
      default:	gnam = 0; break;		/* lint suppression */
     }
+    if (!gnam) gnam = Moloch;
     if (*gnam == '_') ++gnam;
     return gnam;
 }
