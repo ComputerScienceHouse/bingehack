@@ -240,6 +240,8 @@ defer level change for every schedule_goto() call, not just while monsters
 	are moving (player's move could cause an engulfer to expel character
 	onto a level changing trap, then attempt to access stale monster and
 	possibly trigger relmon panic or crash)
+fix obscure worm bug which did not consider the tail tip to be visible.  Bug
+    produced "You miss it" on 3.2 and a blatantly obvious 'I' in prerelease 3.3.
 
 
 Platform- and/or Interface-Specific Fixes
