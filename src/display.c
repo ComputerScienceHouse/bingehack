@@ -427,8 +427,7 @@ display_monster(x, y, mon, in_sight, worm_tail)
 		num = pet_to_glyph(mon);
 #ifdef NEW_WARNING
 	} else if (warn_of_mon(mon)) {
-		if (Warn_of_mon && flags.warntype &&
-		   (flags.warntype & mon->data->mflags2))
+		if (MATCH_WARN_OF_MON(mon))
 			num = mon_to_glyph(mon);
         	else {
         		int tmplev = (int) (mon->m_lev / 4);

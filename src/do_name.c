@@ -587,7 +587,13 @@ boolean called;
 
 	do_hallu = Hallucination && !(suppress & SUPPRESS_HALLUCINATION);
 	do_invis = mtmp->minvis && !(suppress & SUPPRESS_INVISIBLE);
-	do_it = !canspotmon(mtmp) && article != ARTICLE_YOUR &&
+#ifdef NEW_WARNING
+	do_it = (!canspotmon(mtmp) ||
+		(warn_of_mon(mtmp) && !(MATCH_WARN_OF_MON(mtmp)))) &&
+#else
+	do_it = !canspotmon(mtmp) && 
+#endif
+	    article != ARTICLE_YOUR &&
 	    !program_state.gameover &&
 #ifdef STEED
 	    mtmp != u.usteed &&
