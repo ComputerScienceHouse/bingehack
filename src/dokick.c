@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)dokick.c	3.3	1999/08/16	*/
+/*	SCCS Id: @(#)dokick.c	3.3	1999/11/15	*/
 /* Copyright (c) Izchak Miller, Mike Stephenson, Steve Linhart, 1989. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -491,8 +491,8 @@ xchar x, y;
 		    kickobj->where == OBJ_MINVENT && kickobj->ocarry == mon)
 		return 1;	/* alert shk caught it */
 	    notonhead = (mon->mx != bhitpos.x || mon->my != bhitpos.y);
-	    if(isgold ? ghitm(mon, kickobj) :	/* caught? */
-		(void) thitmonst(mon, kickobj))	/* hit && used up? */
+	    if (isgold ? ghitm(mon, kickobj) :	/* caught? */
+		    thitmonst(mon, kickobj))	/* hit && used up? */
 		return(1);
 	}
 
