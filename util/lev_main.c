@@ -409,6 +409,8 @@ char c;		/* class */
 
 	SpinCursor(3);
 	class = (c > 0) ? def_char_to_objclass(c) : 0;
+	if (class == MAXOCLASSES) return ERR;
+
 	for (i = class ? bases[class] : 0; i < NUM_OBJECTS; i++) {
 	    if (class && objects[i].oc_class != class) break;
 	    objname = obj_descr[i].oc_name;
