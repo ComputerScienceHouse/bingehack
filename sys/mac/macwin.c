@@ -849,7 +849,7 @@ topl_ext_key(unsigned char ch) {
 
 static void
 topl_flash_resp(int resp_idx) {
-	long dont_care;
+	unsigned long dont_care;
 	Rect frame;
 	SetPort(theWindows[WIN_MESSAGE].its_window);
 	topl_resp_rect(resp_idx, &frame);

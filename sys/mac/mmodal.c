@@ -14,8 +14,7 @@ FlashButton (WindowPtr wind, short item) {
 	short type;
 	Handle handle;
 	Rect rect;
-	long ticks;
-
+	unsigned long ticks;
 
 	/* Apple recommends 8 ticks */
 	GetDItem(wind, item, &type, &handle, &rect);
