@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)wintty.c	3.3	2000/05/21	*/
+/*	SCCS Id: @(#)wintty.c	3.3	2000/06/27	*/
 /* Copyright (c) David Cohrs, 1991				  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -131,6 +131,7 @@ extern void FDECL(adjust_cursor_flags, (struct WinDesc *));
 
 #if defined(ASCIIGRAPH) && !defined(NO_TERMS)
 boolean GFlag = FALSE;
+boolean HE_resets_AS;	/* see termcap.c */
 #endif
 
 #ifdef MICRO
@@ -2255,11 +2256,11 @@ int in_ch;
     register char ch = (char)in_ch;
 
 # if defined(ASCIIGRAPH) && !defined(NO_TERMS)
-    if (iflags.IBMgraphics || iflags.eight_bit_tty)
+    if (iflags.IBMgraphics || iflags.eight_bit_tty) {
 	/* IBM-compatible displays don't need other stuff */
 	(void) putchar(ch);
-    else if (ch & 0x80) {
-	if (!GFlag) {
+    } else if (ch & 0x80) {
+	if (!GFlag || HE_resets_AS) {
 	    graph_on();
 	    GFlag = TRUE;
 	}

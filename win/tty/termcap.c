@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)termcap.c	3.3	96/07/20	*/
+/*	SCCS Id: @(#)termcap.c	3.3	2000/06/29	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -73,6 +73,10 @@ char NEARDATA *hilites[CLR_MAX]; /* terminal escapes for the various colors */
 static char *KS = (char *)0, *KE = (char *)0;	/* keypad sequences */
 static char nullstr[] = "";
 #endif /* OVLB */
+
+#if defined(ASCIIGRAPH) && !defined(NO_TERMS)
+extern boolean HE_resets_AS;
+#endif
 
 #ifndef TERMLIB
 STATIC_VAR char tgotobuf[20];
@@ -391,6 +395,12 @@ tty_decgraphics_termcap_fixup()
 	if (iflags.DECgraphics) xputs("\033)0");
 #ifdef PC9800
 	init_hilite();
+#endif
+
+#if defined(ASCIIGRAPH) && !defined(NO_TERMS)
+	/* some termcaps suffer from the bizarre notion that resetting
+	   video attributes should also reset the chosen character set */
+	if (strstr(nh_HE, AE)) HE_resets_AS = TRUE;
 #endif
 }
 #endif	/* TERMLIB */
