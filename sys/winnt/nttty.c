@@ -412,8 +412,21 @@ get_scr_size()
 {
 	if (GetConsoleScreenBufferInfo(hConOut,&csbi))
 	{
-	    LI = csbi.dwSize.Y;
-	    CO = csbi.dwSize.X;
+	    int tmpx, tmpy;
+	    COORD newcoord;
+	    
+	    tmpy = csbi.dwSize.Y;
+	    tmpx = csbi.dwSize.X;
+	    if (tmpy < 25 || tmpx < 80) {
+	    	newcoord.Y = 25;
+	    	newcoord.X = 80;
+	    	SetConsoleScreenBufferSize(hConOut, newcoord);
+	    	LI = 25;
+	    	CO = 80;
+	    } else {
+	    	LI = tmpy;
+	   	CO = tmpx;
+	    }
 	}
 	else
 	{	
