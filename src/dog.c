@@ -126,7 +126,8 @@ makedog()
 		petname = catname;
 
 	/* default pet names */
-	if (!*petname) {
+	if (!*petname && pettype == PM_LITTLE_DOG) {
+	    /* All of these names were for dogs. */
 	    if(Role_if(PM_CAVEMAN)) petname = "Slasher";   /* The Warrior */
 	    if(Role_if(PM_SAMURAI)) petname = "Hachi";     /* Shibuya Station */
 	    if(Role_if(PM_BARBARIAN)) petname = "Idefix";  /* Obelix */
