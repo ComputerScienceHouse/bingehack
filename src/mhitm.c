@@ -834,9 +834,11 @@ label2:			if (mdef->mhp > 0) return 0;
 		    Strcpy(buf, Monnam(magr));
 		    pline("%s steals some gold from %s.", buf, mon_nam(mdef));
 		}
-		rloc(magr);
-		if (vis && !canspotmon(magr))
-		    pline("%s suddenly disappears!", buf);
+		if (!tele_restrict(magr)) {
+		    rloc(magr);
+		    if (vis && !canspotmon(magr))
+			pline("%s suddenly disappears!", buf);
+		}
 		break;
 	    case AD_DRLI:
 		if (rn2(2) && !resists_drli(mdef)) {
@@ -885,7 +887,8 @@ label2:			if (mdef->mhp > 0) return 0;
 			if (mdef->mhp <= 0)
 				return (MM_DEF_DIED | (grow_up(magr,mdef) ?
 							0 : MM_AGR_DIED));
-			if (magr->data->mlet == S_NYMPH) {
+			if (magr->data->mlet == S_NYMPH &&
+			    !tele_restrict(magr)) {
 			    rloc(magr);
 			    if (vis && !canspotmon(magr))
 				pline("%s suddenly disappears!", buf);

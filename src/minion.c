@@ -126,9 +126,9 @@ register struct monst *mtmp;
 	    newsym(mtmp->mx,mtmp->my);
 	}
 	if (youmonst.data->mlet == S_DEMON) {	/* Won't blackmail their own. */
-	    pline("%s says, \"Good hunting, %s.\" and vanishes.",
+	    pline("%s says, \"Good hunting, %s.\"",
 		  Amonnam(mtmp), flags.female ? "Sister" : "Brother");
-	    rloc(mtmp);
+	    if (!tele_restrict(mtmp)) rloc(mtmp);
 	    return(1);
 	}
 	demand = (u.ugold * (rnd(80) + 20 * Athome)) /

@@ -1200,7 +1200,7 @@ register struct obj *obj;
 
 nopick:
 	if(!Blind) pline("%s", buf);
-	rloc(mon);
+	if (!tele_restrict(mon)) rloc(mon);
 	return(ret);
 }
 

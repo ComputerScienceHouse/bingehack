@@ -313,7 +313,8 @@ register struct monst *mtmp;
 	if (mtmp->mstun && !rn2(10)) mtmp->mstun = 0;
 
 	/* some monsters teleport */
-	if (mtmp->mflee && !rn2(40) && can_teleport(mdat) && !mtmp->iswiz) {
+	if (mtmp->mflee && !rn2(40) && can_teleport(mdat) && !mtmp->iswiz &&
+	    !level.flags.noteleport) {
 		rloc(mtmp);
 		return(0);
 	}
@@ -355,9 +356,10 @@ register struct monst *mtmp;
 			pline("%s whispers at thin air.",
 			    cansee(mtmp->mux, mtmp->muy) ? Monnam(mtmp) : "It");
 
-			if (is_demon(youmonst.data)) rloc(mtmp);
+			if (is_demon(youmonst.data)) {
 			  /* "Good hunting, brother" */
-			else {
+			    if (!tele_restrict(mtmp)) rloc(mtmp);
+			} else {
 			    mtmp->minvis = mtmp->perminvis = 0;
 			    /* Why?  For the same reason in real demon talk */
 			    pline("%s gets angry!", Amonnam(mtmp));
@@ -620,7 +622,8 @@ register int after;
 #endif
 
 	/* teleport if that lies in our nature */
-	if(ptr == &mons[PM_TENGU] && !rn2(5) && !mtmp->mcan) {
+	if(ptr == &mons[PM_TENGU] && !rn2(5) && !mtmp->mcan &&
+	   !tele_restrict(mtmp)) {
 	    if(mtmp->mhp < 7 || mtmp->mpeaceful || rn2(2))
 		rloc(mtmp);
 	    else
@@ -931,7 +934,7 @@ not_special:
 	    /* Place a segment at the old position. */
 	    if (mtmp->wormno) worm_move(mtmp);
 	} else {
-	    if(is_unicorn(ptr) && rn2(2)) {
+	    if(is_unicorn(ptr) && rn2(2) && !tele_restrict(mtmp)) {
 		rloc(mtmp);
 		return(1);
 	    }

@@ -1069,7 +1069,7 @@ register struct obj *otmp;
 				pline("%s resists the magic!", Monnam(mtmp));
 			    mtmp->msleeping = 0;
 			    if(mtmp->m_ap_type) seemimic(mtmp);
-			} else
+			} else if (!tele_restrict(mtmp))
 			    rloc(mtmp);
 		}
 		break;
