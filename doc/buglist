@@ -143,6 +143,9 @@ Riding bugs:
 -- you can instantly get out of any trap that you fall into while riding 
    just by issuing the #ride command to dismount. Hero and steed are 
    both freed.
+-- Wielding Stormbringer while riding should result in it attacking
+   your steed on occasion.
+
 
 Platform specific bugs:
 -----------------------
