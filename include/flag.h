@@ -172,6 +172,11 @@ struct instance_flags {
 	boolean  popup_dialog;	/* put queries in pop up dialogs instead of
 				   in the message window */
 #endif
+#ifdef MFLOPPY
+	boolean  checkspace;	/* check disk space before writing files */
+				/* (in iflags to allow restore after moving
+				 * to >2GB partition) */
+#endif
 #ifdef MICRO
 	boolean  BIOS;		/* use IBM or ST BIOS calls when appropriate */
 	boolean  rawio;		/* whether can use rawio (IOCTL call) */

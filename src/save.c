@@ -115,9 +115,6 @@ dosave0()
 	register int fd, ofd;
 	xchar ltmp;
 	d_level uz_save;
-#ifdef MFLOPPY
-	long fds, needed;
-#endif
 
 	if (!SAVEF[0])
 		return 0;
@@ -176,28 +173,33 @@ dosave0()
 #endif
 #ifdef MFLOPPY
 	/* make sure there is enough disk space */
-	savelev(fd, ledger_no(&u.uz), COUNT_SAVE);
-	savegamestate(fd, COUNT_SAVE);
-	needed = bytes_counted;
-	for (ltmp = 1; ltmp <= maxledgerno(); ltmp++)
-		if (ltmp != ledger_no(&u.uz) && level_info[ltmp].where)
-			needed += level_info[ltmp].size + (sizeof ltmp);
-# ifdef AMIGA
-	needed+=ami_wbench_iconsize(SAVEF);
-# endif
-	fds = freediskspace(SAVEF);
-	if(needed > fds) {
-	    HUP {
-		pline("There is insufficient space on SAVE disk.");
-		pline("Require %ld bytes but only have %ld.", needed, fds);
-	    }
-	    flushout();
-	    (void) close(fd);
-	    (void) delete_savefile();
-	    return 0;
-	}
+	if (iflags.checkspace) {
+	    long fds, needed;
 
-	co_false();
+	    savelev(fd, ledger_no(&u.uz), COUNT_SAVE);
+	    savegamestate(fd, COUNT_SAVE);
+	    needed = bytes_counted;
+
+	    for (ltmp = 1; ltmp <= maxledgerno(); ltmp++)
+		if (ltmp != ledger_no(&u.uz) && level_info[ltmp].where)
+		    needed += level_info[ltmp].size + (sizeof ltmp);
+# ifdef AMIGA
+	    needed += ami_wbench_iconsize(SAVEF);
+# endif
+	    fds = freediskspace(SAVEF);
+	    if (needed > fds) {
+		HUP {
+		    pline("There is insufficient space on SAVE disk.");
+		    pline("Require %ld bytes but only have %ld.", needed, fds);
+		}
+		flushout();
+		(void) close(fd);
+		(void) delete_savefile();
+		return 0;
+	    }
+
+	    co_false();
+	}
 #endif /* MFLOPPY */
 
 	store_version(fd);
@@ -381,9 +383,14 @@ int mode;
 	if (mode & COUNT_SAVE) {
 		bytes_counted = 0;
 		savelev0(fd, lev, COUNT_SAVE);
-		while (bytes_counted > freediskspace(levels))
-			if (!swapout_oldest())
-				return FALSE;
+		/* probably bytes_counted will be filled in again by an
+		 * immediately following WRITE_SAVE anyway, but we'll
+		 * leave it out of checkspace just in case */
+		if (iflags.checkspace) {
+			while (bytes_counted > freediskspace(levels))
+				if (!swapout_oldest())
+					return FALSE;
+		}
 	}
 	if (mode & (WRITE_SAVE | FREE_SAVE)) {
 		bytes_counted = 0;
@@ -980,9 +987,11 @@ int lev;
 	Sprintf(to, "%s%s", levels, alllevels);
 	set_levelfile_name(from, lev);
 	set_levelfile_name(to, lev);
-	while (level_info[lev].size > freediskspace(to))
-		if (!swapout_oldest())
-			return FALSE;
+	if (iflags.checkspace) {
+		while (level_info[lev].size > freediskspace(to))
+			if (!swapout_oldest())
+				return FALSE;
+	}
 # ifdef WIZARD
 	if (wizard) {
 		pline("Swapping in `%s'", from);

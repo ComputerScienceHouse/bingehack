@@ -1450,6 +1450,11 @@ the value is examined; the string ``random'' is an exception.
 .lp checkpoint
 Save game state after each level change, for possible recovery after
 program crash (default on).
+.lp checkspace
+Check free disk space before writing files to disk (default on).
+You may have to turn this off if you have more than 2 GB free space
+on the partition used for your save and level files.
+Only applies when MFLOPPY was defined during compilation.
 .lp "color   "
 Use color for different monsters, objects, and dungeon features
 (default on for microcomputers).

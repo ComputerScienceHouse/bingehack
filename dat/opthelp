@@ -48,6 +48,9 @@ checkpoint save game state after each level change, for possible  [TRUE]
 Boolean option if NEWS was set at compile time:
 news       print any news from game administrator on startup      [TRUE]
 
+Boolean option if MFLOPPY was set at compile time:
+checkspace check free disk space before writing files to disk     [TRUE]
+
 Boolean options if DGK was set at compile time:
 BIOS       allow the use of IBM ROM BIOS calls                    [FALSE]
 rawio      allow the use of raw I/O (may only be set on startup)  [FALSE]

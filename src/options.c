@@ -51,6 +51,11 @@ static struct Bool_Opt
 #else
 	{"checkpoint", (boolean *)0, FALSE},
 #endif
+#ifdef MFLOPPY
+	{"checkspace", &iflags.checkspace, TRUE},
+#else
+	{"checkspace", (boolean *)0, FALSE},
+#endif
 #ifdef TEXTCOLOR
 # ifdef MICRO
 	{"color", &iflags.use_color, TRUE},
@@ -69,6 +74,9 @@ static struct Bool_Opt
 #ifdef TTY_GRAPHICS
 	{"eight_bit_tty", &iflags.eight_bit_tty, FALSE},
 	{"extmenu", &iflags.extmenu, FALSE},
+#else
+	{"eight_bit_tty", (boolean *)0, FALSE},
+	{"extmenu", (boolean *)0, FALSE},
 #endif
 #ifdef OPT_DISPMAP
 	{"fast_map", &flags.fast_map, TRUE},
