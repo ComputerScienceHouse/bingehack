@@ -220,12 +220,14 @@ max_passive_dmg(mdef, magr)
     uchar adtyp;
 
     for(i = 0; i < NATTK; i++)
-	if(mdef->data->mattk[i].aatyp == AT_NONE) {
+	if(mdef->data->mattk[i].aatyp == AT_NONE ||
+		mdef->data->mattk[i].aatyp == AT_BOOM) {
 	    adtyp = mdef->data->mattk[i].adtyp;
 	    if ((adtyp == AD_ACID && !resists_acid(magr)) ||
 		    (adtyp == AD_COLD && !resists_cold(magr)) ||
 		    (adtyp == AD_FIRE && !resists_fire(magr)) ||
-		    (adtyp == AD_ELEC && !resists_elec(magr))) {
+		    (adtyp == AD_ELEC && !resists_elec(magr)) ||
+		    adtyp == AD_PHYS) {
 		dmg = mdef->data->mattk[i].damn;
 		if(!dmg) dmg = mdef->data->mlevel+1;
 		dmg *= mdef->data->mattk[i].damd;
