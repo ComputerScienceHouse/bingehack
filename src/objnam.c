@@ -1328,8 +1328,7 @@ const char *oldstr;
 			   !BSTRCMP(bp, p-14, "shape changers") ||
 			   !BSTRCMP(bp, p-15, "detect monsters") ||
 			   !BSTRCMPI(bp, p-11, "Aesculapius") || /* staff */
-			   !BSTRCMPI(bp, p-7, "Artemis") || /* bow */
-		       !BSTRCMP(bp, p-10, "eucalyptus") ||
+			   !BSTRCMP(bp, p-10, "eucalyptus") ||
 #ifdef WIZARD
 			   !BSTRCMP(bp, p-9, "iron bars") ||
 #endif
