@@ -302,6 +302,7 @@ typedef unsigned char	uchar;
 /* dungeon levels */
 #define WALLIFIED_MAZE	/* Fancy mazes - Jean-Christophe Collet */
 #define REINCARNATION	/* Special Rogue-like levels */
+/*#define NEW_WARNING */	/* New way of implementing warning */
 /* monsters & objects */
 #define KOPS		/* Keystone Kops by Scott R. Turner */
 #define SEDUCE		/* Succubi/incubi seduction, by KAA, suggested by IM */

@@ -624,7 +624,6 @@ register struct obj *obj;
 	case RIN_COLD_RESISTANCE:
 	case RIN_SHOCK_RESISTANCE:
 	case RIN_CONFLICT:
-	case RIN_WARNING:
 	case RIN_TELEPORT_CONTROL:
 	case RIN_POLYMORPH:
 	case RIN_POLYMORPH_CONTROL:
@@ -632,6 +631,11 @@ register struct obj *obj;
 	case RIN_SLOW_DIGESTION:
 	case RIN_SUSTAIN_ABILITY:
 	case MEAT_RING:
+		break;
+	case RIN_WARNING:
+#ifdef NEW_WARNING
+		see_monsters();
+#endif
 		break;
 	case RIN_SEE_INVISIBLE:
 		/* can now see invisible monsters */
@@ -737,7 +741,6 @@ boolean gone;
 	case RIN_COLD_RESISTANCE:
 	case RIN_SHOCK_RESISTANCE:
 	case RIN_CONFLICT:
-	case RIN_WARNING:
 	case RIN_TELEPORT_CONTROL:
 	case RIN_POLYMORPH:
 	case RIN_POLYMORPH_CONTROL:
@@ -745,6 +748,11 @@ boolean gone;
 	case RIN_SLOW_DIGESTION:
 	case RIN_SUSTAIN_ABILITY:
 	case MEAT_RING:
+		break;
+	case RIN_WARNING:
+#ifdef NEW_WARNING
+		see_monsters();
+#endif
 		break;
 	case RIN_SEE_INVISIBLE:
 		/* Make invisible monsters go away */

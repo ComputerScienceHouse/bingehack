@@ -83,6 +83,7 @@ dochugw(mtmp)
 	register int x = mtmp->mx, y = mtmp->my;
 	boolean already_saw_mon = !occupation ? 0 : canspotmon(mtmp);
 	int rd = dochug(mtmp);
+#ifndef NEW_WARNING
 	int dd;
 
 	if(Warning && !rd && !mtmp->mpeaceful &&
@@ -97,6 +98,7 @@ dochugw(mtmp)
 	    else if ((int) (mtmp->m_lev / 4) > warnlevel)
 		warnlevel = (mtmp->m_lev / 4);
 	}
+#endif /*!NEW_WARNING*/
 
 	/* a similar check is in monster_nearby() in hack.c */
 	/* check whether hero notices monster and stops current activity */

@@ -877,7 +877,11 @@ genericptr_t num;
 		if (!canspotmon(mtmp) &&
 				    !glyph_is_invisible(levl[zx][zy].glyph))
 			map_invisible(zx, zy);
-	} else if (glyph_is_invisible(levl[zx][zy].glyph)) {
+	} else if (glyph_is_invisible(levl[zx][zy].glyph)
+#ifdef NEW_WARNING
+		   || glyph_is_warning(levl[zx][zy].glyph)
+#endif
+							  ) {
 		unmap_object(zx, zy);
 		newsym(zx, zy);
 		(*(int*)num)++;

@@ -224,6 +224,9 @@ struct symdef {
 
 extern const struct symdef defsyms[MAXPCHARS];	/* defaults */
 extern uchar showsyms[MAXPCHARS];
+#ifdef NEW_WARNING
+extern const struct symdef def_warnsyms[WARNCOUNT];
+#endif
 
 /*
  * Graphics sets for display symbols

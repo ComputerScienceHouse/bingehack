@@ -264,7 +264,12 @@ use_stethoscope(obj)
 		newsym(rx, ry);
 		pline_The("invisible monster must have moved.");
 	}
-
+#ifdef NEW_WARNING
+	if (glyph_is_warning(levl[rx][ry].glyph)) {
+		unmap_object(rx, ry);
+		newsym(rx, ry);
+	}
+#endif
 	lev = &levl[rx][ry];
 	switch(lev->typ) {
 	case SDOOR:

@@ -245,6 +245,7 @@ register int nux,nuy;
 	 *  is now in a new location.
 	 */
 	newsym(u.ux0,u.uy0);
+	see_monsters();
 	vision_full_recalc = 1;
 	nomul(0);
 	spoteffects();

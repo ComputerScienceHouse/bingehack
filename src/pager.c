@@ -484,6 +484,11 @@ do_look(quick)
 		sym = showsyms[glyph_to_swallow(glyph)+S_sw_tl];
 	    } else if (glyph_is_invisible(glyph)) {
 		sym = DEF_INVISIBLE;
+#ifdef NEW_WARNING
+	    } else if (glyph_is_warning(glyph)) {
+		sym = glyph_to_warning(glyph);
+	    	sym = warnsyms[sym];
+#endif
 	    } else {
 		impossible("do_look:  bad glyph %d at (%d,%d)",
 						glyph, (int)cc.x, (int)cc.y);
@@ -594,6 +599,24 @@ do_look(quick)
 	    }
 	}
 
+#ifdef NEW_WARNING
+	/* Now check for warning symbols */
+	for (i = 0; i < WARNCOUNT; i++) {
+	    x_str = def_warnsyms[i].explanation;
+	    if (sym == (from_screen ? warnsyms[i] : def_warnsyms[i].sym)) {
+		if (!found) {
+			Sprintf(out_str, "%c       %s",
+				sym, def_warnsyms[i].explanation);
+			firstmatch = def_warnsyms[i].explanation;
+			found++;
+		} else {
+			found += append_str(out_str, def_warnsyms[i].explanation);
+		}
+		break;	/* out of for loop*/
+	    }
+	}
+#endif /* NEW_WARNING */
+    
 	/* if we ignored venom and list turned out to be short, put it back */
 	if (skipped_venom && found < 2) {
 	    x_str = objexplain[VENOM_CLASS];

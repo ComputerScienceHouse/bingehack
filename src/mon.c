@@ -273,6 +273,7 @@ warn_effects()
 	warnlevel = SIZE(warnings)-1;
     if (!Blind &&
 	    (warnlevel > lastwarnlev || moves > lastwarntime + warnDelay)) {
+#ifndef NEW_WARNING
 	const char *which, *what, *how;
 	long rings = (EWarning & (LEFT_RING|RIGHT_RING));
 
@@ -296,6 +297,7 @@ warn_effects()
 		You_feel("apprehensive as you sense a %s flash.",
 		    warnings[warnlevel]);
 	}
+#endif /*NEW_WARNING*/
 
 	lastwarntime = moves;
 	lastwarnlev = warnlevel;
@@ -1312,6 +1314,10 @@ register struct monst *mtmp;
 	if(mtmp->data->msound == MS_NEMESIS) nemdead();
 	if(glyph_is_invisible(levl[mtmp->mx][mtmp->my].glyph))
 	    unmap_object(mtmp->mx, mtmp->my);
+#ifdef NEW_WARNING
+	if(glyph_is_warning(levl[mtmp->mx][mtmp->my].glyph))
+		unmap_object(mtmp->mx, mtmp->my);
+#endif
 	m_detach(mtmp, mptr);
 }
 
@@ -1451,6 +1457,10 @@ register struct monst *mdef;
 	/* mondead() already does this, but we must do it before the newsym */
 	if(glyph_is_invisible(levl[x][y].glyph))
 	    unmap_object(x, y);
+#ifdef NEW_WARNING
+	if(glyph_is_warning(levl[x][y].glyph))
+	    unmap_object(x, y);
+#endif
 	if (cansee(x, y)) newsym(x,y);
 	mondead(mdef);
 }

@@ -117,6 +117,9 @@
  */
 #include "hack.h"
 #include "region.h"
+#ifdef NEW_WARNING
+#include "artifact.h"	/* for definition of SPFX_WARN */
+#endif
 
 STATIC_DCL void FDECL(display_monster,(XCHAR_P,XCHAR_P,struct monst *,int,XCHAR_P));
 STATIC_DCL int FDECL(swallow_to_glyph, (int, int));
@@ -356,7 +359,6 @@ display_monster(x, y, mon, in_sight, worm_tail)
     register boolean mon_mimic = (mon->m_ap_type != M_AP_NOTHING);
     register int sensed = mon_mimic &&
 	(Protection_from_shape_changers || sensemon(mon));
-
     /*
      * We must do the mimic check first.  If the mimic is mimicing something,
      * and the location is in sight, we have to change the hero's memory
@@ -421,6 +423,10 @@ display_monster(x, y, mon, in_sight, worm_tail)
 		num = petnum_to_glyph(PM_LONG_WORM_TAIL);
 	    else
 		num = pet_to_glyph(mon);
+#ifdef NEW_WARNING
+	} else if ((Warning || Warn_of_mon) && (num = warn_of_mon(mon))) {
+		; /* num already assigned */
+#endif
 	} else {
 	    if (worm_tail)
 		num = monnum_to_glyph(what_mon(PM_LONG_WORM_TAIL));
@@ -1105,6 +1111,11 @@ show_glyph(x,y,glyph)
 	 *  This assumes an ordering of the offsets.  See display.h for
 	 *  the definition.
 	 */
+#ifdef NEW_WARNING
+	if (glyph >= GLYPH_WARNING_OFF) {	/* a warning */
+	    text = "warning";		offset = glyph - GLYPH_WARNING_OFF;
+	} else
+#endif
 	if (glyph >= GLYPH_SWALLOW_OFF) {		/* swallow border */
 	    text = "swallow border";	offset = glyph - GLYPH_SWALLOW_OFF;
 	}else if (glyph >= GLYPH_ZAP_OFF) {		/* zap beam */
@@ -2061,5 +2072,23 @@ do_crwall:
     }
     return idx;
 }
+
+#ifdef NEW_WARNING
+# ifdef OVLB
+int
+warn_of_mon(mon)
+struct monst *mon;
+{
+    if (mon && !canseemon(mon)) {
+	if (mon && Warn_of_mon && flags.warntype && (flags.warntype & mon->data->mflags2))
+		return mon_to_glyph(mon);
+	if (mon && Warning && !mon->mpeaceful &&
+	   ((int) (mon->m_lev / 4) >= flags.warnlevel) && (distu(mon->mx, mon->my < 100))) 
+		return warnmon_to_glyph(mon);
+    }
+    return 0;
+}
+# endif
+#endif
 
 /*display.c*/

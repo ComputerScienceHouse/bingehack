@@ -32,6 +32,11 @@ E NEARDATA int nroom;
 E NEARDATA int nsubroom;
 E NEARDATA int occtime;
 
+#define WARNCOUNT 6			/* number of different warning levels */
+#ifdef NEW_WARNING
+E NEARDATA uchar warnsyms[WARNCOUNT];
+#endif
+
 E int x_maze_max, y_maze_max;
 E int otg_temp;
 

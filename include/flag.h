@@ -89,6 +89,10 @@ struct flag {
 	unsigned no_of_wizards; /* 0, 1 or 2 (wizard and his shadow) */
 	unsigned run;		/* 0: h (etc), 1: H (etc), 2: fh (etc) */
 				/* 3: FH, 4: ff+, 5: ff-, 6: FF+, 7: FF- */
+#ifdef NEW_WARNING
+	unsigned long warntype;
+	int	 warnlevel;
+#endif
 	int	 djinni_count, ghost_count;	/* potion effect tuning */
 	int	 pickup_burden;		/* maximum burden before prompt */
 	char	 inv_order[MAXOCLASSES];

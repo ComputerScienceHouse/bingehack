@@ -293,6 +293,9 @@ static struct Comp_Opt
 	{ "videoshades", "gray shades to map to black/gray/white",
 						32, DISP_IN_GAME },
 #endif
+#ifdef NEW_WARNING
+	{ "warnlevel", "minimum monster level to trigger warning", 4, SET_IN_GAME },
+#endif
 	{ "windowtype", "windowing system to use", WINTYPELEN, DISP_IN_GAME },
 	{ (char *)0, (char *)0, 0 }
 };
@@ -392,6 +395,10 @@ STATIC_DCL void FDECL(graphics_opts, (char *,const char *,int,int));
 STATIC_DCL int FDECL(feature_alert_opts, (char *, const char *));
 STATIC_DCL char *FDECL(get_compopt_value, (const char *, char *));
 STATIC_DCL boolean FDECL(special_handling, (const char *, BOOLEAN_P, BOOLEAN_P));
+#ifdef NEW_WARNING
+STATIC_DCL void FDECL(warning_opts, (char *,const char *));
+STATIC_DCL int FDECL(warnlevel_opts, (char *, const char *));
+#endif
 
 /* check whether a user-supplied option string is a proper leading
    substring of a particular option name; option string might have
@@ -446,6 +453,12 @@ initoptions()
 		oc_syms[i] = (uchar) def_oc_syms[i];
 	for (i = 0; i < MAXMCLASSES; i++)
 		monsyms[i] = (uchar) def_monsyms[i];
+#ifdef NEW_WARNING
+	for (i = 0; i < WARNCOUNT; i++)
+		warnsyms[i] = def_warnsyms[i].sym;
+	flags.warnlevel = 2;
+	flags.warntype = 0L;
+#endif
 
      /* assert( sizeof flags.inv_order == sizeof def_inv_order ); */
 	(void)memcpy((genericptr_t)flags.inv_order,
@@ -761,6 +774,77 @@ int maxlen, offset;
 		translate[i] = (uchar) opts[i];
 	assign_graphics(translate, length, maxlen, offset);
 }
+
+#ifdef NEW_WARNING
+STATIC_OVL void
+warning_opts(opts, optype)
+register char *opts;
+const char *optype;
+{
+	uchar translate[MAXPCHARS+1];
+	int length, i;
+
+	if (!(opts = string_for_env_opt(optype, opts, FALSE)))
+		return;
+	escapes(opts, opts);
+
+	length = strlen(opts);
+	if (length > WARNCOUNT) length = WARNCOUNT;
+	/* match the form obtained from PC configuration files */
+	for (i = 0; i < length; i++)
+	     translate[i] = (((i < WARNCOUNT) && opts[i]) ?
+			   (uchar) opts[i] : def_warnsyms[i].sym);
+	assign_warnings(translate);
+}
+
+void
+assign_warnings(graph_chars)
+register uchar *graph_chars;
+{
+	int i;
+	for (i = 0; i < WARNCOUNT; i++)
+	    warnsyms[i] = graph_chars[i];
+}
+
+STATIC_OVL int
+warnlevel_opts(op, optn)
+char *op;
+const char *optn;
+{
+	char buf[BUFSZ];
+	int twarnlevel;
+	boolean rejectlevel = FALSE;
+
+	if (op) {
+		twarnlevel = atoi(op);
+		if (twarnlevel >= WARNCOUNT || twarnlevel < 1)
+			rejectlevel = TRUE;
+		else {
+			flags.warnlevel = twarnlevel;
+			see_monsters();
+		}
+	}
+	if (rejectlevel) {
+		if (!initial)
+			pline("warnlevel must be 1 to %d.", WARNCOUNT - 1);
+		else {
+			Sprintf(buf,
+			    "\n%s=%s Invalid warnlevel ignored (must be 1 to %d)",
+				optn, op, WARNCOUNT - 1);
+			badoption(buf);
+		}
+		return 0;
+	}
+	if (!initial) {
+		if (flags.warnlevel < WARNCOUNT -1)
+			Sprintf(buf, "s %d to %d", flags.warnlevel, WARNCOUNT - 1);
+		else
+			Sprintf(buf, " %d", flags.warnlevel);
+		pline("Warning level%s will be displayed.", buf);
+	}
+	return 1;
+}
+#endif /* NEW_WARNING */
 
 STATIC_OVL int
 feature_alert_opts(op, optn)
@@ -1150,7 +1234,22 @@ goodfruit:
 		    monsyms[i+1] = (uchar) opts[i];
 		return;
 	}
+#ifdef NEW_WARNING
+	fullname = "warnings";
+	if (match_optname(opts, fullname, 5, TRUE)) {
+		if (negated) bad_negation(fullname, FALSE);
+		else warning_opts(opts, fullname);
+		return;
+	}
 
+	fullname = "warnlevel";
+	if (match_optname(opts, fullname, 5, TRUE)) {
+	    op = string_for_opt(opts, negated);
+	    if (negated) bad_negation(fullname, FALSE);
+	    else if (op) (void) warnlevel_opts(op,fullname);
+	    return;
+	}
+#endif
 	/* name:string */
 	fullname = "name";
 	if (match_optname(opts, fullname, 4, TRUE)) {
@@ -1462,6 +1561,7 @@ goodfruit:
 		return;
 	}
 #endif /* MSDOS */
+
 
 	fullname = "windowtype";
 	if (match_optname(opts, fullname, 3, TRUE)) {
@@ -2079,6 +2179,10 @@ char *buf;
 			ttycolors[CLR_BRIGHT_MAGENTA],
 			ttycolors[CLR_BRIGHT_CYAN]);
 #endif /* VIDEOSHADES */
+#ifdef NEW_WARNING
+	else if (!strcmp(optname, "warnlevel"))
+		Sprintf(buf, "%d", flags.warnlevel);
+#endif
 	else if (!strcmp(optname, "windowtype"))
 		Sprintf(buf, "%s", windowprocs.name);
 #ifdef PREFIXES_IN_USE

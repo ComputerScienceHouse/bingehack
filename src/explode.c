@@ -171,6 +171,12 @@ char olet;
 		    unmap_object(i+x-1, j+y-1);
 		    newsym(i+x-1, j+y-1);
 		}
+#ifdef NEW_WARNING
+		else if (!mtmp && glyph_is_warning(levl[i+x-1][j+y-1].glyph)) {
+		    unmap_object(i+x-1, j+y-1);
+		    newsym(i+x-1, j+y-1);
+		}			
+#endif
 
 		if (cansee(i+x-1, j+y-1)) visible = TRUE;
 		if (explmask[i][j] == 1) any_shield = TRUE;

@@ -1340,6 +1340,12 @@ char		*tmp_levels;
 	    /* monsyms[0] is unused */
 	    (void) get_uchars(fp, buf, bufp, &(monsyms[1]),
 					MAXMCLASSES-1, "MONSTERS");
+#ifdef NEW_WARNING
+	} else if (match_varname(buf, "WARNINGS", 5)) {
+	    (void) get_uchars(fp, buf, bufp, translate,
+					WARNCOUNT, "WARNINGS");
+	    assign_warnings(translate);
+#endif
 #ifdef AMIGA
 	} else if (match_varname(buf, "FONT", 4)) {
 		char *t;
