@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Gnomehack
+Comment=GnomeHack. Not a game, but a world where you shouldn't take anything for granted.
+Comment[de]=GnomeHack. Kein Spiel. Eine Welt, in der Sie nichts als selbstverständlich ansehen sollten.
+Comment[fr]=GnomeHack est plus q'un jeu, c'est un monde entier où rien ne doit être considéré comme acquis.
+Comment[wa]=GnomeHack est bén pus k' on simpe djeu, c' est on univers etîr wice ki rén n' est shûr po d' bon.
+Exec=gnomehack
+Terminal=0
+Icon=@prefix@/lib/@PACKAGE@/nh_icon.xpm
+Type=Application

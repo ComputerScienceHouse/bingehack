@@ -1,0 +1,8 @@
+This directory contains the code written for GnomeHack. The NetHack devteam is
+in the process of making it part of the normal distribution.  
+
+These files are based on the files from GnomeHack 1.0.5.
+
+Note: The nethack build is not driven by autoconf, so that ability is missing
+from this code, even though some of its pieces may still linger.
+
