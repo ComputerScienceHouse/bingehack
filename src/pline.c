@@ -160,6 +160,16 @@ pline_The VA_DECL(const char *,line)
 
 /*VARARGS1*/
 void
+There VA_DECL(const char *,line)
+	char *tmp;
+	VA_START(line);
+	VA_INIT(line, const char *);
+	vpline(YouMessage(tmp, "There ", line), VA_ARGS);
+	VA_END();
+}
+
+/*VARARGS1*/
+void
 You_hear VA_DECL(const char *,line)
 	char *tmp;
 	VA_START(line);

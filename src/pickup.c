@@ -184,7 +184,7 @@ ask_again:
 					!strcmp(action,"take out") ?
 							    "inside" : "";
 			    if (*where)
-				pline("There are no %c's %s.", sym, where);
+				There("are no %c's %s.", sym, where);
 			    else
 				You("have no %c's.", sym);
 			    not_everything = TRUE;
@@ -431,7 +431,7 @@ menu_pickup:
 	    } else if (ct >= 2) {
 		int via_menu = 0;
 
-		pline("There are %s objects here.",
+		There("are %s objects here.",
 		      (ct <= 10) ? "several" : "many");
 		if (!query_classes(oclasses, &selective, &all_of_a_type,
 				   "pick up", level.objects[u.ux][u.uy],
@@ -901,7 +901,7 @@ int *wt_before, *wt_after;
 	prefx2 = "is too heavy for you to ";
 	suffx  = "";
     }
-    pline("There %s %s %s, but %s%s%s%s.",
+    There("%s %s %s, but %s%s%s%s.",
 	  (obj->quan == 1L) ? "is" : "are", obj_nambuf, where,
 	  prefx1, prefx2, verb, suffx);
 

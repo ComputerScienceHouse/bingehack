@@ -171,7 +171,7 @@ dig_check(madeby, verbose, x, y)
 				  surface(x,y));
 	    return(FALSE);
 	} else if (sobj_at(BOULDER, x, y)) {
-	    if(verbose) pline("There isn't enough room to dig here.");
+	    if(verbose) There("isn't enough room to dig here.");
 	    return(FALSE);
 	} else if (madeby == BY_OBJECT &&
 		    /* the block against existing traps is mainly to
@@ -818,7 +818,7 @@ struct obj *obj;
 			if (trap && trap->ttyp == WEB) {
 			    if (!trap->tseen) {
 				seetrap(trap);
-				pline("There is a spider web there!");
+				There("is a spider web there!");
 			    }
 			    Your("%s becomes entangled in the web.",
 				aobjnam(obj, (char *)0));

@@ -136,7 +136,7 @@ dosave0()
 	    if (fd > 0) {
 		(void) close(fd);
 		clear_nhwindow(WIN_MESSAGE);
-		pline("There seems to be an old save file.");
+		There("seems to be an old save file.");
 		if (yn("Overwrite the old file?") == 'n') {
 		    compress(SAVEF);
 		    return 0;
@@ -189,7 +189,7 @@ dosave0()
 	    fds = freediskspace(SAVEF);
 	    if (needed > fds) {
 		HUP {
-		    pline("There is insufficient space on SAVE disk.");
+		    There("is insufficient space on SAVE disk.");
 		    pline("Require %ld bytes but only have %ld.", needed, fds);
 		}
 		flushout();

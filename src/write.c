@@ -136,7 +136,7 @@ register struct obj *pen;
 		}
 	}
 
-	pline("There is no such %s!", typeword);
+	There("is no such %s!", typeword);
 	return 1;
 found:
 

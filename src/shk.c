@@ -950,7 +950,7 @@ dopay()
 	}
 
 	if ((!sk && (!Blind || Blind_telepat)) || (!Blind && !seensk)) {
-      pline("There appears to be no shopkeeper here to receive your payment.");
+      There("appears to be no shopkeeper here to receive your payment.");
 		return(0);
 	}
 
@@ -997,7 +997,7 @@ dopay()
 		}
 		mtmp = m_at(cx, cy);
 		if(!mtmp) {
-		     pline("There is no one there to receive your payment.");
+		     There("is no one there to receive your payment.");
 		     return(0);
 		}
 		if(!mtmp->isshk) {

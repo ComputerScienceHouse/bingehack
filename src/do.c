@@ -102,7 +102,7 @@ boolean pushing;
 			boolean moat = (ltyp != WATER) &&
 			    !Is_medusa_level(&u.uz) && !Is_waterlevel(&u.uz);
 
-			pline("There is a large splash as %s %s the %s.",
+			There("is a large splash as %s %s the %s.",
 			      the(xname(otmp)), fills_up? "fills":"falls into",
 			      lava ? "lava" : ltyp==POOL ? "pool" :
 			      moat ? "moat" : "water");
@@ -216,7 +216,7 @@ doaltarobj(obj)  /* obj is an object dropped on an altar */
 	u.uconduct.gnostic++;
 
 	if (obj->blessed || obj->cursed) {
-		pline("There is %s flash as %s hit%s the altar.",
+		There("is %s flash as %s hit%s the altar.",
 			an(hcolor(obj->blessed ? amber : Black)),
 			doname(obj),
 			(obj->quan == 1L) ? "s" : "");

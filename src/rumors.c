@@ -274,7 +274,7 @@ register struct monst *oracl;
 	multi = 0;
 
 	if (!oracl) {
-		pline("There is no one here to consult.");
+		There("is no one here to consult.");
 		return 0;
 	} else if (!oracl->mpeaceful) {
 		pline("%s is in no mood for consultations.", Monnam(oracl));

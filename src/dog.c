@@ -63,7 +63,7 @@ boolean quietly;
 		pm = rndmonst();
 		if (!pm) {
 		  if (!quietly)
-		    pline("There seems to be nothing available for a familiar.");
+		    There("seems to be nothing available for a familiar.");
 		  break;
 		}
 	    }

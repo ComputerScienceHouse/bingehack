@@ -1439,7 +1439,7 @@ dopickup()
 	    }
 	}
 	if(!OBJ_AT(u.ux, u.uy)) {
-		pline("There is nothing here to pick up.");
+		There("is nothing here to pick up.");
 		return(0);
 	}
 	if (!can_reach_floor()) {

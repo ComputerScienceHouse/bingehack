@@ -408,7 +408,7 @@ struct obj *obj;
 	}
 
 	if(!(mtmp = m_at(x, y))) {
-		pline("There is no creature there.");
+		There("is no creature there.");
 		return;
 	}
 
@@ -416,7 +416,7 @@ struct obj *obj;
 
 	if(!mtmp->mtame) {
 	    if(!spotmon)
-		pline("There is no creature there.");
+		There("is no creature there.");
 	    else
 		pline("%s %s leashed!", Monnam(mtmp), (!obj->leashmon) ?
 				"cannot be" : "is not");
@@ -868,7 +868,7 @@ register struct obj *obj;
 		return;
 	}
 	if(obj->spe < 7) {
-		pline("There %s only %d candle%s in %s.",
+		There("%s only %d candle%s in %s.",
 		       obj->spe == 1 ? "is" : "are",
 		       obj->spe,
 		       obj->spe > 1 ? "s" : "",
@@ -1081,7 +1081,7 @@ light_cocktail(obj)
 	    (void) addinv(obj);
 	    return;
 	} else if (Underwater) {
-	    pline("There is not enough oxygen to sustain a fire.");
+	    There("is not enough oxygen to sustain a fire.");
 	    return;
 	}
 
@@ -1883,9 +1883,9 @@ struct obj *obj;
 	if (proficient < 0) proficient = 0;
 
 	if (u.uswallow && attack(u.ustuck))
-		pline("There is not enough room to flick your bullwhip.");
+		There("is not enough room to flick your bullwhip.");
 	else if (Underwater)
-		pline("There is too much resistance to flick your bullwhip.");
+		There("is too much resistance to flick your bullwhip.");
 	else if (u.dz < 0)
 		You("flick a bug off of the %s.",ceiling(u.ux,u.uy));
 	else if((!u.dx && !u.dy) || (u.dz > 0)) {

@@ -1330,7 +1330,7 @@ doputon()
 			return(0);
 		}
 		if(uleft && uright){
-			pline("There are no more %s%s to fill.",
+			There("are no more %s%s to fill.",
 				humanoid(youmonst.data) ? "ring-" : "",
 				makeplural(body_part(FINGER)));
 			return(0);
@@ -1847,7 +1847,7 @@ int retry;
 	    (void) select_off(pick_list[i].item.a_obj);
 	free((genericptr_t) pick_list);
     } else if (n < 0) {
-	pline("There is nothing else you can remove or unwield.");
+	There("is nothing else you can remove or unwield.");
     }
     return 0;
 }

@@ -442,7 +442,7 @@ domonability()
 	    if(IS_FOUNTAIN(levl[u.ux][u.uy].typ)) {
 		if (split_mon(&youmonst, (struct monst *)0))
 		    dryup(u.ux, u.uy);
-	    } else pline("There is no fountain here.");
+	    } else There("is no fountain here.");
 	} else if (is_unicorn(youmonst.data)) {
 	    use_unicorn_horn((struct obj *)0);
 	    return 1;

@@ -1391,6 +1391,7 @@ E void VDECL(You_feel, (const char *,...)) PRINTF_F(1,2);
 E void VDECL(You_cant, (const char *,...)) PRINTF_F(1,2);
 E void VDECL(You_hear, (const char *,...)) PRINTF_F(1,2);
 E void VDECL(pline_The, (const char *,...)) PRINTF_F(1,2);
+E void VDECL(There, (const char *,...)) PRINTF_F(1,2);
 E void VDECL(verbalize, (const char *,...)) PRINTF_F(1,2);
 E void VDECL(raw_printf, (const char *,...)) PRINTF_F(1,2);
 E void VDECL(impossible, (const char *,...)) PRINTF_F(1,2);

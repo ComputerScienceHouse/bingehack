@@ -281,7 +281,7 @@ pick_lock(pick) /* pick a lock with a given object */
 	    int count;
 
 	    if (u.dz < 0) {
-		pline("There isn't any sort of lock up %s.",
+		There("isn't any sort of lock up %s.",
 		      Levitation ? "here" : "there");
 		return 0;
 	    } else if (is_lava(u.ux, u.uy)) {
@@ -348,7 +348,7 @@ pick_lock(pick) /* pick a lock with a given object */
 		}
 	    if (c != 'y') {
 		if (!count)
-		    pline("There doesn't seem to be any sort of lock here.");
+		    There("doesn't seem to be any sort of lock here.");
 		return(0);		/* decided against all boxes */
 	    }
 	} else {			/* pick the lock in a door */
@@ -461,7 +461,7 @@ doforce()		/* try to force a chest with your weapon */
 	for(otmp = level.objects[u.ux][u.uy]; otmp; otmp = otmp->nexthere)
 	    if(Is_box(otmp)) {
 		if (otmp->obroken || !otmp->olocked) {
-		    pline("There is %s here, but its lock is already %s.",
+		    There("is %s here, but its lock is already %s.",
 			  doname(otmp), otmp->obroken ? "broken" : "unlocked");
 		    continue;
 		}
@@ -524,7 +524,7 @@ doopen()		/* try to open a door */
 
 	if(!IS_DOOR(door->typ)) {
 		if (is_db_wall(x,y)) {
-		    pline("There is no obvious way to open the drawbridge.");
+		    There("is no obvious way to open the drawbridge.");
 		    return(0);
 		}
 		You("%s no door there.",
@@ -635,7 +635,7 @@ doclose()		/* try to close a door */
 
 	if(!IS_DOOR(door->typ)) {
 		if (door->typ == DRAWBRIDGE_DOWN)
-		    pline("There is no obvious way to close the drawbridge.");
+		    There("is no obvious way to close the drawbridge.");
 		else
 		    You("%s no door there.",
 				Blind ? "feel" : "see");

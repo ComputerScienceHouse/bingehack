@@ -2365,7 +2365,7 @@ boolean force_failure;
 	/* We might be forced to move onto the trap's location. */
 	if (sobj_at(BOULDER, ttmp->tx, ttmp->ty)
 				&& !Passes_walls && !under_u) {
-		pline("There is a boulder in your way.");
+		There("is a boulder in your way.");
 		return 0;
 	}
 	/* untrappable traps are located on the ground. */
@@ -2656,7 +2656,7 @@ boolean force;
 	if(!u.dx && !u.dy) {
 	    for(otmp = level.objects[x][y]; otmp; otmp = otmp->nexthere)
 		if(Is_box(otmp)) {
-		    pline("There is %s here.", doname(otmp));
+		    There("is %s here.", doname(otmp));
 
 		    switch (ynq("Check for traps?")) {
 			case 'q': return(0);

@@ -1806,7 +1806,7 @@ boolean picked_some;
 		return(!!Blind);
 	}
 	if (!skip_objects && (trap = t_at(u.ux,u.uy)) && trap->tseen)
-		pline("There is %s here.",
+		There("is %s here.",
 			an(defsyms[trap_to_defsym(trap->ttyp)].explanation));
 
 	otmp = level.objects[u.ux][u.uy];
@@ -1842,7 +1842,7 @@ boolean picked_some;
 	if (skip_objects) {
 	    if (dfeature) pline(fbuf);
 	    read_engr_at(u.ux, u.uy); /* Eric Backus */
-	    pline("There are %s%s objects here.",
+	    There("are %s%s objects here.",
 		  (obj_cnt <= 10) ? "several" : "many",
 		  picked_some ? " more" : "");
 	} else if (!otmp->nexthere) {
