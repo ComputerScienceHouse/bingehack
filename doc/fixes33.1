@@ -128,7 +128,8 @@ turning undead should count as calling on a deity for purposes of conduct
 fix "monster trail" problem caused by reading a scroll of magic mapping while
 	engulfed
 don't give Slow_digestion-related message when non-digesting engulfer expels you
-vary vampire's chat responses according to time of day, tameness, and player form
+vary vampire's chat responses according to time of day, tameness, and player
+	form
 added fish_parts to mbodypart/body_part
 fixed do-while loop test criteria in create_mplayers()
 fix crash if reviving troll has been completely drained by Stormbringer, et al
@@ -247,6 +248,14 @@ using 'F' command on a pet with safepet should not produce "thin air" message
 polymorphing into slime or fire creature removes Slimed; becoming a new man
 	resets the Slimed timer
 throwing cockatrice corpse barehanded should stone the player
+avoid "petrified by petrification" on tombstone
+avoid "turning into green slime" on tombstone (KILLED_BY didn't work if Slimed)
+since unchanging prevents sliming, make it reset any sliming already present
+avoid "You turn into a female succubus" redundancy
+player hit by potion of acid should take damage like monster
+"You are protected" in enlightenment display should include u.uspellprot
+chameleons that change into a non-moving, non-attacking form shouldn't get stuck
+fix bug where monsters didn't wield bow (etc.) before shooting arrows (etc.)
 
 
 Platform- and/or Interface-Specific Fixes
@@ -322,6 +331,7 @@ message changes for silver dragon scale mail glowing silver and pit vipers
 	falling into pits
 support explicit `race=random', `alignment=random', and `gender=random'
 	in startup options
+manes now grow up into lemures
 
 
 Platform- and/or Interface-Specific New Features

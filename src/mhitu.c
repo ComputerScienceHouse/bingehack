@@ -1109,7 +1109,7 @@ do_stone:
 					polymon(PM_STONE_GOLEM))) {
 				Stoned = 5;
 				killer_format = KILLED_BY_AN;
-				killer = mtmp->data->mname;
+				delayed_killer = mtmp->data->mname;
 				return(1);
 				/* You("turn to stone..."); */
 				/* done_in_by(mtmp); */
@@ -1420,6 +1420,8 @@ do_stone:
 	    	} else if (!Slimed) {
 	    	    You("don't feel very well.");
 	    	    Slimed = 10L;
+		    killer_format = KILLED_BY_AN;
+		    delayed_killer = mtmp->data->mname;
 	    	} else
 	    	    pline("Yuck!");
 	    	break;

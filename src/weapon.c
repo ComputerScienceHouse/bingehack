@@ -412,8 +412,8 @@ register struct monst *mtmp;
 	    propellor = &zeroobj;
 
 	    prop = (objects[rwep[i]]).oc_skill;
-	    if (prop > 0) {
-		switch (prop) {
+	    if (prop < 0) {
+		switch (-prop) {
 		case P_BOW:
 		  propellor = (oselect(mtmp, YUMI));
 		  if (!propellor) propellor = (oselect(mtmp, ELVEN_BOW));
@@ -567,7 +567,6 @@ register struct monst *mon;
 
 	/* This case actually should never happen */
 	if (mon->weapon_check == NO_WEAPON_WANTED) return 0;
-
 	switch(mon->weapon_check) {
 		case NEED_HTH_WEAPON:
 			obj = select_hwep(mon);

@@ -894,6 +894,14 @@ boolean your_fault;
 		You_feel("a little %s.", Hallucination ? "normal" : "strange");
 		if (!Unchanging && !Antimagic) polyself();
 		break;
+	case POT_ACID:
+		if (!Acid_resistance) {
+		    pline("This burns%s!", obj->blessed ? " a little" :
+				    obj->cursed ? " a lot" : "");
+		    losehp(d(obj->cursed ? 2 : 1, obj->blessed ? 4 : 8),
+				    "potion of acid", KILLED_BY_AN);
+		}
+		break;
 	}
     } else {
 	boolean angermon = TRUE;

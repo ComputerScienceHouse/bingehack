@@ -130,6 +130,9 @@ as a vortex.
 Various problems with stinking cloud scrolls, which have been commented out
 until the next version.
 
+Since tmp_at() is not reentrant, display problems can happen when zapping a
+wand that then causes an explosion (i.e. shooting a gas spore).
+
 Various problems with race:
 -- asking the game to choose a _character_ from the 
    opening screen ignores commandline race requests, -@ ignores 
@@ -180,7 +183,7 @@ Riding bugs:
    your steed on occasion.
 -- There are several inappropriate items around riding a steed
    with wounded legs: 
-   -The enlightenment message is not appropriatly written.
+   -The enlightenment message is not appropriately written.
    -Dexterity is periodically abused.
    -Wounded legs are a minor prayer trouble.
    -Wounded legs are considered an unfixable unicorn horn trouble.

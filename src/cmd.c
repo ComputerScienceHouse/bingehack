@@ -831,7 +831,7 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 	/*** Physical attributes ***/
 	if (Slow_digestion) you_have("slower digestion");
 	if (Regeneration) enl_msg("You regenerate", "", "d", "");
-	if (Protection) you_are("protected");
+	if (u.uspellprot || Protection) you_are("protected");
 	if (Protection_from_shape_changers)
 		you_are("protected from shape changers");
 	if (Polymorph) you_are("polymorphing");

@@ -518,9 +518,13 @@ Amulet_on()
 	case AMULET_VERSUS_POISON:
 	case AMULET_OF_REFLECTION:
 	case AMULET_OF_MAGICAL_BREATHING:
-	case AMULET_OF_UNCHANGING:
 	case FAKE_AMULET_OF_YENDOR:
 		break;
+	case AMULET_OF_UNCHANGING:
+		if (Slimed) {
+		    Slimed = 0;
+		    flags.botl = 1;
+		}
 	case AMULET_OF_CHANGE:
 		if (Unchanging) break;
 		makeknown(AMULET_OF_CHANGE);

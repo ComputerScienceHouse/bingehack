@@ -344,9 +344,10 @@ int	mntmp;
 	}
 	if (dochange) {
 		flags.female = !flags.female;
-		You("%s %s %s!",
+		You("%s %s%s!",
 		    (u.umonnum != mntmp) ? "turn into a" : "feel like a new",
-		    flags.female ? "female" : "male",
+		    (is_male(&mons[mntmp]) || is_female(&mons[mntmp])) ? "" :
+			flags.female ? "female " : "male ",
 		    mons[mntmp].mname);
 	} else {
 		if (u.umonnum != mntmp)

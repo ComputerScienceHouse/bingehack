@@ -445,8 +445,15 @@ movemon()
 
     for(mtmp = fmon; mtmp; mtmp = nmtmp) {
 	nmtmp = mtmp->nmon;
+
 	/* Find a monster that we have not treated yet.	 */
-	if(mtmp->movement < NORMAL_SPEED || DEADMONSTER(mtmp))
+	if(DEADMONSTER(mtmp))
+	    continue;
+	/* Must polymorph chameleons here--otherwise they'd get stuck when
+	   they change into a form that doesn't have any movement */
+	if(mtmp->cham && !rn2(6))
+	    (void) newcham(mtmp, (struct permonst *)0);
+	if(mtmp->movement < NORMAL_SPEED)
 	    continue;
 
 	mtmp->movement -= NORMAL_SPEED;

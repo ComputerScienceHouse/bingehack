@@ -265,9 +265,6 @@ register struct monst *mtmp;
 
 /*	Pre-movement adjustments	*/
 
-	if(mtmp->cham && !rn2(6))	/* polymorph chameleons */
-	    (void) newcham(mtmp, (struct permonst *)0);
-
 	/* regenerate monsters */
 	mon_regen(mtmp, FALSE);
 

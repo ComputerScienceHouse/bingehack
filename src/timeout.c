@@ -217,8 +217,10 @@ nh_timeout()
 				delayed_killer = 0;
 			}
 			if (!killer) {
-				killer_format = KILLED_BY;
-				killer = "petrification";
+				/* leaving killer_format would make it
+				   "petrified by petrification" */
+				killer_format = NO_KILLER_PREFIX;
+				killer = "killed by petrification";
 			}
 			done(STONING);
 			break;
@@ -228,8 +230,8 @@ nh_timeout()
 				delayed_killer = 0;
 			}
 			if (!killer) {
-				killer_format = KILLED_BY;
-				killer = "turning into green slime";
+				killer_format = NO_KILLER_PREFIX;
+				killer = "turned into green slime";
 			}
 			done(TURNED_SLIME);
 			break;
