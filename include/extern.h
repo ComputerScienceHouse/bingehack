@@ -1887,7 +1887,7 @@ E void NDECL(u_init);
 
 /* ### uhitm.c ### */
 
-E void FDECL(hurtmarmor,(struct permonst *,struct monst *,int));
+E void FDECL(hurtmarmor,(struct monst *,int));
 E boolean FDECL(attack_checks, (struct monst *,struct obj *));
 E schar FDECL(find_roll_to_hit, (struct monst *));
 E boolean FDECL(attack, (struct monst *));

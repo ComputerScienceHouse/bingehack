@@ -27,24 +27,18 @@ static boolean override_confirmation = FALSE;
 /* modified from hurtarmor() in mhitu.c */
 /* This is not static because it is also used for monsters rusting monsters */
 void
-hurtmarmor(mdat, mdef, attk)
-struct permonst *mdat;
+hurtmarmor(mdef, attk)
 struct monst *mdef;
 int attk;
 {
-	boolean getbronze, rusting;
 	int	hurt;
 	struct obj *target;
 
-	rusting = (attk == AD_RUST);
-	if (rusting) {
-		hurt = 1;
-		target = which_armor(mdef, W_ARM);
-		getbronze = (mdat == &mons[PM_BLACK_PUDDING] &&
-			     target && is_corrodeable(target));
-	} else {
-		hurt=2;
-		getbronze = FALSE;
+	switch(attk) {
+	    /* 0 is burning, which we should never be called with */
+	    case AD_RUST: hurt = 1; break;
+	    case AD_CORRODE: hurt = 3; break;
+	    default: hurt = 2; break;
 	}
 	/* What the following code does: it keeps looping until it
 	 * finds a target for the rust monster.
@@ -56,45 +50,37 @@ int attk;
 	    switch(rn2(5)) {
 	    case 0:
 		target = which_armor(mdef, W_ARMH);
-		if (!rust_dmg(target, rusting ? "helmet" : "leather helmet",
-				     hurt, FALSE, mdef))
-			continue;
+		if (!target || !rust_dmg(target, xname(target), hurt, FALSE, mdef))
+		    continue;
 		break;
 	    case 1:
 		target = which_armor(mdef, W_ARMC);
 		if (target) {
-		    if (!rusting)
-			(void)rust_dmg(target, "cloak", hurt, TRUE, mdef);
+		    (void)rust_dmg(target, xname(target), hurt, TRUE, mdef);
 		    break;
 		}
-		if (getbronze) {
-		    target = which_armor(mdef, W_ARM);
-		    (void)rust_dmg(target, "bronze armor", 3, TRUE, mdef);
-		} else if ((target = which_armor(mdef, W_ARM)) != (struct obj *)0) {
+		if ((target = which_armor(mdef, W_ARM)) != (struct obj *)0) {
 		    (void)rust_dmg(target, xname(target), hurt, TRUE, mdef);
 #ifdef TOURIST
 		} else if ((target = which_armor(mdef, W_ARMU)) != (struct obj *)0) {
-		    (void)rust_dmg(target, "shirt", hurt, TRUE, mdef);
+		    (void)rust_dmg(target, xname(target), hurt, TRUE, mdef);
 #endif
 		}
 		break;
 	    case 2:
 		target = which_armor(mdef, W_ARMS);
-		if (!rust_dmg(target, rusting ? "shield" : "wooden shield",
-				     hurt, FALSE, mdef))
-			continue;
+		if (!target || !rust_dmg(target, xname(target), hurt, FALSE, mdef))
+		    continue;
 		break;
 	    case 3:
 		target = which_armor(mdef, W_ARMG);
-		if (!rust_dmg(target, rusting ? "metal gauntlets" : "gloves",
-				     hurt, FALSE, mdef))
-			continue;
+		if (!target || !rust_dmg(target, xname(target), hurt, FALSE, mdef))
+		    continue;
 		break;
 	    case 4:
 		target = which_armor(mdef, W_ARMF);
-		if (!rust_dmg(target, rusting ? "metal boots" : "boots",
-				     hurt, FALSE, mdef))
-			continue;
+		if (!target || !rust_dmg(target, xname(target), hurt, FALSE, mdef))
+		    continue;
 		break;
 	    }
 	    break; /* Out of while loop */
@@ -956,24 +942,6 @@ int thrown;
 		}
 	}
 
-#if 0
-	if(mdat == &mons[PM_RUST_MONSTER] && obj && obj == uwep &&
-		is_rustprone(obj) && obj->oeroded < MAX_ERODE) {
-	    if (obj->greased)
-		grease_protect(obj,(char *)0,FALSE);
-	    else if (obj->oerodeproof || (obj->blessed && !rnl(4))) {
-	        if (flags.verbose)
-			pline("Somehow, your %s is not affected.",
-			      is_sword(obj) ? "sword" : "weapon");
-	    } else {
-		Your("%s%s!", aobjnam(obj, "rust"),
-		     obj->oeroded+1 == MAX_ERODE ? " completely" :
-		     obj->oeroded ? " further" : "");
-		obj->oeroded++;
-	    }
-	}
-#endif
-
 	return((boolean)(destroyed ? FALSE : TRUE));
 }
 
@@ -1290,7 +1258,11 @@ register struct attack *mattk;
 			pline("%s falls to pieces!", Monnam(mdef));
 			xkilled(mdef,0);
 		}
-		hurtmarmor(youmonst.data, mdef, AD_RUST);
+		hurtmarmor(mdef, AD_RUST);
+		tmp = 0;
+		break;
+	    case AD_CORRODE:
+		hurtmarmor(mdef, AD_CORRODE);
 		tmp = 0;
 		break;
 	    case AD_DCAY:
@@ -1299,7 +1271,7 @@ register struct attack *mattk;
 			pline("%s falls to pieces!", Monnam(mdef));
 			xkilled(mdef,0);
 		}
-		hurtmarmor(youmonst.data, mdef, AD_DCAY);
+		hurtmarmor(mdef, AD_DCAY);
 		tmp = 0;
 		break;
 	    case AD_DRST:
@@ -1919,6 +1891,15 @@ uchar aatyp;
 	      } else if (aatyp == AT_WEAP || aatyp == AT_CLAW ||
 			aatyp == AT_MAGC || aatyp == AT_TUCH)
 		erode_weapon(&youmonst, FALSE);
+	    break;
+	  case AD_CORRODE:
+	    if(mhit && !mon->mcan)
+	      if (aatyp == AT_KICK) {
+		if (uarmf)
+		    (void) rust_dmg(uarmf, xname(uarmf), 3, TRUE, &youmonst);
+	      } else if (aatyp == AT_WEAP || aatyp == AT_CLAW ||
+			aatyp == AT_MAGC || aatyp == AT_TUCH)
+		erode_weapon(&youmonst, TRUE);
 	    break;
 	  case AD_MAGM:
 	    /* wrath of gods for attacking Oracle */

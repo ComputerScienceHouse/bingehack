@@ -679,7 +679,11 @@ mdamagem(magr, mdef, mattk)
 			return (MM_DEF_DIED | (grow_up(magr,mdef) ?
 							0 : MM_AGR_DIED));
 		}
-		hurtmarmor(magr->data, mdef, AD_RUST);
+		hurtmarmor(mdef, AD_RUST);
+		tmp = 0;
+		break;
+	    case AD_CORRODE:
+		hurtmarmor(mdef, AD_CORRODE);
 		tmp = 0;
 		break;
 	    case AD_DCAY:
@@ -693,7 +697,7 @@ mdamagem(magr, mdef, mattk)
 			return (MM_DEF_DIED | (grow_up(magr,mdef) ?
 							0 : MM_AGR_DIED));
 		}
-		hurtmarmor(magr->data, mdef, AD_DCAY);
+		hurtmarmor(mdef, AD_DCAY);
 		tmp = 0;
 		break;
 	    case AD_STON:
@@ -1015,9 +1019,20 @@ mrustm(magr, mdef, obj)
 register struct monst *magr, *mdef;
 register struct obj *obj;
 {
+	boolean is_acid;
+
 	if (!magr || !mdef || !obj) return; /* just in case */
-	if (mdef->data == &mons[PM_RUST_MONSTER] && !mdef->mcan &&
-	    is_rustprone(obj) && obj->oeroded < MAX_ERODE) {
+
+	if (dmgtype(mdef->data, AD_CORRODE))
+	    is_acid = TRUE;
+	else if (dmgtype(mdef->data, AD_RUST))
+	    is_acid = FALSE;
+	else
+	    return;
+
+	if (!mdef->mcan &&
+	    (is_acid ? is_corrodeable(obj) : is_rustprone(obj)) &&
+	    (is_acid ? obj->oeroded2 : obj->oeroded) < MAX_ERODE) {
 		if (obj->greased || obj->oerodeproof || (obj->blessed && rn2(3))) {
 		    if (cansee(mdef->mx, mdef->my) && flags.verbose)
 			pline("%s weapon is not affected.",
@@ -1026,10 +1041,12 @@ register struct obj *obj;
 		} else {
 		    if (cansee(mdef->mx, mdef->my)) {
 			pline("%s %s%s!", s_suffix(Monnam(magr)),
-			      aobjnam(obj, "rust"),
-			      obj->oeroded ? " further" : "");
+			    aobjnam(obj, (is_acid ? "corrode" : "rust")),
+			    (is_acid ? obj->oeroded2 : obj->oeroded)
+				? " further" : "");
 		    }
-		    obj->oeroded++;
+		    if (is_acid) obj->oeroded2++;
+		    else obj->oeroded++;
 		}
 	}
 }

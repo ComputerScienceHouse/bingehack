@@ -27,7 +27,7 @@ STATIC_DCL void FDECL(missmu,(struct monst *,BOOLEAN_P,struct attack *));
 STATIC_DCL void FDECL(mswings,(struct monst *,struct obj *));
 STATIC_DCL void FDECL(wildmiss, (struct monst *,struct attack *));
 
-STATIC_DCL void FDECL(hurtarmor,(struct permonst *,int));
+STATIC_DCL void FDECL(hurtarmor,(int));
 STATIC_DCL void FDECL(hitmsg,(struct monst *,struct attack *));
 
 /* See comment in mhitm.c.  If we use this a lot it probably should be */
@@ -660,23 +660,18 @@ mattacku(mtmp)
  */
 
 STATIC_OVL void
-hurtarmor(mdat, attk)
-struct permonst *mdat;
+hurtarmor(attk)
 int attk;
 {
-	boolean getbronze, rusting;
 	int	hurt;
 
-	rusting = (attk == AD_RUST);
-	if (rusting) {
-		hurt = 1;
-		getbronze = (mdat == &mons[PM_BLACK_PUDDING] &&
-			     uarm && is_corrodeable(uarm));
+	switch(attk) {
+	    /* 0 is burning, which we should never be called with */
+	    case AD_RUST: hurt = 1; break;
+	    case AD_CORRODE: hurt = 3; break;
+	    default: hurt = 2; break;
 	}
-	else {
-		hurt=2;
-		getbronze = FALSE;
-	}
+
 	/* What the following code does: it keeps looping until it
 	 * finds a target for the rust monster.
 	 * Head, feet, etc... not covered by metal, or covered by
@@ -686,14 +681,12 @@ int attk;
 	while (1) {
 	    switch(rn2(5)) {
 	    case 0:
-		if (!rust_dmg(uarmh, rusting ? "helmet" : "leather helmet",
-					 hurt, FALSE, &youmonst))
+		if (!uarmh || !rust_dmg(uarmh, xname(uarmh), hurt, FALSE, &youmonst))
 			continue;
 		break;
 	    case 1:
 		if (uarmc) {
-		    if (!rusting)
-			(void)rust_dmg(uarmc, "cloak", hurt, TRUE, &youmonst);
+		    (void)rust_dmg(uarmc, xname(uarmc), hurt, TRUE, &youmonst);
 		    break;
 		}
 		/* Note the difference between break and continue;
@@ -701,29 +694,24 @@ int attk;
 		 * means it wasn't a target and though it didn't rust
 		 * something else did.
 		 */
-		if (getbronze)
-		    (void)rust_dmg(uarm, "bronze armor", 3, TRUE, &youmonst);
-		else if (uarm)
+		if (uarm)
 		    (void)rust_dmg(uarm, xname(uarm), hurt, TRUE, &youmonst);
 #ifdef TOURIST
 		else if (uarmu)
-		    (void)rust_dmg(uarmu, "shirt", hurt, TRUE, &youmonst);
+		    (void)rust_dmg(uarmu, xname(uarmu), hurt, TRUE, &youmonst);
 #endif
 		break;
 	    case 2:
-		if (!rust_dmg(uarms, rusting ? "shield" : "wooden shield",
-					 hurt, FALSE, &youmonst))
-			continue;
+		if (!uarms || !rust_dmg(uarms, xname(uarms), hurt, FALSE, &youmonst))
+		    continue;
 		break;
 	    case 3:
-		if (!rust_dmg(uarmg, rusting ? "metal gauntlets" : "gloves",
-					 hurt, FALSE, &youmonst))
-			continue;
+		if (!uarmg || !rust_dmg(uarmg, xname(uarmg), hurt, FALSE, &youmonst))
+		    continue;
 		break;
 	    case 4:
-		if (!rust_dmg(uarmf, rusting ? "metal boots" : "boots",
-					 hurt, FALSE, &youmonst))
-			continue;
+		if (!uarmf || !rust_dmg(uarmf, xname(uarmf), hurt, FALSE, &youmonst))
+		    continue;
 		break;
 	    }
 	    break; /* Out of while loop */
@@ -1257,7 +1245,12 @@ do_stone:
 			rehumanize();
 			break;
 		}
-		hurtarmor(mdat, AD_RUST);
+		hurtarmor(AD_RUST);
+		break;
+	    case AD_CORRODE:
+		hitmsg(mtmp, mattk);
+		if (mtmp->mcan) break;
+		hurtarmor(AD_CORRODE);
 		break;
 	    case AD_DCAY:
 		hitmsg(mtmp, mattk);
@@ -1269,7 +1262,7 @@ do_stone:
 			rehumanize();
 			break;
 		}
-		hurtarmor(mdat, AD_DCAY);
+		hurtarmor(AD_DCAY);
 		break;
 	    case AD_HEAL:
 		if(!uwep
@@ -1867,11 +1860,20 @@ register struct monst *mon;
 register struct obj *obj;
 {
 	boolean vis;
+	boolean is_acid;
 
 	if (!mon || !obj) return; /* just in case */
+	if (dmgtype(youmonst.data, AD_CORRODE))
+	    is_acid = TRUE;
+	else if (dmgtype(youmonst.data, AD_RUST))
+	    is_acid = FALSE;
+	else
+	    return;
+
 	vis = cansee(mon->mx, mon->my);
-	if (u.umonnum == PM_RUST_MONSTER &&
-	    is_rustprone(obj) && obj->oeroded < MAX_ERODE) {
+
+	if ((is_acid ? is_corrodeable(obj) : is_rustprone(obj)) &&
+	    (is_acid ? obj->oeroded2 : obj->oeroded) < MAX_ERODE) {
 		if (obj->greased || obj->oerodeproof || (obj->blessed && rn2(3))) {
 		    if (vis)
 			pline("Somehow, %s weapon is not affected.",
@@ -1880,9 +1882,12 @@ register struct obj *obj;
 		} else {
 		    if (vis)
 			pline("%s %s%s!",
-			        s_suffix(Monnam(mon)), aobjnam(obj, "rust"),
-			        obj->oeroded ? " further" : "");
-		    obj->oeroded++;
+			        s_suffix(Monnam(mon)),
+				aobjnam(obj, (is_acid ? "corrode" : "rust")),
+			        (is_acid ? obj->oeroded2 : obj->oeroded)
+				    ? " further" : "");
+		    if (is_acid) obj->oeroded2++;
+		    else obj->oeroded++;
 		}
 	}
 }
