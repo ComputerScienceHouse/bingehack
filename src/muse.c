@@ -1784,16 +1784,15 @@ STATIC_OVL void
 you_aggravate(mtmp)
 struct monst *mtmp;
 {
-	killer = ""; /* hack: prevent "it" in names */
 	pline("For some reason, %s presence is known to you.",
-		s_suffix(mon_nam(mtmp)));
+		s_suffix(noit_mon_nam(mtmp)));
 	cls();
 #ifdef CLIPPING
 	cliparound(mtmp->mx, mtmp->my);
 #endif
 	show_glyph(mtmp->mx, mtmp->my, mon_to_glyph(mtmp));
 	display_self();
-	You_feel("aggravated at %s.", mon_nam(mtmp));
+	You_feel("aggravated at %s.", noit_mon_nam(mtmp));
 	display_nhwindow(WIN_MAP, TRUE);
 	docrt();
 	if (unconscious()) {
@@ -1801,8 +1800,9 @@ struct monst *mtmp;
 		nomovemsg =
 		      "Aggravated, you are jolted into full consciousness.";
 	}
-	killer = 0;
 	newsym(mtmp->mx,mtmp->my);
+	if (!canspotmon(mtmp))
+	    map_invisible(mtmp->mx, mtmp->my);
 }
 
 int

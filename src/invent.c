@@ -2361,7 +2361,7 @@ int dflags;
 	int do_all = (dflags & MINV_ALL) != 0,
 	    do_gold = (do_all && mon->mgold);
 
-	Sprintf(tmp,"%s %s:", s_suffix(Monnam(mon)),
+	Sprintf(tmp,"%s %s:", s_suffix(noit_Monnam(mon)),
 		do_all ? "possessions" : "armament");
 
 	if (do_all ? (mon->minvent || mon->mgold)

@@ -309,7 +309,7 @@ register struct monst *mtmp;
 	if (mtmp == u.usteed)	  Strcat(info, ", carrying you");
 #endif
 
-	Strcpy(monnambuf, mon_nam(mtmp));
+	Strcpy(monnambuf, noit_mon_nam(mtmp));
 	/* avoid "Status of the invisible newt ..., invisible" */
 	if (mtmp->minvis && strstri(monnambuf, "invisible")) {
 	    mtmp->minvis = 0;

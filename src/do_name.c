@@ -538,8 +538,10 @@ rndghostname()
  * x_monnam is the generic monster-naming function.
  *		  seen	      unseen	   detected		  named
  * mon_nam:	the newt	it	the invisible orc	Fido
+ * noit_mon_nam:the newt (as if detected) the invisible orc	Fido
  * l_monnam:	newt		it	invisible orc		dog called fido
  * Monnam:	The newt	It	The invisible orc	Fido
+ * noit_Monnam: The newt (as if detected) The invisible orc	Fido
  * Adjmonnam:	The poor newt	It	The poor invisible orc	The poor Fido
  * Amonnam:	A newt		It	An invisible orc	Fido
  * a_monnam:	a newt		it	an invisible orc	Fido
@@ -558,6 +560,7 @@ register struct monst *mtmp;
  * 3: no article at all.
  * 4: no article; "it" and invisible suppressed.
  * 5: "your" instead of an article; include "invisible" even when unseen
+ * 6: same as 0 but inability to see the monster is ignored
  */
 int article, called;
 const char *adjective;
@@ -586,7 +589,9 @@ const char *adjective;
 		name += 4;
 	    return strcpy(buf, name);
 	}
-	if (!trunam && !use_your && !canspotmon(mtmp) &&
+	if (article == 6)
+	    article = 0; /* skip "it" code and then act like case 0 */
+	else if (!trunam && !use_your && !canspotmon(mtmp) &&
 #ifdef STEED
 		(mtmp != u.usteed) &&
 #endif
@@ -686,11 +691,32 @@ register struct monst *mtmp;
 	return(x_monnam(mtmp, 0, (char *)0, 0));
 }
 
+/* print the name as if mon_nam() was called, but assume that the player
+ * can always see the monster--used for probing and for monsters aggravating
+ * the player with a cursed potion of invisibility
+ */
+char *
+noit_mon_nam(mtmp)
+register struct monst *mtmp;
+{
+	return(x_monnam(mtmp, 6, (char *)0, 0));
+}
+
 char *
 Monnam(mtmp)
 register struct monst *mtmp;
 {
 	register char *bp = mon_nam(mtmp);
+
+	*bp = highc(*bp);
+	return(bp);
+}
+
+char *
+noit_Monnam(mtmp)
+register struct monst *mtmp;
+{
+	register char *bp = noit_mon_nam(mtmp);
 
 	*bp = highc(*bp);
 	return(bp);

@@ -325,7 +325,7 @@ struct monst *mtmp;
 		otmp->dknown = 1;	/* treat as "seen" */
 	    (void) display_minventory(mtmp, MINV_ALL);
 	} else {
-	    pline("%s is not carrying anything.", Monnam(mtmp));
+	    pline("%s is not carrying anything.", noit_Monnam(mtmp));
 	}
 }
 
@@ -2438,6 +2438,12 @@ struct obj *obj;			/* object tossed/used */
 		    }
 		    (*fhitm)(mtmp, obj);
 		    range -= 3;
+		} else {
+		    if (weapon == ZAPPED_WAND && obj->otyp == WAN_PROBING &&
+		       glyph_is_invisible(levl[bhitpos.x][bhitpos.y].glyph)) {
+			unmap_object(bhitpos.x, bhitpos.y);
+			newsym(x, y);
+		    }
 		}
 		if(fhito) {
 		    if(bhitpile(obj,fhito,bhitpos.x,bhitpos.y))

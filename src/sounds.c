@@ -417,6 +417,13 @@ register struct monst *mtmp;
 
     /* presumably nearness and sleep checks have already been made */
     if (!flags.soundok) return(0);
+    if (ptr->msound == MS_SILENT) return(0);
+
+    /* be sure to do this before talking; the monster might teleport away, in
+     * which case we want to check its pre-teleport position
+     */
+    if (!canspotmon(mtmp))
+	map_invisible(mtmp->mx, mtmp->my);
 
     switch (ptr->msound) {
 	case MS_ORACLE:
@@ -448,8 +455,6 @@ register struct monst *mtmp;
 		pline_msg =
 		     "whispers inaudibly.  All you can make out is \"moon\".";
 	    break;
-	case MS_SILENT:
-	    return 0;
 	case MS_BARK:
 	    if (flags.moonphase == FULL_MOON && night()) {
 		pline_msg = "howls.";
@@ -712,8 +717,6 @@ register struct monst *mtmp;
 	    break;
     }
 
-    if (!canspotmon(mtmp))
-	map_invisible(mtmp->mx, mtmp->my);
     if (pline_msg) pline("%s %s", Monnam(mtmp), pline_msg);
     else if (verbl_msg) verbalize(verbl_msg);
     return(1);
