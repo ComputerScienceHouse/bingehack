@@ -865,7 +865,10 @@ polyuse(objhdr, mat, minwt)
 		else
 			(void)stolen_value(otmp,
 					   otmp->ox, otmp->oy, FALSE, FALSE);
-	    minwt -= (int)otmp->quan;
+	    if (otmp->quan < LARGEST_INT)
+		minwt -= (int)otmp->quan;
+	    else
+		minwt = 0;
 	    delobj(otmp);
 	}
     }
@@ -963,6 +966,7 @@ do_osshock(obj)
 struct obj *obj;
 {
 	long i;
+
 	obj_zapped = TRUE;
 
 	if(poly_zapped < 0) {
@@ -975,8 +979,12 @@ struct obj *obj;
 	}
 
 	/* if quan > 1 then some will survive intact */
-	if (obj->quan > 1L)
+	if (obj->quan > 1L) {
+	    if (obj->quan > LARGEST_INT)
+		(void) splitobj(obj, (long)rnd(30000));
+	    else
 		(void) splitobj(obj, (long)rnd((int)obj->quan - 1));
+	}
 
 	/* appropriately add damage to bill */
 	if (costly_spot(obj->ox, obj->oy))
