@@ -1619,6 +1619,7 @@ E void NDECL(rigid_role_checks);
 E void NDECL(plnamesuffix);
 E const char *FDECL(Hello, (struct monst *));
 E const char *NDECL(Goodbye);
+E char *FDECL(build_plselection_prompt, (char *, int, int, int, int, int));
 
 /* ### rumors.c ### */
 
