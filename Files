@@ -123,10 +123,10 @@ mpwhack.h
 sys/msdos:
 (files for MSDOS version)
 Install.dos     Makefile.BC     Makefile.GCC    Makefile.MSC    Makefile.SC
-moveinit.pat    msdos.c         msdoshlp.txt    ovlinit.c       pckeys.c
-pctiles.c       pctiles.h       pcvideo.h       portio.h        schema1.BC
-schema2.BC      schema3.MSC     setup.bat       sound.c         tile2bin.c
-video.c         vidtxt.c        vidvga.c
+NHAccess.nh     moveinit.pat    msdos.c         msdoshlp.txt    ovlinit.c
+pckeys.c        pctiles.c       pctiles.h       pcvideo.h       portio.h
+schema1.BC      schema2.BC      schema3.MSC     setup.bat       sound.c
+tile2bin.c      video.c         vidtxt.c        vidvga.c
 (files for running MSDOS binary under Windows)
 nhico.uu        nhpif.uu
 
@@ -142,7 +142,7 @@ Install.os2     Makefile.os2    nhpmico.uu      os2.c
 
 sys/share:
 (files for MSDOS and OS/2 versions)
-Makefile.lib    NetHack.cnf     NHAccess.cnf    termcap.uu
+Makefile.lib    NetHack.cnf     termcap.uu
 (file for MSDOS, OS/2, NT, Amiga, and Atari versions)
 pcmain.c
 (files for MSDOS, OS/2, NT, and Atari versions)
