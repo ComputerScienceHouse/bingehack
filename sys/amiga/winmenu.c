@@ -255,6 +255,7 @@ DoMenuScroll( win, blocking, how, retmip )
     struct Screen *scrn = HackScreen;
     int x1,x2,y1,y2;
     long counting = FALSE, count = 0, reset_counting = FALSE;
+    char countString[32];
 
     if( win == WIN_ERR || ( cw = amii_wins[ win ] ) == NULL )
 	panic(winpanicstr,win,"DoMenuScroll");
@@ -553,10 +554,6 @@ DoMenuScroll( win, blocking, how, retmip )
 	    }
 	    ReplyMsg( (struct Message *) imsg );
 
-	    if (reset_counting) {
-		counting = FALSE;
-		count = 0;
-	    }
 	    switch( class )
 	    {
 		case NEWSIZE:
@@ -814,12 +811,18 @@ DoMenuScroll( win, blocking, how, retmip )
 			DisplayData(win, topidx);
 		    } else if (how == PICK_ANY && isdigit(code) &&
 			       (counting || (!counting && code !='0'))) {
-			count = count*10 + (long)(code-'0');
-			if (count > 0) {
-			    counting = TRUE;
-			    reset_counting = FALSE;
-			} else {
-			    reset_counting = TRUE;
+			if (count < LARGEST_INT) {
+			    count = count*10 + (long)(code-'0');
+			    if (count > LARGEST_INT)
+				count = LARGEST_INT;
+			    if (count > 0) {
+				counting = TRUE;
+				reset_counting = FALSE;
+			    } else {
+				reset_counting = TRUE;
+			    }
+			    sprintf(countString, "Count: %d", count);
+			    pline(countString);
 			}
 		    } else if( code == CTRL('D') || code == CTRL('U') ||
 			       code == MENU_NEXT_PAGE || code == MENU_PREVIOUS_PAGE ||
@@ -1141,6 +1144,12 @@ DoMenuScroll( win, blocking, how, retmip )
 			DisplayBeep( NULL );
 		    }
 		    break;
+	    }
+	    if (reset_counting) {
+		count = 0;
+		if (counting)
+		    pline("Count: 0");
+		counting = FALSE;
 	    }
 	}
     }
