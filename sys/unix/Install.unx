@@ -59,8 +59,7 @@
     Make sure that you follow the comments about setting GAMEDIR -- the
     installation process will wipe out the contents of the directory you
     point it at, under the assumption that it's debris from an old version
-    of NetHack, which will cause the new version to crash mysteriously while
-    running.  If this is not the case, you'll want to install somewhere
+    of NetHack.  If this is not the case, you'll want to install somewhere
     else, or comment out the rm under the install target.
 
     The Makefile assumes you want to run NetHack setuid 'games' to cut down
