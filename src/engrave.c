@@ -752,11 +752,12 @@ doengrave()
 		break;
 
 	    case WEAPON_CLASS:
-		if(is_blade(otmp))
+		if (is_blade(otmp)) {
 		    if ((int)otmp->spe > -3)
 			type = ENGRAVE;
 		    else
 			Your("%s too dull for engraving.", aobjnam(otmp,"are"));
+		}
 		break;
 
 	    case TOOL_CLASS:

@@ -1743,13 +1743,15 @@ float_up()
 	else
 		You("start to float in the air!");
 #ifdef STEED
-	if (u.usteed && !is_floater(u.usteed->data) && !is_flyer(u.usteed->data))
+	if (u.usteed && !is_floater(u.usteed->data) &&
+						!is_flyer(u.usteed->data)) {
 	    if (Lev_at_will)
 	    	pline("%s magically floats up!", Monnam(u.usteed));
 	    else {
 	    	You("cannot stay on %s.", mon_nam(u.usteed));
 	    	dismount_steed(DISMOUNT_GENERIC);
 	    }
+	}
 #endif
 	return;
 }

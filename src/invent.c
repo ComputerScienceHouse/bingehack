@@ -2256,10 +2256,11 @@ doorganize()	/* inventory organizer by Del Lamb */
 	/* blank out all the letters currently in use in the inventory */
 	/* except those that will be merged with the selected object   */
 	for (otmp = invent; otmp; otmp = otmp->nobj)
-		if (otmp != obj && !mergable(otmp,obj))
+		if (otmp != obj && !mergable(otmp,obj)) {
 			if (otmp->invlet <= 'Z')
 				alphabet[(otmp->invlet) - 'A' + 26] = ' ';
 			else	alphabet[(otmp->invlet) - 'a']	    = ' ';
+		}
 
 	/* compact the list by removing all the blanks */
 	for (ix = cur = 0; ix <= 52; ix++)

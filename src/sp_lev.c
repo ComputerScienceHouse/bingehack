@@ -966,11 +966,12 @@ struct mkroom	*croom;
 
 	/* assume we wouldn't be given an egg corpsenm unless it was
 	   hatchable */
-	if (otmp->otyp == EGG && otmp->corpsenm != NON_PM)
+	if (otmp->otyp == EGG && otmp->corpsenm != NON_PM) {
 	    if (dead_species(otmp->otyp, TRUE))
 		kill_egg(otmp);	/* make sure nothing hatches */
 	    else
 		attach_egg_hatch_timeout(otmp);	/* attach new hatch timeout */
+	}
 
 	if (o->name.str) {	/* Give a name to that object */
 	    otmp = oname(otmp, o->name.str);
@@ -2094,7 +2095,7 @@ dlb *fd;
 
     /* Initialize map */
     Fread((genericptr_t) &filling, 1, sizeof(filling), fd);
-    if(!init_lev.init_present) /* don't init if mkmap() has been called */
+    if (!init_lev.init_present) { /* don't init if mkmap() has been called */
       for(x = 2; x <= x_maze_max; x++)
 	for(y = 0; y <= y_maze_max; y++)
 	    if (filling == -1) {
@@ -2107,6 +2108,7 @@ dlb *fd;
 	    } else {
 		    levl[x][y].typ = filling;
 	    }
+    }
 
     /* Start reading the file */
     Fread((genericptr_t) &numpart, 1, sizeof(numpart), fd);
@@ -2549,11 +2551,12 @@ dlb *fd;
 		levl[x][y].flags = 0;
 	    }
 
-	    if (!(y % 2))
+	    if (!(y % 2)) {
 		if (dir == W_SOUTH)
 		    y++;
 		else
 		    y--;
+	    }
 
 	    walkfrom(x, y);
     }

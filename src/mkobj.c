@@ -745,12 +745,13 @@ register int chance;
 {
 	if(otmp->blessed || otmp->cursed) return;
 
-	if(!rn2(chance))
+	if(!rn2(chance)) {
 	    if(!rn2(2)) {
 		curse(otmp);
 	    } else {
 		bless(otmp);
 	    }
+	}
 	return;
 }
 

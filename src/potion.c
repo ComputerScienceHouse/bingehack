@@ -1190,12 +1190,13 @@ register struct obj *obj;
 */
 	}
 	/* note: no obfree() */
-	if (obj->dknown)
+	if (obj->dknown) {
 	    if (kn)
 		makeknown(obj->otyp);
 	    else if (!objects[obj->otyp].oc_name_known &&
 						!objects[obj->otyp].oc_uname)
 		docall(obj);
+	}
 }
 
 STATIC_OVL short

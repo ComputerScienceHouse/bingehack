@@ -167,11 +167,12 @@ ext_cmd_getlin_hook(base)
 
 	com_index = -1;
 	for (oindex = 0; extcmdlist[oindex].ef_txt != (char *)0; oindex++) {
-		if (!strncmpi(base, extcmdlist[oindex].ef_txt, strlen(base)))
+		if (!strncmpi(base, extcmdlist[oindex].ef_txt, strlen(base))) {
 			if (com_index == -1)	/* no matches yet */
 			    com_index = oindex;
 			else			/* more than 1 match */
 			    return FALSE;
+		}
 	}
 	if (com_index >= 0) {
 		Strcpy(base, extcmdlist[com_index].ef_txt);

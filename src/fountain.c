@@ -91,11 +91,12 @@ int drinking;
 	int madepool = 0;
 
 	do_clear_area(u.ux, u.uy, 7, gush, (genericptr_t)&madepool);
-	if (!madepool)
+	if (!madepool) {
 	    if (drinking)
 		Your("thirst is quenched.");
 	    else
 		pline("Water sprays all over you.");
+	}
 }
 
 STATIC_PTR void

@@ -31,12 +31,13 @@ ballfall()
 		int dmg = rn1(7,25);
 		pline_The("iron ball falls on your %s.",
 			body_part(HEAD));
-		if (uarmh)
+		if (uarmh) {
 		    if(is_metallic(uarmh)) {
 			pline("Fortunately, you are wearing a hard helmet.");
 			dmg = 3;
 		    } else if (flags.verbose)
 			Your("%s does not protect you.", xname(uarmh));
+		}
 		losehp(dmg, "Crunched in the head by an iron ball",
 			NO_KILLER_PREFIX);
 	}

@@ -525,24 +525,26 @@ struct monst *mon;
 		m_lose_armor(mon, otmp);
 	    }
 	    if ((otmp = which_armor(mon, W_ARMC)) != 0) {
-		if (vis)
+		if (vis) {
 		    if (is_whirly(mon->data))
 			pline("%s cloak falls, unsupported!",
 				     s_suffix(Monnam(mon)));
 		    else
 			pline("%s shrinks out of %s cloak!", Monnam(mon),
 								ppronoun);
+		}
 		m_lose_armor(mon, otmp);
 	    }
 #ifdef TOURIST
 	    if ((otmp = which_armor(mon, W_ARMU)) != 0) {
-		if (vis)
+		if (vis) {
 		    if (sliparm(mon->data))
 			pline("%s seeps right through %s shirt!",
 					Monnam(mon), ppronoun);
 		    else
 			pline("%s becomes much too small for %s shirt!",
 					Monnam(mon), ppronoun);
+		}
 		m_lose_armor(mon, otmp);
 	    }
 #endif

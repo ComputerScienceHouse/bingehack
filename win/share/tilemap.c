@@ -11,6 +11,7 @@
 
 const char * FDECL(tilename, (int, int));
 void NDECL(init_tilemap);
+void FDECL(process_substitutions, (FILE *));
 
 #ifdef MICRO
 #undef exit
@@ -102,8 +103,8 @@ struct conditionals {
  */
 struct substitute {
 	int first_glyph, last_glyph;
-	char *sub_name;		/* for explanations */
-	char *level_test;
+	const char *sub_name;		/* for explanations */
+	const char *level_test;
 } substitutes[] = {
 	{ GLYPH_CMAP_OFF + S_vwall, GLYPH_CMAP_OFF + S_trwall,
 					"mine walls", "In_mines(plev)" },
@@ -180,7 +181,7 @@ int set, entry;
 
 	tilenum = 0;	/* set-relative number */
 	for (i = 0; i < MAXPCHARS; i++) {
-		if (set == OTH_GLYPH && tilenum == entry)
+		if (set == OTH_GLYPH && tilenum == entry) {
 			if (*defsyms[i].explanation)
 				return defsyms[i].explanation;
 			else {
@@ -200,6 +201,7 @@ int set, entry;
 				}
 				return buf;
 			}
+		}
 		tilenum++;
 		while (conditionals[condnum].sequence == OTH_GLYPH &&
 			conditionals[condnum].predecessor == i) {
@@ -371,7 +373,7 @@ init_tilemap()
 	lastothtile = tilenum - 1;
 }
 
-char *prolog[] = {
+const char *prolog[] = {
 	"",
 	"",
 	"void",
@@ -382,7 +384,7 @@ char *prolog[] = {
 	""
 };
 
-char *epilog[] = {
+const char *epilog[] = {
 	"}"
 };
 

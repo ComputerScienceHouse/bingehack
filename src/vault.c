@@ -481,7 +481,7 @@ register struct monst *grd;
 		return(0);
 	    }
 
-	    if (!u_in_vault)
+	    if (!u_in_vault) {
 		if (u_carry_gold) {	/* player teleported */
 		    m = grd->mx;
 		    n = grd->my;
@@ -504,6 +504,7 @@ letknow:
 		    egrd->gddone = 1;
 		    goto cleanup;
 		}
+	    }
 	}
 
 	if(egrd->fcend > 1) {

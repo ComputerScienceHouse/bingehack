@@ -328,7 +328,7 @@ register struct monst *mtmp;
 
 	if(unweapon) {
 	    unweapon = FALSE;
-	    if(flags.verbose)
+	    if(flags.verbose) {
 		if(uwep)
 		    You("begin bashing monsters with your %s.",
 			aobjnam(uwep, (char *)0));
@@ -337,6 +337,7 @@ register struct monst *mtmp;
 			Role_if(PM_MONK) ? "strik" : "bash",
 			uarmg ? "gloved" : "bare",	/* Del Lamb */
 			makeplural(body_part(HAND)));
+	    }
 	}
 	exercise(A_STR, TRUE);		/* you're exercising muscles */
 	/* andrew@orca: prevent unlimited pick-axe attacks */
@@ -677,11 +678,12 @@ int thrown;
 			/* egg is always either used up or transformed, so next
 			   hand-to-hand attack should yield a "bashing" mesg */
 			if (obj == uwep) unweapon = TRUE;
-			if (obj->spe && obj->corpsenm >= LOW_PM)
+			if (obj->spe && obj->corpsenm >= LOW_PM) {
 			    if (obj->quan < 5)
 				change_luck((schar) -(obj->quan));
 			    else
 				change_luck(-5);
+			}
 
 			if (touch_petrifies(&mons[obj->corpsenm])) {
 			    /*learn_egg_type(obj->corpsenm);*/
@@ -1776,7 +1778,7 @@ use_weapon:
 			if (mon->data == &mons[PM_SHADE])
 			    Your("hug passes harmlessly through %s.",
 				mon_nam(mon));
-			else if (!sticks(mon->data) && !u.uswallow)
+			else if (!sticks(mon->data) && !u.uswallow) {
 			    if (mon==u.ustuck) {
 				pline("%s is being %s.", Monnam(mon),
 				    u.umonnum==PM_ROPE_GOLEM ? "choked":
@@ -1787,6 +1789,7 @@ use_weapon:
 				u.ustuck = mon;
 				sum[i] = damageum(mon, mattk);
 			    }
+			}
 			break;
 
 		case AT_EXPL:	/* automatic hit if next to */
@@ -1914,22 +1917,24 @@ uchar aatyp;
 	    }
 	    break;
 	  case AD_RUST:
-	    if(mhit && !mon->mcan)
+	    if(mhit && !mon->mcan) {
 	      if (aatyp == AT_KICK) {
 		if (uarmf)
 		    (void) rust_dmg(uarmf, xname(uarmf), 1, TRUE, &youmonst);
 	      } else if (aatyp == AT_WEAP || aatyp == AT_CLAW ||
 			aatyp == AT_MAGC || aatyp == AT_TUCH)
 		erode_weapon(uwep, FALSE);
+	    }
 	    break;
 	  case AD_CORRODE:
-	    if(mhit && !mon->mcan)
+	    if(mhit && !mon->mcan) {
 	      if (aatyp == AT_KICK) {
 		if (uarmf)
 		    (void) rust_dmg(uarmf, xname(uarmf), 3, TRUE, &youmonst);
 	      } else if (aatyp == AT_WEAP || aatyp == AT_CLAW ||
 			aatyp == AT_MAGC || aatyp == AT_TUCH)
 		erode_weapon(uwep, TRUE);
+	    }
 	    break;
 	  case AD_MAGM:
 	    /* wrath of gods for attacking Oracle */

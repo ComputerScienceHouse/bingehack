@@ -25,9 +25,9 @@ extern struct passwd *FDECL(getpwuid,(int));
 #endif
 extern struct passwd *FDECL(getpwnam,(const char *));
 #ifdef CHDIR
-static void chdirx();
+static void FDECL(chdirx, (const char *,BOOLEAN_P));
 #endif /* CHDIR */
-static boolean whoami();
+static boolean NDECL(whoami);
 static void FDECL(process_options, (int, char **));
 
 #ifdef _M_UNIX

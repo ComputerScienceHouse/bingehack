@@ -545,17 +545,19 @@ register struct obj *sobj;
 	else found = TRUE;
     }
     for (obj = fobj; obj; obj = obj->nobj) {
-	if ((obj->otyp==LARGE_BOX || obj->otyp==CHEST) && obj->otrapped)
+	if ((obj->otyp==LARGE_BOX || obj->otyp==CHEST) && obj->otrapped) {
 	    if (obj->ox != u.ux || obj->oy != u.uy)
 		goto outtrapmap;
 	    else found = TRUE;
+	}
     }
     for (door = 0; door <= doorindex; door++) {
 	cc = doors[door];
-	if (levl[cc.x][cc.y].doormask & D_TRAPPED)
+	if (levl[cc.x][cc.y].doormask & D_TRAPPED) {
 	    if (cc.x != u.ux || cc.x != u.uy)
 		goto outtrapmap;
 	    else found = TRUE;
+	}
     }
     if (!found) {
 	char buf[42];

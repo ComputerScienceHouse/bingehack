@@ -1322,9 +1322,10 @@ do_stone:
 		hitmsg(mtmp, mattk);
 		if(!night() && mdat == &mons[PM_GREMLIN]) break;
 		if(!mtmp->mcan && !rn2(10)) {
-		    if (flags.soundok)
+		    if (flags.soundok) {
 			if (Blind) You_hear("laughter.");
 			else       pline("%s chuckles.", Monnam(mtmp));
+		    }
 		    if (u.umonnum == PM_CLAY_GOLEM) {
 			pline("Some writing vanishes from your head!");
 			/* KMH -- this is okay with unchanging */

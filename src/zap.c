@@ -922,12 +922,13 @@ polyuse(objhdr, mat, minwt)
 	if (((int) objects[otmp->otyp].oc_material == mat) ==
 		(rn2(minwt + 1) != 0)) {
 	    /* appropriately add damage to bill */
-	    if (costly_spot(otmp->ox, otmp->oy))
+	    if (costly_spot(otmp->ox, otmp->oy)) {
 		if (*u.ushops)
 			addtobill(otmp, FALSE, FALSE, FALSE);
 		else
 			(void)stolen_value(otmp,
 					   otmp->ox, otmp->oy, FALSE, FALSE);
+	    }
 	    if (otmp->quan < LARGEST_INT)
 		minwt -= (int)otmp->quan;
 	    else
@@ -1053,12 +1054,13 @@ struct obj *obj;
 	}
 
 	/* appropriately add damage to bill */
-	if (costly_spot(obj->ox, obj->oy))
+	if (costly_spot(obj->ox, obj->oy)) {
 		if (*u.ushops)
 			addtobill(obj, FALSE, FALSE, FALSE);
 		else
 			(void)stolen_value(obj,
 					   obj->ox, obj->oy, FALSE, FALSE);
+	}
 
 	/* zap the object */
 	delobj(obj);

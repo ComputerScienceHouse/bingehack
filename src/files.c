@@ -95,6 +95,10 @@ extern int n_dgns;		/* from dungeon.c */
 
 STATIC_DCL char *FDECL(set_bonesfile_name, (char *,d_level*));
 STATIC_DCL char *NDECL(set_bonestemp_name);
+#ifdef COMPRESS
+STATIC_DCL void FDECL(redirect, (char *,char *,FILE *,BOOLEAN_P));
+STATIC_DCL void FDECL(docompress_file, (char *,BOOLEAN_P));
+#endif
 STATIC_DCL char *FDECL(make_lockname, (const char *,char *));
 STATIC_DCL FILE *FDECL(fopen_config_file, (const char *));
 STATIC_DCL int FDECL(get_uchars, (FILE *,char *,char *,uchar *,int,const char *));
@@ -662,7 +666,7 @@ restore_saved_game()
 
 #ifdef COMPRESS
 
-void
+STATIC_OVL void
 redirect(filename, mode, stream, uncomp)
 char *filename, *mode;
 FILE *stream;
@@ -682,7 +686,7 @@ boolean uncomp;
  *
  * cf. child() in unixunix.c.
  */
-void
+STATIC_OVL void
 docompress_file(filename, uncomp)
 char *filename;
 boolean uncomp;

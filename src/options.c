@@ -1262,11 +1262,12 @@ goodfruit:
 	if (match_optname(opts, fullname, 4, TRUE) ||
 	    match_optname(opts, (fullname = "character"), 4, TRUE)) {
 		if (negated) bad_negation(fullname, FALSE);
-		else if ((op = string_for_env_opt(fullname, opts, FALSE)) != 0)
+		else if ((op = string_for_env_opt(fullname, opts, FALSE)) != 0) {
 			if ((flags.initrole = str2role(op)) == ROLE_NONE)
 				badoption(opts);
 			else  /* Backwards compatibility */
 				nmcpy(pl_character, op, PL_NSIZ);
+		}
 		return;
 	}
 
@@ -1274,11 +1275,12 @@ goodfruit:
 	fullname = "race";
 	if (match_optname(opts, fullname, 4, TRUE)) {
 		if (negated) bad_negation(fullname, FALSE);
-		else if ((op = string_for_env_opt(fullname, opts, FALSE)) != 0)
+		else if ((op = string_for_env_opt(fullname, opts, FALSE)) != 0) {
 			if ((flags.initrace = str2race(op)) == ROLE_NONE)
 				badoption(opts);
 			else /* Backwards compatibility */
 				pl_race = *op;
+		}
 		return;
 	}
 
@@ -1286,11 +1288,12 @@ goodfruit:
 	fullname = "gender";
 	if (match_optname(opts, fullname, 4, TRUE)) {
 		if (negated) bad_negation(fullname, FALSE);
-		else if ((op = string_for_env_opt(fullname, opts, FALSE)) != 0)
+		else if ((op = string_for_env_opt(fullname, opts, FALSE)) != 0) {
 			if ((flags.initgend = str2gend(op)) == ROLE_NONE)
 				badoption(opts);
 			else
 				flags.female = flags.initgend;
+		}
 		return;
 	}
 
