@@ -1951,7 +1951,7 @@ uchar aatyp;
 			break;
 		    }
 		    if(mon->mcansee) {
-		    if (!ureflects("%s gaze is reflected by your %s.",
+		    if (ureflects("%s gaze is reflected by your %s.",
 		    		s_suffix(Monnam(mon))))
 		    	;
 		    else if (Free_action)
