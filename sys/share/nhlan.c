@@ -58,9 +58,11 @@ char *lan_username()
 	char *lu;
 	lu = get_username(&lusername_size);
 	if (lu) {
-	 Strcpy(lusername, lu);
-	 return lusername;
-	} else return (char *)0;
+	   Strcpy(lusername, lu);
+	} else {
+	   Strcpy(lusername, "NetHack");	/* something rather generic */
+	}
+	return lusername;
 }
 
 # ifdef LAN_MAIL
