@@ -3,9 +3,6 @@ Buglist: actual bugs that may get fixed someday
 -----------------------------------------------------------------------------
 
 =============================================================================
-Eating a fox corpse results in "Ulch - that protoplasm was tainted!"
-[raisse@rempt.xs4all.nl]
-
 An additional "[horsename] is caught in bear trap!" message is displayed,
 if caught in beartrap while riding and you unmount 
 [eino.keskitalo@purkki.mbnet.fi]
@@ -152,9 +149,6 @@ as a vortex.
 Various problems with stinking cloud scrolls, which have been commented out
 until the next version.
 
-Since tmp_at() is not reentrant, display problems can happen when zapping a
-wand that then causes an explosion (i.e. shooting a gas spore).
-
 Various problems with race:
 -- asking the game to choose a _character_ from the 
    opening screen ignores commandline race requests, -@ ignores 
@@ -238,7 +232,6 @@ MSDOS
       - On the djgpp version, a large number of arguments to "nethack -s"
 	can crash the program.  "nethack -s *" in a directory with a lot of
 	filenames can trigger this problem.
-      - people want the LEVELS and SAVE options to work in defaults.nh again.
       - set_bonestemp_name() needs to be fixed for the #if MICRO configuration.  
         It currently uses the device+directory path for level files, but bones 
         can be placed elsewhere so renaming from the temp name to the final 
@@ -247,9 +240,9 @@ NT
       - With console window larger than 80x25 (80x43) some commands that 
 	display text underneath the map don't clear to eol, so you get 
 	stray chars left there (?a, ?b, ?c, ?g and ?i, but not others).
-      - When a game is started on a console larger than 80x25, then saved
-	and resumed on an 80x25 console, the game gets severely trashed
-	with horrible overwrites of various memory locations.
+      - When a game is started on a console larger than 80x25, the game
+	only occupies the first 25 lines, leaving whatever junk happened
+	to be on the screen prior to starting NetHack still there.
 Unix
       - save file compression or decompression problems don't get reported
 	satisfactorily to user; forked child process gives message, but nethack
