@@ -1419,9 +1419,9 @@ boolean want_reply;
 	permanent inventory window updates itself to remove the last
 	item(s) dropped.  One down side:  the addition of the exception
 	for permanent inventory window updates _can_ pop the window
-	up when its not displayed -- even if its empty -- because we
+	up when it's not displayed -- even if it's empty -- because we
 	don't know at this level if its up or not.  This may not be
-	an issue if emty checks are done before hand and the call
+	an issue if empty checks are done before hand and the call
 	to here is short circuited away.
 	*/
 	if (!invent && !(flags.perm_invent && !lets && !want_reply)) {
