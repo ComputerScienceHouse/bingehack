@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)uhitm.c	3.3	2000/01/22	*/
+/*	SCCS Id: @(#)uhitm.c	3.3	2000/02/20	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -661,10 +661,8 @@ int thrown;
 			break;
 		    case EGG:
 		      {
-			/* setting quantity to 1 forces complete `useup' */
-#define useup_eggs(o)	{ o->quan = 1L; \
-			  if (thrown) obfree(o,(struct obj *)0); \
-			  else useup(o); \
+#define useup_eggs(o)	{ if (thrown) obfree(o,(struct obj *)0); \
+			  else useupall(o); \
 			  o = (struct obj *)0; }	/* now gone */
 			long cnt = obj->quan;
 
