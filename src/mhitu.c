@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mhitu.c	3.3	2000/02/19	*/
+/*	SCCS Id: @(#)mhitu.c	3.3	2000/04/19	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1810,7 +1810,7 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 	    	    pline("%s attacks you with a fiery gaze!",
 	    	    		Monnam(mtmp));
 	    	    if (Fire_resistance) {
-	    	    	pline("The fire doesn't feel hot!");
+	    	    	pline_The("fire doesn't feel hot!");
 	    	    	dmg = 0;
 	    	    }
 	    	    burn_away_slime();

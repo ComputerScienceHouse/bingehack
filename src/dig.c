@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)dig.c	3.3	1999/12/05	*/
+/*	SCCS Id: @(#)dig.c	3.3	2000/04/19	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -730,7 +730,7 @@ dig_up_grave()
 	    break;
 	default:
 	    /* No corpse */
-	    pline("The grave seems unused.  Strange....");
+	    pline_The("grave seems unused.  Strange....");
 	    break;
 	}
 	levl[u.ux][u.uy].typ = ROOM;
