@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)winX.c	3.3	96/04/05	*/
+/*	SCCS Id: @(#)winX.c	3.3	1999/12/21	*/
 /* Copyright (c) Dean Luick, 1992				  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -860,6 +860,8 @@ static XtActionsRec actions[] = {
     {"ec_delete",	ec_delete},	/* action for ext-com menu delete */
     {"ps_key",		ps_key},	/* action for player selection */
     {"race_key",	race_key},	/* action for race selection */
+    {"gend_key",	gend_key},	/* action for gender selection */
+    {"algn_key",	algn_key},	/* action for alignment selection */
     {"X11_hangup",	X11_hangup},	/* action for delete of top-level */
     {"input",		map_input},	/* action for key input */
     {"scroll",		nh_keyscroll},	/* action for scrolling by keys */
