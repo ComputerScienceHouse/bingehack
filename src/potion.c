@@ -1111,7 +1111,13 @@ register struct obj *obj;
 		} else You("stiffen momentarily.");                
 		break;
 	case POT_SLEEPING:
-		You("yawn.");
+		kn++;
+		if (!Free_action && !Sleep_resistance) {                
+		    You_feel("rather tired.");
+		    nomul(-rnd(5));
+		    nomovemsg = You_can_move_again;
+		    exercise(A_DEX, FALSE);
+		} else You("yawn.");
 		break;
 	case POT_SPEED:
 		if (!Fast) Your("knees seem more flexible now.");
@@ -1275,7 +1281,7 @@ register struct obj *obj;
 	switch (obj->oclass) {
 	    case WEAPON_CLASS:
 		if (!obj->oerodeproof && is_rustprone(obj) &&
-		    (obj->oeroded < MAX_ERODE) && !rn2(10)) {
+		    (obj->oeroded < MAX_ERODE) && !rn2(2)) {
 			pline("%s %s some%s.",
 			      Your_buf, aobjnam(obj, "rust"),
 			      obj->oeroded ? " more" : "what");
@@ -1507,7 +1513,6 @@ dodip()
 		    }
 		}
 
-
 		obj->odiluted = (obj->otyp != POT_WATER);
 
 		if (obj->otyp == POT_WATER && !Hallucination) {
@@ -1588,16 +1593,16 @@ dodip()
 			obj->oeroded++;
 		    }
 		}
-	    } else if (potion->cursed || !is_metallic(obj) ||
-		    /* arrows,&c are classed as metallic due to arrowhead
-		       material, but dipping in oil shouldn't repair them */
-		    is_ammo(obj)) {
+	    } else if (potion->cursed) {
 		pline_The("potion spills and covers your %s with oil.",
 			  makeplural(body_part(FINGER)));
 		incr_itimeout(&Glib, d(2,10));
-	    /* oil removes rust and corrosion, but doesn't unburn */
-	    } else if (!is_flammable(obj) ||
-					(!obj->oeroded && !obj->oeroded2)) {
+	    /* Oil removes rust and corrosion, but doesn't unburn.
+	     * Arrows, etc are classed as metallic due to arrowhead
+	     * material, but dipping in oil shouldn't repair them.
+	     */
+	    } else if ((!is_rustprone(obj) && !is_corrodeable(obj)) ||
+				is_ammo(obj) || (!obj->oeroded && !obj->oeroded2)) {
 		/* uses up potion, doesn't set obj->greased */
 		pline("%s gleam%s with an oily sheen.",
 		      Yname2(obj),
