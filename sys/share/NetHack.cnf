@@ -14,7 +14,7 @@
 #
 # To change the configuration, comment out the unwanted lines, and
 # uncomment the configuration you want.
-
+#
 
 # *** OPTIONS ***
 #
@@ -44,6 +44,10 @@ OPTIONS=time,noshowexp,number_pad,lit_corridor,rest_on_space
 # Some options to set personal preferences.  Uncomment and change these to
 # suit your personal preference.  If several people are to use the same
 # configuration, options like these should not be set.
+#
+# Note to blind players:
+#
+# Use menustyle:traditional for the best interface to speech synthesizers.
 #
 #OPTIONS=name:Janet-V,female,dogname:Fido,catname:Morris,fruit:apricot
 #OPTIONS=autopickup,pickup_types:$"=/!?+
@@ -86,6 +90,10 @@ SAVE=;n
 #
 # See the on-line help or the Guidebook for which symbols are in which
 # positions.
+#
+# Note to blind players:
+#
+# Turn off ibmgraphics, and do not use any of the character graphics sets.
 #
 # If you merely set the IBMgraphics option as above, NetHack will use IBM
 # extended ASCII for dungeon characters.  If you don't like the selections,
