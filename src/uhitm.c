@@ -128,8 +128,15 @@ struct obj *wep;	/* uwep for attack(), null for kick_monster() */
 		return FALSE;
 	}
 
+	/* Put up an invisible monster marker, but one exception is for
+	 * monsters that hide.  That already prints a warning message and
+	 * prevents you from hitting the monster just via the hidden monster
+	 * code below; if we also did that here, similar behavior would be
+	 * happening two turns in a row.
+	 */
 	if (!canspotmon(mtmp) &&
-		    !glyph_is_invisible(levl[u.ux+u.dx][u.uy+u.dy].glyph)) {
+		    !glyph_is_invisible(levl[u.ux+u.dx][u.uy+u.dy].glyph) &&
+		    !(!Blind && mtmp->mundetected && hides_under(mtmp->data))) {
 		pline("Wait!  There's %s there you can't see!",
 			something);
 		map_invisible(u.ux+u.dx, u.uy+u.dy);
