@@ -402,24 +402,24 @@ dismount_steed(reason)
 	if (!DEADMONSTER(mtmp)) {
 	    place_monster(mtmp, u.ux, u.uy);
 	    if (!u.uswallow && !u.ustuck && enexto(&cc, u.ux, u.uy, youmonst.data)) {
+		struct permonst *mdat = mtmp->data;
+
 		/* The steed may drop into water/lava */
-		if (is_pool(u.ux, u.uy) &&
-		    !is_flyer(mtmp->data) && !is_floater(mtmp->data) &&
-		    !is_clinger(mtmp->data)) {
-		    if (!Underwater)
-			pline("%s falls into the %s!", Monnam(mtmp), surface(u.ux, u.uy));
-		    if (!is_swimmer(mtmp->data) && !amphibious(mtmp->data)) {
-			killed(mtmp);
-			adjalign(-1);
-		    }
-		}
-		if (is_lava(u.ux, u.uy) &&
-		    !is_flyer(mtmp->data) && !is_floater(mtmp->data) &&
-		    !is_clinger(mtmp->data)) {
-		    pline("%s is pulled into the lava!", Monnam(mtmp));
-		    if (!likes_lava(mtmp->data)) {
-			killed(mtmp);
-			adjalign(-1);
+		if (!is_flyer(mdat) && !is_floater(mdat) && !is_clinger(mdat)) {
+		    if (is_pool(u.ux, u.uy)) {
+			if (!Underwater)
+			    pline("%s falls into the %s!", Monnam(mtmp),
+							surface(u.ux, u.uy));
+			if (!is_swimmer(mdat) && !amphibious(mdat)) {
+			    killed(mtmp);
+			    adjalign(-1);
+			}
+		    } else if (is_lava(u.ux, u.uy)) {
+			pline("%s is pulled into the lava!", Monnam(mtmp));
+			if (!likes_lava(mdat)) {
+			    killed(mtmp);
+			    adjalign(-1);
+			}
 		    }
 		}
 	    /* Steed dismounting consists of two steps: being moved to another
