@@ -377,7 +377,7 @@ DO_CL:
 !	ENDIF
 !	IF ("$(CL)"=="")
 	   @echo CL Environment variable is defined as follows:
-	   SET CL=/AL $(MC) /Oo /Gy /Gs /Gt15 /Zp1 /W0 /I..\include /nologo /c
+	   SET CL=/AL $(MC) /Oo /Gy /Gs /Gt14 /Zp1 /W0 /I..\include /nologo /c
 !	ELSE
 	   @echo Warning CL Environment variable is defined:
 	   @echo CL=$(CL)
