@@ -1517,7 +1517,7 @@ register int x, y;	/* not xchar: perhaps xchar is unsigned and
 	end_glyphout();
 
 #ifndef NO_TERMS
-    if(!ND && (cx != x || x <= 3)) { /* Extremely primitive */
+    if(!nh_ND && (cx != x || x <= 3)) { /* Extremely primitive */
 	cmov(x, y); /* bunker!wtm */
 	return;
     }
@@ -1528,11 +1528,11 @@ register int x, y;	/* not xchar: perhaps xchar is unsigned and
     if(cy <= 3 && cx <= 3) {
 	nocmov(x, y);
 #ifndef NO_TERMS
-    } else if ((x <= 3 && cy <= 3) || (!CM && x < cx)) {
+    } else if ((x <= 3 && cy <= 3) || (!nh_CM && x < cx)) {
 	(void) putchar('\r');
 	ttyDisplay->curx = 0;
 	nocmov(x, y);
-    } else if (!CM) {
+    } else if (!nh_CM) {
 	nocmov(x, y);
 #endif
     } else
@@ -1786,7 +1786,7 @@ boolean complain;
 	    winid datawin = tty_create_nhwindow(NHW_TEXT);
 	    if(complain
 #ifndef NO_TERMS
-		&& CD
+		&& nh_CD
 #endif
 	    ) {
 		/* attempt to scroll text below map window if there's room */
@@ -2260,7 +2260,7 @@ tty_print_glyph(window, x, y, glyph)
 #define invis_color(n) color = NO_COLOR
 #define pet_color(n)  color = iflags.use_color ? mons[n].mcolor :	      \
 				/* If no color, try to hilite pets; black  */ \
-				/* should be HI				   */ \
+				/* should be nh_HI			   */ \
 				((iflags.hilite_pet && has_color(CLR_BLACK)) ?     \
 							CLR_BLACK : NO_COLOR)
 # if defined(REINCARNATION) && defined(ASCIIGRAPH)

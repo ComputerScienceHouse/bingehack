@@ -308,7 +308,7 @@ set_colors()
 		return;
 	} else {
 		colors_changed = TRUE;
-		HE = colorHE;
+		nh_HE = colorHE;
 	}
 }
 
@@ -318,7 +318,7 @@ restore_colors()
 	static char plainHE[] = "\033q";
 
 	if (colors_changed)
-		HE = plainHE;
+		nh_HE = plainHE;
 	colors_changed = FALSE;
 }
 # endif /* TEXTCOLOR */
