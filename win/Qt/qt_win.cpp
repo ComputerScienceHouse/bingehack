@@ -1465,7 +1465,8 @@ protected:
 	    p->setFont(bold);
 	}
 
-	p->drawText(3,0,width(),cellHeight(),AlignLeft|AlignVCenter,uitem.text);
+	p->drawText(3, 0, cellWidth(), cellHeight(),
+		AlignLeft|AlignVCenter, uitem.text);
 
 	if (uitem.attr) {
 	    p->setFont(font());
