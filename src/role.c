@@ -1049,7 +1049,7 @@ int buflen, rolenum, racenum, gendnum, alignnum;
 
 	if (alignnum != ROLE_NONE) {
 		Strcat(buf, " ");
-		Strcat(buf, (char *)aligns[alignnum].adj[0]);
+		Strcat(buf, aligns[alignnum].adj);
 	} else post_attribs++;
 	/* <your lawful> */
 
@@ -1086,28 +1086,40 @@ int buflen, rolenum, racenum, gendnum, alignnum;
 	num_post_attribs = post_attribs;
 	if (post_attribs) {
 		if (racenum == ROLE_NONE) {
-			Strcat(buf, (post_attribs == num_post_attribs) ?  " " : ", ");
+			if (num_post_attribs > 1 &&
+			    post_attribs < num_post_attribs && post_attribs)
+			 	Strcat(buf, ","); 
+			Strcat(buf, " ");
 			--post_attribs;
-			if (!post_attribs) Strcat(buf, conj);
+			if (!post_attribs && num_post_attribs > 1) Strcat(buf, conj);
 			Strcat(buf, "race");
 		}
 		if (rolenum == ROLE_NONE) {
-			Strcat(buf, (post_attribs == num_post_attribs) ? " " : ", ");
+			if (num_post_attribs > 1 &&
+			    post_attribs < num_post_attribs && post_attribs)
+			 	Strcat(buf, ","); 
+			Strcat(buf, " ");
 			--post_attribs;
-			if (!post_attribs) Strcat(buf, conj);
+			if (!post_attribs && num_post_attribs > 1) Strcat(buf, conj);
 			Strcat(buf, "role");
 		}
-		if (alignnum == ROLE_NONE) {
-			Strcat(buf, (post_attribs == num_post_attribs) ? " " : ", ");
-			--post_attribs;
-			if (!post_attribs) Strcat(buf, conj);
-			Strcat(buf, "alignment");
-		}
 		if (gendnum == ROLE_NONE) {
-			Strcat(buf, (post_attribs == num_post_attribs) ? " " : ", ");
+			if (num_post_attribs > 1
+			    && post_attribs < num_post_attribs && post_attribs)
+			 	Strcat(buf, ","); 
+			Strcat(buf, " ");
 			--post_attribs;
-			if (!post_attribs) Strcat(buf, conj);
+			if (!post_attribs && num_post_attribs > 1) Strcat(buf, conj);
 			Strcat(buf, "gender");
+		}
+		if (alignnum == ROLE_NONE) {
+			if (num_post_attribs > 1
+			    && post_attribs < num_post_attribs && post_attribs)
+			 	Strcat(buf, ","); 
+			Strcat(buf, " ");
+			--post_attribs;
+			if (!post_attribs && num_post_attribs > 1) Strcat(buf, conj);
+			Strcat(buf, "alignment");
 		}
 	}
 	Strcat(buf, " for you? [ynq] ");
