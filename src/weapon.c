@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)weapon.c	3.3	1999/12/20	*/
+/*	SCCS Id: @(#)weapon.c	3.3	2000/01/22	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1041,7 +1041,7 @@ struct obj *weapon;
     type = u.twoweap ? P_TWO_WEAPON_COMBAT : weapon_type(weapon);
     if (type == P_NONE) {
 	bonus = 0;
-    } else if (P_RESTRICTED(type) || type <= P_LAST_WEAPON) {
+    } else if (type <= P_LAST_WEAPON) {
 	switch (P_SKILL(type)) {
 	    default: impossible("weapon_dam_bonus: bad skill %d",P_SKILL(type));
 		     /* fall through */
@@ -1062,8 +1062,8 @@ struct obj *weapon;
 	    case P_SKILLED:	bonus = 0; break;
 	    case P_EXPERT:	bonus = 1; break;
 	}
-    } else if (type == P_BARE_HANDED_COMBAT && P_SKILL(type)) {
-	bonus = (P_SKILL(type) * (martial_bonus() ? 2 : 1)) / 2;
+    } else if (type == P_BARE_HANDED_COMBAT) {
+	bonus = (P_SKILL(type) * (martial_bonus() ? 3 : 1)) / 2;
     }
 
 #ifdef STEED
