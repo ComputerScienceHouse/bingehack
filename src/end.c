@@ -630,12 +630,11 @@ die:
 				  * (long)objects[val->list[i].typ].oc_cost;
 
 	    /* add points for artifacts */
-	    for(otmp=invent; otmp; otmp=otmp->nobj) {
-		if (otmp->oartifact && otmp->otyp != AMULET_OF_YENDOR) {
-		    /* shopkeepers charge 4x, 40x is arbitrary */
-		    u.urexp += 40 * (long)objects[otmp->otyp].oc_cost;
+	    for (otmp = invent; otmp; otmp = otmp->nobj)
+		if (otmp->oartifact) {
+		    /* shopkeepers charge 100x; 250x is arbitrary */
+		    u.urexp += 250L * (long)objects[otmp->otyp].oc_cost;
 		}
-	    }
 
 	    keepdogs(TRUE);
 	    viz_array[0][0] |= IN_SIGHT; /* need visibility for naming */
@@ -672,8 +671,8 @@ die:
 		    /* assumes artifacts don't have quan>1 */
 		    Sprintf(pbuf, "%s (worth %ld zorkmids and %ld points)",
 			artifact_name(xname(otmp), &dummy),
-			4L * objects[otmp->otyp].oc_cost,
-			40L * objects[otmp->otyp].oc_cost);
+			100L * (long)objects[otmp->otyp].oc_cost,
+			250L * (long)objects[otmp->otyp].oc_cost);
 		    putstr(endwin, 0, pbuf);
 		}
 	    }
