@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)objnam.c	3.3	1999/12/19	*/
+/*	SCCS Id: @(#)objnam.c	3.3	1999/12/29	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -151,6 +151,22 @@ register int otyp;
 	if(dn)
 		Sprintf(eos(buf), " (%s)", dn);
 	return(buf);
+}
+
+/* less verbose result than obj_typename(); either the actual name
+   or the description (but not both); user-assigned name is ignored */
+char *
+simple_typename(otyp)
+int otyp;
+{
+    char *bufp, *pp, *save_uname = objects[otyp].oc_uname;
+
+    objects[otyp].oc_uname = 0;		/* suppress any name given by user */
+    bufp = obj_typename(otyp);
+    objects[otyp].oc_uname = save_uname;
+    if ((pp = strstri(bufp, " (")) != 0)
+	*pp = '\0';		/* strip the appended description */
+    return bufp;
 }
 
 boolean

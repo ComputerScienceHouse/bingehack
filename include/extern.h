@@ -1266,6 +1266,7 @@ E void NDECL(objects_init);
 /* ### objnam.c ### */
 
 E char *FDECL(obj_typename, (int));
+E char *FDECL(simple_typename, (int));
 E boolean FDECL(obj_is_pname, (struct obj *));
 E char *FDECL(distant_name, (struct obj *,char *(*)(OBJ_P)));
 E char *FDECL(xname, (struct obj *));

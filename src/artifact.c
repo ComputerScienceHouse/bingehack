@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)artifact.c 3.3	1999/11/26	*/
+/*	SCCS Id: @(#)artifact.c 3.3	1999/12/29	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -633,7 +633,7 @@ winid tmpwin;		/* supplied by dodiscover() */
 	m = artidisco[i];
 	otyp = artilist[m].otyp;
 	Sprintf(buf, "  %s [%s %s]", artiname(m),
-		align_str(artilist[m].alignment), OBJ_NAME(objects[otyp]));
+		align_str(artilist[m].alignment), simple_typename(otyp));
 	putstr(tmpwin, 0, buf);
     }
     return i;
