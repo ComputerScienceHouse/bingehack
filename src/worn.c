@@ -62,32 +62,38 @@ long mask;
 			impossible("Setworn: mask = %ld.", wp->w_mask);
 		if(oobj) {
 		    oobj->owornmask &= ~wp->w_mask;
-		    /* leave as "x = x <op> y", here and below, for broken
-		     * compilers */
-		    p = objects[oobj->otyp].oc_oprop;
-		    u.uprops[p].extrinsic = u.uprops[p].extrinsic & ~wp->w_mask;
-		    if ((p = w_blocks(oobj,mask)) != 0)
-				u.uprops[p].blocked &= ~wp->w_mask;
-		    if (oobj->oartifact) set_artifact_intrinsic(oobj, 0, mask);
+		    if (wp->w_mask & ~(W_SWAPWEP|W_QUIVER)) {
+			/* leave as "x = x <op> y", here and below, for broken
+			 * compilers */
+			p = objects[oobj->otyp].oc_oprop;
+			u.uprops[p].extrinsic =
+					u.uprops[p].extrinsic & ~wp->w_mask;
+			if ((p = w_blocks(oobj,mask)) != 0)
+			    u.uprops[p].blocked &= ~wp->w_mask;
+			if (oobj->oartifact)
+			    set_artifact_intrinsic(oobj, 0, mask);
+		    }
 		}
 		*(wp->w_obj) = obj;
 		if(obj) {
 		    obj->owornmask |= wp->w_mask;
-			/* Prevent getting/blocking intrinsics from wielding
-			 * potions, through the quiver, etc.
-			 * Allow weapon-tools, too.
-			 * wp_mask should be same as mask at this point.
-			 */
-			if (wp->w_mask & ~(W_SWAPWEP|W_QUIVER)) {
-				if (obj->oclass == WEAPON_CLASS || is_weptool(obj) ||
-						mask != W_WEP) {
-			p = objects[obj->otyp].oc_oprop;
-					u.uprops[p].extrinsic = u.uprops[p].extrinsic | wp->w_mask;
-					if ((p = w_blocks(obj, mask)) != 0)
-						u.uprops[p].blocked |= wp->w_mask;
-		    }
-		    if (obj->oartifact) set_artifact_intrinsic(obj, 1, mask);
+		    /* Prevent getting/blocking intrinsics from wielding
+		     * potions, through the quiver, etc.
+		     * Allow weapon-tools, too.
+		     * wp_mask should be same as mask at this point.
+		     */
+		    if (wp->w_mask & ~(W_SWAPWEP|W_QUIVER)) {
+			if (obj->oclass == WEAPON_CLASS || is_weptool(obj) ||
+					    mask != W_WEP) {
+			    p = objects[obj->otyp].oc_oprop;
+			    u.uprops[p].extrinsic =
+					u.uprops[p].extrinsic | wp->w_mask;
+			    if ((p = w_blocks(obj, mask)) != 0)
+				u.uprops[p].blocked |= wp->w_mask;
 			}
+			if (obj->oartifact)
+			    set_artifact_intrinsic(obj, 1, mask);
+		    }
 		}
 	    }
 	}

@@ -381,7 +381,11 @@ long wp_mask;
 	if (spfx & SPFX_HALRES) {
 	    /* make_hallucinated must (re)set the mask itself to get
 	     * the display right */
-	    make_hallucinated((long)!on, TRUE, wp_mask);
+	    /* restoring needed because this is the only artifact intrinsic
+	     * that can print a message--need to guard against being printed
+	     * when restoring a game
+	     */
+	    make_hallucinated((long)!on, restoring ? FALSE : TRUE, wp_mask);
 	}
 	if (spfx & SPFX_ESP) {
 	    if(on) ETelepat |= wp_mask;
