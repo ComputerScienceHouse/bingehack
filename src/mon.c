@@ -2004,7 +2004,8 @@ boolean construct;
 	 /* if (n == 0) animal_temp[n++] = NON_PM; */
 
 	    animal_list = (short *)alloc(n * sizeof *animal_list);
-	    (void) memcpy((void *)animal_list, (void *)animal_temp,
+	    (void) memcpy((genericptr_t *)animal_list,
+			  (genericptr_t *)animal_temp,
 			  n * sizeof *animal_list);
 	    animal_list_count = n;
 	} else {	/* release */

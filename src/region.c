@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)region.c	3.3	96/08/02	*/
+/*	SCCS Id: @(#)region.c	3.3	1999/11/13	*/
 /* Copyright (c) 1996 by Jean-Christophe Collet	 */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -10,11 +10,11 @@
  * structure eventually.
  */
 
-static NhRegion** regions;
+static NhRegion **regions;
 static int n_regions = 0;
 static int max_regions = 0;
 
-#define NO_CALLBACK -1
+#define NO_CALLBACK (-1)
 
 boolean FDECL(inside_gas_cloud, (genericptr,genericptr));
 boolean FDECL(expire_gas_cloud, (genericptr,genericptr));
@@ -44,7 +44,7 @@ static callback_proc callbacks[] = {
   expire_gas_cloud
 };
 
-extern struct monst* find_mid();
+extern struct monst *find_mid();
 
 /* Should be inlined. */
 boolean
@@ -52,7 +52,7 @@ inside_rect(r, x, y)
 NhRect *r;
 int x, y;
 {
-  return (x >= r->lx && x <= r->hx && y >= r->ly && y <= r->hy) ? TRUE : FALSE;
+  return (x >= r->lx && x <= r->hx && y >= r->ly && y <= r->hy);
 }
 
 /* 
@@ -360,14 +360,15 @@ void
 run_regions()
 {
   register int i,j,k;
+  int f_indx;
 
   /* End of life ? */
   /* Do it backward because the array will be modified */
   for (i = n_regions - 1; i >= 0; i--) {
     if (regions[i]->ttl == 0) {
-      if (regions[i]->expire_f == NO_CALLBACK || 
-	  callbacks[regions[i]->expire_f](regions[i], NULL))
-	  remove_region(regions[i]);
+      if ((f_indx = regions[i]->expire_f) == NO_CALLBACK || 
+	  (*callbacks[f_indx])(regions[i], (genericptr_t)0))
+	remove_region(regions[i]);
     }
   }
 
@@ -378,13 +379,14 @@ run_regions()
       regions[i]->ttl--;
     
     /* Check if player is inside region */
-    if (regions[i]->inside_f != NO_CALLBACK && regions[i]->player_inside)
-      (void) callbacks[regions[i]->inside_f](regions[i], NULL);
+    f_indx = regions[i]->inside_f;
+    if (f_indx != NO_CALLBACK && regions[i]->player_inside)
+      (void) (*callbacks[f_indx])(regions[i], (genericptr_t)0);
     /* Check if any monster is inside region */
-    if (regions[i]->inside_f != NO_CALLBACK) {
+    if (f_indx != NO_CALLBACK) {
       for (j=0; j < regions[i]->n_monst; j++) {
-	struct monst* mtmp = find_mid(regions[i]->monsters[j]);
-	if (mtmp != NULL && callbacks[regions[i]->inside_f](regions[i], mtmp)) {
+	struct monst *mtmp = find_mid(regions[i]->monsters[j]);
+	if (mtmp && (*callbacks[f_indx])(regions[i], mtmp)) {
 	  /* The monster died, remove it from list */
 	  regions[i]->monsters[j] = 0;
 	}
@@ -411,7 +413,7 @@ boolean
 in_out_region(x,y)
 xchar x,y;
 {
-  int i;
+  int i, f_indx;
 
   /* First check if we can do the move */
 
@@ -419,15 +421,15 @@ xchar x,y;
     if (inside_region(regions[i], x, y) 
 	&& !regions[i]->player_inside
 	&& !regions[i]->attach_2_u) {
-      if (regions[i]->can_enter_f != NO_CALLBACK)
-	if (!callbacks[regions[i]->can_enter_f](regions[i], NULL))
+      if ((f_indx = regions[i]->can_enter_f) != NO_CALLBACK)
+	if (!(*callbacks[f_indx])(regions[i], (genericptr_t)0))
 	  return FALSE;
     } else
       if (regions[i]->player_inside 
 	  && !inside_region(regions[i], x, y)
 	  && !regions[i]->attach_2_u) {
-	if (regions[i]->can_leave_f != NO_CALLBACK)
-	  if (!callbacks[regions[i]->can_leave_f](regions[i], NULL))
+	if ((f_indx = regions[i]->can_leave_f) != NO_CALLBACK)
+	  if (!(*callbacks[f_indx])(regions[i], (genericptr_t)0))
 	    return FALSE;
       }
   }
@@ -440,8 +442,8 @@ xchar x,y;
       regions[i]->player_inside = FALSE;
       if (regions[i]->leave_msg != NULL)
 	pline(regions[i]->leave_msg);
-      if (regions[i]->leave_f != NO_CALLBACK)
-	(void) callbacks[regions[i]->leave_f](regions[i], NULL);
+      if ((f_indx = regions[i]->leave_f) != NO_CALLBACK)
+	(void) (*callbacks[f_indx])(regions[i], (genericptr_t)0);
     }
 
   /* Callbacks for the regions we do enter */
@@ -453,8 +455,8 @@ xchar x,y;
       regions[i]->player_inside = TRUE;
       if (regions[i]->enter_msg != NULL)
 	pline(regions[i]->enter_msg);
-      if (regions[i]->enter_f != NO_CALLBACK)
-	(void) callbacks[regions[i]->enter_f](regions[i], NULL);
+      if ((f_indx = regions[i]->enter_f) != NO_CALLBACK)
+	(void) (*callbacks[f_indx])(regions[i], (genericptr_t)0);
     }
   return TRUE;
 }
@@ -468,7 +470,7 @@ m_in_out_region(mon, x, y)
 struct monst* mon;
 xchar x, y;
 {
-  int i;
+  int i, f_indx;
 
   /* First check if we can do the move */
 
@@ -476,15 +478,15 @@ xchar x, y;
     if (inside_region(regions[i], x, y) 
 	&& !mon_in_region(regions[i], mon)
 	&& regions[i]->attach_2_m != mon->m_id) {
-      if (regions[i]->can_enter_f != NO_CALLBACK)
-	if (!callbacks[regions[i]->can_enter_f](regions[i], mon))
+      if ((f_indx = regions[i]->can_enter_f) != NO_CALLBACK)
+	if (!(*callbacks[f_indx])(regions[i], mon))
 	  return FALSE;
     } else
       if (mon_in_region(regions[i], mon)
 	  && !inside_region(regions[i], x, y)
 	  && regions[i]->attach_2_m != mon->m_id) {
-	if (regions[i]->can_leave_f != NO_CALLBACK)
-	  if (!callbacks[regions[i]->can_leave_f](regions[i], mon))
+	if ((f_indx = regions[i]->can_leave_f) != NO_CALLBACK)
+	  if (!(*callbacks[f_indx])(regions[i], mon))
 	    return FALSE;
       }
   }
@@ -495,8 +497,8 @@ xchar x, y;
 	&& regions[i]->attach_2_m != mon->m_id
 	&& !inside_region(regions[i], x, y)) {
       remove_mon_from_reg(regions[i], mon);
-      if (regions[i]->leave_f != NO_CALLBACK)
-	(void) callbacks[regions[i]->leave_f](regions[i], mon);
+      if ((f_indx = regions[i]->leave_f) != NO_CALLBACK)
+	(void) (*callbacks[f_indx])(regions[i], mon);
     }
 
   /* Callbacks for the regions we do enter */
@@ -506,8 +508,8 @@ xchar x, y;
 	&& !regions[i]->attach_2_u
 	&& inside_region(regions[i], x, y)) {
       add_mon_to_reg(regions[i], mon);
-      if (regions[i]->enter_f != NO_CALLBACK)
-	(void) callbacks[regions[i]->enter_f](regions[i], mon);
+      if ((f_indx = regions[i]->enter_f) != NO_CALLBACK)
+	(void) (*callbacks[f_indx])(regions[i], mon);
     }
   return TRUE;
 }
@@ -743,7 +745,7 @@ const char * msg_enter;
 const char * msg_leave;
 {
   NhRect tmprect;
-  NhRegion* reg = create_region(NULL, 0);
+  NhRegion* reg = create_region((NhRect *)0, 0);
 
   reg->enter_msg = msg_enter;
   reg->leave_msg = msg_leave;
@@ -795,7 +797,7 @@ int radius, ttl;
   int nrect;
   NhRect tmprect;
 
-  ff = create_region(NULL, 0);
+  ff = create_region((NhRect *)0, 0);
   nrect = radius;
   tmprect.lx = x;
   tmprect.hx = x;
@@ -903,7 +905,7 @@ int damage;
   int i,nrect;
   NhRect tmprect;
 
-  cloud = create_region(NULL, 0);
+  cloud = create_region((NhRect *)0, 0);
   nrect = radius;
   tmprect.lx = x;
   tmprect.hx = x;
