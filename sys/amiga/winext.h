@@ -1,4 +1,4 @@
-/*    SCCS Id: @(#)winext.h    3.1    93/04/02 */
+/*    SCCS Id: @(#)winext.h    3.1    2000/01/12 */
 /* Copyright (c) Gregg Wonderly, Naperville, Illinois,  1991,1992,1993. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -30,9 +30,9 @@ extern int bigscreen;
 extern int amii_numcolors;
 extern long amii_scrnmode;
 extern winid amii_rawprwin;
-extern const char *roles[];
+/* extern const char *roles[]; */
 extern struct Screen *HackScreen;
-extern struct Library *ConsoleDevice;
+/* extern struct Library *ConsoleDevice; */
 extern char Initialized;
 extern char toplines[ BUFSZ ];
 extern NEARDATA winid WIN_MESSAGE;
@@ -53,12 +53,12 @@ extern int amii_otherBPen;
 #else
 extern WinamiBASE *WinamiBase;
 #endif
-
+/*
 extern struct GfxBase *GfxBase;
 extern struct Library *DiskfontBase;
 extern struct IntuitionBase *IntuitionBase;
 extern struct Library *LayersBase;
-
+*/
 /* All kinds of shared stuff */
 extern struct TextAttr Hack160;
 extern struct TextAttr Hack40;

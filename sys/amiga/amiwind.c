@@ -1,4 +1,4 @@
-/*    SCCS Id: @(#)amiwind.c     3.2    96/02/17
+/*    SCCS Id: @(#)amiwind.c     3.2    2000/01/12
 /*    Copyright (c) Olaf Seibert (KosmoSoft), 1989, 1992	  */
 /*    Copyright (c) Kenneth Lorber, Bethesda, Maryland 1993,1996  */
 /* NetHack may be freely redistributed.  See license for details. */
@@ -531,7 +531,7 @@ register struct IntuiMessage *message;
 
 #if defined(TTY_GRAPHICS) && !defined(AMII_GRAPHICS)
 int kbhit(){
-	return 0
+	return 0;
 }
 #else
 int

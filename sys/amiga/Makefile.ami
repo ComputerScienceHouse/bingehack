@@ -1,5 +1,5 @@
 #	NetHack Makefile.
-#	SCCS Id: @(#)Makefile.ami	3.2	96/02/17
+#	SCCS Id: @(#)Makefile.ami	3.2	2000/01/12
 # Copyright (c) Kenneth Lorber, Bethesda, Maryland, 1991,1992,1993,1996.
 # NetHack may be freely redistributed.  See license for details.
 
@@ -212,14 +212,13 @@ ASM	= asm
 # undefine this to not compile with GSTs
 #GST=gst=$(GSTFILE)
 #
-#DEBUG=debug=ff
-#OPTFLAGS=opt optsize optinl optcomp=10 optpeep optgo optdep=5 \
-#	optrdep=5 optalias
+#DEBUG=debug=sf
+OPTFLAGS=opt opttime optpeep optgo optinl optcomp=10 optdep=5 optrdep=5 #optalias +OPTTIME -OPTSIZE
 CFLAGS	= data=far nminc $(DEBUG) idir=$(I) cpu=any nostkchk nover \
 	codename=none strmerge ppbuf=8000 $(OPTFLAGS) $(TILES) $(SAVEDS) \
 	afp $(ERRREXX) $(GST)
 # for files that are too large for the standard flags:
-CFLAGS2 = code=far nostrmerge $(SAVEDS)
+CFLAGS2 = code=far strmerge $(SAVEDS)
 WBCFLAGS = ignore=217,62 data=far ansi nminc code=far idir=$(I) cpu=any afp \
 	$(DEBUG) $(ERRREXX) define=AMIGA $(GST)
 XXX = data=far ansi nminc idir=$(I) cpu=any afp opt optinline optinlocal \
@@ -286,10 +285,10 @@ AOBJSPEC = -o
 
 #[SAS6]
 
-LINK	= slink noicons maxhunk 10000
+LINK	= slink noicons verbose maxhunk 65536 stripdebug
 LIN	= from lib:catch.o
 LLINK	= with $(AMI)ami.lnk
-LLIB	= lib Lib:sc.lib lib lib:amiga.lib BATCH #scnb.lib or sc.lib
+LLIB	= lib lib:scnb.lib BATCH #lib lib:amiga.lib BATCH #scnb.lib or sc.lib
 FLLIB	= $(FBLIB) lib Lib:sc.lib BATCH
 OBJSPEC = objname=
 PNSPEC = noicons to #pname=
@@ -391,7 +390,7 @@ AMIGAOBJ = \
 
 # Objects from assembly sources (because DMake can't handle default rules)
 AMIGAOBJ2 = \
-	$(O)dispmap.o
+#	$(O)dispmap.o
 
 SHAREOBJ = \
 	$(O)pcmain.o	$(RANDOBJ)
@@ -429,7 +428,7 @@ CDFILES= $(SLIB)Cav-goal.lev $(CDFILES1)
 
 HDFILES1= $(SLIB)Hea-fila.lev $(SLIB)Hea-filb.lev $(SLIB)Hea-loca.lev \
 	$(SLIB)Hea-strt.lev
-HDFILES= $(SLIB)H-goal.lev $(HDFILES1)
+HDFILES= $(SLIB)Hea-goal.lev $(HDFILES1)
 
 KDFILES1= $(SLIB)Kni-fila.lev $(SLIB)Kni-filb.lev $(SLIB)Kni-loca.lev \
 	$(SLIB)Kni-strt.lev
@@ -852,7 +851,7 @@ $(O)winkey.o:	$(AMI)winkey.c $(HDEP) $(AMDEP)
 
 $(O)winmenu.o:	$(AMI)winmenu.c $(HDEP) $(AMDEP)
 
-$(O)winami.o:	$(AMI)winami.c $(HDEP) $(AMDEP) $(AMI)char.c $(AMI)randwin.c
+$(O)winami.o:	$(AMI)winami.c $(HDEP) $(AMDEP) #$(AMI)char.c $(AMI)randwin.c
 
 #$(O)amilib.o:	$(AMI)amilib.c $(HDEP) $(AMDEP)
 
@@ -957,13 +956,13 @@ $(SBIN)txt2iff: $(OO)txt2iff.o $(NAMEOBJS) $(OO)tiletext.o $(OO)tiletxt.o
 	$(LINK) $(LNSPEC) $@ $(LIN) $(OO)txt2iff.o $(NAMEOBJS) $(OO)tiletext.o \
 		$(OO)tiletxt.o  $(FLLIB)
 
-$(NETHACK)tiles/objects.iff: /win/share/objects.txt $(SBIN)txt2iff
+$(NETHACK)tiles/objects.iff: $(WSHARE)objects.txt $(SBIN)txt2iff
 	$(SBIN)txt2iff $(WSHARE)objects.txt $(NETHACK)tiles/objects.iff
 
-$(NETHACK)tiles/monsters.iff : /win/share/monsters.txt $(SBIN)txt2iff
+$(NETHACK)tiles/monsters.iff: $(WSHARE)monsters.txt $(SBIN)txt2iff
 	$(SBIN)txt2iff $(WSHARE)monsters.txt $(NETHACK)tiles/monsters.iff
 
-$(NETHACK)tiles/other.iff : /win/share/other.txt $(SBIN)txt2iff
+$(NETHACK)tiles/other.iff: $(WSHARE)other.txt $(SBIN)txt2iff
 	$(SBIN)txt2iff $(WSHARE)other.txt $(NETHACK)tiles/other.iff
 
 # Sound installation rules.

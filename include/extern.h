@@ -26,20 +26,6 @@ E void NDECL(display_gamewindows);
 E void NDECL(newgame);
 E void FDECL(welcome, (BOOLEAN_P));
 
-/* ### amiwbench.c ### */
-
-#ifdef AMIGA
-E void NDECL(ami_wbench_init);
-E void NDECL(ami_wbench_args);
-E int FDECL(ami_wbench_getsave, (int));
-E void FDECL(ami_wbench_unlink, (char *));
-E int FDECL(ami_wbench_iconsize, (char *));
-E void FDECL(ami_wbench_iconwrite, (char *));
-E int FDECL(ami_wbench_badopt, (const char *));
-E void NDECL(ami_wbench_cleanup);
-E void FDECL(getlind, (const char *,char *,const char *));
-#endif /* AMIGA */
-
 /* ### apply.c ### */
 
 E int NDECL(doapply);

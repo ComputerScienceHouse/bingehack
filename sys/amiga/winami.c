@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)winami.c	3.2	96/02/02	*/
+/*	SCCS Id: @(#)winami.c	3.2	2000/01/12	*/
 /* Copyright (c) Gregg Wonderly, Naperville, Illinois,  1991,1992,1993,1996. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -437,7 +437,9 @@ amii_askname()
     }
 }
 
+/* Discarded ... -jhsa
 #include "NH:sys/amiga/char.c"
+*/
 
 /* Get the player selection character */
 
@@ -454,6 +456,12 @@ amii_player_selection()
     amii_clear_nhwindow( WIN_BASE );
     if (validrole(flags.initrole))
     	return;
+    else {
+      flags.initrole=randrole();
+      return;
+    }
+#if 0 /* Don't query the user ... instead give random character -jhsa */
+
 #if 0	/* OBSOLETE */
     if( *pl_character ){
 	pl_character[ 0 ] = toupper( pl_character[ 0 ] );
@@ -576,7 +584,10 @@ amii_player_selection()
     }
     amii_clear_nhwindow( WIN_BASE );
     CloseShWindow( cwin );
+#endif /* Do not query user ... -jhsa */
 }
+
+#if 0 /* Unused ... -jhsa */
 
 #include "NH:sys/amiga/randwin.c"
 
@@ -690,7 +701,7 @@ allocerr:
         }
         while( w && ( imsg = (struct IntuiMessage *) GetMsg( w->UserPort ) ) )
         {
-	    switch( imsg->Class )
+	    switch( (long)imsg->Class )
 	    {
 		/* Must be up for a little while... */
 	    case INACTIVEWINDOW:
@@ -726,6 +737,7 @@ allocerr:
     DeletePort( tport );
     if(w) CloseShWindow( w );
 }
+#endif /* Discarded randwin ... -jhsa */
 
 /* this should probably not be needed (or be renamed)
 void
@@ -976,7 +988,7 @@ put_ext_cmd( obufp, colx, cw, bottom )
 	    amii_curs( WIN_MESSAGE, 0, bottom);
 	    SetAPen( w->RPort, C_WHITE );
 	    Text(w->RPort, "># ", 3 );
-	    SetAPen( w->RPort, C_BLACK );
+	    /* SetAPen( w->RPort, C_BLACK ); */ /* Black text on black screen doesn't look too well ... -jhsa */
 	    Text(w->RPort, t+3, strlen( t ) - 3 );
 	}
 	else
@@ -997,7 +1009,7 @@ put_ext_cmd( obufp, colx, cw, bottom )
 	amii_curs( WIN_MESSAGE, 0, bottom);
 	SetAPen( w->RPort, C_WHITE );
 	Text(w->RPort, "# ", 2 );
-	SetAPen( w->RPort, C_BLACK );
+	/* SetAPen( w->RPort, C_BLACK ); */ /* Black on black ... -jhsa */
 	Text(w->RPort, obufp, strlen( obufp ) );
 	SetAPen( w->RPort, C_WHITE );
     }

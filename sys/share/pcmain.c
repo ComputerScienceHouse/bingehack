@@ -286,9 +286,15 @@ char *argv[];
 # endif
 	getlock();
 #else   /* PC_LOCKING */
+#ifdef AMIGA /* We'll put the bones & levels in the user specified directory -jhsa */
+  Strcat(lock,plname);
+#else
 	Strcpy(lock,plname);
+#endif
 	Strcat(lock,".99");
+#ifndef AMIGA /* Must not regularize since lock may contain a full path -jhsa */
 	regularize(lock);	/* is this necessary? */
+#endif
 #endif	/* PC_LOCKING */
 
 	/* Set up level 0 file to keep the game state.
@@ -506,14 +512,14 @@ nhusage()
 	 * is deprecated and will not be listed here.
 	 */
 	(void) Sprintf(buf1,
-"\nUsage: %s [-d dir] -s [-r role] [-p profession] [maxrank] [name]...\n       or",
+"\nUsage: %s [-d dir] -s [-r race] [-p profession] [maxrank] [name]...\n       or",
 		hname);
 	if (!iflags.window_inited)
 		raw_printf(buf1);
 	else
 		(void)	printf(buf1);
 	(void) Sprintf(buf1,
-	 "\n       %s [-d dir] [-u name] [-r role] [-p profession] [-[DX]]",
+	 "\n       %s [-d dir] [-u name] [-r race] [-p profession] [-[DX]]",
 		hname);
 #ifdef NEWS
 	Strcat(buf1," [-n]");

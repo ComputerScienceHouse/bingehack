@@ -1,4 +1,4 @@
-/*    SCCS Id: @(#)winfuncs.c    3.1    96/02/16 */
+/*    SCCS Id: @(#)winfuncs.c    3.1    2000/01/12 */
 /* Copyright (c) Gregg Wonderly, Naperville, Illinois,  1991,1992,1993,1996. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -2023,6 +2023,12 @@ amii_raw_print(s)
     if(amiIDisplay)
 	amiIDisplay->rawprint++;
 
+    if (!Initialized) { /* Not yet screen open ... */
+        puts(s);
+        fflush(stdout);
+        return;
+    }
+
     if( Initialized == 0 && WIN_BASE == WIN_ERR )
 	    init_nhwindows(&argc, (char **)0);
 
@@ -2054,6 +2060,12 @@ amii_raw_print_bold(s)
 
     if(amiIDisplay)
 	amiIDisplay->rawprint++;
+
+    if (!Initialized) { /* Not yet screen open ... */
+        puts(s);
+        fflush(stdout);
+        return;
+    }
 
     if( Initialized == 0 && WIN_BASE == WIN_ERR )
 	    init_nhwindows(&argc, (char **)0);

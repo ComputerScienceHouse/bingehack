@@ -142,9 +142,13 @@ set_lock_and_bones()
 	strncat(levels, bbs_id, PATHLEN);
 #endif
 	append_slash(bones);
+#ifndef AMIGA /* We'll want bones & levels in the user specified directory -jhsa */
 	Strcat(bones, "bonesnn.*");
+#endif
 	Strcpy(lock, levels);
+#ifndef AMIGA
 	Strcat(lock, alllevels);
+#endif
 	return;
 }
 #endif /* MFLOPPY */
@@ -280,9 +284,19 @@ d_level *lev;
 {
 	s_level *sptr;
 	char *dptr;
+#ifdef AMIGA
+	char bonetmp[16];
+#endif
 
+#ifdef AMIGA /* We'll want the bones go the user defined Levels directory -jhsa */
+	Sprintf(bonetmp, "bon%c%s", dungeons[lev->dnum].boneid,
+			In_quest(lev) ? urole.filecode : "0");
+	Strcpy(file, permbones);
+	Strcat(file, bonetmp);
+#else
 	Sprintf(file, "bon%c%s", dungeons[lev->dnum].boneid,
 			In_quest(lev) ? urole.filecode : "0");
+#endif
 	dptr = eos(file);
 	if ((sptr = Is_special(lev)) != 0)
 	    Sprintf(dptr, ".%c", sptr->boneid);

@@ -1,4 +1,4 @@
-/*    SCCS Id: @(#)amidos.c     3.2    96/02/16
+/*    SCCS Id: @(#)amidos.c     3.2    2000/01/12
 /* Copyright (c) Olaf Seibert, Nijmegen, The Netherlands, 1988,1990.    */
 /* Copyright (c) Kenneth Lorber, Bethesda, Maryland, 1991,1992,1993,1996.  */
 /* NetHack may be freely redistributed.  See license for details.	*/
@@ -41,7 +41,7 @@ int Enable_Abort = 0;   /* for stdio package */
 #endif
 
 /* Initial path, so we can find NetHack.cnf */
-char PATH[PATHLEN] = "Ram:;df0:;NetHack:";
+char PATH[PATHLEN] = "NetHack:";
 
 static boolean record_exists(void);
 
