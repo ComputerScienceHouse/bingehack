@@ -49,14 +49,18 @@ burnarmor(victim)
 struct monst *victim;
 {
     struct obj *item;
-
+    char buf[BUFSZ];
+    int mat_idx;
+    
     if (!victim) return 0;
 #define burn_dmg(obj,descr) rust_dmg(obj, descr, 0, FALSE, victim)
     while (1) {
 	switch (rn2(5)) {
 	case 0:
 	    item = (victim == &youmonst) ? uarmh : which_armor(victim, W_ARMH);
-	    if (!burn_dmg(item, "leather helmet")) continue;
+	    mat_idx = objects[item->otyp].oc_material;
+	    Sprintf(buf,"%s helmet", materialnm[mat_idx]);
+	    if (!burn_dmg(item, buf)) continue;
 	    break;
 	case 1:
 	    item = (victim == &youmonst) ? uarmc : which_armor(victim, W_ARMC);

@@ -212,6 +212,15 @@ struct c_common_strings c_common_strings = {
 	"something", "Something", "You can move again."
 };
 
+/* NOTE: the order of these words exactly corresponds to the
+   order of oc_material values #define'd in objclass.h. */
+const char *materialnm[] = {
+	"mysterious", "liquid", "wax", "organic", "flesh",
+	"paper", "cloth", "leather", "wooden", "bone", "dragonhide",
+	"iron", "metal", "copper", "silver", "gold", "platinum", "mithril",
+	"plastic", "glass", "gemstone", "stone"
+};
+
 /* Vision */
 NEARDATA boolean vision_full_recalc = 0;
 NEARDATA char	 **viz_array = 0;/* used in cansee() and couldsee() macros */

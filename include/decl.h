@@ -282,6 +282,9 @@ E struct c_common_strings {
 #define Something	   c_common_strings.c_Something
 #define You_can_move_again c_common_strings.c_You_can_move_again
 
+/* material strings */
+E const char *materialnm[];
+
 /* Monster name articles */
 #define ARTICLE_NONE	0
 #define ARTICLE_THE	1
