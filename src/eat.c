@@ -703,7 +703,8 @@ register struct permonst *ptr;
 		debugpline("Trying to give poison resistance");
 #endif
 		if(!(HPoison_resistance & FROMOUTSIDE)) {
-			You_feel("healthy.");
+			You_feel(Poison_resistance ?
+				 "especially healthy." : "healthy.");
 			HPoison_resistance |= FROMOUTSIDE;
 		}
 		break;
