@@ -46,7 +46,7 @@ DAT   = ..\dat       # NetHack data files
 DOC   = ..\doc       # NetHack documentation files
 UTIL  = ..\util      # Utility source
 SRC   = ..\src       # Main source
-SYS   = ..\sys\share # Shared system files
+SSYS  = ..\sys\share # Shared system files
 NTSYS = ..\sys\winnt # NT Win32 specific files
 TTY   = ..\win\tty   # window port files (tty)
 WIN32 = ..\win\win32 # window port files (Win32)
@@ -217,7 +217,7 @@ DLB =
 # Rules for files in sys\share
 #
 
-{$(SYS)}.c{$(OBJ)}.o:
+{$(SSYS)}.c{$(OBJ)}.o:
 	@$(cc) $(CFLAGSG)  -Fo$@  $<
 
 #
@@ -642,9 +642,9 @@ $(U)lev_yacc.c $(INCL)\lev_comp.h : $(U)lev_comp.y
 	   @echo To update $(U)lev_yacc.c and $(INCL)\lev_comp.h run $(YACC).
 	   @echo ---
 	   @echo For now, we will copy the prebuilt lev_yacc.c and 
-	   @echo lev_comp.h from $(SYS) into $(UTIL) and use them.
-	   @copy $(SYS)\lev_yacc.c $(U)lev_yacc.c >nul
-	   @copy $(SYS)\lev_comp.h $(INCL)\lev_comp.h >nul
+	   @echo lev_comp.h from $(SSYS) into $(UTIL) and use them.
+	   @copy $(SSYS)\lev_yacc.c $(U)lev_yacc.c >nul
+	   @copy $(SSYS)\lev_comp.h $(INCL)\lev_comp.h >nul
 	   @echo /**/ >>$(U)lev_yacc.c
 	   @echo /**/ >>$(INCL)\lev_comp.h
 !	ENDIF
@@ -660,8 +660,8 @@ $(U)lev_$(LEX).c: $(U)lev_comp.l
 	   @echo $(U)lev_comp.l has changed. To update $@ run $(LEX).
 	   @echo ---
 	   @echo For now, we will copy the prebuilt lev_lex.c 
-	   @echo from $(SYS) into $(UTIL) and use it.
-	   @copy $(SYS)\lev_lex.c $@ >nul
+	   @echo from $(SSYS) into $(UTIL) and use it.
+	   @copy $(SSYS)\lev_lex.c $@ >nul
 	   @echo /**/ >>$@
 !	ENDIF
 
@@ -700,9 +700,9 @@ $(U)dgn_yacc.c $(INCL)\dgn_comp.h : $(U)dgn_comp.y
 	   @echo $(INCL)\dgn_comp.h run $(YACC).
 	   @echo ---
 	   @echo For now, we will copy the prebuilt $(U)dgn_yacc.c and 
-	   @echo dgn_comp.h from $(SYS) into $(UTIL) and use them.
-	   @copy $(SYS)\dgn_yacc.c $(U)dgn_yacc.c >nul
-	   @copy $(SYS)\dgn_comp.h $(INCL)\dgn_comp.h >nul
+	   @echo dgn_comp.h from $(SSYS) into $(UTIL) and use them.
+	   @copy $(SSYS)\dgn_yacc.c $(U)dgn_yacc.c >nul
+	   @copy $(SSYS)\dgn_comp.h $(INCL)\dgn_comp.h >nul
 	   @echo /**/ >>$(U)dgn_yacc.c
 	   @echo /**/ >>$(INCL)\dgn_comp.h
 !	ENDIF
@@ -718,8 +718,8 @@ $(U)dgn_$(LEX).c: $(U)dgn_comp.l
 	   @echo $(U)dgn_comp.l has changed. To update $@ run $(LEX).
 	   @echo ---
 	   @echo For now, we will copy the prebuilt dgn_lex.c 
-	   @echo from $(SYS) into $(UTIL) and use it.
-	   @copy $(SYS)\dgn_lex.c $@ >nul
+	   @echo from $(SSYS) into $(UTIL) and use it.
+	   @copy $(SSYS)\dgn_lex.c $@ >nul
 	   @echo /**/ >>$@
 !	ENDIF
 
@@ -991,18 +991,18 @@ $(O)wintty.o: $(TTY)\wintty.c $(HACK_H) $(INCL)\dlb.h \
 #
 # from sys\share
 #
-$(O)pcmain.o: $(SYS)\pcmain.c $(HACK_H) $(INCL)\dlb.h
-	$(CC) $(CFLAGSG) $(NTSUB) -Fo$@ $(SYS)\pcmain.c
-$(O)pcsys.o: $(SYS)\pcsys.c $(HACK_H)
-	$(CC) $(CFLAGSG) $(NTSUB) -Fo$@ $(SYS)\pcsys.c
-$(O)pctty.o: $(SYS)\pctty.c $(HACK_H)
-	$(CC) $(CFLAGSG) $(NTSUB) -Fo$@ $(SYS)\pctty.c
-$(O)pcunix.o: $(SYS)\pcunix.c $(HACK_H)
-	$(CC) $(CFLAGSG) $(NTSUB) -Fo$@ $(SYS)\pcunix.c
-$(O)random.o: $(SYS)\random.c $(HACK_H)
-	$(CC) $(CFLAGSG) $(NTSUB) -Fo$@ $(SYS)\random.c
-$(O)nhlan.o:	$(HACK_H) $(NHLAN_H) $(SYS)\nhlan.c
-	@$(cc) $(CFLAGSG) $(NTSUB) -Fo$@ $(SYS)\nhlan.c
+$(O)main.o: $(SSYS)\pcmain.c $(HACK_H) $(INCL)\dlb.h
+	@$(CC) $(CFLAGSG) $(NTSUB) -Fo$@ $(SSYS)\pcmain.c
+$(O)sys.o: $(SSYS)\pcsys.c $(HACK_H)
+	@$(CC) $(CFLAGSG) $(NTSUB) -Fo$@ $(SSYS)\pcsys.c
+$(O)tty.o: $(SSYS)\pctty.c $(HACK_H)
+	@$(CC) $(CFLAGSG) $(NTSUB) -Fo$@ $(SSYS)\pctty.c
+$(O)unix.o: $(SSYS)\pcunix.c $(HACK_H)
+	@$(CC) $(CFLAGSG) $(NTSUB) -Fo$@ $(SSYS)\pcunix.c
+$(O)random.o: $(SSYS)\random.c $(HACK_H)
+	@$(CC) $(CFLAGSG) $(NTSUB) -Fo$@ $(SSYS)\random.c
+$(O)nhlan.o:	$(HACK_H) $(NHLAN_H) $(SSYS)\nhlan.c
+	@$(cc) $(CFLAGSG) $(NTSUB) -Fo$@ $(SSYS)\nhlan.c
 
 
 #
