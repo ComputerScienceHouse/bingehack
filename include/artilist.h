@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)artilist.h 3.3	99/03/22	*/
+/*	SCCS Id: @(#)artilist.h 3.3	2000/07/22	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -65,6 +65,12 @@ A("Orcrist",			ELVEN_BROADSWORD,
 	SPFX_DFLAG2, 0, M2_ORC,
 	PHYS(5,0),	NO_DFNS,	NO_CARY,	0, A_CHAOTIC, NON_PM, PM_ELF ),
 
+/*
+ *	The combination of SPFX_WARN and M2_something on an artifact
+ *	will trigger EWarn_of_mon for all monsters that have the appropriate
+ *	M2_something flags.  In Sting's case it will trigger EWarn_of_mon
+ *	for M2_ORC monsters.
+ */
 A("Sting",			ELVEN_DAGGER,
 	(SPFX_WARN|SPFX_DFLAG2), 0, M2_ORC,
 	PHYS(5,0),	NO_DFNS,	NO_CARY,	0, A_CHAOTIC, NON_PM, PM_ELF ),

@@ -410,10 +410,10 @@ long wp_mask;
 	    if (spec_m2(otmp)) {
 	    	if (on) {
 			EWarn_of_mon |= wp_mask;
-			flags.warntype = spec_m2(otmp);
+			flags.warntype |= spec_m2(otmp);
 	    	} else {
 			EWarn_of_mon &= ~wp_mask;
-	    		flags.warntype = 0L;
+	    		flags.warntype &= ~spec_m2(otmp);
 		}
 		see_monsters();
 	    } else {
@@ -577,7 +577,7 @@ struct monst *mtmp;
 	return(0);
 }
 
-/* return the index of monster that an artifact's special attacks apply against */
+/* return the M2 flags of monster that an artifact's special attacks apply against */
 long
 spec_m2(otmp)
 struct obj *otmp;
