@@ -15,6 +15,7 @@ struct trobj {
 static void FDECL(ini_inv, (struct trobj *));
 static void FDECL(knows_object,(int));
 static void FDECL(knows_class,(CHAR_P));
+static boolean FDECL(restricted_spell_discipline, (int));
 
 #define UNDEF_TYP	0
 #define UNDEF_SPE	'\177'
