@@ -1048,8 +1048,14 @@ dopois:
 		break;
 	    case AD_DRLI:
 		hitmsg(mtmp, mattk);
-		if (uncancelled && !rn2(3) && !Drain_resistance)
+		if (uncancelled && !rn2(3) && !Drain_resistance) {
 		    losexp();
+		    if (u.uhp <= 0) {
+			killer_format = KILLED_BY;
+			killer = "life drainage";
+			done(DIED);
+		    }
+		}
 		break;
 	    case AD_LEGS:
 		{ register long side = rn2(2) ? RIGHT_SIDE : LEFT_SIDE;
@@ -2109,7 +2115,7 @@ register struct monst *mon;
 				if (!resists_drli(&youmonst)) {
 				    You_feel("out of shape.");
 				    losexp();
-				    if(u.uhp <= 0) {
+				    if (u.uhp <= 0) {
 					killer_format = KILLED_BY;
 					killer = "overexertion";
 					done(DIED);

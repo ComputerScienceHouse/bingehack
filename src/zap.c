@@ -1798,6 +1798,11 @@ boolean ordinary;
 		case SPE_DRAIN_LIFE:
 			if (!Drain_resistance) {
 				losexp();
+				if (u.uhp <= 0) {
+					killer_format = KILLED_BY;
+					killer = "life drainage";
+					done(DIED);
+				}
 				makeknown(obj->otyp);
 			}
 			damage = 0;	/* No additional damage */
