@@ -185,6 +185,10 @@ wielded egg that hatched wasn't cleaning up worn objects and might cause crash
 cease two-weapon combat immediately if either weapon becomes unwielded
 	(dropped, put into container, &c), rather than waiting til next attack
 mirror shouldn't show location of unseen monsters
+modify moveloop so that time (moves) is not relative to the player's speed
+fix moveloop to account for player not accumulating enough movement points
+	to move in a turn -- this fixes the reported "time is wrong when
+	burdened" problem
 
 
 Platform- and/or Interface-Specific Fixes
