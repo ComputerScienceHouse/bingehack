@@ -34,6 +34,14 @@
 )
 
 #ifdef NEW_WARNING
+#define warn_of_mon(mon) (!canseemon(mon) && (Warn_of_mon &&   			       \
+			    flags.warntype && (flags.warntype & (mon)->data->mflags2)) \
+        		|| (Warning && !(mon)->mpeaceful &&                            \
+                            distu((mon)->mx, (mon)->my) < 100 &&                       \
+			    (((int) ((mon)->m_lev / 4)) >= flags.warnlevel)))
+#endif
+
+#ifdef NEW_WARNING
 #define sensemon(mon) (tp_sensemon(mon) || Detect_monsters || warn_of_mon(mon))
 #else
 #define sensemon(mon) (tp_sensemon(mon) || Detect_monsters)
@@ -277,9 +285,7 @@
 #define GLYPH_INVISIBLE GLYPH_INVIS_OFF
 
 #ifdef NEW_WARNING
-#define mon_to_warnlevel(mon)	( ((int) (mon->m_lev / 4)) < WARNCOUNT ? 	\
-				  ((int) (mon->m_lev / 4)) : (WARNCOUNT - 1))
-#define warnmon_to_glyph(mon) (mon_to_warnlevel(mon)+GLYPH_WARNING_OFF)
+#define warning_to_glyph(mwarnlev) ((mwarnlev)+GLYPH_WARNING_OFF)
 #endif
 				
 #define mon_to_glyph(mon) ((int) what_mon(monsndx((mon)->data))+GLYPH_MON_OFF)
