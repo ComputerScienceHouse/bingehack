@@ -1314,9 +1314,9 @@ characters for such terminals, so you should specify it when appropriate
 even if you override the selections with your own graphics strings.
 .lp extmenu
 Changes the extended commands interface to pop-up a menu of available commands.  
-It is keystroke compatible with the traditional interface,
-and is implemented only by the tty port (default off), when the game
-has been compiled to support tty graphics.
+It is keystroke compatible with the traditional interface except that it does
+not require that you hit Enter. It is implemented only by the tty port 
+(default off), when the game has been compiled to support tty graphics.
 .lp disclose
 Offer to disclose various information when the game ends (default all).
 The possibilities are identifying your inventory ('i'),
