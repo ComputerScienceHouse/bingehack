@@ -2,7 +2,7 @@
 # for nethack's source files (`make depend' support for Makefile.src).
 #
 # usage:
-#   cd src ; nawk -f depend.awk ../include/*.h list-of-.c-files
+#   cd src ; nawk -f depend.awk ../include/*.h list-of-.c/.cpp-files
 #
 # This awk program scans each file in sequence, looking for lines beginning
 # with `#include "' and recording the name inside the quotes.  For .h files,
@@ -47,12 +47,12 @@ END		{ output_dep() }		#finish the last file
 #
 function output_dep(				targ)
 {
-  if (file ~ /\.c$/) {
-    #prior to very first .c file, handle some special header file cases
+  if (file ~ /\.cp*$/) {
+    #prior to very first .c/.cc file, handle some special header file cases
     if (!c_count++)
       output_specials()
     #construct object filename from source filename
-    targ = file;  sub("^.+/", "", targ);  sub("\\.c$", ".o", targ)
+    targ = file;  sub("^.+/", "", targ);  sub("\\.cp*$", ".o", targ)
     #format and write the collected dependencies
     format_dep(targ, file)
   }
@@ -102,7 +102,10 @@ function format_dep(target, source,		n, i, list)
   #write build command if first source entry has non-include path prefix
   source = list[2]
   if (source ~ /\// && substr(source, 1, 11) != "../include/")
-    print "\t$(CC) $(CFLAGS) -c " source
+    if (source ~ /\.cpp$/ )
+      print "\t$(CXX) $(CXXFLAGS) -c " source
+    else
+      print "\t$(CC) $(CFLAGS) -c " source
 }
 
 #

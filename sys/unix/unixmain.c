@@ -91,9 +91,9 @@ char *argv[];
 
 	    /*
 	     * Now we know the directory containing 'record' and
-	     * may do a prscore().
+	     * may do a prscore().  Exclude `-style' - it's a Qt option.
 	     */
-	    if (!strncmp(argv[1], "-s", 2)) {
+	    if (!strncmp(argv[1], "-s", 2) && strncmp(argv[1], "-style", 6)) {
 #ifdef CHDIR
 		chdirx(dir,0);
 #endif

@@ -4,24 +4,26 @@
 
 0.  Read this entire file before starting, and come back to the Notes
     below if you have any problems.  If you are trying to use X11,
-    also read all of win/X11/Install.X11.  For help in controlling
+    also read all of win/X11/Install.X11, or read win/Qt/Install.Qt
+    if you are using Qt or KDE under X11.  For help in controlling
     and running the game after it is installed, see the '?' command
     within the game and doc/Guidebook (non-installers want to know
     about those things too).
 
 1.  Make sure all the NetHack files are in the appropriate directory
-    structure.  You should have a main directory with subdirectories dat,
-    doc, include, src, util, sys/share, sys/unix, win/tty, and win/X11.
-    You may have other subdirectories under sys and win, but they will not
-    affect compilation for a UNIX system.  If you do not follow this
-    structure, the Makefiles will not function properly.  The .c files for
-    the main program belong in src, those for utility programs in util, and
-    UNIX-specific ones in sys/unix.  All the .h files belong in include, the
-    documentation in doc, and assorted data files in dat.  Some UNIX
-    versions may also be interested in sys/share's random.c or its lex/yacc
-    output, as explained in note 11.  (A more detailed explanation of the
-    directory structure may be found in Files, which should be in the top
-    directory.)
+
+    structure.  You should have a main directory with subdirectories
+    dat, doc, include, src, util, sys/share, sys/unix, win/tty, win/X11,
+    and win/Qt.  You may have other subdirectories under sys and win,
+    but they will not affect compilation for a UNIX system.  If you do
+    not follow this structure, the Makefiles will not function properly.
+    The .c files for the main program belong in src, those for utility
+    programs in util, and UNIX-specific ones in sys/unix.  All the .h
+    files belong in include, the documentation in doc, and assorted
+    data files in dat.  Some UNIX's random.c or its lex/yacc output,
+    as explained in note 11.  (A more detailed explanation of the
+    directory structure may be found in Files, which should be in the
+    top directory.)
 
 2.  Your Makefiles may still be in sys/unix with tags on the end of them.
     If so, run setup.sh in that directory to distribute the Makefiles to

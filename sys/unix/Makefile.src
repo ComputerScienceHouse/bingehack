@@ -135,6 +135,11 @@ SYSOBJ = ioctl.o unixmain.o unixtty.o unixunix.o
 CFLAGS = -O -I../include
 LFLAGS = 
 
+# Only used for Qt interface (other interfaces are standard C)
+CXXFLAGS = -g $(CFLAGS) -I. -I$(QTDIR)/include
+# Qt is C++, so define the compiler and linker thus required:
+#CXX=g++
+#LD=g++
 
 # Set the WINSRC, WINOBJ, and WINLIB lines to correspond to your desired
 # combination of windowing systems.  Also set windowing systems in config.h.
@@ -152,6 +157,12 @@ WINX11SRC = ../win/X11/Window.c ../win/X11/dialogs.c ../win/X11/winX.c \
 	../win/X11/winval.c tile.c
 WINX11OBJ = Window.o dialogs.o winX.o winmap.o winmenu.o winmesg.o \
 	winmisc.o winstat.o wintext.o winval.o tile.o
+#
+# Files for a Qt port
+#
+WINQTSRC = ../win/Qt/qt_win.cpp ../win/Qt/qt_clust.cpp
+WINQTOBJ = qt_win.o qt_clust.o tile.o
+
 #
 # 
 WINSRC = $(WINTTYSRC)
@@ -180,7 +191,14 @@ WINX11LIB = -lXaw -lXmu -lXext -lXt -lX11
 # WINX11LIB = -lXaw -lXmu -lXext -lXt -lXpm -lX11 -lm
 # WINX11LIB = -lXaw -lXmu -lXpm -lXext -lXt -lX11 -lSM -lICE -lm # BSD/OS 2.0
 #
+# libraries for Qt
+WINQTLIB = -L$(QTDIR)/lib -lqt
 #
+# libraries for KDE (with Qt)
+WINKDELIB = -lkdecore -lkdeui -lXext
+#
+#
+
 WINLIB = $(WINTTYLIB)
 
 # any other strange libraries your system needs (for Sysunix only -- the more
@@ -257,6 +275,8 @@ SYSCSRC = ../sys/atari/tos.c ../sys/share/pcmain.c ../sys/share/pcsys.c \
 
 # all windowing-system-dependent .c (for dependencies and such)
 WINCSRC = $(WINTTYSRC) $(WINX11SRC)
+# all windowing-system-dependent .cpp (for dependencies and such)
+WINCXXSRC = $(WINQTSRC)
 
 # .c files for this version (for date.h)
 VERSOURCES = $(HACKCSRC) $(SYSSRC) $(WINSRC) monstr.c vis_tab.c
@@ -372,6 +392,13 @@ objects.o:
 	$(CC) $(CFLAGS) -c objects.c
 	@rm -f $(MAKEDEFS)
 
+# Qt windowport meta-object-compiler output
+qt_kde0.moc: ../include/qt_kde0.h
+	moc $< >$@
+
+qt_win.moc: ../include/qt_win.h
+	moc $< >$@
+
 $(MAKEDEFS): ../util/makedefs.c  $(CONFIG_H) ../include/permonst.h \
 		../include/objclass.h ../include/monsym.h \
 		../include/artilist.h ../include/dungeon.h ../include/obj.h \
@@ -428,8 +455,8 @@ spotless: clean
 	-rm -f monstr.c ../include/vis_tab.h vis_tab.c tile.c
 
 
-depend: ../sys/unix/depend.awk $(SYSCSRC) $(WINCSRC) $(HACKCSRC)
-	$(AWK) -f ../sys/unix/depend.awk ../include/*.h $(SYSCSRC) $(WINCSRC) $(HACKCSRC) >makedep
+depend: ../sys/unix/depend.awk $(SYSCSRC) $(WINCSRC) $(WINCXXSRC) $(HACKCSRC)
+	$(AWK) -f ../sys/unix/depend.awk ../include/*.h $(SYSCSRC) $(WINCSRC) $(WINCXXSRC) $(HACKCSRC) >makedep
 	@echo '/^# DO NOT DELETE THIS LINE OR CHANGE ANYTHING BEYOND IT/+2,$$d' >eddep
 	@echo '$$r makedep' >>eddep
 	@echo 'w' >>eddep
@@ -526,6 +553,13 @@ wintext.o: ../win/X11/wintext.c $(HACK_H) ../include/winX.h ../include/xwindow.h
 winval.o: ../win/X11/winval.c $(HACK_H) ../include/winX.h
 	$(CC) $(CFLAGS) -c ../win/X11/winval.c
 tile.o: tile.c $(HACK_H)
+qt_win.o: ../win/Qt/qt_win.cpp $(HACK_H) ../include/func_tab.h \
+		../include/dlb.h ../include/patchlevel.h ../include/qt_win.h \
+		../include/qt_clust.h ../include/qt_kde0.h \
+		../include/qt_xpms.h qt_win.moc qt_kde0.moc
+	$(CXX) $(CXXFLAGS) -c ../win/Qt/qt_win.cpp
+qt_clust.o: ../win/Qt/qt_clust.cpp ../include/qt_clust.h
+	$(CXX) $(CXXFLAGS) -c ../win/Qt/qt_clust.cpp
 allmain.o: allmain.c $(HACK_H)
 alloc.o: alloc.c $(CONFIG_H)
 apply.o: apply.c $(HACK_H) ../include/edog.h
