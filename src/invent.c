@@ -196,7 +196,7 @@ struct obj **potmp, **pobj;
 }
 
 /*
-Adjst hero intrinsics as if this object was being added to the hero's
+Adjust hero intrinsics as if this object was being added to the hero's
 inventory.  Called _before_ the object has been added to the hero's
 inventory.
 
@@ -237,7 +237,7 @@ struct obj *obj;
 }
 
 /*
-Adjst hero intrinsics as if this object was being added to the hero's
+Adjust hero intrinsics as if this object was being added to the hero's
 inventory.  Called _after_ the object has been added to the hero's
 inventory.
 

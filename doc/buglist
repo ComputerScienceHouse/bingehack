@@ -198,7 +198,7 @@ NT
 	stray chars left there (?a, ?b, ?c, ?g and ?i, but not others).
 Unix
       - save file compression or decompression problems don't get reported
-	satifactorily to user; forked child process gives message, but nethack
+	satisfactorily to user; forked child process gives message, but nethack
 	parent rewrites the whole screen without pausing for acknowledgement.
 X11
       - It is possible to get a prompt which does not vanish from the screen.
@@ -367,6 +367,15 @@ material now, but they'll know it as soon as they can see".
 
 Shades cannot be attacked by players unless they have silver or blessed
 weapons.  Monsters who attack shades are not subject to similar restrictions.
+
+The idea of giants carrying boulders, and the idea of boulders being huge
+objects that block passages, really don't mesh very well.  At worst, a boulder
+fills the full height of a passage and for a giant to carry one is the
+equivalent of a human carrying a boulder his own height in a passage no higher
+than the boulder is tall.  At best, the grid squares are taller than they are
+wide, and it is still the equivalent of a human carrying a rock that is at
+least two feet wide, not to mention that you can't fly or levitate over the
+boulder and giants that carry them don't block light.
 -------------------------------------------------------------------------
 3.'s Doomed Agenda  (which doesn't mean they're reserved!)
 -------------------------------------------------------------------------
@@ -589,9 +598,6 @@ Realism:
     Limit large mimics to large objects and small mimics to smaller ones
     and from doors.
 
-    Mark limbless monsters that can carry things with a flag, and make
-    monsters that can't drop everything.
-
     Limit the merging of food so that very fresh and very spoiled food
     don't mix.
 
@@ -783,10 +789,6 @@ Tourist search for lost Luggage.
 Eating wood/iron golems whole, should iron golems really be poisonous?
 
 Put -DWIZARD -DHACKDIR comments in makefiles.
-
-Add gorgon to data.base or monst.c comments, to forestall the periodic, "Medusa
-is one of three gorgons, why don't we add the other two?"  (Because the other
-two are immortal, for one thing.)
 
 Perhaps allow different poisoned weapon effects for different potions.
 Change "Interesting..." since it suggests something happens when nothing
