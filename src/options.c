@@ -399,6 +399,7 @@ STATIC_DCL void FDECL(warning_opts, (char *,const char *));
 #if 0
 STATIC_DCL int FDECL(warnlevel_opts, (char *, const char *));
 #endif
+STATIC_DCL void FDECL(duplicate_opt_detection, (const char *, int));
 
 /* check whether a user-supplied option string is a proper leading
    substring of a particular option name; option string might have
@@ -451,6 +452,9 @@ initoptions()
 	/* initialize the random number generator */
 	setrandom();
 
+	/* for detection of configfile options specified multiple times */
+	iflags.opt_booldup = iflags.opt_compdup = (int *)0;
+	
 	for (i = 0; boolopt[i].name; i++) {
 		if (boolopt[i].addr)
 			*(boolopt[i].addr) = boolopt[i].initvalue;
@@ -902,6 +906,78 @@ const char *optn;
 }
 
 void
+set_duplicate_opt_detection(on_or_off)
+int on_or_off;
+{
+	int k, *optptr;
+	if (on_or_off != 0) {
+		/*-- ON --*/
+		if (iflags.opt_booldup)
+			impossible("iflags.opt_booldup already on (memory leak)");
+		iflags.opt_booldup = (int *)alloc(SIZE(boolopt) * sizeof(int));
+		optptr = iflags.opt_booldup;
+		for (k = 0; k < SIZE(boolopt); ++k)
+			*optptr++ = 0;
+			
+		if (iflags.opt_compdup)
+			impossible("iflags.opt_compdup already on (memory leak)");
+		iflags.opt_compdup = (int *)alloc(SIZE(compopt) * sizeof(int));
+		optptr = iflags.opt_compdup;
+		for (k = 0; k < SIZE(compopt); ++k)
+			*optptr++ = 0;
+	} else {
+		/*-- OFF --*/
+		if (iflags.opt_booldup) free((genericptr_t) iflags.opt_booldup);
+		iflags.opt_booldup = (int *)0;
+		if (iflags.opt_compdup) free((genericptr_t) iflags.opt_compdup);
+		iflags.opt_compdup = (int *)0;
+	} 
+}
+
+STATIC_OVL void
+duplicate_opt_detection(opts, bool_or_comp)
+const char *opts;
+int bool_or_comp;	/* 0 == boolean option, 1 == compound */
+{
+	int i, *optptr;
+#if defined(MAC) || defined(AMIGA)
+	/* the Mac has trouble dealing with the output of messages while
+	 * processing the config file.  That should get fixed one day.
+	 * FIXME: The Amiga probably needs some WB adjustments to work properly here.
+	 * For now just return for both of those environments.
+	 */
+	return;
+#endif
+	if ((bool_or_comp == 0) && iflags.opt_booldup && initial && from_file) {
+	    for (i = 0; boolopt[i].name; i++) {
+		if (match_optname(opts, boolopt[i].name, 3, FALSE)) {
+			optptr = iflags.opt_booldup + i;
+			if (*optptr == 1) {
+			    raw_printf(
+				"\nWarning - Boolean option specified multiple times: %s.\n",
+					opts);
+			        wait_synch();
+			}
+			*optptr += 1;
+		}
+	    }
+	} else if ((bool_or_comp == 1) && iflags.opt_compdup && initial && from_file) {
+	    for (i = 0; compopt[i].name; i++) {
+		if (match_optname(opts, compopt[i].name, strlen(compopt[i].name), TRUE)) {
+			optptr = iflags.opt_compdup + i;
+			if (*optptr == 1) {
+			    raw_printf(
+				"\nWarning - compound option specified multiple times: %s.\n",
+					compopt[i].name);
+			        wait_synch();
+			}
+			*optptr += 1;
+		}
+	    }
+	}
+}
+
+void
 parseoptions(opts, tinitial, tfrom_file)
 register char *opts;
 boolean tinitial, tfrom_file;
@@ -939,6 +1015,8 @@ boolean tinitial, tfrom_file;
 
 	if (match_optname(opts, "colour", 5, FALSE))
 		Strcpy(opts, "color");	/* fortunately this isn't longer */
+
+	duplicate_opt_detection(opts, 1);	/* 1 means compound opts */
 
 	/* special boolean options */
 
@@ -1687,6 +1765,8 @@ goodfruit:
 			}
 
 			*(boolopt[i].addr) = !negated;
+
+			duplicate_opt_detection(boolopt[i].name, 0);
 
 #if defined(TERMLIB) || defined(ASCIIGRAPH) || defined(MAC_GRAPHICS_ENV)
 			if (FALSE

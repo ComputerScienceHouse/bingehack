@@ -1302,6 +1302,7 @@ E void FDECL(add_menu_cmd_alias, (CHAR_P, CHAR_P));
 E char FDECL(map_menu_cmd, (CHAR_P));
 E void FDECL(assign_warnings, (uchar *));
 E char *FDECL(nh_getenv, (const char *));
+E void FDECL(set_duplicate_opt_detection, (int));
 
 /* ### pager.c ### */
 

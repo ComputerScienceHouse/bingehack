@@ -1499,6 +1499,8 @@ const char *filename;
 # endif
 	tmp_levels[0] = 0;
 #endif
+	/* begin detection of duplicate configfile options */
+	set_duplicate_opt_detection(1);
 
 	while (fgets(buf, 4*BUFSZ, fp)) {
 		if (!parse_config_line(fp, buf, tmp_ramdisk, tmp_levels)) {
@@ -1507,6 +1509,9 @@ const char *filename;
 		}
 	}
 	(void) fclose(fp);
+	
+	/* turn off detection of duplicate configfile options */
+	set_duplicate_opt_detection(0);
 
 #if defined(MICRO) && !defined(NOCWD_ASSUMPTIONS)
 	/* should be superseded by fqn_prefix[] */
