@@ -415,7 +415,7 @@ E int NDECL(dothrow);
 E int NDECL(dofire);
 E void FDECL(hitfloor, (struct obj *));
 E void FDECL(hurtle, (int,int,int,BOOLEAN_P));
-E void FDECL(throwit, (struct obj *));
+E void FDECL(throwit, (struct obj *,long));
 E int FDECL(omon_adj, (struct monst *,struct obj *,BOOLEAN_P));
 E int FDECL(thitmonst, (struct monst *,struct obj *));
 E int FDECL(hero_breaks, (struct obj *,XCHAR_P,XCHAR_P,BOOLEAN_P));

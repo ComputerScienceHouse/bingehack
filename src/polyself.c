@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)polyself.c	3.3	1999/08/16	*/
+/*	SCCS Id: @(#)polyself.c	3.3	2000/01/20	*/
 /*	Copyright (C) 1987, 1988, 1989 by Ken Arromdee */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -690,7 +690,7 @@ dospit()
 	otmp = mksobj(u.umonnum==PM_COBRA ? BLINDING_VENOM : ACID_VENOM,
 			TRUE, FALSE);
 	otmp->spe = 1; /* to indicate it's yours */
-	throwit(otmp);
+	throwit(otmp, 0L);
 	return(1);
 }
 

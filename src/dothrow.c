@@ -36,6 +36,7 @@ int shotlimit;
 	struct obj *otmp;
 	int multishot = 1;
 	schar skill;
+	long wep_mask;
 
 	/* ask "in what direction?" */
 	if (!getdir((char *)0)) {
@@ -113,22 +114,19 @@ int shotlimit;
 	if (shotlimit > 0 && multishot > shotlimit) multishot = shotlimit;
 
 	while (obj && multishot-- > 0) {
+		wep_mask = obj->owornmask;
 		/* Split this object off from its slot */
 		otmp = (struct obj *)0;
 		if (obj == uquiver) {
 			if(obj->quan > 1L)
 				setuqwep(otmp = splitobj(obj, 1L));
-			else {
+			else
 				setuqwep((struct obj *)0);
-				if (uquiver) return(1);
-			}
 		} else if (obj == uswapwep) {
 			if(obj->quan > 1L)
 				setuswapwep(otmp = splitobj(obj, 1L));
-			else {
+			else
 				setuswapwep((struct obj *)0);
-				if (uswapwep) return(1);
-			}
 		} else if (obj == uwep) {
 	    if(welded(obj)) {
 		weldmsg(obj);
@@ -143,8 +141,8 @@ int shotlimit;
 	    }
 		} else if(obj->quan > 1L)
 			otmp = splitobj(obj, 1L);
-	freeinv(obj);
-	throwit(obj);
+		freeinv(obj);
+		throwit(obj, wep_mask);
 		obj = otmp;
 	}	/* while (multishot) */
 	return(1);
@@ -552,8 +550,9 @@ struct obj *obj;
 }
 
 void
-throwit(obj)
+throwit(obj, wep_mask)
 register struct obj *obj;
+long wep_mask;	/* used to re-equip returning boomerang */
 {
 	register struct monst *mon;
 	register int range, urange;
@@ -606,8 +605,10 @@ register struct obj *obj;
 		mon = boomhit(u.dx, u.dy);
 		if(mon == &youmonst) {		/* the thing was caught */
 			exercise(A_DEX, TRUE);
-			(void) addinv(obj);
+			obj = addinv(obj);
 			(void) encumber_msg();
+			if (wep_mask && !(obj->owornmask & wep_mask))
+			    setworn(obj, wep_mask);
 			return;
 		}
 	} else {
