@@ -222,6 +222,9 @@ NT
       - With console window larger than 80x25 (80x43) some commands that 
 	display text underneath the map don't clear to eol, so you get 
 	stray chars left there (?a, ?b, ?c, ?g and ?i, but not others).
+      - When a game is started on a console larger than 80x25, then saved
+	and resumed on an 80x25 console, the game gets severely trashed
+	with horrible overwrites of various memory locations.
 Unix
       - save file compression or decompression problems don't get reported
 	satisfactorily to user; forked child process gives message, but nethack
