@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)lock.c	3.3	96/05/31	*/
+/*	SCCS Id: @(#)lock.c	3.3	2000/02/06	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -761,16 +761,19 @@ int x, y;
 	case SPE_WIZARD_LOCK:
 #ifdef REINCARNATION
 	    if (Is_rogue_level(&u.uz)) {
+	    	boolean vis = cansee(x,y);
 		/* Can't have real locking in Rogue, so just hide doorway */
-		pline("%s springs up in the older, more primitive doorway.",
+		if (vis) pline("%s springs up in the older, more primitive doorway.",
 			dustcloud);
+		else
+			You_hear("a swoosh.");
 		if (obstructed(x,y)) {
-			pline_The("cloud %s.",quickly_dissipates);
+			if (vis) pline_The("cloud %s.",quickly_dissipates);
 			return FALSE;
 		}
 		block_point(x, y);
 		door->typ = SDOOR;
-		if (cansee(x,y)) pline_The("doorway vanishes!");
+		if (vis) pline_The("doorway vanishes!");
 		newsym(x,y);
 		return TRUE;
 	    }
