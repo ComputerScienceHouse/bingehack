@@ -3826,10 +3826,11 @@ retry:
 	    if (!(otmp = readobjnam((char *)0)))
 		return; /* for safety; should never happen */
 	}
-	if (otmp != &zeroobj) {
-	    /* KMH, conduct */
-	    u.uconduct.wishes++;
 
+	/* KMH, conduct */
+	u.uconduct.wishes++;
+
+	if (otmp != &zeroobj) {
 	    if(otmp->oartifact && !touch_artifact(otmp,&youmonst))
 		dropy(otmp);
 	    else
