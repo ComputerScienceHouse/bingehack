@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)lock.c	3.3	2000/02/06	*/
+/*	SCCS Id: @(#)lock.c	3.4	2000/02/06	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -103,7 +103,7 @@ picklock()	/* try to open/close a lock */
 	    return((xlock.usedtime = 0));
 	}
 
-	if(rn2(100) > xlock.chance) return(1);		/* still busy */
+	if(rn2(100) >= xlock.chance) return(1);		/* still busy */
 
 	You("succeed in %s.", lock_action());
 	if (xlock.door) {
@@ -160,7 +160,7 @@ forcelock()	/* try to force a locked chest */
 	} else			/* blunt */
 	    wake_nearby();	/* due to hammering on the container */
 
-	if(rn2(100) > xlock.chance) return(1);		/* still busy */
+	if(rn2(100) >= xlock.chance) return(1);		/* still busy */
 
 	You("succeed in forcing the lock.");
 	xlock.box->olocked = 0;
@@ -201,7 +201,7 @@ forcelock()	/* try to force a locked chest */
 	    if (costly)
 		loss += stolen_value(xlock.box, u.ux, u.uy,
 					     (boolean)shkp->mpeaceful, TRUE);
-	    if(loss) You("owe %ld zorkmids for objects destroyed.", loss);
+	    if(loss) You("owe %ld %s for objects destroyed.", loss, currency(loss));
 	    delobj(xlock.box);
 	}
 	exercise((xlock.picktyp) ? A_DEX : A_STR, TRUE);
@@ -226,7 +226,8 @@ int
 pick_lock(pick) /* pick a lock with a given object */
 	register struct	obj	*pick;
 {
-	int x, y, picktyp, c, ch;
+	int picktyp, c, ch;
+	coord cc;
 	struct rm	*door;
 	struct obj	*otmp;
 	char qbuf[QBUFSZ];
@@ -270,12 +271,10 @@ pick_lock(pick) /* pick a lock with a given object */
 		impossible("picking lock with object %d?", picktyp);
 		return(0);
 	}
-	if(!getdir((char *)0)) return(0);
-
 	ch = 0;		/* lint suppression */
-	x = u.ux + u.dx;
-	y = u.uy + u.dy;
-	if (x == u.ux && y == u.uy) {	/* pick lock on a container */
+
+	if(!get_adjacent_loc((char *)0, "Invalid location!", u.ux, u.uy, &cc)) return 0;
+	if (cc.x == u.ux && cc.y == u.uy) {	/* pick lock on a container */
 	    const char *verb;
 	    boolean it;
 	    int count;
@@ -295,7 +294,7 @@ pick_lock(pick) /* pick a lock with a given object */
 
 	    count = 0;
 	    c = 'n';			/* in case there are no boxes here */
-	    for(otmp = level.objects[x][y]; otmp; otmp = otmp->nexthere)
+	    for(otmp = level.objects[cc.x][cc.y]; otmp; otmp = otmp->nexthere)
 		if (Is_box(otmp)) {
 		    ++count;
 		    if (!can_reach_floor()) {
@@ -308,7 +307,9 @@ pick_lock(pick) /* pick a lock with a given object */
 		    else if (picktyp != LOCK_PICK) verb = "unlock", it = 1;
 		    else verb = "pick";
 		    Sprintf(qbuf, "There is %s here, %s %s?",
-			    doname(otmp), verb, it ? "it" : "its lock");
+		    	    safe_qbuf("", sizeof("There is  here, unlock its lock?"),
+			    	doname(otmp), an(simple_typename(otmp->otyp)), "a box"),
+			    verb, it ? "it" : "its lock");
 
 		    c = ynq(qbuf);
 		    if(c == 'q') return(0);
@@ -354,8 +355,13 @@ pick_lock(pick) /* pick a lock with a given object */
 	} else {			/* pick the lock in a door */
 	    struct monst *mtmp;
 
-	    door = &levl[x][y];
-	    if ((mtmp = m_at(x, y)) && canseemon(mtmp)
+	    if (u.utrap && u.utraptype == TT_PIT) {
+		You_cant("reach over the edge of the pit.");
+		return(0);
+	    }
+
+	    door = &levl[cc.x][cc.y];
+	    if ((mtmp = m_at(cc.x, cc.y)) && canseemon(mtmp)
 			&& mtmp->m_ap_type != M_AP_FURNITURE
 			&& mtmp->m_ap_type != M_AP_OBJECT) {
 #ifdef TOURIST
@@ -368,7 +374,7 @@ pick_lock(pick) /* pick a lock with a given object */
 		return(0);
 	    }
 	    if(!IS_DOOR(door->typ)) {
-		if (is_drawbridge_wall(x,y) >= 0)
+		if (is_drawbridge_wall(cc.x,cc.y) >= 0)
 		    You("%s no lock on the drawbridge.",
 				Blind ? "feel" : "see");
 		else
@@ -465,7 +471,10 @@ doforce()		/* try to force a chest with your weapon */
 			  doname(otmp), otmp->obroken ? "broken" : "unlocked");
 		    continue;
 		}
-		Sprintf(qbuf,"There is %s here, force its lock?", doname(otmp));
+		Sprintf(qbuf,"There is %s here, force its lock?",
+			safe_qbuf("", sizeof("There is  here, force its lock?"),
+				doname(otmp), an(simple_typename(otmp->otyp)),
+				"a box"));
 
 		c = ynq(qbuf);
 		if(c == 'q') return(0);
@@ -476,7 +485,7 @@ doforce()		/* try to force a chest with your weapon */
 		else
 		    You("start bashing it with your %s.", xname(uwep));
 		xlock.box = otmp;
-		xlock.chance = objects[otmp->otyp].oc_wldam * 2;
+		xlock.chance = objects[uwep->otyp].oc_wldam * 2;
 		xlock.picktyp = picktyp;
 		xlock.usedtime = 0;
 		break;
@@ -490,7 +499,7 @@ doforce()		/* try to force a chest with your weapon */
 int
 doopen()		/* try to open a door */
 {
-	register int x, y;
+	coord cc;
 	register struct rm *door;
 	struct monst *mtmp;
 
@@ -504,13 +513,11 @@ doopen()		/* try to open a door */
 	    return 0;
 	}
 
-	if(!getdir((char *)0)) return(0);
+	if(!get_adjacent_loc((char *)0, (char *)0, u.ux, u.uy, &cc)) return(0);
 
-	x = u.ux + u.dx;
-	y = u.uy + u.dy;
-	if((x == u.ux) && (y == u.uy)) return(0);
+	if((cc.x == u.ux) && (cc.y == u.uy)) return(0);
 
-	if ((mtmp = m_at(x,y))				&&
+	if ((mtmp = m_at(cc.x,cc.y))			&&
 		mtmp->m_ap_type == M_AP_FURNITURE	&&
 		(mtmp->mappearance == S_hcdoor ||
 			mtmp->mappearance == S_vcdoor)	&&
@@ -520,10 +527,10 @@ doopen()		/* try to open a door */
 	    return(1);
 	}
 
-	door = &levl[x][y];
+	door = &levl[cc.x][cc.y];
 
 	if(!IS_DOOR(door->typ)) {
-		if (is_db_wall(x,y)) {
+		if (is_db_wall(cc.x,cc.y)) {
 		    There("is no obvious way to open the drawbridge.");
 		    return(0);
 		}
@@ -542,7 +549,7 @@ doopen()		/* try to open a door */
 	    default:	   mesg = " is locked"; break;
 	    }
 	    pline("This door%s.", mesg);
-	    if (Blind) feel_location(x,y);
+	    if (Blind) feel_location(cc.x,cc.y);
 	    return(0);
 	}
 
@@ -557,14 +564,14 @@ doopen()		/* try to open a door */
 	    if(door->doormask & D_TRAPPED) {
 		b_trapped("door", FINGER);
 		door->doormask = D_NODOOR;
-		if (*in_rooms(x, y, SHOPBASE)) add_damage(x, y, 0L);
+		if (*in_rooms(cc.x, cc.y, SHOPBASE)) add_damage(cc.x, cc.y, 0L);
 	    } else
 		door->doormask = D_ISOPEN;
 	    if (Blind)
-		feel_location(x,y);	/* the hero knows she opened it  */
+		feel_location(cc.x,cc.y);	/* the hero knows she opened it  */
 	    else
-		newsym(x,y);
-	    unblock_point(x,y);		/* vision: new see through there */
+		newsym(cc.x,cc.y);
+	    unblock_point(cc.x,cc.y);		/* vision: new see through there */
 	} else {
 	    exercise(A_STR, TRUE);
 	    pline_The("door resists!");
@@ -847,6 +854,8 @@ int x, y;
 		}
 		unblock_point(x,y);
 		newsym(x,y);
+		/* force vision recalc before printing more messages */
+		if (vision_full_recalc) vision_recalc(0);
 		loudness = 20;
 	    } else res = FALSE;
 	    break;
@@ -872,13 +881,14 @@ STATIC_OVL void
 chest_shatter_msg(otmp)
 struct obj *otmp;
 {
-	const char *disposition, *article = (otmp->quan > 1L) ? "A" : "The";
+	const char *disposition;
 	const char *thing;
 	long save_Blinded;
 
 	if (otmp->oclass == POTION_CLASS) {
-		You("%s a flask shatter!", Blind ? "hear" : "see");
-		potionbreathe(otmp);
+		You("%s %s shatter!", Blind ? "hear" : "see", an(bottlename()));
+		if (!breathless(youmonst.data) || haseyes(youmonst.data))
+			potionbreathe(otmp);
 		return;
 	}
 	/* We have functions for distant and singular names, but not one */
@@ -903,7 +913,7 @@ struct obj *otmp;
 	default:	disposition = "is destroyed";
 		break;
 	}
-	pline("%s %s %s!", article, thing, disposition);
+	pline("%s %s!", An(thing), disposition);
 }
 
 #endif /* OVLB */

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)topten.c	3.3	2000/01/21	*/
+/*	SCCS Id: @(#)topten.c	3.4	2000/01/21	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -31,13 +31,13 @@ static long final_fpos;
 #define newttentry() (struct toptenentry *) alloc(sizeof(struct toptenentry))
 #define dealloc_ttentry(ttent) free((genericptr_t) (ttent))
 #define NAMSZ	10
-#define DTHSZ	60
+#define DTHSZ	100
 #define ROLESZ   3
 #define PERSMAX	 3		/* entries per name/uid per char. allowed */
 #define POINTSMIN	1	/* must be > 0 */
 #define ENTRYMAX	100	/* must be >= 10 */
 
-#if !defined(MICRO) && !defined(MAC)
+#if !defined(MICRO) && !defined(MAC) && !defined(WIN32)
 #define PERS_IS_UID		/* delete for PERSMAX per name; now per uid */
 #endif
 struct toptenentry {
@@ -76,10 +76,10 @@ STATIC_DCL void FDECL(nsb_unmung_line,(char*));
 #endif
 
 /* must fit with end.c; used in rip.c */
-NEARDATA const char *killed_by_prefix[] = {
-	"killed by ", "choked on ", "poisoned by ", "", "drowned in ",
-	"", "dissolved in ", "crushed to death by ", "petrified by ",
-	"turned to slime by ", "", "", "", "", "", ""
+NEARDATA const char * const killed_by_prefix[] = {
+	"killed by ", "choked on ", "poisoned by ", "died of ", "drowned in ",
+	"burned by ", "dissolved in ", "crushed to death by ", "petrified by ",
+	"turned to slime by ", "killed by ", "", "", "", "", ""
 };
 
 static winid toptenwin = WIN_ERR;
@@ -128,13 +128,13 @@ FILE *rfile;
 struct toptenentry *tt;
 {
 #ifdef NO_SCAN_BRACK /* Version_ Pts DgnLevs_ Hp___ Died__Born id */
-	static const char *fmt = "%d %d %d %ld %d %d %d %d %d %d %ld %ld %d%*c";
-	static const char *fmt32 = "%c%c %s %s%*c";
-	static const char *fmt33 = "%s %s %s %s %s %s%*c";
+	static const char fmt[] = "%d %d %d %ld %d %d %d %d %d %d %ld %ld %d%*c";
+	static const char fmt32[] = "%c%c %s %s%*c";
+	static const char fmt33[] = "%s %s %s %s %s %s%*c";
 #else
-	static const char *fmt = "%d.%d.%d %ld %d %d %d %d %d %d %ld %ld %d ";
-	static const char *fmt32 = "%c%c %[^,],%[^\n]%*c";
-	static const char *fmt33 = "%s %s %s %s %[^,],%[^\n]%*c";
+	static const char fmt[] = "%d.%d.%d %ld %d %d %d %d %d %d %ld %ld %d ";
+	static const char fmt32[] = "%c%c %[^,],%[^\n]%*c";
+	static const char fmt33[] = "%s %s %s %s %[^,],%[^\n]%*c";
 #endif
 
 #ifdef UPDATE_RECORD_IN_PLACE
@@ -264,6 +264,13 @@ int how;
 	return;
 #endif
 
+/* If we are in the midst of a panic, cut out topten entirely.
+ * topten uses alloc() several times, which will lead to
+ * problems if the panic was the result of an alloc() failure.
+ */
+	if (program_state.panicking)
+		return;
+
 	if (flags.toptenwin) {
 	    toptenwin = create_nhwindow(NHW_TEXT);
 	}
@@ -333,7 +340,7 @@ int how;
 
 #ifdef LOGFILE		/* used for debugging (who dies of what, where) */
 	if (lock_file(LOGFILE, SCOREPREFIX, 10)) {
-	    if(!(lfile = fopen_datafile(LOGFILE, "a", TRUE))) {
+	    if(!(lfile = fopen_datafile(LOGFILE, "a", SCOREPREFIX))) {
 		HUP raw_print("Cannot open log file!");
 	    } else {
 		writeentry(lfile, t0);
@@ -359,9 +366,9 @@ int how;
 		goto destroywin;
 
 #ifdef UPDATE_RECORD_IN_PLACE
-	rfile = fopen_datafile(RECORD, "r+", TRUE);
+	rfile = fopen_datafile(RECORD, "r+", SCOREPREFIX);
 #else
-	rfile = fopen_datafile(RECORD, "r", TRUE);
+	rfile = fopen_datafile(RECORD, "r", SCOREPREFIX);
 #endif
 
 	if (!rfile) {
@@ -438,7 +445,7 @@ int how;
 				     t0->fpos : final_fpos), SEEK_SET);
 #else
 		(void) fclose(rfile);
-		if(!(rfile = fopen_datafile(RECORD, "w", TRUE))){
+		if(!(rfile = fopen_datafile(RECORD, "w", SCOREPREFIX))){
 			HUP raw_print("Cannot write record file");
 			unlock_file(RECORD);
 			free_ttlist(tt_head);
@@ -588,7 +595,7 @@ boolean so;
 	    if (!strncmp(t1->death, "quit", 4)) {
 		Strcat(linebuf, "quit");
 		second_line = FALSE;
-	    } else if (!strncmp(t1->death, "starv", 5)) {
+	    } else if (!strncmp(t1->death, "died of st", 10)) {
 		Strcat(linebuf, "starved to death");
 		second_line = FALSE;
 	    } else if (!strncmp(t1->death, "choked", 6)) {
@@ -622,8 +629,9 @@ boolean so;
 		}
 		Sprintf(eos(linebuf), fmt, arg);
 	    } else {
-		Sprintf(eos(linebuf), " in %s on level %d",
-			dungeons[t1->deathdnum].dname, t1->deathlev);
+		Sprintf(eos(linebuf), " in %s", dungeons[t1->deathdnum].dname);
+		if (t1->deathdnum != knox_level.dnum)
+		    Sprintf(eos(linebuf), " on level %d", t1->deathlev);
 		if (t1->deathlev != t1->maxlvl)
 		    Sprintf(eos(linebuf), " [max %d]", t1->maxlvl);
 	    }
@@ -707,7 +715,16 @@ int uid;
 #endif
 
 	for (i = 0; i < playerct; i++) {
-		if (strcmp(players[i], "all") == 0 ||
+	    if (players[i][0] == '-' && index("pr", players[i][1]) &&
+                players[i][2] == 0 && i + 1 < playerct) {
+		char *arg = (char *)players[i + 1];
+		if ((players[i][1] == 'p' &&
+		     str2role(arg) == str2role(t1->plrole)) ||
+		    (players[i][1] == 'r' &&
+		     str2race(arg) == str2race(t1->plrace)))
+		    return 1;
+		i++;
+	    } else if (strcmp(players[i], "all") == 0 ||
 		    strncmp(t1->name, players[i], NAMSZ) == 0 ||
 		    (players[i][0] == '-' &&
 		     players[i][1] == t1->plrole[0] &&
@@ -746,7 +763,7 @@ char **argv;
 		return;
 	}
 
-	rfile = fopen_datafile(RECORD, "r", TRUE);
+	rfile = fopen_datafile(RECORD, "r", SCOREPREFIX);
 	if (!rfile) {
 		raw_print("Cannot open record file!");
 		return;
@@ -771,14 +788,6 @@ char **argv;
 	if (!argv[1][2]){	/* plain "-s" */
 		argc--;
 		argv++;
-#if 0 /* uses obsolete pl_classes[] */
-	} else if (!argv[1][3] && index(pl_classes, argv[1][2])) {
-		/* may get this case instead of next accidentally,
-		 * but neither is listed in the documentation, so
-		 * anything useful that happens is a bonus anyway */
-		argv[1]++;
-		argv[1][0] = '-';
-#endif
 	} else	argv[1] += 2;
 
 	if (argc > 1 && !strcmp(argv[1], "-v")) {
@@ -840,19 +849,35 @@ char **argv;
 	    else {
 		if (playerct > 1) Strcat(pbuf, "any of ");
 		for (i = 0; i < playerct; i++) {
+		    /* stop printing players if there are too many to fit */
+		    if (strlen(pbuf) + strlen(players[i]) + 2 >= BUFSZ) {
+			if (strlen(pbuf) < BUFSZ-4) Strcat(pbuf, "...");
+			else Strcpy(pbuf+strlen(pbuf)-4, "...");
+			break;
+		    }
 		    Strcat(pbuf, players[i]);
-		    if (i < playerct-1) Strcat(pbuf, ":");
+		    if (i < playerct-1) {
+			if (players[i][0] == '-' &&
+			    index("pr", players[i][1]) && players[i][2] == 0)
+			    Strcat(pbuf, " ");
+			else Strcat(pbuf, ":");
+		    }
 		}
 	    }
 	    raw_print(pbuf);
-	    raw_printf("Call is: %s -s [-v] [-role] [maxrank] [playernames]",
+	    raw_printf("Usage: %s -s [-v] <playertypes> [maxrank] [playernames]",
+
 			 hname);
+	    raw_printf("Player types are: [-p role] [-r race]");
 	}
 	free_ttlist(tt_head);
 #ifdef	AMIGA
-	display_nhwindow(amii_rawprwin, 1);
-	destroy_nhwindow(amii_rawprwin);
-	amii_rawprwin = WIN_ERR;
+	{
+	    extern winid amii_rawprwin;
+	    display_nhwindow(amii_rawprwin, 1);
+	    destroy_nhwindow(amii_rawprwin);
+	    amii_rawprwin = WIN_ERR;
+	}
 #endif
 }
 
@@ -896,7 +921,7 @@ struct obj *otmp;
 
 	if (!otmp) return((struct obj *) 0);
 
-	rfile = fopen_datafile(RECORD, "r", TRUE);
+	rfile = fopen_datafile(RECORD, "r", SCOREPREFIX);
 	if (!rfile) {
 		impossible("Cannot open record file!");
 		return (struct obj *)0;

@@ -1,14 +1,14 @@
-/*	SCCS Id: @(#)patchlevel.h	3.3	2000/08/11	*/
+/*	SCCS Id: @(#)patchlevel.h	3.4	2003/12/06	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
-/* NetHack 3.3.2 */
+/* NetHack 3.4.3 */
 #define VERSION_MAJOR	3
-#define VERSION_MINOR	3
+#define VERSION_MINOR	4
 /*
  * PATCHLEVEL is updated for each release.
  */
-#define PATCHLEVEL	2
+#define PATCHLEVEL	3
 /*
  * Incrementing EDITLEVEL can be used to force invalidation of old bones
  * and save files.
@@ -16,7 +16,7 @@
 #define EDITLEVEL	0
 
 #define COPYRIGHT_BANNER_A \
-"NetHack, Copyright 1985-2000"
+"NetHack, Copyright 1985-2003"
 
 #define COPYRIGHT_BANNER_B \
 "         By Stichting Mathematisch Centrum and M. Stephenson."
@@ -25,25 +25,87 @@
 "         See license for details."
 
 /*
- * Marking compatible at start of 3.3.2 development. Change it
- * if/when they become incompatible (Remove this comment before release)
- */
-
-#if 1
-/*
- * If two successive patchlevels have compatible data files (fat chance),
- * defining this with the value of the older one will allow its bones and
- * save files to work with the newer one.  The format is
+ * If two or more successive releases have compatible data files, define
+ * this with the version number of the oldest such release so that the
+ * new release will accept old save and bones files.  The format is
  *	0xMMmmPPeeL
  * 0x = literal prefix "0x", MM = major version, mm = minor version,
  * PP = patch level, ee = edit level, L = literal suffix "L",
  * with all four numbers specified as two hexadecimal digits.
  */
-#define VERSION_COMPATIBILITY 0x03030100L
-#endif
+#define VERSION_COMPATIBILITY 0x03040000L	/* 3.4.0-0 */
+
 
 /*****************************************************************************/
-/* Version 3.3.1 */
+/* Version 3.4.x */
+
+/*  Patch 3, December 7, 2003
+ *  Several dozen general bug fixes including at least one fatal bug
+ *  Correct several inconsistencies
+ *  Handle level completely filled with monsters better
+ *  Performance enhancements for win32tty port on Windows 98 and Me
+ *  win32gui player selection fixes
+ *  X11 player selection fixes, one of which could be fatal
+ *  Eliminated a gold-in-shop-container cheat
+ *  Include bones file version compatibility info in options file
+ */
+
+/*  Patch 2, August 30, 2003
+ *  Fix a fatal bug that caused a crash when applying figurine, candle, or
+ *      bell that gets used up
+ *  Fix a fatal bug that triggered a panic when your secondary weapon was
+ *      cursed during bones file creation
+ *  Several dozen general bug fixes
+ *  Fixed some Gnome compilation problems on Redhat 7.2 and 8.0
+ *  Fixed a problem in the util Makefile
+ *  Use random() by default under linux instead of lrand48()
+ *  win32 tty adjustments and support for loading alternative key handlers
+ */
+
+/*  Patch 1, February 22, 2003
+ *  Fix a few fatal errors including one for reentering shops, one
+ *     involving land mines and boulders/statues, one for delayed
+ *     polymorph, and one from a chest trap exploding ball and chain
+ *  Fix a buffer overflow that could lead to security problems
+ *  Hundreds of general bug fixes
+ *  Several message and other glitches corrected
+ *  Travel command adjustments and ability to disable travel command
+ *  message recall window extensions (by Christian Cooper)
+ *  win32: some interface improvements
+ *  unix: improved tile support
+ *  gnome: some fixes, and some enhancements by Dylan Alex Simon
+ *  winCE: Windows CE port included (by Alex Kompel)
+ */
+
+/*
+ *  NetHack 3.4.0, March 20, 2002
+ *
+ *  Hundreds of general bug fixes including some for sliming, zapping, conduct,
+ *	and several more for riding
+ *  Eliminated a few potentially fatal bugs including one for stone-to-flesh,
+ *	trouble-fixing during prayer, riding down stairs while punished,
+ *	polyd player demon summoning, throwing digging tools into shops, and
+ *	a couple from having the vision system enabled at inappropriate times 
+ *  Corrected some incorrect calculations in final scoring
+ *  Enhanced config file processing and alert to duplication of entries
+ *  Player selection prompt enhancements for TTY and X11
+ *  Objects merge in containers
+ *  Wish for "nothing", and genocide "none" to preserve your conduct
+ *  Changes to Wizard quest
+ *  Added the travel command which works by mouse click or '_' command
+ *  Config file BOULDER option to specify the symbol for displaying boulders
+ *  Incorporate modified versions of several 3.3.1 patches that have been
+ *      in circulation in the NetHack community
+ *  New Gnomish Mines levels (courtesy Kelly Bailey)
+ *  Mac: command-key shortcuts in the player selection dialog
+ *  Amiga: screenmode requester, and several amiga specific bug fixes
+ *  Win32 graphical port contributed by Alex Kompel is now included
+ */
+
+/* Version 3.4 */
+
+/*****************************************************************************/
+/* Version 3.3.x */
 
 /*  Patch 1, August 9, 2000
  *  Many, many general fixes, including a number for riding, twoweapon,
@@ -80,10 +142,11 @@
  *  updated COPYRIGHT_BANNER_A to reflect year of release.
  *  Dozens of other bug fixes, and minor improvements.
  */
+
 /* Version 3.3 */
 
 /*****************************************************************************/
-/* Version 3.2.3 */
+/* Version 3.2.x */
 
 /*  Patch 3, December 10, 1999
  *  Released simultaneously with 3.3.0 for the benefit of

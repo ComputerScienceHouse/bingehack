@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)vision.c	3.3	99/02/18	*/
+/*	SCCS Id: @(#)vision.c	3.4	1999/02/18	*/
 /* Copyright (c) Dean Luick, with acknowledgements to Dave Cohrs, 1990.	*/
 /* NetHack may be freely redistributed.  See license for details.	*/
 
@@ -242,6 +242,7 @@ vision_reset()
 	}
     }
 
+    iflags.vision_inited = 1;	/* vision is ready */
     vision_full_recalc = 1;	/* we want to run vision_recalc() */
 }
 
@@ -510,7 +511,7 @@ vision_recalc(control)
     int oldseenv;				/* previous seenv value */
 
     vision_full_recalc = 0;			/* reset flag */
-    if (in_mklev) return;
+    if (in_mklev || !iflags.vision_inited) return;
 
 #ifdef GCC_WARN
     row = 0;
@@ -586,7 +587,7 @@ vision_recalc(control)
 
 		    next_rmin[row] = min(next_rmin[row], col);
 		    next_rmax[row] = max(next_rmax[row], col);
-		    next_array[row][col] = IN_SIGHT;
+		    next_array[row][col] = IN_SIGHT | COULD_SEE;
 		}
 	}
 
@@ -600,7 +601,7 @@ vision_recalc(control)
 		next_row = next_array[row];
 
 		for(col=next_rmin[row]; col <= next_rmax[row]; col++)
-		    next_row[col] = IN_SIGHT;
+		    next_row[col] = IN_SIGHT | COULD_SEE;
 	    }
 	} else
 	    view_from(u.uy, u.ux, next_array, next_rmin, next_rmax,
@@ -725,12 +726,13 @@ vision_recalc(control)
 		/*
 		 * We see this position because it is lit.
 		 */
-		if (IS_DOOR(lev->typ) && !viz_clear[row][col]) {
+		if ((IS_DOOR(lev->typ) || lev->typ == SDOOR ||
+		     IS_WALL(lev->typ)) && !viz_clear[row][col]) {
 		    /*
-		     * Make sure doors, boulders or mimics don't show up
+		     * Make sure doors, walls, boulders or mimics don't show up
 		     * at the end of dark hallways.  We do this by checking
 		     * the adjacent position.  If it is lit, then we can see
-		     * the door, otherwise we can't.
+		     * the door or wall, otherwise we can't.
 		     */
 		    dx = u.ux - col;	dx = sign(dx);
 		    flev = &(levl[col+dx][row+dy]);
@@ -793,7 +795,13 @@ not_in_sight:
     colbump[u.ux] = colbump[u.ux+1] = 0;
 
 skip:
-    newsym(u.ux,u.uy);		/* Make sure the hero shows up! */
+    /* This newsym() caused a crash delivering msg about failure to open
+     * dungeon file init_dungeons() -> panic() -> done(11) ->
+     * vision_recalc(2) -> newsym() -> crash!  u.ux and u.uy are 0 and
+     * program_state.panicking == 1 under those circumstances
+     */
+    if (!program_state.panicking)
+	newsym(u.ux, u.uy);		/* Make sure the hero shows up! */
 
     /* Set the new min and max pointers. */
     viz_rmin  = next_rmin;
@@ -1511,7 +1519,9 @@ clear_path(col1,row1,col2,row2)
 	    q3_path(row1,col1,row2,col2,cleardone);
 	}
     }
+#ifdef MACRO_CPATH
 cleardone:
+#endif
     return((boolean)result);
 }
 
@@ -1656,6 +1666,9 @@ right_side(row, cb_row, cb_col, fb_row, fb_col, left, right_mark, limits)
     char *row_max;		/* right most */
     int		  lim_max;	/* right most limit of circle */
 
+#ifdef GCC_WARN
+    rowp = 0;
+#endif
     nrow    = row + step;
     deeper  = good_row(nrow) && (!limits || (*limits >= *(limits+1)));
     if(!vis_func) {
@@ -1908,6 +1921,9 @@ left_side(row, cb_row, cb_col, fb_row, fb_col, left_mark, right, limits)
     char *row_max;		/* right most */
     int		  lim_min;
 
+#ifdef GCC_WARN
+    rowp = 0;
+#endif
     nrow    = row + step;
     deeper  = good_row(nrow) && (!limits || (*limits >= *(limits+1)));
     if(!vis_func) {

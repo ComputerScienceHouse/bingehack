@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)monst.h	3.3	99/01/04	*/
+/*	SCCS Id: @(#)monst.h	3.4	1999/01/04	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -6,7 +6,7 @@
 #define MONST_H
 
 /* The weapon_check flag is used two ways:
- * 1) When calling mon_wield_item, is 2, 3, or 4 depending on what is desired.
+ * 1) When calling mon_wield_item, is 2-6 depending on what is desired.
  * 2) Between calls to mon_wield_item, is 0 or 1 depending on whether or not
  *    the weapon is known by the monster to be cursed (so it shouldn't bother
  *    trying for another weapon).
@@ -20,6 +20,8 @@
 # define NEED_RANGED_WEAPON 2
 # define NEED_HTH_WEAPON 3
 # define NEED_PICK_AXE 4
+# define NEED_AXE 5
+# define NEED_PICK_OR_AXE 6
 
 /* The following flags are used for the second argument to display_minventory
  * in invent.c:
@@ -83,7 +85,7 @@ struct monst {
 	Bitfield(mspeed,2);	/* current speed */
 	Bitfield(permspeed,2);	/* intrinsic mspeed value */
 	Bitfield(mrevived,1);	/* has been revived from the dead */
-	Bitfield(not_used,1);	/*** available ***/
+	Bitfield(mavenge,1);	/* did something to deserve retaliation */
 
 	Bitfield(mflee,1);	/* fleeing */
 	Bitfield(mfleetim,7);	/* timeout for mflee */
@@ -98,7 +100,7 @@ struct monst {
 	Bitfield(mstun,1);	/* stunned (off balance) */
 	Bitfield(mconf,1);	/* confused */
 	Bitfield(mpeaceful,1);	/* does not attack unprovoked */
-	Bitfield(mtrapped,1);	/* trapped in a pit or bear trap */
+	Bitfield(mtrapped,1);	/* trapped in a pit, web or bear trap */
 	Bitfield(mleashed,1);	/* monster is on a leash */
 	Bitfield(isshk,1);	/* is shopkeeper */
 	Bitfield(isminion,1);	/* is a minion */
@@ -128,7 +130,9 @@ struct monst {
 
 	long mtrapseen;		/* bitmap of traps we've been trapped in */
 	long mlstmv;		/* for catching up with lost time */
+#ifndef GOLDOBJ
 	long mgold;
+#endif
 	struct obj *minvent;
 
 	struct obj *mw;

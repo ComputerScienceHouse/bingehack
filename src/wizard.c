@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)wizard.c	3.3	99/03/29	*/
+/*	SCCS Id: @(#)wizard.c	3.4	2003/02/18	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -9,6 +9,9 @@
 
 #include "hack.h"
 #include "qtext.h"
+#include "epri.h"
+
+extern const int monstr[];
 
 #ifdef OVLB
 
@@ -64,11 +67,11 @@ amulet()
 		if(ttmp->ttyp == MAGIC_PORTAL) {
 		    int du = distu(ttmp->tx, ttmp->ty);
 		    if (du <= 9)
-			pline("%s feels hot!", The(xname(amu)));
+			pline("%s hot!", Tobjnam(amu, "feel"));
 		    else if (du <= 64)
-			pline("%s feels very warm.", The(xname(amu)));
+			pline("%s very warm.", Tobjnam(amu, "feel"));
 		    else if (du <= 144)
-			pline("%s feels warm.", The(xname(amu)));
+			pline("%s warm.", Tobjnam(amu, "feel"));
 		    /* else, the amulet feels normal */
 		    break;
 		}
@@ -240,7 +243,12 @@ strategy(mtmp)
 {
 	long strat, dstrat;
 
-	if(!is_covetous(mtmp->data)) return(STRAT_NONE);
+	if (!is_covetous(mtmp->data) ||
+		/* perhaps a shopkeeper has been polymorphed into a master
+		   lich; we don't want it teleporting to the stairs to heal
+		   because that will leave its shop untended */
+		(mtmp->isshk && inhishop(mtmp)))
+	    return STRAT_NONE;
 
 	switch((mtmp->mhp*3)/mtmp->mhpmax) {	/* 0-3 */
 
@@ -300,9 +308,10 @@ tactics(mtmp)
 	    case STRAT_HEAL:	/* hide and recover */
 		/* if wounded, hole up on or near the stairs (to block them) */
 		/* unless, of course, there are no stairs (e.g. endlevel) */
+		mtmp->mavenge = 1; /* covetous monsters attack while fleeing */
 		if (In_W_tower(mtmp->mx, mtmp->my, &u.uz) ||
 			(mtmp->iswiz && !xupstair && !mon_has_amulet(mtmp))) {
-		    if (!rn2(3 + mtmp->mhp/10)) rloc(mtmp);
+		    if (!rn2(3 + mtmp->mhp/10)) (void) rloc(mtmp, FALSE);
 		} else if (xupstair &&
 			 (mtmp->mx != xupstair || mtmp->my != yupstair)) {
 		    (void) mnearto(mtmp, xupstair, yupstair, TRUE);
@@ -316,7 +325,7 @@ tactics(mtmp)
 		/* fall through :-) */
 
 	    case STRAT_NONE:	/* harrass */
-	        if(!rn2(5)) mnexto(mtmp);
+		if (!rn2(!mtmp->mflee ? 5 : 33)) mnexto(mtmp);
 		return(0);
 
 	    default:		/* kill, maim, pillage! */
@@ -336,28 +345,32 @@ tactics(mtmp)
 		    return(0);
 		}
 		if(where == STRAT_GROUND) {
-		  if(!MON_AT(tx, ty) || (mtmp->mx == tx && mtmp->my == ty)) {
-		    /* teleport to it and pick it up */
-		    rloc_to(mtmp, tx, ty);	/* clean old pos */
+		    if(!MON_AT(tx, ty) || (mtmp->mx == tx && mtmp->my == ty)) {
+			/* teleport to it and pick it up */
+			rloc_to(mtmp, tx, ty);	/* clean old pos */
 
-		    if ((otmp = on_ground(which_arti(targ))) != 0) {
-			if (cansee(mtmp->mx, mtmp->my))
-			    pline("%s picks up %s.",
-				  Monnam(mtmp),
-				  (distu(mtmp->my, mtmp->my) <= 5) ?
-				    doname(otmp) : distant_name(otmp, doname));
-			obj_extract_self(otmp);
-			(void) mpickobj(mtmp, otmp);
-			return(1);
-		    } else return(0);
-		  }
+			if ((otmp = on_ground(which_arti(targ))) != 0) {
+			    if (cansee(mtmp->mx, mtmp->my))
+				pline("%s picks up %s.",
+				    Monnam(mtmp),
+				    (distu(mtmp->mx, mtmp->my) <= 5) ?
+				     doname(otmp) : distant_name(otmp, doname));
+			    obj_extract_self(otmp);
+			    (void) mpickobj(mtmp, otmp);
+			    return(1);
+			} else return(0);
+		    } else {
+			/* a monster is standing on it - cause some trouble */
+			if (!rn2(5)) mnexto(mtmp);
+			return(0);
+		    }
 	        } else { /* a monster has it - 'port beside it. */
-		    (void) mnearto(mtmp, tx, ty, TRUE);
+		    (void) mnearto(mtmp, tx, ty, FALSE);
 		    return(0);
 		}
 	    }
 	}
-	/* NOTREACHED */
+	/*NOTREACHED*/
 	return(0);
 }
 
@@ -405,33 +418,54 @@ pick_nasty()
 
 /* create some nasty monsters, aligned or neutral with the caster */
 /* a null caster defaults to a chaotic caster (e.g. the wizard) */
-void
+int
 nasty(mcast)
 	struct monst *mcast;
 {
     register struct monst	*mtmp;
     register int	i, j, tmp;
     int castalign = (mcast ? mcast->data->maligntyp : -1);
+    coord bypos;
+    int count=0;
 
-    if(!rn2(10) && Inhell) msummon(&mons[PM_WIZARD_OF_YENDOR]);
-    else {
+    if(!rn2(10) && Inhell) {
+	msummon((struct monst *) 0);	/* summons like WoY */
+	count++;
+    } else {
 	tmp = (u.ulevel > 3) ? u.ulevel/3 : 1; /* just in case -- rph */
-
+	/* if we don't have a casting monster, the nasties appear around you */
+	bypos.x = u.ux;
+	bypos.y = u.uy;
 	for(i = rnd(tmp); i > 0; --i)
 	    for(j=0; j<20; j++) {
-		if ((mtmp = makemon(&mons[pick_nasty()],
-				    u.ux, u.uy, NO_MM_FLAGS)) != 0) {
+		int makeindex;
+
+		/* Don't create more spellcasters of the monsters' level or
+		 * higher--avoids chain summoners filling up the level.
+		 */
+		do {
+		    makeindex = pick_nasty();
+		} while(mcast && attacktype(&mons[makeindex], AT_MAGC) &&
+			monstr[makeindex] >= monstr[mcast->mnum]);
+		/* do this after picking the monster to place */
+		if (mcast &&
+		    !enexto(&bypos, mcast->mux, mcast->muy, &mons[makeindex]))
+		    continue;
+		if ((mtmp = makemon(&mons[makeindex],
+				    bypos.x, bypos.y, NO_MM_FLAGS)) != 0) {
 		    mtmp->msleeping = mtmp->mpeaceful = mtmp->mtame = 0;
 		    set_malign(mtmp);
 		} else /* GENOD? */
 		    mtmp = makemon((struct permonst *)0,
-					u.ux, u.uy, NO_MM_FLAGS);
+					bypos.x, bypos.y, NO_MM_FLAGS);
 		if(mtmp && (mtmp->data->maligntyp == 0 ||
-		            sgn(mtmp->data->maligntyp) == sgn(castalign)) )
+		            sgn(mtmp->data->maligntyp) == sgn(castalign)) ) {
+		    count++;
 		    break;
+		}
 	    }
     }
-    return;
+    return count;
 }
 
 /*	Let's resurrect the wizard, for some unexpected fun.	*/
@@ -496,12 +530,12 @@ intervene()
 			break;
 	    case 2:	if (!Blind)
 			    You("notice a %s glow surrounding you.",
-				  hcolor(Black));
+				  hcolor(NH_BLACK));
 			rndcurse();
 			break;
 	    case 3:	aggravate();
 			break;
-	    case 4:	nasty((struct monst *)0);
+	    case 4:	(void)nasty((struct monst *)0);
 			break;
 	    case 5:	resurrect();
 			break;
@@ -518,7 +552,7 @@ wizdead()
 	}
 }
 
-const char *random_insult[] = {
+const char * const random_insult[] = {
 	"antic",
 	"blackguard",
 	"caitiff",
@@ -549,7 +583,7 @@ const char *random_insult[] = {
 	"wretch",
 };
 
-const char *random_malediction[] = {
+const char * const random_malediction[] = {
 	"Hell shall soon claim thy remains,",
 	"I chortle at thee, thou pathetic",
 	"Prepare to die, thou",
@@ -588,7 +622,7 @@ register struct monst	*mtmp;
 		    verbalize("%s %s!",
 			  random_malediction[rn2(SIZE(random_malediction))],
 			  random_insult[rn2(SIZE(random_insult))]);
-	} else if(is_lminion(mtmp->data)) {
+	} else if(is_lminion(mtmp)) {
 		com_pager(rn2(QTN_ANGELIC - 1 + (Hallucination ? 1 : 0)) +
 			      QT_ANGELIC);
 	} else {

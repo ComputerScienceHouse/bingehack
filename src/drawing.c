@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)drawing.c	3.3	1999/12/02	*/
+/*	SCCS Id: @(#)drawing.c	3.4	1999/12/02	*/
 /* Copyright (c) NetHack Development Team 1992.			  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -46,10 +46,10 @@ const char def_oc_syms[MAXOCLASSES] = {
 	VENOM_SYM
 };
 
-const char *invisexplain = "remembered, unseen, creature";
+const char invisexplain[] = "remembered, unseen, creature";
 
 /* Object descriptions.  Used in do_look(). */
-const char *objexplain[] = {	/* these match def_oc_syms, above */
+const char * const objexplain[] = {	/* these match def_oc_syms, above */
 /* 0*/	0,
 	"strange object",
 	"weapon",
@@ -71,7 +71,7 @@ const char *objexplain[] = {	/* these match def_oc_syms, above */
 };
 
 /* Object class names.  Used in object_detect(). */
-const char *oclass_names[] = {
+const char * const oclass_names[] = {
 /* 0*/	0,
 	"illegal objects",
 	"weapons",
@@ -161,7 +161,7 @@ const char def_monsyms[MAXMCLASSES] = {
  * for blessed genocide, so no text should wholly contain any later
  * text.  They should also always contain obvious names (eg. cat/feline).
  */
-const char *monexplain[MAXMCLASSES] = {
+const char * const monexplain[MAXMCLASSES] = {
     0,
     "ant or other insect",	"blob",			"cockatrice",
     "dog or other canine",	"eye or sphere",	"cat or other feline",
@@ -169,7 +169,7 @@ const char *monexplain[MAXMCLASSES] = {
     "jelly",			"kobold",		"leprechaun",
     "mimic",			"nymph",		"orc",
     "piercer",			"quadruped",		"rodent",
-    "spider",			"trapper or lurker above", "unicorn or horse",
+    "arachnid or centipede",	"trapper or lurker above", "unicorn or horse",
     "vortex",		"worm", "xan or other mythical/fantastic insect",
     "light",			"zruty",
 
@@ -181,7 +181,7 @@ const char *monexplain[MAXMCLASSES] = {
     "pudding or ooze",		"quantum mechanic",	"rust monster or disenchanter",
     "snake",			"troll",		"umber hulk",
     "vampire",			"wraith",		"xorn",
-    "yeti, ape or other large beast", "zombie",
+    "apelike creature",		"zombie",
 
     "human or elf",		"ghost",		"golem",
     "major demon",		"sea monster",		"lizard",
@@ -225,7 +225,7 @@ const struct symdef defsyms[MAXPCHARS] = {
 	{'#', "tree",		C(CLR_GREEN)},	/* tree */
 	{'.', "floor of a room",C(CLR_GRAY)},	/* room */
 /*20*/	{'#', "corridor",	C(CLR_GRAY)},	/* dark corr */
-	{'#', "lit corridor",	C(CLR_GRAY)},	/* lit corr */
+	{'#', "lit corridor",	C(CLR_GRAY)},	/* lit corr (see mapglyph.c) */
 	{'<', "staircase up",	C(CLR_GRAY)},	/* upstair */
 	{'>', "staircase down",	C(CLR_GRAY)},	/* dnstair */
 	{'<', "ladder up",	C(CLR_BROWN)},	/* upladder */
@@ -269,7 +269,7 @@ const struct symdef defsyms[MAXPCHARS] = {
 	{'"', "web",		C(CLR_GRAY)},	/* web */
 	{'^', "statue trap",	C(CLR_GRAY)},	/* trap */
 /*60*/	{'^', "magic trap",	C(HI_ZAP)},	/* trap */
-	{'^', "anti-magic trap field", C(HI_ZAP)},	/* trap */
+	{'^', "anti-magic field", C(HI_ZAP)},	/* trap */
 	{'^', "polymorph trap",	C(CLR_BRIGHT_GREEN)},	/* trap */
 	{'|', "wall",		C(CLR_GRAY)},	/* vbeam */
 	{'-', "wall",		C(CLR_GRAY)},	/* hbeam */
@@ -612,8 +612,8 @@ void NDECL((*ascgraphics_mode_callback)) = 0;	/* set in tty_start_screen() */
 
 /*
  * Convert the given character to an object class.  If the character is not
- * recognized, then MAXOCLASSES is returned.  Used in invent.c, options.c,
- * pickup.c, sp_lev.c, and lev_main.c.
+ * recognized, then MAXOCLASSES is returned.  Used in detect.c invent.c,
+ * options.c, pickup.c, sp_lev.c, and lev_main.c.
  */
 int
 def_char_to_objclass(ch)
@@ -741,7 +741,7 @@ static const uchar r_oc_syms[MAXOCLASSES] = {
 static const uchar IBM_r_oc_syms[MAXOCLASSES] = {	/* a la EPYX Rogue */
 /* 0*/	'\0',
 	ILLOBJ_SYM,
-#  if defined(MSDOS) || defined(WIN32) || defined(OS2)
+#  if defined(MSDOS) || defined(OS2) || ( defined(WIN32) && !defined(MSWIN_GRAPHICS) )
 	0x18,			/* weapon: up arrow */
 /*	0x0a, */ ARMOR_SYM,	/* armor:  Vert rect with o */
 /*	0x09, */ RING_SYM,	/* ring:   circle with arrow */
@@ -794,12 +794,12 @@ boolean is_rlevel;
 	/* Use a loop: char != uchar on some machines. */
 	for (i = 0; i < MAXMCLASSES; i++)
 	    monsyms[i] = def_monsyms[i];
-# ifdef ASCIIGRAPH
+# if defined(ASCIIGRAPH) && !defined(MSWIN_GRAPHICS)
 	if (iflags.IBMgraphics
 #  if defined(USE_TILES) && defined(MSDOS)
 		&& !iflags.grmode
 #  endif
-				)
+		)
 	    monsyms[S_HUMAN] = 0x01; /* smiley face */
 # endif
 	for (i = 0; i < MAXPCHARS; i++)
@@ -842,6 +842,7 @@ boolean is_rlevel;
 	    showsyms[S_litcorr] = 0xb2;
 	    showsyms[S_upstair] = 0xf0; /* Greek Xi */
 	    showsyms[S_dnstair] = 0xf0;
+#ifndef MSWIN_GRAPHICS
 	    showsyms[S_arrow_trap] = 0x04; /* diamond (cards) */
 	    showsyms[S_dart_trap] = 0x04;
 	    showsyms[S_falling_rock_trap] = 0x04;
@@ -864,6 +865,7 @@ boolean is_rlevel;
 	    showsyms[S_magic_trap] = 0x04;
 	    showsyms[S_anti_magic_trap] = 0x04;
 	    showsyms[S_polymorph_trap] = 0x04;
+#endif
 	}
 #endif /* ASCIIGRAPH */
 

@@ -40,12 +40,21 @@ replacement font), you will need to have the win/share files and change
 the VARDATND setting in the top Makefile to contain the tile files before
 you do your 'make all'.
 
+If you get a linker error referring to `substitute_tiles' then most
+likely you have overlooked the WINSRC, WINOBJ, WINLIB step above.
+Alternatively, you are building with more than one non-tty interface
+specified but haven't followed the direction in src/Makefile to remove
+all but one instance of tile.o from the WINxxxOBJ values used for WINOBJ.
+
 When using tiles, you have the option of defining USE_XPM in config.h.
 This causes NetHack to use the XPM file format for the "x11tiles" file
 rather than a custom format.  Since the XPM format can be processed by
 existing tools such as PBMPlus and XV, you can modify the tiles to suit
-your environment.  For example, you may magnify them for display on
-high-resolution screens using the following command:
+your environment.  However, you need to make sure the number of tiles
+in each row of the image remains the same (currently 40), as the code
+depends on this to calculate the size of each tile. For example, you may
+magnify them for display on high-resolution screens using the following
+command:
     xpmtoppm x11tiles | pnmscale -xscale 1 -yscale 1.6875 |
         pnmdepth 255 | ppmquant 100 | ppmtoxpm >x11tiles_big.xpm
 To use XPM, you must have the free XPM libraries installed in your system.
@@ -100,13 +109,10 @@ prepend an appropriate -I<idirectory> parameter to CFLAGS and a
 find the include and library files for X11.
 
 
-Finally, you should also install the NetHack.ad file as NetHack in the
-normal X11 applications defaults directory.  Alternatively, each person
-may append the contents of this file to their .Xdefaults file.  A second
-alternative is copy NetHack.ad to NetHack in GAMEDIR (from the top Makefile)
-and add a line to nethack.sh specifying this additional applications
-defaults directory:
-	XAPPLRESDIR=$HACKDIR; export XAPPLRESDIR
+Finally, to ensure NetHack's windows look the way they were intended to
+look, make sure the top Makefile VARDATND also contains NetHack.ad.  If it
+does, running nethack will automatically take the appropriate steps to
+cause this file to be used to initialize NetHack's X11 resources.
 
 
 Three icon suggestions to the window manager are supported:  nh72, nh56,

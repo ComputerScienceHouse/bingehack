@@ -1,10 +1,13 @@
-/*	SCCS Id: @(#)pline.c	3.3	1999/11/28	*/
+/*	SCCS Id: @(#)pline.c	3.4	1999/11/28	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #define NEED_VARARGS /* Uses ... */	/* comment line for pre-compiled headers */
 #include "hack.h"
 #include "epri.h"
+#ifdef WIZARD
+#include "edog.h"
+#endif
 
 #ifdef OVLB
 
@@ -245,8 +248,17 @@ void
 impossible VA_DECL(const char *, s)
 	VA_START(s);
 	VA_INIT(s, const char *);
+	if (program_state.in_impossible)
+		panic("impossible called impossible");
+	program_state.in_impossible = 1;
+	{
+	    char pbuf[BUFSZ];
+	    Vsprintf(pbuf,s,VA_ARGS);
+	    paniclog("impossible", pbuf);
+	}
 	vpline(s,VA_ARGS);
 	pline("Program in disorder - perhaps you'd better #quit.");
+	program_state.in_impossible = 0;
 	VA_END();
 }
 
@@ -282,7 +294,13 @@ register struct monst *mtmp;
 	info[0] = 0;
 	if (mtmp->mtame) {	  Strcat(info, ", tame");
 #ifdef WIZARD
-	    if (wizard)		  Sprintf(eos(info), " (%d)", mtmp->mtame);
+	    if (wizard) {
+		Sprintf(eos(info), " (%d", mtmp->mtame);
+		if (!mtmp->isminion)
+		    Sprintf(eos(info), "; hungry %ld; apport %d",
+			EDOG(mtmp)->hungrytime, EDOG(mtmp)->apport);
+		Strcat(info, ")");
+	    }
 #endif
 	}
 	else if (mtmp->mpeaceful) Strcat(info, ", peaceful");

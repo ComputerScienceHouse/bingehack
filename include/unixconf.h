@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)unixconf.h 3.3	99/07/02	*/
+/*	SCCS Id: @(#)unixconf.h 3.4	1999/07/02	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -19,7 +19,7 @@
  */
 
 /* define exactly one of the following four choices */
-/* #define BSD 1 */	/* define for 4.n BSD  */
+/* #define BSD 1 */	/* define for 4.n/Free/Open/Net BSD  */
 			/* also for relatives like SunOS 4.x, DG/UX, and */
 			/* older versions of Linux */
 /* #define ULTRIX */	/* define for Ultrix v3.0 or higher (but not lower) */
@@ -80,7 +80,7 @@
 /* #define RANDOM */		/* if neither random/srandom nor lrand48/srand48
 				   is available from your system */
 
-/* see sys/unix/snd86.shr for more information on these */
+/* see sys/unix/snd86unx.shr for more information on these */
 /* #define UNIX386MUSIC */	/* play real music through speaker on systems
 				   with music driver installed */
 /* #define VPIX_MUSIC */	/* play real music through speaker on systems
@@ -171,11 +171,15 @@
 #  ifdef AMS
 #define AMS_MAILBOX	"/Mailbox"
 #  else
+#   if defined(__FreeBSD__) || defined(__OpenBSD__)
+#define DEF_MAILREADER	"/usr/bin/mail"
+#   else
 #define DEF_MAILREADER	"/usr/ucb/Mail"
+#   endif
 #  endif
 #else
-# if defined(SYSV) || defined(DGUX) || defined(HPUX)
-#  if defined(M_XENIX) || defined(__FreeBSD__)
+# if (defined(SYSV) || defined(DGUX) || defined(HPUX)) && !defined(LINUX)
+#  if defined(M_XENIX)
 #define DEF_MAILREADER	"/usr/bin/mail"
 #  else
 #   ifdef __sgi
@@ -297,14 +301,14 @@
 #endif
 
 /* Use the high quality random number routines. */
-#if defined(BSD) || defined(ULTRIX) || defined(CYGWIN32) || defined(RANDOM)
+#if defined(BSD) || defined(LINUX) || defined(ULTRIX) || defined(CYGWIN32) || defined(RANDOM) || defined(__APPLE__)
 #define Rand()	random()
 #else
 #define Rand()	lrand48()
 #endif
 
 #ifdef TIMED_DELAY
-# if defined(SUNOS4) || defined(LINUX)
+# if defined(SUNOS4) || defined(LINUX) || (defined(BSD) && !defined(ULTRIX))
 # define msleep(k) usleep((k)*1000)
 # endif
 # ifdef ULTRIX
@@ -319,6 +323,29 @@
 # define __HC__ hc
 # undef hc
 #endif
+
+#if defined(GNOME_GRAPHICS)
+#if defined(LINUX)
+# include <linux/unistd.h>
+# if defined(__NR_getresuid) && defined(__NR_getresgid)	/* ie., >= v2.1.44 */
+#  define GETRES_SUPPORT
+# endif
+#else
+# if defined(BSD) || defined(SVR4)
+/*
+ * [ALI] We assume that SVR4 means we can safely include syscall.h
+ * (although it's really a BSDism). This is certainly true for Solaris 2.5,
+ * Solaris 7, Solaris 8 and Compaq Tru64 5.1
+ * Later BSD systems will have the getresid system calls.
+ */
+# include <sys/syscall.h>
+# if (defined (SYS_getuid) || defined(SYS_getresuid)) && \
+  (defined(SYS_getgid) || defined(SYS_getresgid))
+#  define GETRES_SUPPORT
+# endif
+# endif	/* BSD || SVR4 */
+#endif /* LINUX */
+#endif	/* GNOME_GRAPHICS */
 
 #endif /* UNIXCONF_H */
 #endif /* UNIX */

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)hack.h	3.3	2000/01/28	*/
+/*	SCCS Id: @(#)hack.h	3.4	2001/04/12	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -24,11 +24,11 @@
 
 /* symbolic names for capacity levels */
 #define UNENCUMBERED	0
-#define SLT_ENCUMBER	1
-#define MOD_ENCUMBER	2
-#define HVY_ENCUMBER	3
-#define EXT_ENCUMBER	4
-#define OVERLOADED	5
+#define SLT_ENCUMBER	1	/* Burdened */
+#define MOD_ENCUMBER	2	/* Stressed */
+#define HVY_ENCUMBER	3	/* Strained */
+#define EXT_ENCUMBER	4	/* Overtaxed */
+#define OVERLOADED	5	/* Overloaded */
 
 /* Macros for how a rumor was delivered in outrumor() */
 #define BY_ORACLE	0
@@ -43,8 +43,21 @@
 #define DISMOUNT_THROWN		2
 #define DISMOUNT_POLY		3
 #define DISMOUNT_ENGULFED	4
-#define DISMOUNT_BYCHOICE	5
+#define DISMOUNT_BONES		5
+#define DISMOUNT_BYCHOICE	6
 #endif
+
+/* Special returns from mapglyph() */
+#define MG_CORPSE	0x01
+#define MG_INVIS	0x02
+#define MG_DETECT	0x04
+#define MG_PET		0x08
+#define MG_RIDDEN	0x10
+
+/* sellobj_state() states */
+#define SELL_NORMAL	(0)
+#define SELL_DELIBERATE	(1)
+#define SELL_DONTSELL	(2)
 
 /*
  * This is the way the game ends.  If these are rearranged, the arrays
@@ -125,6 +138,15 @@ NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
 #define MM_EMIN		  0x08	/* add emin structure */
 #define MM_ANGRY	  0x10  /* monster is created angry */
 #define MM_NONAME	  0x20  /* monster is not christened */
+#define MM_NOCOUNTBIRTH	  0x40  /* don't increment born counter (for revival) */
+#define MM_IGNOREWATER	  0x80	/* ignore water when positioning */
+#define MM_ADJACENTOK	  0x100 /* it is acceptable to use adjacent coordinates */
+
+/* special mhpmax value when loading bones monster to flag as extinct or genocided */
+#define DEFUNCT_MONSTER	(-100)
+
+/* flags for special ggetobj status returns */
+#define ALL_FINISHED	  0x01  /* called routine already finished the job */
 
 /* flags to control query_objlist() */
 #define BY_NEXTHERE	  0x1	/* follow objlist by nexthere field */
@@ -132,6 +154,7 @@ NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
 #define USE_INVLET	  0x4	/* use object's invlet */
 #define INVORDER_SORT	  0x8	/* sort objects by packorder */
 #define SIGNAL_NOMENU	  0x10	/* return -1 rather than 0 if none allowed */
+#define FEEL_COCKATRICE   0x20  /* engage cockatrice checks and react */
 
 /* Flags to control query_category() */
 /* BY_NEXTHERE used by query_category() too, so skip 0x01 */
@@ -141,6 +164,11 @@ NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
 #define ALL_TYPES    0x10
 #define BILLED_TYPES 0x20
 #define CHOOSE_ALL   0x40
+#define BUC_BLESSED  0x80
+#define BUC_CURSED   0x100
+#define BUC_UNCURSED 0x200
+#define BUC_UNKNOWN  0x400
+#define BUC_ALLBKNOWN (BUC_BLESSED|BUC_CURSED|BUC_UNCURSED)
 #define ALL_TYPES_SELECTED -2
 
 /* Flags to control find_mid() */
@@ -152,6 +180,16 @@ NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
 /* Flags to control pick_[race,role,gend,align] routines in role.c */
 #define PICK_RANDOM	0
 #define PICK_RIGID	1
+
+/* Flags to control dotrap() in trap.c */
+#define NOWEBMSG	0x01	/* suppress stumble into web message */
+#define FORCEBUNGLE	0x02	/* adjustments appropriate for bungling */
+#define RECURSIVETRAP	0x04	/* trap changed into another type this same turn */
+
+/* Flags to control test_move in hack.c */
+#define DO_MOVE		0	/* really doing the move */
+#define TEST_MOVE	1	/* test a normal move (move there next) */
+#define TEST_TRAV	2	/* test a future travel location */
 
 /*** some utility macros ***/
 #define yn(query) yn_function(query,ynchars, 'n')
@@ -170,8 +208,20 @@ NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
 #define MAY_FRACTURE	0x10	/* boulders & statues may fracture */
 
 /* Macros for launching objects */
-#define ROLL	1
-#define FLING	2
+#define ROLL		0x01	/* the object is rolling */
+#define FLING		0x02	/* the object is flying thru the air */
+#define LAUNCH_UNSEEN	0x40	/* hero neither caused nor saw it */
+#define LAUNCH_KNOWN	0x80	/* the hero caused this by explicit action */
+
+/* Macros for explosion types */
+#define EXPL_DARK	0
+#define EXPL_NOXIOUS	1
+#define EXPL_MUDDY	2
+#define EXPL_WET	3
+#define EXPL_MAGICAL	4
+#define EXPL_FIERY	5
+#define EXPL_FROSTY	6
+#define EXPL_MAX	7
 
 /* Macros for messages referring to hands, eyes, feet, etc... */
 #define ARM 0
@@ -191,6 +241,8 @@ NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
 #define HAIR 14
 #define BLOOD 15
 #define LUNG 16
+#define NOSE 17
+#define STOMACH 18
 
 /* Flags to control menus */
 #define MENUTYPELEN sizeof("traditional ")
@@ -201,6 +253,16 @@ NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
 
 #define MENU_SELECTED	TRUE
 #define MENU_UNSELECTED FALSE
+
+/*
+ * Option flags
+ * Each higher number includes the characteristics of the numbers
+ * below it.
+ */
+#define SET_IN_FILE	0 /* config file option only */
+#define SET_VIA_PROG	1 /* may be set via extern program, not seen in game */
+#define DISP_IN_GAME	2 /* may be set via extern program, displayed in game */
+#define SET_IN_GAME	3 /* may be set via extern program or set in the game */
 
 #define FEATURE_NOTICE_VER(major,minor,patch) (((unsigned long)major << 24) | \
 	((unsigned long)minor << 16) | \
@@ -266,4 +328,14 @@ NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
 # define STATIC_PTR static
 #endif
 
+/* The function argument to qsort() requires a particular
+ * calling convention under WINCE which is not the default
+ * in that environment.
+ */
+#if defined(WIN_CE)
+# define CFDECLSPEC __cdecl
+#else
+# define CFDECLSPEC
+#endif
+ 
 #endif /* HACK_H */

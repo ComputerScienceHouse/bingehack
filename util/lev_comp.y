@@ -1,5 +1,5 @@
 %{
-/*	SCCS Id: @(#)lev_yacc.c	3.3	2000/01/17	*/
+/*	SCCS Id: @(#)lev_yacc.c	3.4	2000/01/17	*/
 /*	Copyright (c) 1989 by Jean-Christophe Collet */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -274,6 +274,9 @@ lev_init	: /* nothing */
 			    yyerror("Invalid background type.");
 			init_lev.smoothed = $7;
 			init_lev.joined = $9;
+			if (init_lev.joined &&
+			    init_lev.fg != CORR && init_lev.fg != ROOM)
+			    yyerror("Invalid foreground type for joined map.");
 			init_lev.lit = $11;
 			init_lev.walled = $13;
 			$$ = 1;
@@ -877,7 +880,7 @@ object_detail	: OBJECT_ID object_desc
 		  }
 		| COBJECT_ID object_desc
 		  {
-			/* 1: is contents of next object with 2 */
+			/* 1: is contents of preceeding object with 2 */
 			/* 2: is a container */
 			/* 0: neither */
 			tmpobj[nobj-1]->containment = 2;

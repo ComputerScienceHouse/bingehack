@@ -8,7 +8,7 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #define yyerrok (yyerrflag=0)
 #define YYRECOVERING (yyerrflag!=0)
 #define YYPREFIX "yy"
-/*	SCCS Id: @(#)lev_yacc.c	3.3	2000/01/17	*/
+/*	SCCS Id: @(#)lev_yacc.c	3.4	2000/01/17	*/
 /*	Copyright (c) 1989 by Jean-Christophe Collet */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1138,6 +1138,9 @@ case 11:
 			    yyerror("Invalid background type.");
 			init_lev.smoothed = yyvsp[-6].i;
 			init_lev.joined = yyvsp[-4].i;
+			if (init_lev.joined &&
+			    init_lev.fg != CORR && init_lev.fg != ROOM)
+			    yyerror("Invalid foreground type for joined map.");
 			init_lev.lit = yyvsp[-2].i;
 			init_lev.walled = yyvsp[0].i;
 			yyval.i = 1;
@@ -1630,7 +1633,7 @@ case 131:
 break;
 case 132:
 {
-			/* 1: is contents of next object with 2 */
+			/* 1: is contents of preceeding object with 2 */
 			/* 2: is a container */
 			/* 0: neither */
 			tmpobj[nobj-1]->containment = 2;

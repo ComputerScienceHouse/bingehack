@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)pcsys.c	3.3	1999/12/10
+/*	SCCS Id: @(#)pcsys.c	3.4	2002/01/22		  */
 /* NetHack may be freely redistributed.  See license for details. */
 
 /*
@@ -11,7 +11,7 @@
 
 #include <ctype.h>
 #include <fcntl.h>
-#ifndef MSDOS			/* already done */
+#if !defined(MSDOS) && !defined(WIN_CE) 	/* already done */
 #include <process.h>
 #endif
 #ifdef __GO32__
@@ -45,16 +45,18 @@ extern unsigned short __far __cdecl _movefpaused;
 #define     __MOVE_PAUSE_CACHE	  4   /* Represents the cache memory */
 #endif /* MOVERLAY */
 
+#ifdef MFLOPPY
 STATIC_DCL boolean NDECL(record_exists);
-#ifndef TOS
+# ifndef TOS
 STATIC_DCL boolean NDECL(comspec_exists);
+# endif
 #endif
 
 #ifdef WIN32CON
 extern int GUILaunched;    /* from nttty.c */
 #endif
 
-#ifdef MICRO
+#if defined(MICRO) || defined(WIN32)
 
 void
 flushout()
@@ -78,11 +80,13 @@ dosh()
 {
 	extern char orgdir[];
 	char *comspec;
+# ifndef __GO32__
 	int spawnstat;
+# endif
 #if defined(MSDOS) && defined(NO_TERMS)
-	int grmode;
+	int grmode = iflags.grmode;
 #endif
-	if (comspec = getcomspec()) {
+	if ((comspec = getcomspec())) {
 #  ifndef TOS	/* TOS has a variety of shells */
 		suspend_nhwindows("To return to NetHack, enter \"exit\" at the system prompt.\n");
 #  else
@@ -91,7 +95,9 @@ dosh()
 #   endif
 		suspend_nhwindows((char *)0);
 #  endif /* TOS */
+#  ifndef NOCWD_ASSUMPTIONS
 		chdirx(orgdir, 0);
+#  endif
 #  ifdef __GO32__
 		if (system(comspec) < 0) {  /* wsu@eecs.umich.edu */
 #  else
@@ -116,7 +122,9 @@ dosh()
 		if (iflags.BIOS)
 			(void)Cursconf(1, -1);
 #  endif
+#  ifndef NOCWD_ASSUMPTIONS
 		chdirx(hackdir, 0);
+#  endif
 		get_scr_size(); /* maybe the screen mode changed (TH) */
 #  if defined(MSDOS) && defined(NO_TERMS)
 		if (grmode) gr_init();
@@ -297,8 +305,6 @@ int start;
 	return 1;
 }
 
-# endif /* MFLOPPY */
-
 /* Return 1 if the record file was found */
 STATIC_OVL boolean
 record_exists()
@@ -312,10 +318,12 @@ record_exists()
 	}
 	return FALSE;
 }
+#endif /* MFLOPPY */
 
 # ifdef TOS
 #define comspec_exists() 1
 # else
+#  ifdef MFLOPPY
 /* Return 1 if the comspec was found */
 STATIC_OVL boolean
 comspec_exists()
@@ -323,14 +331,16 @@ comspec_exists()
 	int fd;
 	char *comspec;
 
-	if (comspec = getcomspec())
+	if ((comspec = getcomspec()))
 		if ((fd = open(comspec, O_RDONLY)) >= 0) {
 			(void) close(fd);
 			return TRUE;
 		}
 	return FALSE;
 }
+#  endif /* MFLOPPY */
 # endif
+
 
 # ifdef MFLOPPY
 /* Prompt for game disk, then check for record file.
@@ -378,10 +388,17 @@ char *name;
 	return;
 }
 
+#ifdef WIN32
+boolean getreturn_enabled;
+#endif
+
 void
 getreturn(str)
 const char *str;
 {
+#ifdef WIN32
+	if (!getreturn_enabled) return;
+#endif
 #ifdef TOS
 	msmsg("Hit <Return> %s.", str);
 #else
@@ -391,11 +408,12 @@ const char *str;
 	return;
 }
 
+#ifndef WIN32CON
 void
 msmsg VA_DECL(const char *, fmt)
 	VA_START(fmt);
 	VA_INIT(fmt, const char *);
-# if defined(MSDOS)
+# if defined(MSDOS) && defined(NO_TERMS)
 	if (iflags.grmode)
 		gr_finish();
 # endif
@@ -404,6 +422,7 @@ msmsg VA_DECL(const char *, fmt)
 	VA_END();
 	return;
 }
+#endif
 
 /*
  * Follow the PATH, trying to fopen the file.
@@ -429,7 +448,7 @@ const char *name, *mode;
 	 */
 	(void) strncpy(buf, name, BUFSIZ - 1);
 	buf[BUFSIZ-1] = '\0';
-	if (fp = fopen(buf, mode))
+	if ((fp = fopen(buf, mode)))
 		return fp;
 	else {
 		int ccnt = 0;
@@ -445,8 +464,8 @@ const char *name, *mode;
 				ccnt++;
 			}
 			(void) strncpy(bp, name, (BUFSIZ - ccnt) - 2);
-			bp[BUFSIZ-1] = '\0';
-			if (fp = fopen(buf, mode))
+			bp[BUFSIZ - ccnt - 1] = '\0';
+			if ((fp = fopen(buf, mode)))
 				return fp;
 			if (*pp)
 				pp++;
@@ -471,10 +490,6 @@ void nethack_exit(code)
 int code;
 {
 	msexit();
-#ifdef MTHREAD_VIEW
-	if (iflags.mthreaded) nh_thread_exit(code);  /* no return from this */
-	else
-#endif
 	exit(code);
 }
 
@@ -499,7 +514,7 @@ static void msexit()
 #ifdef MFLOPPY
 	if (ramdisk) copybones(TOPERM);
 #endif
-#ifdef CHDIR
+#if defined(CHDIR) && !defined(NOCWD_ASSUMPTIONS)
 	chdir(orgdir);		/* chdir, not chdirx */
 	chdrive(orgdir);
 #endif
@@ -517,30 +532,10 @@ static void msexit()
 	 * not vanish instantly after being created.
 	 * GUILaunched is defined and set in nttty.c.
 	 */
-
+	synch_cursor();
 	if (GUILaunched) getreturn("to end");
+	synch_cursor();
 #endif
 	return;
 }
-#ifdef WIN32
-/*
- * This is a kludge.  Just before the release of 3.3.0 the latest
- * version of a popular MAPI mail product was found to exhibit
- * a strange result where the current directory was changed out
- * from under NetHack resulting in a failure of all subsequent
- * file operations in NetHack.  This routine is called prior
- * to all file open/renames/deletes in file.c.
- *
- * A more elegant solution will be sought after 3.3.0 is released.
- */
-void dircheck()
-{
-	char dirbuf[BUFSZ];
-	dirbuf[0] = '\0';
-	if (getcwd(dirbuf, sizeof dirbuf) != (char *)0)
-		/* pline("%s,%s",dirbuf,hackdir); */
-		if (strcmp(dirbuf,hackdir) != 0)
-			chdir(hackdir);		/* chdir, not chdirx */
-}
-#endif
 #endif /* MICRO || WIN32 || OS2 */

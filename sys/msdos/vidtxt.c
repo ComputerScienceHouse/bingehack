@@ -1,4 +1,4 @@
-/*   SCCS Id: @(#)vidtxt.c   3.3     94/04/04                       */
+/*   SCCS Id: @(#)vidtxt.c   3.4     1994/04/04                     */
 /*   Copyright (c) NetHack PC Development Team 1993                 */
 /*   NetHack may be freely redistributed.  See license for details. */
 /*                                                                  */
@@ -31,9 +31,8 @@
 # endif
 #endif
 
-/* void FDECL(txt_xputc,(char, int)); /* write out character (and attribute) */
+/* void FDECL(txt_xputc,(char, int)); */ /* write out character (and attribute) */
 
-STATIC_VAR char buf[BUFSZ];
 extern int attrib_text_normal;	/* text mode normal attribute */
 extern int attrib_gr_normal;	/* graphics mode normal attribute */
 extern int attrib_text_intense;	/* text mode intense attribute */
@@ -127,20 +126,11 @@ txt_backsp()
 
 	int86(DOS_EXT_FUNC, &regs, &regs);
 
-	txt_xputc(' ',attrib_text_normal);
-
-	regs.h.dl = 0x01;		  /* one column */
-	regs.h.ah = CURSOR_LEFT;
-	regs.h.cl = DIRECT_CON_IO;
-
-	(void) int86(DOS_EXT_FUNC, &regs, &regs);
 #  else
 	int col,row;
 
 	txt_get_cursor(&col, &row);
 	if (col > 0) col = col-1;
-	txt_gotoxy(col,row);
-	txt_xputc(' ',attrib_text_normal);
 	txt_gotoxy(col,row);
 #  endif
 }

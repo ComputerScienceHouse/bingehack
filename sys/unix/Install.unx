@@ -1,4 +1,4 @@
-                Instructions for installing NetHack 3.3
+                Instructions for installing NetHack 3.4
                            on a UNIX system
                 =======================================
 
@@ -25,8 +25,8 @@
     in Files, which should be in the top directory.)
 
 2.  Your Makefiles may still be in sys/unix with tags on the end of them.
-    If so, run setup.sh in that directory to distribute the Makefiles to
-    places they can do their work.  (If later official patches change
+    If so, run "sh setup.sh" in that directory to distribute the Makefiles
+    to places they can do their work.  (If later official patches change
     these Makefiles, setup.sh should be rerun to make sure you use the
     current copies.)
 
@@ -77,15 +77,15 @@
     files the main executable will use.  Then become root if necessary and
     type 'make install'.  Everything should now be set.
 
-8.  Read doc/recover.man or doc/recover.txt, and think about whether and
-    how you want to install the recover program.  If you decide to install
-    it, type 'make recover' in the util directory and then install recover
-    by hand in your desired manner.
+8.  Read doc/recover.man or doc/recover.txt to learn how to use the recover
+    program.  The recover program can be used in case of a crash to recover
+    a game that was in progress.  The recover command is installed in the
+    GAMEDIR by default.
 
 Notes:
 
 1.  Save files and bones files from previous versions will not work with
-    NetHack 3.3.  Don't bother trying to keep them.
+    NetHack 3.4.  Don't bother trying to keep them.
 
 2.  To install an update of this version of NetHack after changing something,
     type 'make update' from the main directory.  If you created the new
@@ -243,3 +243,26 @@ Notes:
     on your console speaker in certain appropriate game situations.  The only
     modification to the main-line code needed to enable use of the driver
     is defining UNIX386MUSIC or VPIX_MUSIC in unixconf.h.
+
+15. If you are trying to cross-compile for another system, there is some
+    support in the src and util Makefiles, but there are still other
+    complications.  It may well be best to make another copy of util,
+    util2, to compile target copies of makedefs, lev_comp, and recover
+    (duplicating the cross-compilation settings from the src Makefile)
+    without disturbing the main build.
+
+    You can use the host makedefs for everything but "makedefs -v", which
+    creates include/date.h, which provides various sanity-checking values
+    for making sure files read by NetHack at run-time are compatible.
+    These values depend on the endianness of your processor, its type
+    sizes, and its compiler's idea of struct packing.  Your host and target
+    computers may disagree on these things, so you'll need to build a target
+    version of makedefs, run "makedefs -v" on your target, and bring the
+    resulting date.h back for the builds on the host.  (Making sure the host
+    makedefs doesn't decide it needs to overwrite it for you. :-)
+
+    You also need a target version of lev_comp, and to provide it with all
+    the dat/*.des files, and copy all the resulting *.lev files back for
+    packaging on the host.
+
+    For recover, you just want the target binary to install on the target.

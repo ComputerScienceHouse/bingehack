@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)o_init.c	3.3	1999/12/09	*/
+/*	SCCS Id: @(#)o_init.c	3.4	1999/12/09	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -75,9 +75,7 @@ shuffle(o_low, o_high, domaterial)
 {
 	int i, j, num_to_shuffle;
 	short sw;
-#ifdef TEXTCOLOR
 	int color;
-#endif /* TEXTCOLOR */
 
 	for (num_to_shuffle = 0, j=o_low; j <= o_high; j++)
 		if (!objects[j].oc_name_known) num_to_shuffle++;
@@ -94,11 +92,10 @@ shuffle(o_low, o_high, domaterial)
 		sw = objects[j].oc_tough;
 		objects[j].oc_tough = objects[i].oc_tough;
 		objects[i].oc_tough = sw;
-#ifdef TEXTCOLOR
 		color = objects[j].oc_color;
 		objects[j].oc_color = objects[i].oc_color;
 		objects[i].oc_color = color;
-#endif /* TEXTCOLOR */
+
 		/* shuffle material */
 		if (domaterial) {
 			sw = objects[j].oc_material;
@@ -385,7 +382,7 @@ dodiscovered()				/* free after Robert Viduya */
     for (i = dis = 0; i < SIZE(uniq_objs); i++)
 	if (objects[uniq_objs[i]].oc_name_known) {
 	    if (!dis++)
-		putstr(tmpwin, ATR_INVERSE, "Unique Items");
+		putstr(tmpwin, iflags.menu_headings, "Unique Items");
 		Sprintf(buf, "  %s", OBJ_NAME(objects[uniq_objs[i]]));
 	    putstr(tmpwin, 0, buf);
 	    ++ct;
@@ -409,7 +406,7 @@ dodiscovered()				/* free after Robert Viduya */
 	    if ((dis = disco[i]) && interesting_to_discover(dis)) {
 		ct++;
 		if (oclass != prev_class) {
-		    putstr(tmpwin, ATR_INVERSE, let_to_name(oclass, FALSE));
+		    putstr(tmpwin, iflags.menu_headings, let_to_name(oclass, FALSE));
 		    prev_class = oclass;
 		}
 		Sprintf(buf, "%s %s",(objects[dis].oc_pre_discovered ? "*" : " "),

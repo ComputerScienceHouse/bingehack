@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)end.c	3.3	2000/06/10	*/
+/*	SCCS Id: @(#)end.c	3.4	2003/03/10	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -18,7 +18,7 @@
  
 struct valuable_data { long count; int typ; };
 
-struct valuable_data
+static struct valuable_data
 	gems[LAST_GEM+1 - FIRST_GEM + 1], /* 1 extra for glass */
 	amulets[LAST_AMULET+1 - FIRST_AMULET];
 
@@ -37,11 +37,11 @@ static void FDECL(done_hangup, (int));
 STATIC_DCL void FDECL(disclose,(int,BOOLEAN_P));
 STATIC_DCL void FDECL(get_valuables, (struct obj *));
 STATIC_DCL void FDECL(sort_valuables, (struct valuable_data *,int));
-STATIC_DCL void FDECL(add_artifact_score, (struct obj *));
-STATIC_DCL void FDECL(display_artifact_score, (struct obj *,winid));
+STATIC_DCL void FDECL(artifact_score, (struct obj *,BOOLEAN_P,winid));
 STATIC_DCL void FDECL(savelife, (int));
-STATIC_DCL void NDECL(list_vanquished);
-STATIC_DCL void NDECL(list_genocided);
+STATIC_DCL void FDECL(list_vanquished, (CHAR_P,BOOLEAN_P));
+STATIC_DCL void FDECL(list_genocided, (CHAR_P,BOOLEAN_P));
+STATIC_DCL boolean FDECL(should_query_disclose_option, (int,char *));
 
 #if defined(__BEOS__) || defined(MICRO) || defined(WIN32) || defined(OS2)
 extern void FDECL(nethack_exit,(int));
@@ -52,13 +52,16 @@ extern void FDECL(nethack_exit,(int));
 #define done_stopprint program_state.stopprint
 
 #ifdef AMIGA
-void NDECL(clear_icon);
 # define NH_abort()	Abort(0)
 #else
 # ifdef SYSV
 # define NH_abort()	(void) abort()
 # else
+#  ifdef WIN32
+# define NH_abort()	win32_abort()
+#  else
 # define NH_abort()	abort()
+#  endif
 # endif
 #endif
 
@@ -81,8 +84,7 @@ static NEARDATA const char *ends[] = {		/* "when you..." */
 	"quit", "escaped", "ascended"
 };
 
-extern const char *killed_by_prefix[];
-
+extern const char * const killed_by_prefix[];	/* from topten.c */
 
 /*ARGSUSED*/
 void
@@ -186,10 +188,18 @@ register struct monst *mtmp;
 	You("die...");
 	mark_synch();	/* flush buffered screen output */
 	buf[0] = '\0';
-	if ((mtmp->data->geno & G_UNIQ) != 0) {
+	killer_format = KILLED_BY_AN;
+	/* "killed by the high priest of Crom" is okay, "killed by the high
+	   priest" alone isn't */
+	if ((mtmp->data->geno & G_UNIQ) != 0 && !(mtmp->data == &mons[PM_HIGH_PRIEST] && !mtmp->ispriest)) {
 	    if (!type_is_pname(mtmp->data))
 		Strcat(buf, "the ");
 	    killer_format = KILLED_BY;
+	}
+	/* _the_ <invisible> <distorted> ghost of Dudley */
+	if (mtmp->data == &mons[PM_GHOST] && mtmp->mnamelth) {
+		Strcat(buf, "the ");
+		killer_format = KILLED_BY;
 	}
 	if (mtmp->minvis)
 		Strcat(buf, "invisible ");
@@ -197,12 +207,8 @@ register struct monst *mtmp;
 		Strcat(buf, "hallucinogen-distorted ");
 
 	if(mtmp->data == &mons[PM_GHOST]) {
-		char *gn = NAME(mtmp);
-		if (!distorted && !mtmp->minvis && *gn) {
-			Strcat(buf, "the ");
-			killer_format = KILLED_BY;
-		}
-		Sprintf(eos(buf), (*gn ? "ghost of %s" : "ghost%s"), gn);
+		Strcat(buf, "ghost");
+		if (mtmp->mnamelth) Sprintf(eos(buf), " of %s", NAME(mtmp));
 	} else if(mtmp->isshk) {
 		Sprintf(eos(buf), "%s %s, the shopkeeper",
 			(mtmp->female ? "Ms." : "Mr."), shkname(mtmp));
@@ -226,6 +232,8 @@ register struct monst *mtmp;
 		u.ugrave_arise = urace.mummynum;
 	else if (mtmp->data->mlet == S_VAMPIRE && Race_if(PM_HUMAN))
 		u.ugrave_arise = PM_VAMPIRE;
+	else if (mtmp->data == &mons[PM_GHOUL])
+		u.ugrave_arise = PM_GHOUL;
 	if (u.ugrave_arise >= LOW_PM &&
 				(mvitals[u.ugrave_arise].mvflags & G_GENOD))
 		u.ugrave_arise = NON_PM;
@@ -235,6 +243,10 @@ register struct monst *mtmp;
 		done(DIED);
 	return;
 }
+
+#if defined(WIN32)
+#define NOTIFY_NETHACK_BUGS
+#endif
 
 /*VARARGS1*/
 void
@@ -252,19 +264,29 @@ panic VA_DECL(const char *, str)
 	    iflags.window_inited = 0; /* they're gone; force raw_print()ing */
 	}
 
-	raw_print(!program_state.something_worth_saving ?
+	raw_print(program_state.gameover ?
+		  "Postgame wrapup disrupted." :
+		  !program_state.something_worth_saving ?
 		  "Program initialization has failed." :
 		  "Suddenly, the dungeon collapses.");
 #if defined(WIZARD) && !defined(MICRO)
+# if defined(NOTIFY_NETHACK_BUGS)
+	if (!wizard)
+	    raw_printf("Report the following error to \"%s\".",
+			"nethack-bugs@nethack.org");
+	else if (program_state.something_worth_saving)
+	    raw_print("\nError save file being written.\n");
+# else
 	if (!wizard)
 	    raw_printf("Report error to \"%s\"%s.",
-# ifdef WIZARD_NAME	/*(KR1ED)*/
+#  ifdef WIZARD_NAME	/*(KR1ED)*/
 			WIZARD_NAME,
-# else
+#  else
 			WIZARD,
-# endif
+#  endif
 			!program_state.something_worth_saving ? "" :
 			" and it may be possible to rebuild.");
+# endif
 	if (program_state.something_worth_saving) {
 	    set_error_savefile();
 	    (void) dosave0();
@@ -274,8 +296,12 @@ panic VA_DECL(const char *, str)
 	    char buf[BUFSZ];
 	    Vsprintf(buf,str,VA_ARGS);
 	    raw_print(buf);
+	    paniclog("panic", buf);
 	}
-#if defined(WIZARD) && (defined(UNIX) || defined(VMS) || defined(LATTICE))
+#ifdef WIN32
+	interject(INTERJECT_PANIC);
+#endif
+#if defined(WIZARD) && (defined(UNIX) || defined(VMS) || defined(LATTICE) || defined(WIN32))
 	if (wizard)
 	    NH_abort();	/* generate core dump */
 #endif
@@ -283,56 +309,100 @@ panic VA_DECL(const char *, str)
 	done(PANICKED);
 }
 
+STATIC_OVL boolean
+should_query_disclose_option(category, defquery)
+int category;
+char *defquery;
+{
+    int idx;
+    char *dop = index(disclosure_options, category);
+
+    if (dop && defquery) {
+	idx = dop - disclosure_options;
+	if (idx < 0 || idx > (NUM_DISCLOSURE_OPTIONS - 1)) {
+	    impossible(
+		   "should_query_disclose_option: bad disclosure index %d %c",
+		       idx, category);
+	    *defquery = DISCLOSE_PROMPT_DEFAULT_YES;
+	    return TRUE;
+	}
+	if (flags.end_disclose[idx] == DISCLOSE_YES_WITHOUT_PROMPT) {
+	    *defquery = 'y';
+	    return FALSE;
+	} else if (flags.end_disclose[idx] == DISCLOSE_NO_WITHOUT_PROMPT) {
+	    *defquery = 'n';
+	    return FALSE;
+	} else if (flags.end_disclose[idx] == DISCLOSE_PROMPT_DEFAULT_YES) {
+	    *defquery = 'y';
+	    return TRUE;
+	} else if (flags.end_disclose[idx] == DISCLOSE_PROMPT_DEFAULT_NO) {
+	    *defquery = 'n';
+	    return TRUE;
+	}
+    }
+    if (defquery)
+	impossible("should_query_disclose_option: bad category %c", category);
+    else
+	impossible("should_query_disclose_option: null defquery");
+    return TRUE;
+}
+
 STATIC_OVL void
 disclose(how,taken)
 int how;
 boolean taken;
 {
-	char	c;
+	char	c = 0, defquery;
 	char	qbuf[QBUFSZ];
+	boolean ask;
 
-	if (invent && !done_stopprint &&
-		(!flags.end_disclose[0] || index(flags.end_disclose, 'i'))) {
+	if (invent) {
 	    if(taken)
 		Sprintf(qbuf,"Do you want to see what you had when you %s?",
 			(how == QUIT) ? "quit" : "died");
 	    else
 		Strcpy(qbuf,"Do you want your possessions identified?");
-	    if ((c = yn_function(qbuf, ynqchars, 'y')) == 'y') {
-	    /* New dump format by maartenj@cs.vu.nl */
-		struct obj *obj;
 
-		for (obj = invent; obj; obj = obj->nobj) {
-		    makeknown(obj->otyp);
-		    obj->known = obj->bknown = obj->dknown = obj->rknown = 1;
+	    ask = should_query_disclose_option('i', &defquery);
+	    if (!done_stopprint) {
+		c = ask ? yn_function(qbuf, ynqchars, defquery) : defquery;
+		if (c == 'y') {
+			struct obj *obj;
+
+			for (obj = invent; obj; obj = obj->nobj) {
+			    makeknown(obj->otyp);
+			    obj->known = obj->bknown = obj->dknown = obj->rknown = 1;
+			}
+			(void) display_inventory((char *)0, TRUE);
+			container_contents(invent, TRUE, TRUE);
 		}
-		(void) display_inventory((char *)0, TRUE);
-		container_contents(invent, TRUE, TRUE);
+		if (c == 'q')  done_stopprint++;
 	    }
-	    if (c == 'q')  done_stopprint++;
 	}
 
-	if (!done_stopprint &&
-		(!flags.end_disclose[0] || index(flags.end_disclose, 'a'))) {
-	    c = yn_function("Do you want to see your attributes?",ynqchars,'y');
-	    if (c == 'y') enlightenment(how >= PANICKED ? 1 : 2); /* final */
+	ask = should_query_disclose_option('a', &defquery);
+	if (!done_stopprint) {
+	    c = ask ? yn_function("Do you want to see your attributes?",
+				  ynqchars, defquery) : defquery;
+	    if (c == 'y')
+		enlightenment(how >= PANICKED ? 1 : 2); /* final */
 	    if (c == 'q') done_stopprint++;
 	}
 
-	if (!done_stopprint &&
-		(!flags.end_disclose[0] || index(flags.end_disclose, 'v'))) {
-	    list_vanquished();
-	}
+	ask = should_query_disclose_option('v', &defquery);
+	if (!done_stopprint)
+	    list_vanquished(defquery, ask);
 
-	if (!done_stopprint &&
-		(!flags.end_disclose[0] || index(flags.end_disclose, 'g'))) {
-	    list_genocided();
-	}
+	ask = should_query_disclose_option('g', &defquery);
+	if (!done_stopprint)
+	    list_genocided(defquery, ask);
 
-	if (!done_stopprint &&
-		(!flags.end_disclose[0] || index(flags.end_disclose, 'c'))) {
-	    c = yn_function("Do you want to see your conduct?",ynqchars,'y');
-	    if (c == 'y') show_conduct(how >= PANICKED ? 1 : 2);
+	ask = should_query_disclose_option('c', &defquery);
+	if (!done_stopprint) {
+	    c = ask ? yn_function("Do you want to see your conduct?",
+				  ynqchars, defquery) : defquery;
+	    if (c == 'y')
+		show_conduct(how >= PANICKED ? 1 : 2);
 	    if (c == 'q') done_stopprint++;
 	}
 }
@@ -347,6 +417,11 @@ int how;
 	if (u.uhunger < 500) {
 	    u.uhunger = 500;
 	    newuhs(FALSE);
+	}
+	/* cure impending doom of sickness hero won't have time to fix */
+	if ((Sick & TIMEOUT) == 1) {
+	    u.usick_type = 0;
+	    Sick = 0;
 	}
 	if (how == CHOKING) init_uhunger();
 	nomovemsg = "You survived that attempt on your life.";
@@ -370,18 +445,19 @@ struct obj *list;	/* inventory or container contents */
     register struct obj *obj;
     register int i;
 
-    /* find amulets and gems, ignoring artifacts except for the AoY. */
+    /* find amulets and gems, ignoring all artifacts */
     for (obj = list; obj; obj = obj->nobj)
 	if (Has_contents(obj)) {
 	    get_valuables(obj->cobj);
+	} else if (obj->oartifact) {
+	    continue;
 	} else if (obj->oclass == AMULET_CLASS) {
 	    i = obj->otyp - FIRST_AMULET;
 	    if (!amulets[i].count) {
 		amulets[i].count = obj->quan;
 		amulets[i].typ = obj->otyp;
 	    } else amulets[i].count += obj->quan; /* always adds one */
-	} else if (obj->oclass == GEM_CLASS && obj->otyp < LUCKSTONE &&
-		!obj->oartifact) {
+	} else if (obj->oclass == GEM_CLASS && obj->otyp < LUCKSTONE) {
 	    i = min(obj->otyp, LAST_GEM + 1) - FIRST_GEM;
 	    if (!gems[i].count) {
 		gems[i].count = obj->quan;
@@ -417,52 +493,41 @@ int size;		/* max value is less than 20 */
     return;
 }
 
+/* called twice; first to calculate total, then to list relevant items */
 STATIC_OVL void
-add_artifact_score(list)
+artifact_score(list, counting, endwin)
 struct obj *list;
-{
-    struct obj *otmp;
-
-    for (otmp = list; otmp; otmp = otmp->nobj)
-	if (otmp->oartifact ||
-			otmp->otyp == BELL_OF_OPENING ||
-			otmp->otyp == SPE_BOOK_OF_THE_DEAD ||
-			otmp->otyp == CANDELABRUM_OF_INVOCATION) {
-	    /* shopkeepers charge 100x; 250x is arbitrary */
-	    u.urexp += 250L * (long)objects[otmp->otyp].oc_cost;
-	if (Has_contents(otmp))
-	    add_artifact_score(otmp->cobj);
-    }
-}
-
-STATIC_OVL void
-display_artifact_score(list,endwin)
-struct obj *list;
+boolean counting;	/* true => add up points; false => display them */
 winid endwin;
 {
     char pbuf[BUFSZ];
     struct obj *otmp;
+    long value, points;
+    short dummy;	/* object type returned by artifact_name() */
 
     for (otmp = list; otmp; otmp = otmp->nobj) {
 	if (otmp->oartifact ||
 			otmp->otyp == BELL_OF_OPENING ||
 			otmp->otyp == SPE_BOOK_OF_THE_DEAD ||
 			otmp->otyp == CANDELABRUM_OF_INVOCATION) {
-	    short dummy;
-
-	    makeknown(otmp->otyp);
-	    otmp->known = otmp->bknown = otmp->dknown =
-		otmp->rknown = 1;
-	    /* assumes artifacts don't have quan>1 */
-	    Sprintf(pbuf, "%s (worth %ld zorkmids and %ld points)",
-		otmp->oartifact ? artifact_name(xname(otmp), &dummy) :
-			OBJ_NAME(objects[otmp->otyp]),
-		100L * (long)objects[otmp->otyp].oc_cost,
-		250L * (long)objects[otmp->otyp].oc_cost);
-	    putstr(endwin, 0, pbuf);
+	    value = arti_cost(otmp);	/* zorkmid value */
+	    points = value * 5 / 2;	/* score value */
+	    if (counting) {
+		u.urexp += points;
+	    } else {
+		makeknown(otmp->otyp);
+		otmp->known = otmp->dknown = otmp->bknown = otmp->rknown = 1;
+		/* assumes artifacts don't have quan > 1 */
+		Sprintf(pbuf, "%s%s (worth %ld %s and %ld points)",
+			the_unique_obj(otmp) ? "The " : "",
+			otmp->oartifact ? artifact_name(xname(otmp), &dummy) :
+				OBJ_NAME(objects[otmp->otyp]),
+			value, currency(value), points);
+		putstr(endwin, 0, pbuf);
+	    }
 	}
 	if (Has_contents(otmp))
-	    display_artifact_score(otmp->cobj,endwin);
+	    artifact_score(otmp->cobj, counting, endwin);
     }
 }
 
@@ -476,25 +541,34 @@ int how;
 	winid endwin = WIN_ERR;
 	boolean bones_ok, have_windows = iflags.window_inited;
 	struct obj *corpse = (struct obj *)0;
+	long umoney;
+
+	if (how == TRICKED) {
+	    if (killer) {
+		paniclog("trickery", killer);
+		killer = 0;
+	    }
+#ifdef WIZARD
+	    if (wizard) {
+		You("are a very tricky wizard, it seems.");
+		return;
+	    }
+#endif
+	}
 
 	/* kilbuf: used to copy killer in case it comes from something like
 	 *	xname(), which would otherwise get overwritten when we call
 	 *	xname() when listing possessions
 	 * pbuf: holds Sprintf'd output for raw_print and putstr
 	 */
-	if (how == ASCENDED)
+	if (how == ASCENDED || (!killer && how == GENOCIDED))
 		killer_format = NO_KILLER_PREFIX;
 	/* Avoid killed by "a" burning or "a" starvation */
 	if (!killer && (how == STARVING || how == BURNING))
 		killer_format = KILLED_BY;
 	Strcpy(kilbuf, (!killer || how >= PANICKED ? deaths[how] : killer));
 	killer = kilbuf;
-#ifdef WIZARD
-	if (wizard && how == TRICKED) {
-		You("are a very tricky wizard, it seems.");
-		return;
-	}
-#endif
+
 	if (how < PANICKED) u.umortality++;
 	if (Lifesaved && (how <= GENOCIDED)) {
 		pline("But wait...");
@@ -540,8 +614,8 @@ die:
 	program_state.gameover = 1;
 	/* in case of a subsequent panic(), there's no point trying to save */
 	program_state.something_worth_saving = 0;
-	/* turn off vision subsystem */
-	vision_recalc(2);
+	/* render vision subsystem inoperative */
+	iflags.vision_inited = 0;
 	/* might have been killed while using a disposable item, so make sure
 	   it's gone prior to inventory disclosure and creation of bones data */
 	inven_inuse(TRUE);
@@ -551,7 +625,7 @@ die:
 	 * smiling... :-)  -3.
 	 */
 	if (moves <= 1 && how < PANICKED)	/* You die... --More-- */
-	    pline("Do not pass go.  Do not collect 200 zorkmids.");
+	    pline("Do not pass go.  Do not collect 200 %s.", currency(200L));
 
 	if (have_windows) wait_synch();	/* flush screen output */
 #ifndef NO_SIGNAL
@@ -573,8 +647,19 @@ die:
 		u.ugrave_arise = (NON_PM - 2);	/* leave no corpse */
 	    else if (how == STONING)
 		u.ugrave_arise = (NON_PM - 1);	/* statue instead of corpse */
-	    else if (u.ugrave_arise == NON_PM) {
-		corpse = mk_named_object(CORPSE, &mons[u.umonnum],
+	    else if (u.ugrave_arise == NON_PM &&
+		     !(mvitals[u.umonnum].mvflags & G_NOCORPSE)) {
+		int mnum = u.umonnum;
+
+		if (!Upolyd) {
+		    /* Base corpse on race when not poly'd since original
+		     * u.umonnum is based on role, and all role monsters
+		     * are human.
+		     */
+		    mnum = (flags.female && urace.femalenum != NON_PM) ?
+			urace.femalenum : urace.malenum;
+		}
+		corpse = mk_named_object(CORPSE, &mons[mnum],
 				       u.ux, u.uy, plname);
 		Sprintf(pbuf, "%s, %s%s", plname,
 			killer_format == NO_KILLER_PREFIX ? "" :
@@ -598,15 +683,13 @@ die:
 
 	if (how != PANICKED) {
 	    /* these affect score and/or bones, but avoid them during panic */
-	    taken = paybill(how != QUIT);
+	    taken = paybill((how == ESCAPED) ? -1 : (how != QUIT));
 	    paygd();
 	    clearpriests();
 	} else	taken = FALSE;	/* lint; assert( !bones_ok ); */
 
 	clearlocks();
-#ifdef AMIGA
-	clear_icon();
-#endif
+
 	if (have_windows) display_nhwindow(WIN_MESSAGE, FALSE);
 
 	if (strcmp(flags.end_disclose, "none") && how != PANICKED)
@@ -619,8 +702,16 @@ die:
 	    long tmp;
 	    int deepest = deepest_lev_reached(FALSE);
 
-	    u.ugold += hidden_gold();	/* accumulate gold from containers */
-	    tmp = u.ugold - u.ugold0;
+#ifndef GOLDOBJ
+	    umoney = u.ugold;
+	    tmp = u.ugold0;
+#else
+	    umoney = money_cnt(invent);
+	    tmp = u.umoney0;
+#endif
+	    umoney += hidden_gold();	/* accumulate gold from containers */
+	    tmp = umoney - tmp;		/* net gain */
+
 	    if (tmp < 0L)
 		tmp = 0L;
 	    if (how < PANICKED)
@@ -642,6 +733,14 @@ die:
 	    corpse = (struct obj *)0;
 	}
 
+	/* update gold for the rip output, which can't use hidden_gold()
+	   (containers will be gone by then if bones just got saved...) */
+#ifndef GOLDOBJ
+	u.ugold = umoney;
+#else
+	done_money = umoney;
+#endif
+
 	/* clean up unneeded windows */
 	if (have_windows) {
 	    wait_synch();
@@ -654,7 +753,8 @@ die:
 	    if(!done_stopprint || flags.tombstone)
 		endwin = create_nhwindow(NHW_TEXT);
 
-	    if(how < GENOCIDED && flags.tombstone) outrip(endwin, how);
+	    if (how < GENOCIDED && flags.tombstone && endwin != WIN_ERR)
+		outrip(endwin, how);
 	} else
 	    done_stopprint = 1; /* just avoid any more output */
 
@@ -699,7 +799,8 @@ die:
 			u.urexp += val->list[i].count
 				  * (long)objects[val->list[i].typ].oc_cost;
 
-	    add_artifact_score(invent);
+	    /* count the points for artifacts */
+	    artifact_score(invent, TRUE, endwin);
 
 	    keepdogs(TRUE);
 	    viz_array[0][0] |= IN_SIGHT; /* need visibility for naming */
@@ -727,7 +828,7 @@ die:
 	    }
 
 	    if (!done_stopprint)
-		display_artifact_score(invent,endwin);
+		artifact_score(invent, FALSE, endwin);	/* list artifacts */
 
 	    /* list valuables here */
 	    for (val = valuables; val->list; val++) {
@@ -744,9 +845,9 @@ die:
 			otmp->dknown = 1;	/* seen it (blindness fix) */
 			otmp->onamelth = 0;
 			otmp->quan = count;
-			Sprintf(pbuf, "%8ld %s (worth %ld zorkmids),",
+			Sprintf(pbuf, "%8ld %s (worth %ld %s),",
 				count, xname(otmp),
-				count * (long)objects[typ].oc_cost);
+				count * (long)objects[typ].oc_cost, currency(2L));
 			obfree(otmp, (struct obj *)0);
 		    } else {
 			Sprintf(pbuf,
@@ -782,7 +883,7 @@ die:
 
 	if (!done_stopprint) {
 	    Sprintf(pbuf, "and %ld piece%s of gold, after %ld move%s.",
-		    u.ugold, plur(u.ugold), moves, plur(moves));
+		    umoney, plur(umoney), moves, plur(moves));
 	    putstr(endwin, 0, pbuf);
 	}
 	if (!done_stopprint) {
@@ -823,8 +924,10 @@ boolean identified, all_containers;
 	char buf[BUFSZ];
 
 	for (box = list; box; box = box->nobj) {
-	    if (Is_container(box) && box->otyp != BAG_OF_TRICKS) {
-		if (box->cobj) {
+	    if (Is_container(box) || box->otyp == STATUE) {
+		if (box->otyp == BAG_OF_TRICKS) {
+		    continue;	/* wrong type of container */
+		} else if (box->cobj) {
 		    winid tmpwin = create_nhwindow(NHW_MENU);
 		    Sprintf(buf, "Contents of %s:", the(xname(box)));
 		    putstr(tmpwin, 0, buf);
@@ -842,7 +945,7 @@ boolean identified, all_containers;
 		    if (all_containers)
 			container_contents(box->cobj, identified, TRUE);
 		} else {
-		    pline("%s is empty.", The(xname(box)));
+		    pline("%s empty.", Tobjnam(box, "are"));
 		    display_nhwindow(WIN_MESSAGE, FALSE);
 		}
 	    }
@@ -871,7 +974,9 @@ int status;
 }
 
 STATIC_OVL void
-list_vanquished()
+list_vanquished(defquery, ask)
+char defquery;
+boolean ask;
 {
     register int i, lev;
     int ntypes = 0, max_lev = 0, nkilled;
@@ -891,8 +996,8 @@ list_vanquished()
      * includes all dead monsters, not just those killed by the player
      */
     if (ntypes != 0) {
-	c = yn_function("Do you want an account of creatures vanquished?",
-			ynqchars, 'n');
+	c = ask ? yn_function("Do you want an account of creatures vanquished?",
+			      ynqchars, defquery) : defquery;
 	if (c == 'q') done_stopprint++;
 	if (c == 'y') {
 	    klwin = create_nhwindow(NHW_MENU);
@@ -909,11 +1014,11 @@ list_vanquished()
 				mons[i].mname);
 			if (nkilled > 1) {
 			    switch (nkilled) {
-	    			case 2:  Sprintf(eos(buf)," (twice)");  break;
-	    			case 3:  Sprintf(eos(buf)," (thrice)");  break;
-	    			default: Sprintf(eos(buf)," (%d time%s)",
-				    		nkilled, plur(nkilled));
-				break;
+				case 2:  Sprintf(eos(buf)," (twice)");  break;
+				case 3:  Sprintf(eos(buf)," (thrice)");  break;
+				default: Sprintf(eos(buf)," (%d time%s)",
+						 nkilled, plur(nkilled));
+					 break;
 			    }
 			}
 		    } else {
@@ -955,7 +1060,9 @@ num_genocides()
 }
 
 STATIC_OVL void
-list_genocided()
+list_genocided(defquery, ask)
+char defquery;
+boolean ask;
 {
     register int i;
     int ngenocided;
@@ -967,8 +1074,8 @@ list_genocided()
 
     /* genocided species list */
     if (ngenocided != 0) {
-	c = yn_function("Do you want a list of species genocided?",
-			ynqchars, 'n');
+	c = ask ? yn_function("Do you want a list of species genocided?",
+			      ynqchars, defquery) : defquery;
 	if (c == 'q') done_stopprint++;
 	if (c == 'y') {
 	    klwin = create_nhwindow(NHW_MENU);

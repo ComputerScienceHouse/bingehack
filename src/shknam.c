@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)shknam.c	3.3	97/05/25	*/
+/*	SCCS Id: @(#)shknam.c	3.4	2003/01/09	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -13,12 +13,14 @@ extern const struct shclass shtypes[];
 #else
 
 STATIC_DCL void FDECL(mkshobj_at, (const struct shclass *,int,int));
-STATIC_DCL void FDECL(nameshk, (struct monst *,const char **));
+STATIC_DCL void FDECL(nameshk, (struct monst *,const char * const *));
 STATIC_DCL int  FDECL(shkinit, (const struct shclass *,struct mkroom *));
 
-static const char *shkliquors[] = {
+static const char * const shkliquors[] = {
     /* Ukraine */
-    "Njezjin", "Tsjernigof", "Gomel", "Ossipewsk", "Gorlowka",
+    "Njezjin", "Tsjernigof", "Ossipewsk", "Gorlowka",
+    /* Belarus */
+    "Gomel",
     /* N. Russia */
     "Konosja", "Weliki Oestjoeg", "Syktywkar", "Sablja",
     "Narodnaja", "Kyzyl",
@@ -31,7 +33,7 @@ static const char *shkliquors[] = {
     0
 };
 
-static const char *shkbooks[] = {
+static const char * const shkbooks[] = {
     /* Eire */
     "Skibbereen", "Kanturk", "Rath Luirc", "Ennistymon", "Lahinch",
     "Kinnegad", "Lugnaquillia", "Enniscorthy", "Gweebarra",
@@ -42,7 +44,7 @@ static const char *shkbooks[] = {
     0
 };
 
-static const char *shkarmors[] = {
+static const char * const shkarmors[] = {
     /* Turquie */
     "Demirci", "Kalecik", "Boyabai", "Yildizeli", "Gaziantep",
     "Siirt", "Akhalataki", "Tirebolu", "Aksaray", "Ermenak",
@@ -53,11 +55,11 @@ static const char *shkarmors[] = {
     0
 };
 
-static const char *shkwands[] = {
+static const char * const shkwands[] = {
     /* Wales */
     "Yr Wyddgrug", "Trallwng", "Mallwyd", "Pontarfynach",
     "Rhaeader", "Llandrindod", "Llanfair-ym-muallt",
-    "Y-Fenni", "Measteg", "Rhydaman", "Beddgelert",
+    "Y-Fenni", "Maesteg", "Rhydaman", "Beddgelert",
     "Curig", "Llanrwst", "Llanerchymedd", "Caergybi",
     /* Scotland */
     "Nairn", "Turriff", "Inverurie", "Braemar", "Lochnagar",
@@ -67,7 +69,7 @@ static const char *shkwands[] = {
     0
 };
 
-static const char *shkrings[] = {
+static const char * const shkrings[] = {
     /* Hollandse familienamen */
     "Feyfer", "Flugi", "Gheel", "Havic", "Haynin", "Hoboken",
     "Imbyze", "Juyn", "Kinsky", "Massis", "Matray", "Moy",
@@ -80,7 +82,7 @@ static const char *shkrings[] = {
     0
 };
 
-static const char *shkfoods[] = {
+static const char * const shkfoods[] = {
     /* Indonesia */
     "Djasinga", "Tjibarusa", "Tjiwidej", "Pengalengan",
     "Bandjar", "Parbalingga", "Bojolali", "Sarangan",
@@ -92,7 +94,7 @@ static const char *shkfoods[] = {
     0
 };
 
-static const char *shkweapons[] = {
+static const char * const shkweapons[] = {
     /* Perigord */
     "Voulgezac", "Rouffiac", "Lerignac", "Touverac", "Guizengeard",
     "Melac", "Neuvicq", "Vanzac", "Picq", "Urignac", "Corignac",
@@ -103,7 +105,7 @@ static const char *shkweapons[] = {
     0
 };
 
-static const char *shktools[] = {
+static const char * const shktools[] = {
     /* Spmi */
     "Ymla", "Eed-morra", "Cubask", "Nieb", "Bnowr Falr", "Telloc Cyaj",
     "Sperc", "Noskcirdneh", "Yawolloh", "Hyeghu", "Niskal", "Trahnil",
@@ -115,7 +117,7 @@ static const char *shktools[] = {
     "Erreip", "Nehpets", "Mron", "Snivek", "Lapu", "Kahztiy",
 #endif
 #ifdef WIN32
-    "Lechaim",
+    "Lechaim", "Lexa", "Niod",
 #endif
 #ifdef MAC
     "Nhoj-lee", "Evad\'kh", "Ettaw-noj", "Tsew-mot", "Ydna-s",
@@ -134,7 +136,7 @@ static const char *shktools[] = {
     0
 };
 
-static const char *shklight[] = {
+static const char * const shklight[] = {
     /* Romania */
     "Zarnesti", "Slanic", "Nehoiasu", "Ludus", "Sighisoara", "Nisipitu",
     "Razboieni", "Bicaz", "Dorohoi", "Vaslui", "Fetesti", "Tirgu Neamt",
@@ -146,7 +148,7 @@ static const char *shklight[] = {
     0
 };
 
-static const char *shkgeneral[] = {
+static const char * const shkgeneral[] = {
     /* Suriname */
     "Hebiwerie", "Possogroenoe", "Asidonhopo", "Manlobbi",
     "Adjama", "Pakka Pakka", "Kabalebo", "Wonotobo",
@@ -246,28 +248,32 @@ mkshobj_at(shp, sx, sy)
 const struct shclass *shp;
 int sx, sy;
 {
-	register struct monst *mtmp;
+	struct monst *mtmp;
 	int atype;
 	struct permonst *ptr;
 
 	if (rn2(100) < depth(&u.uz) &&
-	    !MON_AT(sx, sy) && (ptr = mkclass(S_MIMIC,0)) &&
-	    (mtmp=makemon(ptr,sx,sy,NO_MM_FLAGS))) {
-		/* note: makemon will set the mimic symbol to a shop item */
-		if (rn2(10) >= depth(&u.uz)) {
-			mtmp->m_ap_type = M_AP_OBJECT;
-			mtmp->mappearance = STRANGE_OBJECT;
-		}
-	} else if ((atype = get_shop_item(shp - shtypes)) < 0)
-		(void) mksobj_at(-atype, sx, sy, TRUE);
-	else (void) mkobj_at(atype, sx, sy, TRUE);
+		!MON_AT(sx, sy) && (ptr = mkclass(S_MIMIC,0)) &&
+		(mtmp = makemon(ptr,sx,sy,NO_MM_FLAGS)) != 0) {
+	    /* note: makemon will set the mimic symbol to a shop item */
+	    if (rn2(10) >= depth(&u.uz)) {
+		mtmp->m_ap_type = M_AP_OBJECT;
+		mtmp->mappearance = STRANGE_OBJECT;
+	    }
+	} else {
+	    atype = get_shop_item(shp - shtypes);
+	    if (atype < 0)
+		(void) mksobj_at(-atype, sx, sy, TRUE, TRUE);
+	    else
+		(void) mkobj_at(atype, sx, sy, TRUE);
+	}
 }
 
 /* extract a shopkeeper name for the given shop type */
 STATIC_OVL void
 nameshk(shk, nlp)
 struct monst *shk;
-const char *nlp[];
+const char * const *nlp;
 {
 	int i, trycnt, names_avail;
 	const char *shname = 0;
@@ -379,7 +385,7 @@ struct mkroom	*sroom;
 	    return(-1);
 	}
 
-	if(MON_AT(sx, sy)) rloc(m_at(sx, sy)); /* insurance */
+	if(MON_AT(sx, sy)) (void) rloc(m_at(sx, sy), FALSE); /* insurance */
 
 	/* now initialize the shopkeeper monster structure */
 	if(!(shk = makemon(&mons[PM_SHOPKEEPER], sx, sy, NO_MM_FLAGS)))
@@ -402,7 +408,13 @@ struct mkroom	*sroom;
 	ESHK(shk)->visitct = 0;
 	ESHK(shk)->following = 0;
 	ESHK(shk)->billct = 0;
+#ifndef GOLDOBJ
 	shk->mgold = 1000L + 30L*(long)rnd(100);	/* initial capital */
+#else
+        mkmonmoney(shk, 1000L + 30L*(long)rnd(100));	/* initial capital */
+#endif
+	if (shp->shknms == shkrings)
+	    (void) mongets(shk, TOUCHSTONE);
 	nameshk(shk, shp->shknms);
 
 	return(sh);

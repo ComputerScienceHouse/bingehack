@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)gnmenu.h	3.3	2000/07/16	*/
+/*	SCCS Id: @(#)gnmenu.h	3.4	2000/07/16	*/
 /* Copyright (C) 1998 by Erik Andersen <andersee@debian.org> */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -27,6 +27,6 @@ typedef struct _GHackMenuItem GHackMenuItem;
 
 int ghack_menu_window_select_menu (GtkWidget *menuWin, 
 	MENU_ITEM_P **_selected, gint how);
-
+int ghack_menu_ext_cmd(void);
 
 #endif  /* GnomeHackMenuWindow_h */

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mkroom.h	3.3	92/11/14	*/
+/*	SCCS Id: @(#)mkroom.h	3.4	1992/11/14	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -31,7 +31,7 @@ struct shclass {
 	    int iprob;		/* probability of an item type */
 	    int itype;	/* item type: if >=0 a class, if < 0 a specific item */
 	} iprobs[5];
-	const char **shknms;	/* list of shopkeeper names for this type */
+	const char * const *shknms;	/* list of shopkeeper names for this type */
 };
 
 extern NEARDATA struct mkroom rooms[(MAXNROFROOMS+1)*2];

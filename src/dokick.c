@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)dokick.c	3.3	2000/04/21	*/
+/*	SCCS Id: @(#)dokick.c	3.4	2003/12/04	*/
 /* Copyright (c) Izchak Miller, Mike Stephenson, Steve Linhart, 1989. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -23,8 +23,6 @@ STATIC_DCL void FDECL(drop_to, (coord *,SCHAR_P));
 
 static NEARDATA struct obj *kickobj;
 
-#define IS_SHOP(x)	(rooms[x].rtype >= SHOPBASE)
-
 static const char kick_passes_thru[] = "kick passes harmlessly through";
 
 STATIC_OVL void
@@ -36,6 +34,7 @@ register boolean clumsy;
 	register int dmg = ( ACURRSTR + ACURR(A_DEX) + ACURR(A_CON) )/ 15;
 	int kick_skill = P_NONE;
 	int blessed_foot_damage = 0;
+	boolean trapkilled = FALSE;
 
 	if (uarmf && uarmf->otyp == KICKING_BOOTS)
 	    dmg += 5;
@@ -63,23 +62,15 @@ register boolean clumsy;
 
 	if(mon->m_ap_type) seemimic(mon);
 
-	/* it is unchivalrous to attack the defenseless or from behind */
-	if (Role_if(PM_KNIGHT) &&
-		u.ualign.type == A_LAWFUL && u.ualign.record > -10 &&
-		(!mon->mcanmove || mon->msleeping || mon->mflee)) {
-	    You_feel("like a caitiff!");
-	    adjalign(-1);
-	}
+	check_caitiff(mon);
 
 	/* squeeze some guilt feelings... */
 	if(mon->mtame) {
 	    abuse_dog(mon);
-	    mon->mflee = mon->mtame ? 1 : 0;
-#ifdef HISX
-	    mon->mfleetim = mon->mfleetim + (dmg ? rnd(dmg) : 1);
-#else
-	    mon->mfleetim += (dmg ? rnd(dmg) : 1);
-#endif
+	    if (mon->mtame)
+		monflee(mon, (dmg ? rnd(dmg) : 1), FALSE, FALSE);
+	    else
+		mon->mflee = 0;
 	}
 
 	if (dmg > 0) {
@@ -97,25 +88,26 @@ register boolean clumsy;
 	dmg += u.udaminc;	/* add ring(s) of increase damage */
 	if (dmg > 0)
 		mon->mhp -= dmg;
-	if(mon->mhp > 0 && martial() && !bigmonst(mon->data) && !rn2(3)
-			&& mon->mcanmove && mon != u.ustuck) {
+	if (mon->mhp > 0 && martial() && !bigmonst(mon->data) && !rn2(3) &&
+	    mon->mcanmove && mon != u.ustuck && !mon->mtrapped) {
 		/* see if the monster has a place to move into */
 		mdx = mon->mx + u.dx;
 		mdy = mon->my + u.dy;
-		if(goodpos(mdx, mdy, mon)) {
+		if(goodpos(mdx, mdy, mon, 0)) {
 			pline("%s reels from the blow.", Monnam(mon));
-			if (!m_in_out_region(mon, mdx, mdy)) {
+			if (m_in_out_region(mon, mdx, mdy)) {
 			    remove_monster(mon->mx, mon->my);
 			    newsym(mon->mx, mon->my);
 			    place_monster(mon, mdx, mdy);
 			    newsym(mon->mx, mon->my);
 			    set_apparxy(mon);
+			    if (mintrap(mon) == 2) trapkilled = TRUE;
 			}
 		}
 	}
 
 	(void) passive(mon, TRUE, mon->mhp > 0, AT_KICK);
-	if (mon->mhp <= 0) killed(mon);
+	if (mon->mhp <= 0 && !trapkilled) killed(mon);
 
 	/* may bring up a dialog, so put this after all messages */
 	if (kick_skill != P_NONE)	/* exercise proficiency */
@@ -165,6 +157,8 @@ register xchar x, y;
 		    You("kick %s.", mon_nam(mon));
 		    sum = damageum(mon, uattk);
 		    (void)passive(mon, (boolean)(sum > 0), (sum != 2), AT_KICK);
+		    if (sum == 2)
+			break;		/* Defender died */
 		} else {
 		    missum(mon, uattk);
 		    (void)passive(mon, 0, 1, AT_KICK);
@@ -214,10 +208,14 @@ doit:
 		} else {
 		    mnexto(mon);
 		    if(mon->mx != x || mon->my != y) {
+			if(glyph_is_invisible(levl[x][y].glyph)) {
+			    unmap_object(x, y);
+			    newsym(x, y);
+			}
 			pline("%s %s, %s evading your %skick.", Monnam(mon),
 				(can_teleport(mon->data) ? "teleports" :
 				 is_floater(mon->data) ? "floats" :
-				 is_flyer(mon->data) ? "flutters" :
+				 is_flyer(mon->data) ? "swoops" :
 				 (nolimbs(mon->data) || slithy(mon->data)) ?
 					"slides" : "jumps"),
 				clumsy ? "easily" : "nimbly",
@@ -239,14 +237,22 @@ ghitm(mtmp, gold)
 register struct monst *mtmp;
 register struct obj *gold;
 {
+	boolean msg_given = FALSE;
+
 	if(!likes_gold(mtmp->data) && !mtmp->isshk && !mtmp->ispriest
 			&& !is_mercenary(mtmp->data)) {
 		wakeup(mtmp);
 	} else if (!mtmp->mcanmove) {
 		/* too light to do real damage */
-		if (canseemon(mtmp))
-		    pline_The("gold hits %s.", mon_nam(mtmp));
+		if (canseemon(mtmp)) {
+		    pline_The("%s harmlessly %s %s.", xname(gold),
+			      otense(gold, "hit"), mon_nam(mtmp));
+		    msg_given = TRUE;
+		}
 	} else {
+#ifdef GOLDOBJ
+                long value = gold->quan * objects[gold->otyp].oc_cost;
+#endif
 		mtmp->msleeping = 0;
 		mtmp->meating = 0;
 		if(!rn2(4)) setmangry(mtmp); /* not always pleasing */
@@ -254,12 +260,18 @@ register struct obj *gold;
 		/* greedy monsters catch gold */
 		if (cansee(mtmp->mx, mtmp->my))
 		    pline("%s catches the gold.", Monnam(mtmp));
+#ifndef GOLDOBJ
 		mtmp->mgold += gold->quan;
+#endif
 		if (mtmp->isshk) {
 			long robbed = ESHK(mtmp)->robbed;
 
 			if (robbed) {
+#ifndef GOLDOBJ
 				robbed -= gold->quan;
+#else
+				robbed -= value;
+#endif
 				if (robbed < 0) robbed = 0;
 				pline_The("amount %scovers %s recent losses.",
 				      !robbed ? "" : "partially ",
@@ -269,10 +281,14 @@ register struct obj *gold;
 					make_happy_shk(mtmp, FALSE);
 			} else {
 				if(mtmp->mpeaceful) {
+#ifndef GOLDOBJ
 				    ESHK(mtmp)->credit += gold->quan;
-				    You("have %ld zorkmid%s in credit.",
+#else
+				    ESHK(mtmp)->credit += value;
+#endif
+				    You("have %ld %s in credit.",
 					ESHK(mtmp)->credit,
-					plur(ESHK(mtmp)->credit));
+					currency(ESHK(mtmp)->credit));
 				} else verbalize("Thanks, scum!");
 			}
 		} else if (mtmp->ispriest) {
@@ -293,20 +309,91 @@ register struct obj *gold;
 			   goldreqd = 750L;
 
 			if (goldreqd) {
+#ifndef GOLDOBJ
 			   if (gold->quan > goldreqd +
 				(u.ugold + u.ulevel*rn2(5))/ACURR(A_CHA))
+#else
+			   if (value > goldreqd +
+				(money_cnt(invent) + u.ulevel*rn2(5))/ACURR(A_CHA))
+#endif
 			    mtmp->mpeaceful = TRUE;
 			}
 		     }
 		     if (mtmp->mpeaceful)
 			    verbalize("That should do.  Now beat it!");
 		     else verbalize("That's not enough, coward!");
-		 }
+		}
 
+#ifndef GOLDOBJ
 		dealloc_obj(gold);
-		return(1);
+#else
+		add_to_minv(mtmp, gold);
+#endif
+		return TRUE;
 	}
-	return(0);
+
+	if (!msg_given) miss(xname(gold), mtmp);
+	return FALSE;
+}
+
+/* container is kicked, dropped, thrown or otherwise impacted by player.
+ * Assumes container is on floor.  Checks contents for possible damage. */
+void
+container_impact_dmg(obj)
+struct obj *obj;
+{
+	struct monst *shkp;
+	struct obj *otmp, *otmp2;
+	long loss = 0L;
+	boolean costly, insider;
+	xchar x = obj->ox, y = obj->oy;
+
+	/* only consider normal containers */
+	if (!Is_container(obj) || Is_mbag(obj)) return;
+
+	costly = ((shkp = shop_keeper(*in_rooms(x, y, SHOPBASE))) &&
+		  costly_spot(x, y));
+	insider = (*u.ushops && inside_shop(u.ux, u.uy) &&
+		   *in_rooms(x, y, SHOPBASE) == *u.ushops);
+
+	for (otmp = obj->cobj; otmp; otmp = otmp2) {
+	    const char *result = (char *)0;
+
+	    otmp2 = otmp->nobj;
+	    if (objects[otmp->otyp].oc_material == GLASS &&
+		otmp->oclass != GEM_CLASS && !obj_resists(otmp, 33, 100)) {
+		result = "shatter";
+	    } else if (otmp->otyp == EGG && !rn2(3)) {
+		result = "cracking";
+	    }
+	    if (result) {
+		if (otmp->otyp == MIRROR) change_luck(-2);
+
+		/* eggs laid by you.  penalty is -1 per egg, max 5,
+		 * but it's always exactly 1 that breaks */
+		if (otmp->otyp == EGG && otmp->spe && otmp->corpsenm >= LOW_PM)
+		    change_luck(-1);
+		You_hear("a muffled %s.", result);
+		if (costly)
+		    loss += stolen_value(otmp, x, y,
+					 (boolean)shkp->mpeaceful, TRUE);
+		if (otmp->quan > 1L)
+		    useup(otmp);
+		else {
+		    obj_extract_self(otmp);
+		    obfree(otmp, (struct obj *) 0);
+		}
+	    }
+	}
+	if (costly && loss) {
+	    if (!insider) {
+		You("caused %ld %s worth of damage!", loss, currency(loss));
+		make_angry_shk(shkp, x, y);
+	    } else {
+		You("owe %s %ld %s for objects destroyed.",
+		    mon_nam(shkp), loss, currency(loss));
+	    }
+	}
 }
 
 STATIC_OVL int
@@ -315,10 +402,9 @@ xchar x, y;
 {
 	int range;
 	register struct monst *mon, *shkp;
-	register struct obj *otmp;
 	struct trap *trap;
 	char bhitroom;
-	boolean costly, insider, isgold, slide = FALSE;
+	boolean costly, isgold, slide = FALSE;
 
 	/* if a pile, the "top" object gets kicked */
 	kickobj = level.objects[x][y];
@@ -346,16 +432,16 @@ xchar x, y;
 
 	if(kickobj->otyp == CORPSE && touch_petrifies(&mons[kickobj->corpsenm])
 			&& !Stone_resistance && !uarmf) {
-		char kbuf[BUFSZ];
+	    char kbuf[BUFSZ];
 
-		You("kick the %s corpse with your bare %s.",
-				mons[kickobj->corpsenm].mname, makeplural(body_part(FOOT)));
+	    You("kick the %s with your bare %s.",
+		corpse_xname(kickobj, TRUE), makeplural(body_part(FOOT)));
 	    if (!(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))) {
 		You("turn to stone...");
 		killer_format = KILLED_BY;
 		/* KMH -- otmp should be kickobj */
-		Sprintf(kbuf, "kicking a %s corpse without boots",
-			mons[kickobj->corpsenm].mname);
+		Sprintf(kbuf, "kicking %s without boots",
+			an(corpse_xname(kickobj, TRUE)));
 		killer = kbuf;
 		done(STONING);
 	    }
@@ -384,49 +470,45 @@ xchar x, y;
 
 	costly = ((shkp = shop_keeper(*in_rooms(x, y, SHOPBASE))) &&
 				    costly_spot(x, y));
-	insider = (*u.ushops && inside_shop(u.ux, u.uy) &&
-				    *in_rooms(x, y, SHOPBASE) == *u.ushops);
+	isgold = (kickobj->oclass == COIN_CLASS);
+
+	if (IS_ROCK(levl[x][y].typ) || closed_door(x, y)) {
+	    if ((!martial() && rn2(20) > ACURR(A_DEX)) ||
+		    IS_ROCK(levl[u.ux][u.uy].typ) || closed_door(u.ux, u.uy)) {
+		if (Blind)
+		    pline("It doesn't come loose.");
+		else
+		    pline("%s %sn't come loose.",
+			  The(distant_name(kickobj, xname)),
+			  otense(kickobj, "do"));
+		return (!rn2(3) || martial());
+	    }
+	    if (Blind)
+		pline("It comes loose.");
+	    else
+		pline("%s %s loose.",
+		      The(distant_name(kickobj, xname)),
+		      otense(kickobj, "come"));
+	    obj_extract_self(kickobj);
+	    newsym(x, y);
+	    if (costly && (!costly_spot(u.ux, u.uy) ||
+		    !index(u.urooms, *in_rooms(x, y, SHOPBASE))))
+		addtobill(kickobj, FALSE, FALSE, FALSE);
+	    if (!flooreffects(kickobj, u.ux, u.uy, "fall")) {
+		place_object(kickobj, u.ux, u.uy);
+		stackobj(kickobj);
+		newsym(u.ux, u.uy);
+	    }
+	    return 1;
+	}
 
 	/* a box gets a chance of breaking open here */
 	if(Is_box(kickobj)) {
 		boolean otrp = kickobj->otrapped;
-		struct obj *otmp2;
-		long loss = 0L;
 
 		if(range < 2) pline("THUD!");
 
-		for(otmp = kickobj->cobj; otmp; otmp = otmp2) {
-			const char *result = (char *)0;
-
-			otmp2 = otmp->nobj;
-			if (objects[otmp->otyp].oc_material == GLASS
-			    && otmp->oclass != GEM_CLASS
-			    && !obj_resists(otmp, 33, 100)) {
-				result = "shatter";
-			} else if (otmp->otyp == EGG && !rn2(3)) {
-				result = "cracking";
-			}
-			if (result) {
-				You_hear("a muffled %s.",result);
-				if(costly) loss += stolen_value(otmp, x, y,
-					    (boolean)shkp->mpeaceful, TRUE);
-				if (otmp->quan > 1L)
-					useup(otmp);
-				else {
-					obj_extract_self(otmp);
-					obfree(otmp, (struct obj *) 0);
-				}
-			}
-		}
-		if(costly && loss) {
-		    if(!insider) {
-			You("caused %ld zorkmids worth of damage!", loss);
-			make_angry_shk(shkp, x, y);
-		    } else {
-			You("owe %s %ld zorkmids for objects destroyed.",
-			    mon_nam(shkp), loss);
-		    }
-		}
+		container_impact_dmg(kickobj);
 
 		if (kickobj->olocked) {
 		    if (!rn2(5) || (martial() && !rn2(2))) {
@@ -450,35 +532,6 @@ xchar x, y;
 	/* fragile objects should not be kicked */
 	if (hero_breaks(kickobj, kickobj->ox, kickobj->oy, FALSE)) return 1;
 
-	if (IS_ROCK(levl[x][y].typ) || closed_door(x, y)) {
-		if ((!martial() && rn2(20) > ACURR(A_DEX))
-				 || IS_ROCK(levl[u.ux][u.uy].typ)
-				 || closed_door(u.ux, u.uy)) {
-			if (Blind) pline("It doesn't come loose.");
-			else pline("%s do%sn't come loose.",
-				The(distant_name(kickobj, xname)),
-				(kickobj->quan == 1L) ? "es" : "");
-			return(!rn2(3) || martial());
-		}
-		if (Blind) pline("It comes loose.");
-		else pline("%s come%s loose.",
-			   The(distant_name(kickobj, xname)),
-			   (kickobj->quan == 1L) ? "s" : "");
-		obj_extract_self(kickobj);
-		newsym(x, y);
-		if (costly && (!costly_spot(u.ux, u.uy)
-			       || !index(u.urooms, *in_rooms(x, y, SHOPBASE))))
-			addtobill(kickobj, FALSE, FALSE, FALSE);
-		if(!flooreffects(kickobj,u.ux,u.uy,"fall")) {
-		    place_object(kickobj, u.ux, u.uy);
-		    stackobj(kickobj);
-		    newsym(u.ux, u.uy);
-		}
-		return(1);
-	}
-
-	isgold = (kickobj->oclass == GOLD_CLASS);
-
 	/* too heavy to move.  range is calculated as potential distance from
 	 * player, so range == 2 means the object may move up to one square
 	 * from its current position
@@ -488,12 +541,11 @@ xchar x, y;
 	    return(!rn2(3) || martial());
 	}
 
-	if (kickobj->quan > 1L && !isgold) (void) splitobj(kickobj, 1L);
+	if (kickobj->quan > 1L && !isgold) kickobj = splitobj(kickobj, 1L);
 
 	if (slide && !Blind)
-	    pline("Whee!  %s slide%s across the %s.", Doname2(kickobj),
-		kickobj->quan > 1L ? "" : "s",
-		surface(x,y));
+	    pline("Whee!  %s %s across the %s.", Doname2(kickobj),
+		  otense(kickobj, "slide"), surface(x,y));
 
 	obj_extract_self(kickobj);
 	(void) snuff_candle(kickobj);
@@ -514,8 +566,15 @@ xchar x, y;
 	}
 
 	/* the object might have fallen down a hole */
-	if (kickobj->where == OBJ_MIGRATING)
+	if (kickobj->where == OBJ_MIGRATING) {
+	    if (costly) {
+		if(isgold)
+		    costly_gold(x, y, kickobj->quan);
+		else (void)stolen_value(kickobj, x, y,
+					(boolean)shkp->mpeaceful, FALSE);
+	    }
 	    return 1;
+	}
 
 	bhitroom = *in_rooms(bhitpos.x, bhitpos.y, SHOPBASE);
 	if (costly && (!costly_spot(bhitpos.x, bhitpos.y) ||
@@ -541,17 +600,17 @@ char *buf;
 
 	if (kickobj) what = distant_name(kickobj,doname);
 	else if (IS_DOOR(maploc->typ)) what = "a door";
+	else if (IS_TREE(maploc->typ)) what = "a tree";
 	else if (IS_STWALL(maploc->typ)) what = "a wall";
 	else if (IS_ROCK(maploc->typ)) what = "a rock";
 	else if (IS_THRONE(maploc->typ)) what = "a throne";
 	else if (IS_FOUNTAIN(maploc->typ)) what = "a fountain";
 	else if (IS_GRAVE(maploc->typ)) what = "a headstone";
-	else if (IS_TREE(maploc->typ)) what = "a tree";
 #ifdef SINKS
 	else if (IS_SINK(maploc->typ)) what = "a sink";
 #endif
 	else if (IS_ALTAR(maploc->typ)) what = "an altar";
-	else if (IS_DRAWBRIDGE(maploc->typ)) what = "the drawbridge";
+	else if (IS_DRAWBRIDGE(maploc->typ)) what = "a drawbridge";
 	else if (maploc->typ == STAIRS) what = "the stairs";
 	else if (maploc->typ == LADDER) what = "a ladder";
 	else if (maploc->typ == IRONBARS) what = "an iron bar";
@@ -562,10 +621,9 @@ char *buf;
 int
 dokick()
 {
-	register int x, y;
+	int x, y;
 	int avrg_attrib;
 	register struct monst *mtmp;
-	s_level *slev;
 	boolean no_kick = FALSE;
 	char buf[BUFSZ];
 
@@ -598,6 +656,9 @@ dokick()
 		no_kick = TRUE;
 	} else if (near_capacity() > SLT_ENCUMBER) {
 		Your("load is too heavy to balance yourself for a kick.");
+		no_kick = TRUE;
+	} else if (youmonst.data->mlet == S_LIZARD) {
+		Your("legs cannot kick effectively.");
 		no_kick = TRUE;
 	} else if (u.uinwater && !rn2(2)) {
 		Your("slow motion kick doesn't hit anything.");
@@ -683,7 +744,8 @@ dokick()
 		kick_monster(x, y);
 		flags.forcefight = FALSE;
 		/* see comment in attack_checks() */
-		if (!canspotmon(mtmp) &&
+		if (!DEADMONSTER(mtmp) &&
+		    !canspotmon(mtmp) &&
 		    /* check x and y; a monster that evades your kick by
 		       jumping to an unseen square doesn't leave an I behind */
 		    mtmp->mx == x && mtmp->my == y &&
@@ -782,7 +844,9 @@ dokick()
 			(void) mkgold((long) rn1(201, 300), x, y);
 			i = Luck + 1;
 			if(i > 6) i = 6;
-			while(i--) (void) mkobj_at(GEM_CLASS, x, y, TRUE);
+			while(i--)
+			    (void) mksobj_at(rnd_class(DILITHIUM_CRYSTAL,
+					LUCKSTONE-1), x, y, FALSE, TRUE);
 			if (Blind)
 			    You("kick %s loose!", something);
 			else {
@@ -821,34 +885,55 @@ dokick()
 		    exercise(A_DEX, TRUE);
 		    return(1);
 		}
-		if(IS_GRAVE(maploc->typ))
+		if(IS_GRAVE(maploc->typ) || maploc->typ == IRONBARS)
 		    goto ouch;
 		if(IS_TREE(maploc->typ)) {
 		    struct obj *treefruit;
-		    if (rn2(8)) goto ouch;
-		    /* fruit or trouble ? */
-		    if (!rn2(2) && !(maploc->looted & TREE_LOOTED) &&
+		    /* nothing, fruit or trouble? 75:23.5:1.5% */
+		    if (rn2(3)) {
+			if ( !rn2(6) && !(mvitals[PM_KILLER_BEE].mvflags & G_GONE) )
+			    You_hear("a low buzzing."); /* a warning */
+			goto ouch;
+		    }
+		    if (rn2(15) && !(maploc->looted & TREE_LOOTED) &&
 			  (treefruit = rnd_treefruit_at(x, y))) {
-			treefruit->quan = (long)(8 - rnl(8));
-			if (treefruit->quan > 1L)
-				pline("Some %s fall from the tree!", xname(treefruit));
+			long nfruit = 8L-rnl(7), nfall;
+			short frtype = treefruit->otyp;
+			treefruit->quan = nfruit;
+			if (is_plural(treefruit))
+			    pline("Some %s fall from the tree!", xname(treefruit));
 			else
-				pline("%s falls from the tree!", An(xname(treefruit)));
-			scatter(x,y,2,MAY_HIT,treefruit);
+			    pline("%s falls from the tree!", An(xname(treefruit)));
+			nfall = scatter(x,y,2,MAY_HIT,treefruit);
+			if (nfall != nfruit) {
+			    /* scatter left some in the tree, but treefruit
+			     * may not refer to the correct object */
+			    treefruit = mksobj(frtype, TRUE, FALSE);
+			    treefruit->quan = nfruit-nfall;
+			    pline("%ld %s got caught in the branches.",
+				nfruit-nfall, xname(treefruit));
+			    dealloc_obj(treefruit);
+			}
 			exercise(A_DEX, TRUE);
 			exercise(A_WIS, TRUE);	/* discovered a new food source! */
 			newsym(x, y);
 			maploc->looted |= TREE_LOOTED;
 			return(1);
-		    } else if (!rn2(15) && !(maploc->looted & TREE_SWARM)){
-		    	int cnt = rnl(5);
+		    } else if (!(maploc->looted & TREE_SWARM)) {
+		    	int cnt = rnl(4) + 2;
+			int made = 0;
 		    	coord mm;
 		    	mm.x = x; mm.y = y;
-			pline("You've disturbed the occupants!");
-			while (cnt--)
-			    if (enexto(&mm, mm.x, mm.y, &mons[PM_KILLER_BEE]))
-				(void) makemon(&mons[PM_KILLER_BEE],
-					       mm.x, mm.y, MM_ANGRY);
+			while (cnt--) {
+			    if (enexto(&mm, mm.x, mm.y, &mons[PM_KILLER_BEE])
+				&& makemon(&mons[PM_KILLER_BEE],
+					       mm.x, mm.y, MM_ANGRY))
+				made++;
+			}
+			if ( made )
+			    pline("You've attracted the tree's former occupants!");
+			else
+			    You("smell stale honey.");
 			maploc->looted |= TREE_SWARM;
 			return(1);
 		    }
@@ -873,7 +958,7 @@ dokick()
 			    You_hear("a gushing sound.");
 			else
 			    pline("A %s ooze gushes up from the drain!",
-					 hcolor(Black));
+					 hcolor(NH_BLACK));
 			(void) makemon(&mons[PM_BLACK_PUDDING],
 					 x, y, NO_MM_FLAGS);
 			exercise(A_DEX, TRUE);
@@ -917,17 +1002,17 @@ ouch:
 		    exercise(A_DEX, FALSE);
 		    exercise(A_STR, FALSE);
 		    if (Blind) feel_location(x,y); /* we know we hit it */
+		    if (is_drawbridge_wall(x,y) >= 0) {
+			pline_The("drawbridge is unaffected.");
+			/* update maploc to refer to the drawbridge */
+			(void) find_drawbridge(&x,&y);
+			maploc = &levl[x][y];
+		    }
 		    if(!rn2(3)) set_wounded_legs(RIGHT_SIDE, 5 + rnd(5));
 		    losehp(rnd(ACURR(A_CON) > 15 ? 3 : 5), kickstr(buf),
 			KILLED_BY);
 		    if(Is_airlevel(&u.uz) || Levitation)
 			hurtle(-u.dx, -u.dy, rn1(2,4), TRUE); /* assume it's heavy */
-		    return(1);
-		}
-		if (is_drawbridge_wall(x,y) >= 0) {
-		    pline_The("drawbridge is unaffected.");
-		    if(Levitation)
-			hurtle(-u.dx, -u.dy, rn1(2,4), TRUE); /* it's heavy */
 		    return(1);
 		}
 		goto dumb;
@@ -982,16 +1067,19 @@ dumb:
 		unblock_point(x,y);		/* vision */
 		if (shopdoor) {
 		    add_damage(x, y, 400L);
-		    pay_for_damage("break");
+		    pay_for_damage("break", FALSE);
 		}
-		if ((slev = Is_special(&u.uz)) && slev->flags.town)
+		if (in_town(x, y))
 		  for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
 		    if (DEADMONSTER(mtmp)) continue;
 		    if((mtmp->data == &mons[PM_WATCHMAN] ||
 			mtmp->data == &mons[PM_WATCH_CAPTAIN]) &&
 			couldsee(mtmp->mx, mtmp->my) &&
 			mtmp->mpeaceful) {
-			pline("%s yells:", Amonnam(mtmp));
+			if (canspotmon(mtmp))
+			    pline("%s yells:", Amonnam(mtmp));
+			else
+			    You_hear("someone yell:");
 			verbalize("Halt, thief!  You're under arrest!");
 			(void) angry_guards(FALSE);
 			break;
@@ -1001,13 +1089,16 @@ dumb:
 	    if (Blind) feel_location(x,y);	/* we know we hit it */
 	    exercise(A_STR, TRUE);
 	    pline("WHAMMM!!!");
-	    if ((slev = Is_special(&u.uz)) && slev->flags.town)
+	    if (in_town(x, y))
 		for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
 		    if (DEADMONSTER(mtmp)) continue;
 		    if ((mtmp->data == &mons[PM_WATCHMAN] ||
 				mtmp->data == &mons[PM_WATCH_CAPTAIN]) &&
 			    mtmp->mpeaceful && couldsee(mtmp->mx, mtmp->my)) {
-			pline("%s yells:", Amonnam(mtmp));
+			if (canspotmon(mtmp))
+			    pline("%s yells:", Amonnam(mtmp));
+			else
+			    You_hear("someone yell:");
 			if(levl[x][y].looted & D_WARNED) {
 			    verbalize("Halt, vandal!  You're under arrest!");
 			    (void) angry_guards(FALSE);
@@ -1120,7 +1211,7 @@ xchar x, y, dlev;
 		    /* set obj->no_charge to 0 */
 		    if (Has_contents(obj))
 			picked_container(obj);	/* does the right thing */
-		    if (obj->oclass != GOLD_CLASS)
+		    if (obj->oclass != COIN_CLASS)
 			obj->no_charge = 0;
 		}
 
@@ -1150,7 +1241,7 @@ xchar x, y, dlev;
 
 	if(costly && shkp && price) {
 		if(ESHK(shkp)->robbed > robbed) {
-		    You("removed %ld zorkmids worth of goods!", price);
+		    You("removed %ld %s worth of goods!", price, currency(price));
 		    if(cansee(shkp->mx, shkp->my)) {
 			if(ESHK(shkp)->customer[0] == 0)
 			    (void) strncpy(ESHK(shkp)->customer,
@@ -1163,10 +1254,12 @@ xchar x, y, dlev;
 		    (void) angry_guards(FALSE);
 		    return;
 		}
-		if(ESHK(shkp)->debit > debit)
-		    You("owe %s %ld zorkmids for goods lost.",
+		if(ESHK(shkp)->debit > debit) {
+		    long amt = (ESHK(shkp)->debit - debit);
+		    You("owe %s %ld %s for goods lost.",
 			Monnam(shkp),
-			(ESHK(shkp)->debit - debit));
+			amt, currency(amt));
+		}
 	}
 
 }
@@ -1239,14 +1332,44 @@ boolean shop_floor_obj;
 	    /* set otmp->no_charge to 0 */
 	    if(container)
 		picked_container(otmp); /* happens to do the right thing */
-	    if(otmp->oclass != GOLD_CLASS)
+	    if(otmp->oclass != COIN_CLASS)
 		otmp->no_charge = 0;
+	}
+
+	if (otmp == uwep) setuwep((struct obj *)0);
+	if (otmp == uquiver) setuqwep((struct obj *)0);
+	if (otmp == uswapwep) setuswapwep((struct obj *)0);
+
+	/* some things break rather than ship */
+	if (breaktest(otmp)) {
+	    const char *result;
+
+	    if (objects[otmp->otyp].oc_material == GLASS
+#ifdef TOURIST
+		|| otmp->otyp == EXPENSIVE_CAMERA
+#endif
+		) {
+		if (otmp->otyp == MIRROR)
+		    change_luck(-2);
+		result = "crash";
+	    } else {
+		/* penalty for breaking eggs laid by you */
+		if (otmp->otyp == EGG && otmp->spe && otmp->corpsenm >= LOW_PM)
+		    change_luck((schar) -min(otmp->quan, 5L));
+		result = "splat";
+	    }
+	    You_hear("a muffled %s.",result);
+	    obj_extract_self(otmp);
+	    obfree(otmp, (struct obj *) 0);
+	    return TRUE;
 	}
 
 	add_to_migration(otmp);
 	otmp->ox = cc.x;
 	otmp->oy = cc.y;
 	otmp->owornmask = (long)toloc;
+	/* boulder from rolling boulder trap, no longer part of the trap */
+	if (otmp->otyp == BOULDER) otmp->otrapped = 0;
 
 	if(impact) {
 	    /* the objs impacted may be in a shop other than
@@ -1295,7 +1418,7 @@ obj_delivery()
 	    if (nx > 0) {
 		place_object(otmp, nx, ny);
 		stackobj(otmp);
-		scatter(nx, ny, rnd(2), 0, otmp);
+		(void)scatter(nx, ny, rnd(2), 0, otmp);
 	    } else {		/* random location */
 		/* set dummy coordinates because there's no
 		   current position for rloco() to update */
@@ -1319,19 +1442,18 @@ long num;
 		 xname(otmp));
 
 	if(num) { /* means: other objects are impacted */
-	    Sprintf(eos(obuf), " hit%s %s object%s",
-		      otmp->quan == 1L ? "s" : "",
-		      num == 1L ? "another" : "other",
-		      num > 1L ? "s" : "");
+	    Sprintf(eos(obuf), " %s %s object%s",
+		    otense(otmp, "hit"),
+		    num == 1L ? "another" : "other",
+		    num > 1L ? "s" : "");
 	    if(nodrop)
 		Sprintf(eos(obuf), ".");
 	    else
-		Sprintf(eos(obuf), " and fall%s %s.",
-			otmp->quan == 1L ? "s" : "", gate_str);
+		Sprintf(eos(obuf), " and %s %s.",
+			otense(otmp, "fall"), gate_str);
 	    pline("%s", obuf);
 	} else if(!nodrop)
-	    pline("%s fall%s %s.", obuf,
-		  otmp->quan == 1L ? "s" : "", gate_str);
+	    pline("%s %s %s.", obuf, otense(otmp, "fall"), gate_str);
 }
 
 /* migration destination for objects which fall down to next level */

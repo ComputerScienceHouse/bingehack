@@ -1,4 +1,4 @@
-#	SCCS Id: @(#)Healer.des	3.3	95/04/16
+#	SCCS Id: @(#)Healer.des	3.4	1995/04/16
 #	Copyright (c) 1989 by Jean-Christophe Collet
 #	Copyright (c) 1991, 1993 by M. Stephenson, P. Winner
 # NetHack may be freely redistributed.  See license for details.
@@ -125,7 +125,7 @@ PPPPPPPP...............PPPPPPPP
 PPPPPPPPPPP........PPPPPPPPPPPP
 ENDMAP
 # Dungeon Description
-REGION:(03,00,26,09),lit,"ordinary"
+REGION:(00,00,30,09),lit,"ordinary"
 REGION:(12,03,20,06),lit,"temple"
 # Doors
 DOOR:closed,(09,04)

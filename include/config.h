@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)config.h	3.3	2000/07/20	*/
+/*	SCCS Id: @(#)config.h	3.4	2003/12/06	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -46,6 +46,7 @@
 /* #define X11_GRAPHICS */	/* X11 interface */
 /* #define QT_GRAPHICS */	/* Qt interface */
 /* #define GNOME_GRAPHICS */	/* Gnome interface */
+/* #define MSWIN_GRAPHICS */	/* Windows NT, CE, Graphics */
 
 /*
  * Define the default window system.  This should be one that is compiled
@@ -82,6 +83,11 @@
 #endif
 
 #ifdef QT_GRAPHICS
+# define DEFAULT_WC_TILED_MAP   /* Default to tiles if users doesn't say wc_ascii_map */
+# define USER_SOUNDS		/* Use sounds */
+# ifndef __APPLE__
+#  define USER_SOUNDS_REGEX
+# endif
 # define USE_XPM		/* Use XPM format for images (required) */
 # define GRAPHIC_TOMBSTONE	/* Use graphical tombstone (rip.ppm) */
 # ifndef DEFAULT_WINDOW_SYS
@@ -95,6 +101,16 @@
 # ifndef DEFAULT_WINDOW_SYS
 #  define DEFAULT_WINDOW_SYS "Gnome"
 # endif
+#endif
+
+#ifdef MSWIN_GRAPHICS
+# ifdef TTY_GRAPHICS
+# undef TTY_GRAPHICS
+# endif
+# ifndef DEFAULT_WINDOW_SYS
+#  define DEFAULT_WINDOW_SYS "mswin"
+# endif
+# define HACKDIR "\\nethack"
 #endif
 
 #ifndef DEFAULT_WINDOW_SYS
@@ -119,9 +135,10 @@
 
 /*
  * Section 2:	Some global parameters and filenames.
- *		Commenting out WIZARD, LOGFILE, or NEWS removes that feature
- *		from the game; otherwise set the appropriate wizard name.
- *		LOGFILE and NEWS refer to files in the playground.
+ *		Commenting out WIZARD, LOGFILE, NEWS or PANICLOG removes that
+ *		feature from the game; otherwise set the appropriate wizard
+ *		name.  LOGFILE, NEWS and PANICLOG refer to files in the
+ *		playground.
  */
 
 #ifndef WIZARD		/* allow for compile-time or Makefile changes */
@@ -135,6 +152,7 @@
 
 #define LOGFILE "logfile"	/* larger file for debugging purposes */
 #define NEWS "news"		/* the file containing the latest hack news */
+#define PANICLOG "paniclog"	/* log of panic and impossible events */
 
 /*
  *	If COMPRESS is defined, it should contain the full path name of your
@@ -186,7 +204,7 @@
  * otherwise it will be the current directory.
  */
 # ifndef HACKDIR
-#  define HACKDIR "/usr/games/lib/nethackdir"	/* nethack directory */
+#  define HACKDIR "/usr/games/lib/nethackdir"
 # endif
 
 /*
@@ -321,6 +339,19 @@ typedef unsigned char	uchar;
 
 #define EXP_ON_BOTL	/* Show experience on bottom line */
 /* #define SCORE_ON_BOTL */	/* added by Gary Erickson (erickson@ucivax) */
+
+/*
+ * Section 5:  EXPERIMENTAL STUFF
+ *
+ * Conditional compilation of new or experimental options are controlled here.
+ * Enable any of these at your own risk -- there are almost certainly
+ * bugs left here.
+ */
+
+/*#define GOLDOBJ */	/* Gold is kept on obj chains - Helge Hafting */
+/*#define AUTOPICKUP_EXCEPTIONS */ /* exceptions to autopickup */
+
+/* End of Section 5 */
 
 #include "global.h"	/* Define everything else according to choices above */
 

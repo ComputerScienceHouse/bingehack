@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mondata.h	3.3	2000/07/14	*/
+/*	SCCS Id: @(#)mondata.h	3.4	2003/01/08	*/
 /* Copyright (c) 1989 Mike Threepoint				  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -19,6 +19,11 @@
 #define resists_acid(mon)	(((mon)->mintrinsics & MR_ACID) != 0)
 #define resists_ston(mon)	(((mon)->mintrinsics & MR_STONE) != 0)
 
+#define is_lminion(mon)		(is_minion((mon)->data) && \
+				 (mon)->data->maligntyp >= A_COALIGNED && \
+				 ((mon)->data != &mons[PM_ANGEL] || \
+				  EPRI(mon)->shralign > 0))
+
 #define is_flyer(ptr)		(((ptr)->mflags1 & M1_FLY) != 0L)
 #define is_floater(ptr)		((ptr)->mlet == S_EYE)
 #define is_clinger(ptr)		(((ptr)->mflags1 & M1_CLING) != 0L)
@@ -33,12 +38,21 @@
 #define hides_under(ptr)	(((ptr)->mflags1 & M1_CONCEAL) != 0L)
 #define is_hider(ptr)		(((ptr)->mflags1 & M1_HIDE) != 0L)
 #define haseyes(ptr)		(((ptr)->mflags1 & M1_NOEYES) == 0L)
+#define eyecount(ptr)		(!haseyes(ptr) ? 0 : \
+				 ((ptr) == &mons[PM_CYCLOPS] || \
+				  (ptr) == &mons[PM_FLOATING_EYE]) ? 1 : 2)
 #define nohands(ptr)		(((ptr)->mflags1 & M1_NOHANDS) != 0L)
 #define nolimbs(ptr)		(((ptr)->mflags1 & M1_NOLIMBS) == M1_NOLIMBS)
 #define notake(ptr)		(((ptr)->mflags1 & M1_NOTAKE) != 0L)
 #define has_head(ptr)		(((ptr)->mflags1 & M1_NOHEAD) == 0L)
+#define has_horns(ptr)		(num_horns(ptr) > 0)
 #define is_whirly(ptr)		((ptr)->mlet == S_VORTEX || \
 				 (ptr) == &mons[PM_AIR_ELEMENTAL])
+#define flaming(ptr)		((ptr) == &mons[PM_FIRE_VORTEX] || \
+				 (ptr) == &mons[PM_FLAMING_SPHERE] || \
+				 (ptr) == &mons[PM_FIRE_ELEMENTAL] || \
+				 (ptr) == &mons[PM_SALAMANDER])
+#define is_silent(ptr)		((ptr)->msound == MS_SILENT)
 #define unsolid(ptr)		(((ptr)->mflags1 & M1_UNSOLID) != 0L)
 #define mindless(ptr)		(((ptr)->mflags1 & M1_MINDLESS) != 0L)
 #define humanoid(ptr)		(((ptr)->mflags1 & M1_HUMANOID) != 0L)
@@ -90,6 +104,7 @@
 #define strongmonst(ptr)	(((ptr)->mflags2 & M2_STRONG) != 0L)
 #define can_breathe(ptr)	attacktype(ptr, AT_BREA)
 #define cantwield(ptr)		(nohands(ptr) || verysmall(ptr))
+#define could_twoweap(ptr)	((ptr)->mattk[1].aatyp == AT_WEAP)
 #define cantweararm(ptr)	(breakarm(ptr) || sliparm(ptr))
 #define throws_rocks(ptr)	(((ptr)->mflags2 & M2_ROCKTHROW) != 0L)
 #define type_is_pname(ptr)	(((ptr)->mflags2 & M2_PNAME) != 0L)
@@ -100,8 +115,6 @@
 #define is_dlord(ptr)		(is_demon(ptr) && is_lord(ptr))
 #define is_dprince(ptr)		(is_demon(ptr) && is_prince(ptr))
 #define is_minion(ptr)		((ptr)->mflags2 & M2_MINION)
-#define is_lminion(ptr)		(is_minion(ptr) && \
-				 (ptr)->maligntyp >= A_COALIGNED)
 #define likes_gold(ptr)		(((ptr)->mflags2 & M2_GREEDY) != 0L)
 #define likes_gems(ptr)		(((ptr)->mflags2 & M2_JEWELS) != 0L)
 #define likes_objs(ptr)		(((ptr)->mflags2 & M2_COLLECT) != 0L || \
@@ -125,6 +138,9 @@
 				 (ptr) == &mons[PM_GIANT] || \
 				 (ptr) == &mons[PM_ELF] || \
 				 (ptr) == &mons[PM_HUMAN])
+/* return TRUE if the monster tends to revive */
+#define is_reviver(ptr)		(is_rider(ptr) || (ptr)->mlet == S_TROLL)
+
 /* this returns the light's range, or 0 if none; if we add more light emitting
    monsters, we'll likely have to add a new light range field to mons[] */
 #define emits_light(ptr)	(((ptr)->mlet == S_LIGHT || \
@@ -149,7 +165,9 @@
 #define is_mind_flayer(ptr)	((ptr) == &mons[PM_MIND_FLAYER] || \
 				 (ptr) == &mons[PM_MASTER_MIND_FLAYER])
 
-#define nonliving(ptr)		(is_golem(ptr) || is_undead(ptr))
+#define nonliving(ptr)		(is_golem(ptr) || is_undead(ptr) || \
+				 (ptr)->mlet == S_VORTEX || \
+				 (ptr) == &mons[PM_MANES])
 
 /* Used for conduct with corpses, tins, and digestion attacks */
 /* G_NOCORPSE monsters might still be swallowed as a purple worm */
@@ -168,5 +186,8 @@
 #define vegetarian(ptr)		(vegan(ptr) || \
 				((ptr)->mlet == S_PUDDING &&         \
 				 (ptr) != &mons[PM_BLACK_PUDDING]))
+
+#define befriend_with_obj(ptr, obj) ((obj)->oclass == FOOD_CLASS && \
+				     is_domestic(ptr))
 
 #endif /* MONDATA_H */

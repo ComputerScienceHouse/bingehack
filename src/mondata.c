@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mondata.c	3.3	2000/07/14	*/
+/*	SCCS Id: @(#)mondata.c	3.4	2003/06/02	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -29,17 +29,26 @@ int flag;
 #endif /* OVLB */
 #ifdef OVL0
 
+struct attack *
+attacktype_fordmg(ptr, atyp, dtyp)
+struct permonst *ptr;
+int atyp, dtyp;
+{
+    struct attack *a;
+
+    for (a = &ptr->mattk[0]; a < &ptr->mattk[NATTK]; a++)
+	if (a->aatyp == atyp && (dtyp == AD_ANY || a->adtyp == dtyp))
+	    return a;
+
+    return (struct attack *)0;
+}
+
 boolean
 attacktype(ptr, atyp)
-	register struct	permonst	*ptr;
-	register int atyp;
+struct permonst *ptr;
+int atyp;
 {
-	int	i;
-
-	for(i = 0; i < NATTK; i++)
-	    if(ptr->mattk[i].aatyp == atyp) return(TRUE);
-
-	return(FALSE);
+    return attacktype_fordmg(ptr, atyp, AD_ANY) ? TRUE : FALSE;
 }
 
 #endif /* OVL0 */
@@ -105,9 +114,9 @@ struct monst *mon;
 			    paralysis does too, we can't check it */
 		    mon->msleeping))
 	    return TRUE;
-	/* AD_BLND => yellow light, Archon, !cobra, !raven */
-	if (dmgtype(ptr, AD_BLND) &&
-	    !attacktype(ptr, AT_SPIT) && !attacktype(ptr, AT_CLAW))
+	/* yellow light, Archon; !dust vortex, !cobra, !raven */
+	if (dmgtype_fromattack(ptr, AD_BLND, AT_EXPL) ||
+		dmgtype_fromattack(ptr, AD_BLND, AT_GAZE))
 	    return TRUE;
 	o = is_you ? uwep : MON_WEP(mon);
 	if (o && o->oartifact && defends(AD_BLND, o))
@@ -238,6 +247,16 @@ register struct permonst *ptr;
 		(ptr->mlet==S_IMP && ptr != &mons[PM_TENGU])));
 }
 
+/* true iff the type of monster pass through iron bars */
+boolean
+passes_bars(mptr)
+struct permonst *mptr;
+{
+    return (boolean) (passes_walls(mptr) || amorphous(mptr) ||
+		      is_whirly(mptr) || verysmall(mptr) ||
+		      (slithy(mptr) && !bigmonst(mptr)));
+}
+
 #endif /* OVL0 */
 #ifdef OVL1
 
@@ -282,17 +301,48 @@ sticks(ptr)	/* creature sticks other creatures it hits */
 		attacktype(ptr,AT_HUGS)));
 }
 
+/* number of horns this type of monster has on its head */
+int
+num_horns(ptr)
+struct permonst *ptr;
+{
+    switch (monsndx(ptr)) {
+    case PM_HORNED_DEVIL:	/* ? "more than one" */
+    case PM_MINOTAUR:
+    case PM_ASMODEUS:
+    case PM_BALROG:
+	return 2;
+    case PM_WHITE_UNICORN:
+    case PM_GRAY_UNICORN:
+    case PM_BLACK_UNICORN:
+    case PM_KI_RIN:
+	return 1;
+    default:
+	break;
+    }
+    return 0;
+}
+
+struct attack *
+dmgtype_fromattack(ptr, dtyp, atyp)
+struct permonst *ptr;
+int dtyp, atyp;
+{
+    struct attack *a;
+
+    for (a = &ptr->mattk[0]; a < &ptr->mattk[NATTK]; a++)
+	if (a->adtyp == dtyp && (atyp == AT_ANY || a->aatyp == atyp))
+	    return a;
+
+    return (struct attack *)0;
+}
+
 boolean
 dmgtype(ptr, dtyp)
-	register struct	permonst	*ptr;
-	register int dtyp;
+struct permonst *ptr;
+int dtyp;
 {
-	int	i;
-
-	for(i = 0; i < NATTK; i++)
-	    if(ptr->mattk[i].adtyp == dtyp) return TRUE;
-
-	return FALSE;
+    return dmgtype_fromattack(ptr, dtyp, AT_ANY) ? TRUE : FALSE;
 }
 
 /* returns the maximum damage a defender can do to the attacker via
@@ -337,7 +387,7 @@ monsndx(ptr)		/* return an index into the mons array */
 		/* ought to switch this to use `fmt_ptr' */
 	    panic("monsndx - could not index monster (%lx)",
 		  (unsigned long)ptr);
-	    return FALSE;		/* will not get here */
+	    return NON_PM;		/* will not get here */
 	}
 
 	return(i);
@@ -444,6 +494,10 @@ const char *in_str;
 			(str[m_i_len] == ' ' ||
 			 !strcmpi(&str[m_i_len], "s") ||
 			 !strncmpi(&str[m_i_len], "s ", 2) ||
+			 !strcmpi(&str[m_i_len], "'") ||
+			 !strncmpi(&str[m_i_len], "' ", 2) ||
+			 !strcmpi(&str[m_i_len], "'s") ||
+			 !strncmpi(&str[m_i_len], "'s ", 3) ||
 			 !strcmpi(&str[m_i_len], "es") ||
 			 !strncmpi(&str[m_i_len], "es ", 3))) {
 		    mntmp = i;
@@ -473,20 +527,29 @@ int
 pronoun_gender(mtmp)
 register struct monst *mtmp;
 {
-	if (!canspotmon(mtmp) || !humanoid(mtmp->data))
-		return 2;
-	return mtmp->female;
+	if (is_neuter(mtmp->data) || !canspotmon(mtmp)) return 2;
+	return (humanoid(mtmp->data) || (mtmp->data->geno & G_UNIQ) ||
+		type_is_pname(mtmp->data)) ? (int)mtmp->female : 2;
 }
 
 #endif /* OVL2 */
 #ifdef OVLB
 
+/* used for nearby monsters when you go to another level */
 boolean
 levl_follower(mtmp)
-register struct monst *mtmp;
+struct monst *mtmp;
 {
-	return((boolean)(mtmp->mtame || (mtmp->data->mflags2 & M2_STALK) || is_fshk(mtmp)
-		|| (mtmp->iswiz && !mon_has_amulet(mtmp))));
+	/* monsters with the Amulet--even pets--won't follow across levels */
+	if (mon_has_amulet(mtmp)) return FALSE;
+
+	/* some monsters will follow even while intending to flee from you */
+	if (mtmp->mtame || mtmp->iswiz || is_fshk(mtmp)) return TRUE;
+
+	/* stalking types follow, but won't when fleeing unless you hold
+	   the Amulet */
+	return (boolean)((mtmp->data->mflags2 & M2_STALK) &&
+				(!mtmp->mflee || u.uhave.amulet));
 }
 
 static const short grownups[][2] = {
@@ -499,6 +562,11 @@ static const short grownups[][2] = {
 	{PM_KOBOLD, PM_LARGE_KOBOLD}, {PM_LARGE_KOBOLD, PM_KOBOLD_LORD},
 	{PM_GNOME, PM_GNOME_LORD}, {PM_GNOME_LORD, PM_GNOME_KING},
 	{PM_DWARF, PM_DWARF_LORD}, {PM_DWARF_LORD, PM_DWARF_KING},
+	{PM_MIND_FLAYER, PM_MASTER_MIND_FLAYER},
+	{PM_ORC, PM_ORC_CAPTAIN}, {PM_HILL_ORC, PM_ORC_CAPTAIN},
+	{PM_MORDOR_ORC, PM_ORC_CAPTAIN}, {PM_URUK_HAI, PM_ORC_CAPTAIN},
+	{PM_SEWER_RAT, PM_GIANT_RAT},
+	{PM_CAVE_SPIDER, PM_GIANT_SPIDER},
 	{PM_OGRE, PM_OGRE_LORD}, {PM_OGRE_LORD, PM_OGRE_KING},
 	{PM_ELF, PM_ELF_LORD}, {PM_WOODLAND_ELF, PM_ELF_LORD},
 	{PM_GREEN_ELF, PM_ELF_LORD}, {PM_GREY_ELF, PM_ELF_LORD},
@@ -583,11 +651,26 @@ int montype;
 	return montype;
 }
 
-static const char *levitate[2]	= { "float", "Float" };
-static const char *fly[2]	= { "fly", "Fly" };
-static const char *slither[2]	= { "slither", "Slither" };
-static const char *ooze[2]	= { "ooze", "Ooze" };
-static const char *crawl[2]	= { "crawl", "Crawl" };
+/*
+ * Return the permonst ptr for the race of the monster.
+ * Returns correct pointer for non-polymorphed and polymorphed
+ * player.  It does not return a pointer to player role character.
+ */
+const struct permonst *
+raceptr(mtmp)
+struct monst *mtmp;
+{
+    if (mtmp == &youmonst && !Upolyd) return(&mons[urace.malenum]);
+    else return(mtmp->data);
+}
+
+static const char *levitate[4]	= { "float", "Float", "wobble", "Wobble" };
+static const char *flys[4]	= { "fly", "Fly", "flutter", "Flutter" };
+static const char *flyl[4]	= { "fly", "Fly", "stagger", "Stagger" };
+static const char *slither[4]	= { "slither", "Slither", "falter", "Falter" };
+static const char *ooze[4]	= { "ooze", "Ooze", "tremble", "Tremble" };
+static const char *immobile[4]	= { "wiggle", "Wiggle", "pulsate", "Pulsate" };
+static const char *crawl[4]	= { "crawl", "Crawl", "falter", "Falter" };
 
 const char *
 locomotion(ptr, def)
@@ -598,13 +681,75 @@ const char *def;
 
 	return (
 		is_floater(ptr) ? levitate[capitalize] :
-		is_flyer(ptr)   ? fly[capitalize] :
+		(is_flyer(ptr) && ptr->msize <= MZ_SMALL) ? flys[capitalize] :
+		(is_flyer(ptr) && ptr->msize > MZ_SMALL)  ? flyl[capitalize] :
 		slithy(ptr)     ? slither[capitalize] :
 		amorphous(ptr)  ? ooze[capitalize] :
+		!ptr->mmove	? immobile[capitalize] :
 		nolimbs(ptr)    ? crawl[capitalize] :
 		def
 	       );
 
+}
+
+const char *
+stagger(ptr, def)
+const struct permonst *ptr;
+const char *def;
+{
+	int capitalize = 2 + (*def == highc(*def));
+
+	return (
+		is_floater(ptr) ? levitate[capitalize] :
+		(is_flyer(ptr) && ptr->msize <= MZ_SMALL) ? flys[capitalize] :
+		(is_flyer(ptr) && ptr->msize > MZ_SMALL)  ? flyl[capitalize] :
+		slithy(ptr)     ? slither[capitalize] :
+		amorphous(ptr)  ? ooze[capitalize] :
+		!ptr->mmove	? immobile[capitalize] :
+		nolimbs(ptr)    ? crawl[capitalize] :
+		def
+	       );
+
+}
+
+/* return a phrase describing the effect of fire attack on a type of monster */
+const char *
+on_fire(mptr, mattk)
+struct permonst *mptr;
+struct attack *mattk;
+{
+    const char *what;
+
+    switch (monsndx(mptr)) {
+    case PM_FLAMING_SPHERE:
+    case PM_FIRE_VORTEX:
+    case PM_FIRE_ELEMENTAL:
+    case PM_SALAMANDER:
+	what = "already on fire";
+	break;
+    case PM_WATER_ELEMENTAL:
+    case PM_FOG_CLOUD:
+    case PM_STEAM_VORTEX:
+	what = "boiling";
+	break;
+    case PM_ICE_VORTEX:
+    case PM_GLASS_GOLEM:
+	what = "melting";
+	break;
+    case PM_STONE_GOLEM:
+    case PM_CLAY_GOLEM:
+    case PM_GOLD_GOLEM:
+    case PM_AIR_ELEMENTAL:
+    case PM_EARTH_ELEMENTAL:
+    case PM_DUST_VORTEX:
+    case PM_ENERGY_VORTEX:
+	what = "heating up";
+	break;
+    default:
+	what = (mattk->aatyp == AT_HUGS) ? "being roasted" : "on fire";
+	break;
+    }
+    return what;
 }
 
 #endif /* OVLB */

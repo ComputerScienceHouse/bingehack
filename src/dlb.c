@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)dlb.c	3.3	97/07/29	*/
+/*	SCCS Id: @(#)dlb.c	3.4	1997/07/29	*/
 /* Copyright (c) Kenneth Lorber, Bethesda, Maryland, 1993. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -8,6 +8,8 @@
 #ifdef __DJGPP__
 #include <string.h>
 #endif
+
+#define DATAPREFIX 4
 
 #ifdef DLB
 /*
@@ -29,7 +31,7 @@ typedef struct dlb_procs {
 } dlb_procs_t;
 
 /* without extern.h via hack.h, these haven't been declared for us */
-extern FILE *FDECL(fopen_datafile, (const char *,const char *,BOOLEAN_P));
+extern FILE *FDECL(fopen_datafile, (const char *,const char *,int));
 
 #ifdef DLBLIB
 /*
@@ -199,7 +201,7 @@ open_library(lib_name, lp)
 {
     boolean status = FALSE;
 
-    lp->fdata = fopen_datafile(lib_name, RDBMODE, FALSE);
+    lp->fdata = fopen_datafile(lib_name, RDBMODE, DATAPREFIX);
     if (lp->fdata) {
 	if (readlibdir(lp)) {
 	    status = TRUE;
@@ -350,6 +352,13 @@ lib_dlb_fgets(buf, len, dp)
     }
     *bp = '\0';
 
+#if defined(MSDOS) || defined(WIN32)
+    if ((bp = index(buf, '\r')) != 0) {
+	*bp++ = '\n';
+	*bp = '\0';
+    }
+#endif
+
     return buf;
 }
 
@@ -453,7 +462,7 @@ dlb_fopen(name, mode)
     dp = (dlb *) alloc(sizeof(dlb));
     if (do_dlb_fopen(dp, name, mode))
     	dp->fp = (FILE *) 0;
-    else if ((fp = fopen_datafile(name, mode, FALSE)) != 0)
+    else if ((fp = fopen_datafile(name, mode, DATAPREFIX)) != 0)
 	dp->fp = fp;
     else {
 	/* can't find anything */

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)obj.h	3.3	1999/12/13	*/
+/*	SCCS Id: @(#)obj.h	3.4	2002/01/07	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -33,7 +33,11 @@ struct obj {
 				   marks your eggs, spinach tins
 				   royal coffers for a court ( == 2)
 				   tells which fruit a fruit is
-				   special for uball and amulet %% BAH */
+				   special for uball and amulet
+				   historic and gender for statues */
+#define STATUE_HISTORIC 0x01
+#define STATUE_MALE     0x02
+#define STATUE_FEMALE   0x04
 	char	oclass;		/* object class */
 	char	invlet;		/* designation in inventory */
 	char	oartifact;	/* artifact array index */
@@ -65,10 +69,12 @@ struct obj {
 #define MAX_ERODE 3
 #define orotten oeroded		/* rotten food */
 #define odiluted oeroded	/* diluted potions */
+#define norevive oeroded2
 	Bitfield(oerodeproof,1); /* erodeproof weapon/armor */
 	Bitfield(olocked,1);	/* object is locked */
 	Bitfield(obroken,1);	/* lock has been broken */
 	Bitfield(otrapped,1);	/* container is trapped */
+				/* or accidental tripped rolling boulder trap */
 #define opoisoned otrapped	/* object (weapon) is coated with poison */
 
 	Bitfield(recharged,3);	/* number of times it's been recharged */
@@ -84,11 +90,13 @@ struct obj {
 #define OATTACHED_UNUSED3 3
 
 	Bitfield(in_use,1);	/* for magic items before useup items */
-	/* 7 free bits */
+	Bitfield(bypass,1);	/* mark this as an object to be skipped by bhito() */
+	/* 6 free bits */
 
 	int	corpsenm;	/* type of corpse is mons[corpsenm] */
 #define leashmon  corpsenm	/* gets m_id of attached pet */
-#define spestudied corpsenm	/* how many times a spellbook has been studied */
+#define spestudied corpsenm	/* # of times a spellbook has been studied */
+#define fromsink  corpsenm	/* a potion from a sink */
 	unsigned oeaten;	/* nutrition left in food, if partly eaten */
 	long age;		/* creation date */
 
@@ -177,7 +185,24 @@ struct obj {
 			 objects[otmp->otyp].oc_armcat == ARM_SHIRT)
 #define is_suit(otmp)	(otmp->oclass == ARMOR_CLASS && \
 			 objects[otmp->otyp].oc_armcat == ARM_SUIT)
+#define is_elven_armor(otmp)	((otmp)->otyp == ELVEN_LEATHER_HELM\
+				|| (otmp)->otyp == ELVEN_MITHRIL_COAT\
+				|| (otmp)->otyp == ELVEN_CLOAK\
+				|| (otmp)->otyp == ELVEN_SHIELD\
+				|| (otmp)->otyp == ELVEN_BOOTS)
+#define is_orcish_armor(otmp)	((otmp)->otyp == ORCISH_HELM\
+				|| (otmp)->otyp == ORCISH_CHAIN_MAIL\
+				|| (otmp)->otyp == ORCISH_RING_MAIL\
+				|| (otmp)->otyp == ORCISH_CLOAK\
+				|| (otmp)->otyp == URUK_HAI_SHIELD\
+				|| (otmp)->otyp == ORCISH_SHIELD)
+#define is_dwarvish_armor(otmp)	((otmp)->otyp == DWARVISH_IRON_HELM\
+				|| (otmp)->otyp == DWARVISH_MITHRIL_COAT\
+				|| (otmp)->otyp == DWARVISH_CLOAK\
+				|| (otmp)->otyp == DWARVISH_ROUNDSHIELD)
+#define is_gnomish_armor(otmp)	(FALSE)
 
+				
 /* Eggs and other food */
 #define MAX_EGG_HATCH_TIME 200	/* longest an egg can remain unhatched */
 #define stale_egg(egg)	((monstermoves - (egg)->age) > (2*MAX_EGG_HATCH_TIME))
@@ -197,10 +222,82 @@ struct obj {
 #define Is_mbag(otmp)	(otmp->otyp == BAG_OF_HOLDING || \
 			 otmp->otyp == BAG_OF_TRICKS)
 
+/* dragon gear */
+#define Is_dragon_scales(obj)	((obj)->otyp >= GRAY_DRAGON_SCALES && \
+				 (obj)->otyp <= YELLOW_DRAGON_SCALES)
+#define Is_dragon_mail(obj)	((obj)->otyp >= GRAY_DRAGON_SCALE_MAIL && \
+				 (obj)->otyp <= YELLOW_DRAGON_SCALE_MAIL)
+#define Is_dragon_armor(obj)	(Is_dragon_scales(obj) || Is_dragon_mail(obj))
+#define Dragon_scales_to_pm(obj) &mons[PM_GRAY_DRAGON + (obj)->otyp \
+				       - GRAY_DRAGON_SCALES]
+#define Dragon_mail_to_pm(obj)	&mons[PM_GRAY_DRAGON + (obj)->otyp \
+				      - GRAY_DRAGON_SCALE_MAIL]
+#define Dragon_to_scales(pm)	(GRAY_DRAGON_SCALES + (pm - mons))
+
+/* Elven gear */
+#define is_elven_weapon(otmp)	((otmp)->otyp == ELVEN_ARROW\
+				|| (otmp)->otyp == ELVEN_SPEAR\
+				|| (otmp)->otyp == ELVEN_DAGGER\
+				|| (otmp)->otyp == ELVEN_SHORT_SWORD\
+				|| (otmp)->otyp == ELVEN_BROADSWORD\
+				|| (otmp)->otyp == ELVEN_BOW)
+#define is_elven_obj(otmp)	(is_elven_armor(otmp) || is_elven_weapon(otmp))
+
+/* Orcish gear */
+#define is_orcish_obj(otmp)	(is_orcish_armor(otmp)\
+				|| (otmp)->otyp == ORCISH_ARROW\
+				|| (otmp)->otyp == ORCISH_SPEAR\
+				|| (otmp)->otyp == ORCISH_DAGGER\
+				|| (otmp)->otyp == ORCISH_SHORT_SWORD\
+				|| (otmp)->otyp == ORCISH_BOW)
+
+/* Dwarvish gear */
+#define is_dwarvish_obj(otmp)	(is_dwarvish_armor(otmp)\
+				|| (otmp)->otyp == DWARVISH_SPEAR\
+				|| (otmp)->otyp == DWARVISH_SHORT_SWORD\
+				|| (otmp)->otyp == DWARVISH_MATTOCK)
+
+/* Gnomish gear */
+#define is_gnomish_obj(otmp)	(is_gnomish_armor(otmp))
+
 /* Light sources */
 #define Is_candle(otmp) (otmp->otyp == TALLOW_CANDLE || \
 			 otmp->otyp == WAX_CANDLE)
 #define MAX_OIL_IN_FLASK 400	/* maximum amount of oil in a potion of oil */
+
+/* MAGIC_LAMP intentionally excluded below */
+/* age field of this is relative age rather than absolute */
+#define age_is_relative(otmp)	((otmp)->otyp == BRASS_LANTERN\
+				|| (otmp)->otyp == OIL_LAMP\
+				|| (otmp)->otyp == CANDELABRUM_OF_INVOCATION\
+				|| (otmp)->otyp == TALLOW_CANDLE\
+				|| (otmp)->otyp == WAX_CANDLE\
+				|| (otmp)->otyp == POT_OIL)
+/* object can be ignited */
+#define ignitable(otmp)	((otmp)->otyp == BRASS_LANTERN\
+				|| (otmp)->otyp == OIL_LAMP\
+				|| (otmp)->otyp == CANDELABRUM_OF_INVOCATION\
+				|| (otmp)->otyp == TALLOW_CANDLE\
+				|| (otmp)->otyp == WAX_CANDLE\
+				|| (otmp)->otyp == POT_OIL)
+
+/* special stones */
+#define is_graystone(obj)	((obj)->otyp == LUCKSTONE || \
+				 (obj)->otyp == LOADSTONE || \
+				 (obj)->otyp == FLINT     || \
+				 (obj)->otyp == TOUCHSTONE)
+
+/* misc */
+#ifdef KOPS
+#define is_flimsy(otmp)		(objects[(otmp)->otyp].oc_material <= LEATHER || \
+				 (otmp)->otyp == RUBBER_HOSE)
+#else
+#define is_flimsy(otmp)		(objects[(otmp)->otyp].oc_material <= LEATHER)
+#endif
+
+/* helpers, simple enough to be macros */
+#define is_plural(o)	((o)->quan > 1 || \
+			 (o)->oartifact == ART_EYES_OF_THE_OVERWORLD)
 
 /* Flags for get_obj_location(). */
 #define CONTAINED_TOO	0x1

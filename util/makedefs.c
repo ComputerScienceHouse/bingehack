@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)makedefs.c	3.3	1999/08/16	*/
+/*	SCCS Id: @(#)makedefs.c	3.4	2002/08/14	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* Copyright (c) M. Stephenson, 1990, 1991.			  */
 /* Copyright (c) Dean Luick, 1990.				  */
@@ -27,7 +27,7 @@
 #endif
 
 #ifdef MAC
-# ifdef applec	/* Means the MPW compiler, I hope */
+# if defined(__SC__) || defined(__MRC__)	/* MPW compilers */
 #  define MPWTOOL
 #include <CursorCtl.h>
 #include <string.h>
@@ -49,14 +49,16 @@
 #endif
 
 #if defined(UNIX) && !defined(LINT) && !defined(GCC_WARN)
-static	const char	SCCS_Id[] = "@(#)makedefs.c\t3.3\t1999/08/16";
+static	const char	SCCS_Id[] = "@(#)makedefs.c\t3.4\t2002/02/03";
 #endif
 
 	/* names of files to be generated */
 #define DATE_FILE	"date.h"
 #define MONST_FILE	"pm.h"
 #define ONAME_FILE	"onames.h"
+#ifndef OPTIONS_FILE
 #define OPTIONS_FILE	"options"
+#endif
 #define ORACLE_FILE	"oracles"
 #define DATA_FILE	"data"
 #define RUMOR_FILE	"rumors"
@@ -75,29 +77,34 @@ static	const char	SCCS_Id[] = "@(#)makedefs.c\t3.3\t1999/08/16";
 # define DGN_TEMPLATE		"NH:dat/%s"  /* where dungeon.pdf file goes */
 # define DATA_TEMPLATE		"NH:slib/%s"
 # define DATA_IN_TEMPLATE	"NH:dat/%s"
-#else
-# ifdef MAC
+#else /* not AMIGA */
+# if defined(MAC) && !defined(__MACH__)
+    /* MacOS 9 or earlier */
 #   define INCLUDE_TEMPLATE	":include:%s"
 #   define SOURCE_TEMPLATE	":src:%s"
 #   define DGN_TEMPLATE		":dat:%s"  /* where dungeon.pdf file goes */
+#  if __SC__ || __MRC__
+#   define DATA_TEMPLATE	":Dungeon:%s"
+#  else
 #   define DATA_TEMPLATE	":lib:%s"
+#  endif /* __SC__ || __MRC__ */
 #   define DATA_IN_TEMPLATE	":dat:%s"
-# else /* MAC */
+# else /* neither AMIGA nor MAC */
 #  ifdef OS2
 #   define INCLUDE_TEMPLATE	"..\\include\\%s"
 #   define SOURCE_TEMPLATE	"..\\src\\%s"
 #   define DGN_TEMPLATE		"..\\dat\\%s"  /* where dungeon.pdf file goes */
 #   define DATA_TEMPLATE	"..\\dat\\%s"
 #   define DATA_IN_TEMPLATE	"..\\dat\\%s"
-#  else /* OS2 */
+#  else /* not AMIGA, MAC, or OS2 */
 #   define INCLUDE_TEMPLATE	"../include/%s"
 #   define SOURCE_TEMPLATE	"../src/%s"
 #   define DGN_TEMPLATE		"../dat/%s"  /* where dungeon.pdf file goes */
 #   define DATA_TEMPLATE	"../dat/%s"
 #   define DATA_IN_TEMPLATE	"../dat/%s"
-#  endif /* OS2 */
-# endif /* MAC */
-#endif	/* AMIGA */
+#  endif /* else !OS2 */
+# endif /* else !MAC */
+#endif	/* else !AMIGA */
 
 static const char
     *Dont_Edit_Code =
@@ -164,6 +171,7 @@ static boolean FDECL(d_filter, (char *));
 static boolean FDECL(h_filter, (char *));
 static boolean FDECL(ranged_attk,(struct permonst*));
 static int FDECL(mstrength,(struct permonst *));
+static void NDECL(build_savebones_compat_string);
 
 static boolean FDECL(qt_comment, (char *));
 static boolean FDECL(qt_control, (char *));
@@ -191,7 +199,7 @@ static char *FDECL(eos, (char *));
 /* input, output, tmp */
 static FILE *ifp, *ofp, *tfp;
 
-#ifdef __BORLANDC__
+#if defined(__BORLANDC__) && !defined(_WIN32)
 extern unsigned _stklen = STKSIZ;
 #endif
 
@@ -400,6 +408,18 @@ do_rumors()
 	return;
 }
 
+/*
+ * 3.4.1: way back in 3.2.1 `flags.nap' became unconditional but
+ * TIMED_DELAY was erroneously left in VERSION_FEATURES and has
+ * been there up through 3.4.0.  Simply removing it now would
+ * break save file compatibility with 3.4.0 files, so we will
+ * explicitly mask it out during version checks.
+ * This should go away in the next version update.
+ */
+#define IGNORED_FEATURES	( 0L \
+				| (1L << 23)	/* TIMED_DELAY */ \
+				)
+
 static void
 make_version()
 {
@@ -441,6 +461,9 @@ make_version()
 #ifdef STEED
 			| (1L << 11)
 #endif
+#ifdef GOLDOBJ
+			| (1L << 12)
+#endif
 		/* flag bits and/or other global variables (15..26) */
 #ifdef TEXTCOLOR
 			| (1L << 17)
@@ -456,9 +479,6 @@ make_version()
 #endif
 #ifdef SCORE_ON_BOTL
 			| (1L << 21)
-#endif
-#ifdef TIMED_DELAY
-			| (1L << 23)
 #endif
 		/* data format [COMPRESS excluded] (27..31) */
 #ifdef ZEROCOMP
@@ -536,7 +556,7 @@ do_date()
 		perror(filename);
 		exit(EXIT_FAILURE);
 	}
-	Fprintf(ofp,"/*\tSCCS Id: @(#)date.h\t3.3\t1996/05/17 */\n\n");
+	Fprintf(ofp,"/*\tSCCS Id: @(#)date.h\t3.4\t2002/02/03 */\n\n");
 	Fprintf(ofp,Dont_Edit_Code);
 
 #ifdef KR1ED
@@ -560,6 +580,10 @@ do_date()
 		version.incarnation, ul_sfx);
 	Fprintf(ofp,"#define VERSION_FEATURES 0x%08lx%s\n",
 		version.feature_set, ul_sfx);
+#ifdef IGNORED_FEATURES
+	Fprintf(ofp,"#define IGNORED_FEATURES 0x%08lx%s\n",
+		(unsigned long) IGNORED_FEATURES, ul_sfx);
+#endif
 	Fprintf(ofp,"#define VERSION_SANITY1 0x%08lx%s\n",
 		version.entity_count, ul_sfx);
 	Fprintf(ofp,"#define VERSION_SANITY2 0x%08lx%s\n",
@@ -575,11 +599,32 @@ do_date()
 	Fprintf(ofp,"#define AMIGA_VERSION_STRING ");
 	Fprintf(ofp,"\"\\0$VER: NetHack %d.%d.%d (%d.%d.%d)\"\n",
 		VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL,
-		tm->tm_mday, tm->tm_mon+1, tm->tm_year);
+		tm->tm_mday, tm->tm_mon+1, tm->tm_year+1900);
 	}
 #endif
 	Fclose(ofp);
 	return;
+}
+
+static char save_bones_compat_buf[BUFSZ];
+
+static void
+build_savebones_compat_string()
+{
+#ifdef VERSION_COMPATIBILITY
+	unsigned long uver = VERSION_COMPATIBILITY;
+#endif
+	Strcpy(save_bones_compat_buf,
+		"save and bones files accepted from version");
+#ifdef VERSION_COMPATIBILITY
+	Sprintf(eos(save_bones_compat_buf), "s %lu.%lu.%lu through %d.%d.%d",
+		((uver & 0xFF000000L) >> 24), ((uver & 0x00FF0000L) >> 16),
+		((uver & 0x0000FF00L) >> 8),
+		VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL);
+#else
+	Sprintf(eos(save_bones_compat_buf), " %d.%d.%d only",
+		VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL);
+#endif
 }
 
 static const char *build_opts[] = {
@@ -588,6 +633,9 @@ static const char *build_opts[] = {
 #endif
 #ifdef ANSI_DEFAULT
 		"ANSI default terminal",
+#endif
+#ifdef AUTOPICKUP_EXCEPTIONS
+		"autopickup_exceptions",
 #endif
 #ifdef TEXTCOLOR
 		"color",
@@ -613,11 +661,17 @@ static const char *build_opts[] = {
 #ifdef MFLOPPY
 		"floppy drive support",
 #endif
+#ifdef GOLDOBJ
+		"gold object in inventories",
+#endif
 #ifdef INSURANCE
 		"insurance files for recovering from crashes",
 #endif
 #ifdef KOPS
 		"Keystone Kops",
+#endif
+#ifdef HOLD_LOCKFILE_OPEN
+		"exclusive lock on level 0 file",
 #endif
 #ifdef LOGFILE
 		"log file",
@@ -661,23 +715,19 @@ static const char *build_opts[] = {
 # ifdef MAC
 		"screen control via mactty",
 # endif
-# ifdef SCREEN_8514
-		"screen control via 8514/A graphics",
-# endif
 # ifdef SCREEN_BIOS
 		"screen control via BIOS",
 # endif
 # ifdef SCREEN_DJGPPFAST
 		"screen control via DJGPP fast",
 # endif
-# ifdef SCREEN_VESA
-		"screen control via VESA graphics",
-# endif
 # ifdef SCREEN_VGA
 		"screen control via VGA graphics",
 # endif
-# ifdef WIN32CON
+# ifndef MSWIN_GRAPHICS
+#  ifdef WIN32CON
 		"screen control via WIN32 console I/O",
+#  endif
 # endif
 #endif
 #ifdef SEDUCE
@@ -695,7 +745,7 @@ static const char *build_opts[] = {
 #ifdef TERMINFO
 		"terminal info library",
 #else
-# if defined(TERMLIB) || (!defined(MICRO) && defined(TTY_GRAPHICS))
+# if defined(TERMLIB) || ((!defined(MICRO) && !defined(WIN32)) && defined(TTY_GRAPHICS))
 		"terminal capability library",
 # endif
 #endif
@@ -704,6 +754,13 @@ static const char *build_opts[] = {
 #endif
 #ifdef TOURIST
 		"tourists",
+#endif
+#ifdef USER_SOUNDS
+# ifdef USER_SOUNDS_REGEX
+		"user sounds via regular expressions",
+# else
+		"user sounds via pmatch",
+# endif
 #endif
 #ifdef PREFIXES_IN_USE
 		"variable playground",
@@ -717,6 +774,7 @@ static const char *build_opts[] = {
 #ifdef ZEROCOMP
 		"zero-compressed save files",
 #endif
+		save_bones_compat_buf,
 		"basic NetHack features"
 	};
 
@@ -742,8 +800,8 @@ static const char *window_opts[] = {
 #ifdef GEM_GRAPHICS
 		"Gem",
 #endif
-#ifdef WIN32_GRAPHICS
-		"Win32",
+#ifdef MSWIN_GRAPHICS
+		"mswin",
 #endif
 #ifdef BEOS_GRAPHICS
 		"BeOS InterfaceKit",
@@ -767,6 +825,7 @@ do_options()
 		exit(EXIT_FAILURE);
 	}
 
+	build_savebones_compat_string();
 	Fprintf(ofp,
 #ifdef BETA
 		"\n    NetHack version %d.%d.%d [beta]\n",
@@ -1332,7 +1391,7 @@ do_permonst()
 		perror(filename);
 		exit(EXIT_FAILURE);
 	}
-	Fprintf(ofp,"/*\tSCCS Id: @(#)pm.h\t3.3\t1994/09/10 */\n\n");
+	Fprintf(ofp,"/*\tSCCS Id: @(#)pm.h\t3.4\t2002/02/03 */\n\n");
 	Fprintf(ofp,Dont_Edit_Code);
 	Fprintf(ofp,"#ifndef PM_H\n#define PM_H\n");
 
@@ -1487,6 +1546,9 @@ static void
 do_qt_text(s)
 	char *s;
 {
+	if (!in_msg) {
+	    Fprintf(stderr, TEXT_NOT_IN_MSG, qt_line);
+	}
 	curr_msg->size += strlen(s);
 	return;
 }
@@ -1645,7 +1707,7 @@ do_objs()
 		perror(filename);
 		exit(EXIT_FAILURE);
 	}
-	Fprintf(ofp,"/*\tSCCS Id: @(#)onames.h\t3.3\t1994/09/10 */\n\n");
+	Fprintf(ofp,"/*\tSCCS Id: @(#)onames.h\t3.4\t2002/02/03 */\n\n");
 	Fprintf(ofp,Dont_Edit_Code);
 	Fprintf(ofp,"#ifndef ONAMES_H\n#define ONAMES_H\n\n");
 

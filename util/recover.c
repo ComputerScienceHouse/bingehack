@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)recover.c	3.3	99/10/23	*/
+/*	SCCS Id: @(#)recover.c	3.4	1999/10/23	*/
 /*	Copyright (c) Janet Walz, 1992.				  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -12,6 +12,7 @@
 #include <fcntl.h>
 #endif
 #ifdef WIN32
+#include <errno.h>
 #include "win32api.h"
 #endif
 
@@ -26,7 +27,13 @@ int FDECL(open_levelfile, (int));
 int NDECL(create_savefile);
 void FDECL(copy_bytes, (int,int));
 
+#ifndef WIN_CE
 #define Fprintf	(void)fprintf
+#else
+#define Fprintf	(void)nhce_message
+static void nhce_message(FILE*, const char*, ...);
+#endif
+
 #define Close	(void)close
 
 #ifdef UNIX
@@ -47,7 +54,7 @@ void FDECL(copy_bytes, (int,int));
 char *FDECL(exepath, (char *));
 #endif
 
-#ifdef __BORLANDC__
+#if defined(__BORLANDC__) && !defined(_WIN32)
 extern unsigned _stklen = STKSIZ;
 #endif
 char savename[SAVESIZE]; /* holds relative path of save file from playground */
@@ -214,6 +221,16 @@ char *basename;
 	(void) strcpy(lock, basename);
 	gfd = open_levelfile(0);
 	if (gfd < 0) {
+#if defined(WIN32) && !defined(WIN_CE)
+ 	    if(errno == EACCES) {
+	  	Fprintf(stderr,
+			"\nThere are files from a game in progress under your name.");
+		Fprintf(stderr,"\nThe files are locked or inaccessible.");
+		Fprintf(stderr,"\nPerhaps the other game is still running?\n");
+	    } else
+	  	Fprintf(stderr,
+			"\nTrouble accessing level 0 (errno = %d).\n", errno);
+#endif
 	    Fprintf(stderr, "Cannot open level 0 for %s.\n", basename);
 	    return(-1);
 	}
@@ -340,11 +357,19 @@ char *str;
 	if (!str) return (char *)0;
 	bsize = EXEPATHBUFSZ;
 	tmp = exepathbuf;
-# ifndef WIN32
+#if !defined(WIN32)
 	strcpy (tmp, str);
+#else
+# if defined(WIN_CE)
+	{
+	  TCHAR wbuf[EXEPATHBUFSZ];
+	  GetModuleFileName((HANDLE)0, wbuf, EXEPATHBUFSZ);
+	  NH_W2A(wbuf, tmp, bsize);
+	}
 # else
 	*(tmp + GetModuleFileName((HANDLE)0, tmp, bsize)) = '\0';
 # endif
+#endif
 	tmp2 = strrchr(tmp, PATH_SEPARATOR);
 	if (tmp2) *tmp2 = '\0';
 	return tmp;
@@ -354,6 +379,21 @@ char *str;
 #ifdef AMIGA
 #include "date.h"
 const char amiga_version_string[] = AMIGA_VERSION_STRING;
+#endif
+
+#ifdef WIN_CE
+void nhce_message(FILE* f, const char* str, ...)
+{
+    va_list ap;
+	TCHAR wbuf[NHSTR_BUFSIZE];
+	char buf[NHSTR_BUFSIZE];
+
+    va_start(ap, str);
+	vsprintf(buf, str, ap);
+    va_end(ap);
+
+	MessageBox(NULL, NH_A2W(buf, wbuf, NHSTR_BUFSIZE), TEXT("Recover"), MB_OK);
+}
 #endif
 
 /*recover.c*/

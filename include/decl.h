@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)decl.h	3.3	2000/06/12	*/
+/*	SCCS Id: @(#)decl.h	3.4	2001/12/10	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -27,7 +27,9 @@ E char SAVEP[];
 E NEARDATA int bases[MAXOCLASSES];
 
 E NEARDATA int multi;
+#if 0
 E NEARDATA int warnlevel;
+#endif
 E NEARDATA int nroom;
 E NEARDATA int nsubroom;
 E NEARDATA int occtime;
@@ -142,7 +144,7 @@ E struct linfo level_info[MAXLINFO];
 E NEARDATA struct sinfo {
 	int gameover;		/* self explanatory? */
 	int stopprint;		/* inhibit further end of game disclosure */
-#if defined(UNIX) || defined(VMS) || defined (__EMX__)
+#if defined(UNIX) || defined(VMS) || defined (__EMX__) || defined(WIN32)
 	int done_hup;		/* SIGHUP or moral equivalent received
 				 * -- no more screen output */
 #endif
@@ -150,6 +152,10 @@ E NEARDATA struct sinfo {
 	int panicking;		/* `panic' is in progress */
 #if defined(VMS) || defined(WIN32)
 	int exiting;		/* an exit handler is executing */
+#endif
+	int in_impossible;
+#ifdef PANICLOG
+	int in_paniclog;
 #endif
 } program_state;
 
@@ -162,6 +168,9 @@ E const char ynqchars[];
 E const char ynaqchars[];
 E const char ynNaqchars[];
 E NEARDATA long yn_number;
+
+E const char disclosure_options[];
+
 E NEARDATA int smeq[];
 E NEARDATA int doorindex;
 E NEARDATA char *save_cm;
@@ -171,6 +180,9 @@ E NEARDATA char *save_cm;
 E NEARDATA int killer_format;
 E const char *killer;
 E const char *delayed_killer;
+#ifdef GOLDOBJ
+E long done_money;
+#endif
 E char killer_buf[BUFSZ];
 E const char *configfile;
 E NEARDATA char plname[PL_NSIZ];
@@ -188,11 +200,14 @@ E const schar xdir[], ydir[], zdir[];
 
 E NEARDATA schar tbx, tby;		/* set in mthrowu.c */
 
+E NEARDATA struct multishot { int n, i; short o; boolean s; } m_shot;
+
 E NEARDATA struct dig_info {		/* apply.c, hack.c */
 	int	effort;
 	d_level level;
 	coord	pos;
-	boolean down, chew;
+	long lastdigtime;
+	boolean down, chew, warned, quiet;
 } digging;
 
 E NEARDATA long moves, monstermoves;
@@ -211,8 +226,8 @@ E const int shield_static[];
 #include "spell.h"
 E NEARDATA struct spell spl_book[];	/* sized in decl.c */
 
-#ifdef TEXTCOLOR
 #include "color.h"
+#ifdef TEXTCOLOR
 E const int zapcolors[];
 #endif
 
@@ -259,23 +274,27 @@ E NEARDATA struct c_color_names {
 		*const c_silver, *const c_blue, *const c_purple,
 		*const c_white;
 } c_color_names;
-#define Black		c_color_names.c_black
-#define amber		c_color_names.c_amber
-#define golden		c_color_names.c_golden
-#define light_blue	c_color_names.c_light_blue
-#define red		c_color_names.c_red
-#define green		c_color_names.c_green
-#define silver		c_color_names.c_silver
-#define blue		c_color_names.c_blue
-#define purple		c_color_names.c_purple
-#define White		c_color_names.c_white
+#define NH_BLACK		c_color_names.c_black
+#define NH_AMBER		c_color_names.c_amber
+#define NH_GOLDEN		c_color_names.c_golden
+#define NH_LIGHT_BLUE		c_color_names.c_light_blue
+#define NH_RED			c_color_names.c_red
+#define NH_GREEN		c_color_names.c_green
+#define NH_SILVER		c_color_names.c_silver
+#define NH_BLUE			c_color_names.c_blue
+#define NH_PURPLE		c_color_names.c_purple
+#define NH_WHITE		c_color_names.c_white
+
+/* The names of the colors used for gems, etc. */
+E const char *c_obj_colors[];
 
 E struct c_common_strings {
     const char	*const c_nothing_happens, *const c_thats_enough_tries,
 		*const c_silly_thing_to, *const c_shudder_for_moment,
 		*const c_something, *const c_Something,
 		*const c_You_can_move_again,
-		*const c_Never_mind;
+		*const c_Never_mind, *c_vision_clears,
+		*const c_the_your[2];
 } c_common_strings;
 #define nothing_happens    c_common_strings.c_nothing_happens
 #define thats_enough_tries c_common_strings.c_thats_enough_tries
@@ -285,6 +304,8 @@ E struct c_common_strings {
 #define Something	   c_common_strings.c_Something
 #define You_can_move_again c_common_strings.c_You_can_move_again
 #define Never_mind	   c_common_strings.c_Never_mind
+#define vision_clears	   c_common_strings.c_vision_clears
+#define the_your	   c_common_strings.c_the_your
 
 /* material strings */
 E const char *materialnm[];
@@ -322,7 +343,7 @@ E struct tc_gbl_data {	/* also declared in tcap.h */
 #endif
 
 /* xxxexplain[] is in drawing.c */
-E const char *monexplain[], *invisexplain, *objexplain[], *oclass_names[];
+E const char * const monexplain[], invisexplain[], * const objexplain[], * const oclass_names[];
 
 /* Some systems want to use full pathnames for some subsets of file names,
  * rather than assuming that they're all in the current directory.  This
@@ -333,11 +354,12 @@ E const char *monexplain[], *invisexplain, *objexplain[], *oclass_names[];
 #define LEVELPREFIX	1
 #define SAVEPREFIX	2
 #define BONESPREFIX	3
-#define DATAPREFIX	4
+#define DATAPREFIX	4	/* this one must match hardcoded value in dlb.c */
 #define SCOREPREFIX	5
 #define LOCKPREFIX	6
 #define CONFIGPREFIX	7
-#define PREFIX_COUNT	8
+#define TROUBLEPREFIX	8
+#define PREFIX_COUNT	9
 /* used in files.c; xxconf.h can override if needed */
 # ifndef FQN_MAX_FILENAME
 #define FQN_MAX_FILENAME 512
@@ -354,6 +376,14 @@ E char *fqn_prefix[PREFIX_COUNT];
 #ifdef PREFIXES_IN_USE
 E char *fqn_prefix_names[PREFIX_COUNT];
 #endif
+
+#ifdef AUTOPICKUP_EXCEPTIONS
+struct autopickup_exception {
+	char *pattern;
+	boolean grab;
+	struct autopickup_exception *next;
+};
+#endif /* AUTOPICKUP_EXCEPTIONS */
 
 #undef E
 

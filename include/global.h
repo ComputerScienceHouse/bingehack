@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)global.h	3.3	99/07/02	*/
+/*	SCCS Id: @(#)global.h	3.4	2003/08/31	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 
-#define BETA		/* if a beta-test copy	[MRS] */
+/* #define BETA	*/	/* if a beta-test copy	[MRS] */
 
 /*
  * Files expected to exist in the playground directory.
@@ -175,7 +175,11 @@ typedef xchar	boolean;		/* 0 or 1 */
 #endif
 
 #ifdef WIN32
+#ifdef WIN_CE
+#include "wceconf.h"
+#else
 #include "ntconf.h"
+#endif
 #endif
 
 /* Displayable name of this port; don't redefine if defined in *conf.h */
@@ -215,12 +219,19 @@ typedef xchar	boolean;		/* 0 or 1 */
 #  define PORT_ID	"VMS"
 # endif
 # ifdef WIN32
-#  define PORT_ID	"NT"
+#  define PORT_ID	"Windows"
+#  ifndef PORT_SUB_ID
+#   ifdef MSWIN_GRAPHICS
+#    define PORT_SUB_ID	"graphical"
+#   else
+#    define PORT_SUB_ID	"tty"
+#   endif
+#  endif
 # endif
 #endif
 
 #if defined(MICRO)
-#if !defined(AMIGA) && !defined(TOS) && !defined(OS2_HPFS) && !defined(WIN32)
+#if !defined(AMIGA) && !defined(TOS) && !defined(OS2_HPFS)
 #define SHORT_FILENAMES		/* filenames are 8.3 */
 #endif
 #endif
@@ -246,7 +257,7 @@ typedef xchar	boolean;		/* 0 or 1 */
 # define EXIT_FAILURE 1
 #endif
 
-#if defined(X11_GRAPHICS) || defined(QT_GRAPHICS) || defined(GNOME_GRAPHICS)
+#if defined(X11_GRAPHICS) || defined(QT_GRAPHICS) || defined(GNOME_GRAPHICS) || defined(MSWIN_GRAPHICS)
 # ifndef USE_TILES
 #  define USE_TILES		/* glyph2tile[] will be available */
 # endif
@@ -328,7 +339,7 @@ struct version_info {
 
 #define MAXULEV		30	/* max character experience level */
 
-#define MAXMONNO	120	/* geno monst after this number killed */
+#define MAXMONNO	120	/* extinct monst after this number created */
 #define MHPMAX		500	/* maximum monster hp */
 
 #endif /* GLOBAL_H */

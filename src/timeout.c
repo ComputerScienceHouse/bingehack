@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)timeout.c	3.3	2000/05/26	*/
+/*	SCCS Id: @(#)timeout.c	3.4	2002/12/17	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -12,11 +12,12 @@ STATIC_DCL void NDECL(slime_dialogue);
 STATIC_DCL void NDECL(slip_or_trip);
 STATIC_DCL void FDECL(see_lamp_flicker, (struct obj *, const char *));
 STATIC_DCL void FDECL(lantern_message, (struct obj *));
+STATIC_DCL void FDECL(cleanup_burn, (genericptr_t,long));
 
 #ifdef OVLB
 
 /* He is being petrified - dialogue by inmet!tower */
-static NEARDATA const char *stoned_texts[] = {
+static NEARDATA const char * const stoned_texts[] = {
 	"You are slowing down.",		/* 5 */
 	"Your limbs are stiffening.",		/* 4 */
 	"Your limbs have turned to stone.",	/* 3 */
@@ -29,18 +30,18 @@ stoned_dialogue()
 {
 	register long i = (Stoned & TIMEOUT);
 
-	if(i > 0 && i <= SIZE(stoned_texts))
+	if (i > 0L && i <= SIZE(stoned_texts))
 		pline(stoned_texts[SIZE(stoned_texts) - i]);
-	if(i == 5)
+	if (i == 5L)
 		HFast = 0L;
-	if(i == 3)
+	if (i == 3L)
 		nomul(-3);
 	exercise(A_DEX, FALSE);
 }
 
 /* He is getting sicker and sicker prior to vomiting */
-static NEARDATA const char *vomiting_texts[] = {
-	"are feeling mildly nauseous.",		/* 14 */
+static NEARDATA const char * const vomiting_texts[] = {
+	"are feeling mildly nauseated.",	/* 14 */
 	"feel slightly confused.",		/* 11 */
 	"can't seem to think straight.",	/* 8 */
 	"feel incredibly sick.",		/* 5 */
@@ -71,7 +72,7 @@ vomiting_dialogue()
 	exercise(A_CON, FALSE);
 }
 
-static NEARDATA const char *choke_texts[] = {
+static NEARDATA const char * const choke_texts[] = {
 	"You find it hard to breathe.",
 	"You're gasping for air.",
 	"You can no longer breathe.",
@@ -79,7 +80,7 @@ static NEARDATA const char *choke_texts[] = {
 	"You suffocate."
 };
 
-static NEARDATA const char *choke_texts2[] = {
+static NEARDATA const char * const choke_texts2[] = {
 	"Your %s is becoming constricted.",
 	"Your blood is having trouble reaching your brain.",
 	"The pressure on your %s increases.",
@@ -99,7 +100,7 @@ choke_dialogue()
 		const char *str = choke_texts[SIZE(choke_texts)-i];
 
 		if (index(str, '%'))
-		    pline(str, hcolor(blue));
+		    pline(str, hcolor(NH_BLUE));
 		else
 		    pline(str);
 	    }
@@ -107,7 +108,7 @@ choke_dialogue()
 	exercise(A_STR, FALSE);
 }
 
-static NEARDATA const char *slime_texts[] = {
+static NEARDATA const char * const slime_texts[] = {
 	"You are turning a little %s.",           /* 5 */
 	"Your limbs are getting oozy.",              /* 4 */
 	"Your skin begins to peel away.",            /* 3 */
@@ -120,21 +121,24 @@ slime_dialogue()
 {
 	register long i = (Slimed & TIMEOUT) / 2L;
 
-	if (((Slimed & TIMEOUT) % 2L) && i >= 0
+	if (((Slimed & TIMEOUT) % 2L) && i >= 0L
 		&& i < SIZE(slime_texts)) {
-	    const char *str = slime_texts[SIZE(slime_texts)-i-1];
+	    const char *str = slime_texts[SIZE(slime_texts) - i - 1L];
 
 	    if (index(str, '%')) {
-		if (i == 4) {
-		    if (!Blind)
-			pline(str, hcolor(green));
+		if (i == 4L) {	/* "you are turning green" */
+		    if (!Blind)	/* [what if you're already green?] */
+			pline(str, hcolor(NH_GREEN));
 		} else
 		    pline(str, an(Hallucination ? rndmonnam() : "green slime"));
 	    } else
 		pline(str);
 	}
-	if(i == 4)
-	    HFast = 0;
+	if (i == 3L) {	/* limbs becoming oozy */
+	    HFast = 0L;	/* lose intrinsic speed */
+	    stop_occupation();
+	    if (multi > 0) nomul(0);
+	}
 	exercise(A_DEX, FALSE);
 }
 
@@ -144,6 +148,7 @@ burn_away_slime()
 	if (Slimed) {
 	    pline_The("slime that covers you is burned away!");
 	    Slimed = 0L;
+	    flags.botl = 1;
 	}
 	return;
 }
@@ -197,7 +202,7 @@ nh_timeout()
 		u.uspellprot--;
 		find_ac();
 		if (!Blind)
-		    Norep("The %s haze around you %s.", hcolor(golden),
+		    Norep("The %s haze around you %s.", hcolor(NH_GOLDEN),
 			  u.uspellprot ? "becomes less dense" : "disappears");
 	    }
 	}
@@ -246,16 +251,11 @@ nh_timeout()
 			if ((m_idx = name_to_mon(killer)) >= LOW_PM) {
 			    if (type_is_pname(&mons[m_idx])) {
 				killer_format = KILLED_BY;
-			    }
-#if 0				/* at present, there aren't any monster
-				   poisoners with titles rather than names */
-			    else if (mons[m_idx].geno & G_UNIQ) {
-				char buf[BUFSZ];
-				Sprintf(buf, "the %s", killer);
-				Strcpy(u.usick_cause, buf);
+			    } else if (mons[m_idx].geno & G_UNIQ) {
+				killer = the(killer);
+				Strcpy(u.usick_cause, killer);
 				killer_format = KILLED_BY;
 			    }
-#endif
 			}
 			u.usick_type = 0;
 			done(POISONING);
@@ -282,10 +282,11 @@ nh_timeout()
 			break;
 		case INVIS:
 			newsym(u.ux,u.uy);
-			if (!Invis && !BInvis &&
-			    !See_invisible && !Blind) {
-				You("are no longer invisible.");
-				stop_occupation();
+			if (!Invis && !BInvis && !Blind) {
+			    You(!See_invisible ?
+				    "are no longer invisible." :
+				    "can no longer see through yourself.");
+			    stop_occupation();
 			}
 			break;
 		case SEE_INVIS:
@@ -300,7 +301,7 @@ nh_timeout()
 			break;
 		case HALLUC:
 			HHallucination = 1;
-			make_hallucinated(0L, TRUE, 0L);
+			(void) make_hallucinated(0L, TRUE, 0L);
 			stop_occupation();
 			break;
 		case SLEEPING:
@@ -362,6 +363,13 @@ boolean wakeup_msg;
 {
 	stop_occupation();
 	nomul(how_long);
+	/* generally don't notice sounds while sleeping */
+	if (wakeup_msg && multi == how_long) {
+	    /* caller can follow with a direct call to Hear_again() if
+	       there's a need to override this when wakeup_msg is true */
+	    flags.soundok = 0;
+	    afternmv = Hear_again;	/* this won't give any messages */
+	}
 	/* early wakeup from combat won't be possible until next monster turn */
 	u.usleep = monstermoves;
 	nomovemsg = wakeup_msg ? "You wake up." : You_can_move_again;
@@ -489,7 +497,8 @@ long timeout;
 	    if (cansee_hatchspot) {
 		Sprintf(monnambuf, "%s%s",
 			siblings ? "some " : "",
-			siblings ? makeplural(m_monnam(mon)) : a_monnam(mon));
+			siblings ?
+			makeplural(m_monnam(mon)) : an(m_monnam(mon)));
 		/* we don't learn the egg type here because learning
 		   an egg type requires either seeing the egg hatch
 		   or being familiar with the egg already,
@@ -610,8 +619,14 @@ slip_or_trip()
 	struct obj *otmp = vobj_at(u.ux, u.uy);
 	const char *what, *pronoun;
 	char buf[BUFSZ];
+	boolean on_foot = TRUE;
+#ifdef STEED
+	if (u.usteed) on_foot = FALSE;
+#endif
 
-	if (otmp) {		/* trip over something in particular */
+	if (otmp && on_foot && !u.uinwater && is_pool(u.ux, u.uy)) otmp = 0;
+
+	if (otmp && on_foot) {		/* trip over something in particular */
 	    /*
 		If there is only one item, it will have just been named
 		during the move, so refer to by via pronoun; otherwise,
@@ -634,26 +649,52 @@ slip_or_trip()
 		You("trip over %s.", what);
 	    }
 	} else if (rn2(3) && is_ice(u.ux, u.uy)) {
-	    You("%s on the ice.", rn2(2) ? "slip" : "slide");
-	} else switch (rn2(4)) {
-	    case 1:
-		You("trip over your own %s.", Hallucination ?
-			"elbow" : makeplural(body_part(FOOT)));
-		break;
-	    case 2:
-		You("slip %s.", Hallucination ?
-			"on a banana peel" : "and nearly fall");
-		break;
-	    case 3:
-		You("flounder.");
-		break;
-	    default:
-		You("stumble.");
-		break;
-	}
+	    pline("%s %s%s on the ice.",
 #ifdef STEED
-	if (u.usteed) dismount_steed(DISMOUNT_FELL);
+		u.usteed ? upstart(x_monnam(u.usteed,
+				u.usteed->mnamelth ? ARTICLE_NONE : ARTICLE_THE,
+				(char *)0, SUPPRESS_SADDLE, FALSE)) :
 #endif
+		"You", rn2(2) ? "slip" : "slide", on_foot ? "" : "s");
+	} else {
+	    if (on_foot) {
+		switch (rn2(4)) {
+		  case 1:
+			You("trip over your own %s.", Hallucination ?
+				"elbow" : makeplural(body_part(FOOT)));
+			break;
+		  case 2:
+			You("slip %s.", Hallucination ?
+				"on a banana peel" : "and nearly fall");
+			break;
+		  case 3:
+			You("flounder.");
+			break;
+		  default:
+			You("stumble.");
+			break;
+		}
+	    }
+#ifdef STEED
+	    else {
+		switch (rn2(4)) {
+		  case 1:
+			Your("%s slip out of the stirrups.", makeplural(body_part(FOOT)));
+			break;
+		  case 2:
+			You("let go of the reins.");
+			break;
+		  case 3:
+			You("bang into the saddle-horn.");
+			break;
+		  default:
+			You("slide to one side of the saddle.");
+			break;
+		}
+		dismount_steed(DISMOUNT_FELL);
+	    }
+#endif
+	}
 }
 
 /* Print a lamp flicker message with tailer. */
@@ -1007,7 +1048,8 @@ begin_burn(obj, already_lit)
 	long turns = 0;
 	boolean do_timer = TRUE;
 
-	if (obj->age == 0 && obj->otyp != MAGIC_LAMP) return;
+	if (obj->age == 0 && obj->otyp != MAGIC_LAMP && !artifact_light(obj))
+	    return;
 
 	switch (obj->otyp) {
 	    case MAGIC_LAMP:
@@ -1049,8 +1091,15 @@ begin_burn(obj, already_lit)
 		break;
 
 	    default:
-		impossible("begin burn: unexpected %s", xname(obj));
-		turns = obj->age;
+                /* [ALI] Support artifact light sources */
+                if (artifact_light(obj)) {
+		    obj->lamplit = 1;
+		    do_timer = FALSE;
+		    radius = 2;
+		} else {
+		    impossible("begin burn: unexpected %s", xname(obj));
+		    turns = obj->age;
+		}
 		break;
 	}
 
@@ -1059,11 +1108,14 @@ begin_burn(obj, already_lit)
 					BURN_OBJECT, (genericptr_t)obj)) {
 		obj->lamplit = 1;
 		obj->age -= turns;
-		if (obj->where == OBJ_INVENT && !already_lit)
+		if (carried(obj) && !already_lit)
 		    update_inventory();
 	    } else {
 		obj->lamplit = 0;
 	    }
+	} else {
+	    if (carried(obj) && !already_lit)
+		update_inventory();
 	}
 
 	if (obj->lamplit && !already_lit) {
@@ -1085,29 +1137,54 @@ end_burn(obj, timer_attached)
 	struct obj *obj;
 	boolean timer_attached;
 {
-	long expire_time;
-
 	if (!obj->lamplit) {
 	    impossible("end_burn: obj %s not lit", xname(obj));
 	    return;
 	}
 
-	del_light_source(LS_OBJECT, (genericptr_t) obj);
+	if (obj->otyp == MAGIC_LAMP || artifact_light(obj))
+	    timer_attached = FALSE;
 
-	if (obj->otyp == MAGIC_LAMP) timer_attached = FALSE;
-	if (timer_attached) {
-	    expire_time = stop_timer(BURN_OBJECT, (genericptr_t) obj);
-	    if (expire_time)
-		/* restore unused time */
-		obj->age += expire_time - monstermoves;
-	    else
-		impossible("end_burn: obj %s not timed!", xname(obj));
-	}
-	obj->lamplit = 0;
-
-	if (obj->where == OBJ_INVENT)
-	    update_inventory();
+	if (!timer_attached) {
+	    /* [DS] Cleanup explicitly, since timer cleanup won't happen */
+	    del_light_source(LS_OBJECT, (genericptr_t)obj);
+	    obj->lamplit = 0;
+	    if (obj->where == OBJ_INVENT)
+		update_inventory();
+	} else if (!stop_timer(BURN_OBJECT, (genericptr_t) obj))
+	    impossible("end_burn: obj %s not timed!", xname(obj));
 }
+
+#endif /* OVL1 */
+#ifdef OVL0
+
+/*
+ * Cleanup a burning object if timer stopped.
+ */
+static void
+cleanup_burn(arg, expire_time)
+    genericptr_t arg;
+    long expire_time;
+{
+    struct obj *obj = (struct obj *)arg;
+    if (!obj->lamplit) {
+	impossible("cleanup_burn: obj %s not lit", xname(obj));
+	return;
+    }
+
+    del_light_source(LS_OBJECT, arg);
+
+    /* restore unused time */
+    obj->age += expire_time - monstermoves;
+
+    obj->lamplit = 0;
+
+    if (obj->where == OBJ_INVENT)
+	update_inventory();
+}
+
+#endif /* OVL0 */
+#ifdef OVL1
 
 void
 do_storms()
@@ -1205,17 +1282,6 @@ do_storms()
  *		Stop all timers attached to obj.
  */
 
-
-typedef struct fe {
-    struct fe *next;		/* next item in chain */
-    long timeout;		/* when we time out */
-    unsigned long tid;		/* timer ID */
-    short kind;			/* kind of use */
-    short func_index;		/* what to call when we time out */
-    genericptr_t arg;		/* pointer to timeout argument */
-    Bitfield (needs_fixup,1);	/* does arg need to be patched? */
-} timer_element;
-
 #ifdef WIZARD
 STATIC_DCL const char *FDECL(kind_name, (SHORT_P));
 STATIC_DCL void FDECL(print_queue, (winid, timer_element *));
@@ -1223,6 +1289,7 @@ STATIC_DCL void FDECL(print_queue, (winid, timer_element *));
 STATIC_DCL void FDECL(insert_timer, (timer_element *));
 STATIC_DCL timer_element *FDECL(remove_timer, (timer_element **, SHORT_P,
 								genericptr_t));
+STATIC_DCL void FDECL(write_timer, (int, timer_element *));
 STATIC_DCL boolean FDECL(mon_is_local, (struct monst *));
 STATIC_DCL boolean FDECL(timer_is_local, (timer_element *));
 STATIC_DCL int FDECL(maybe_write_timer, (int, int, BOOLEAN_P));
@@ -1235,23 +1302,23 @@ static unsigned long timer_id = 1;
 #define VERBOSE_TIMER
 
 typedef struct {
-    timeout_proc f;
+    timeout_proc f, cleanup;
 #ifdef VERBOSE_TIMER
     const char *name;
-# define TTAB(a, b) {a,b}
+# define TTAB(a, b, c) {a,b,c}
 #else
-# define TTAB(a, b) {a}
+# define TTAB(a, b, c) {a,b}
 #endif
 } ttable;
 
 /* table of timeout functions */
-static ttable timeout_funcs[NUM_TIME_FUNCS] = {
-    TTAB(rot_organic,	"rot_organic"),
-    TTAB(rot_corpse,	"rot_corpse"),
-    TTAB(revive_mon,	"revive_mon"),
-    TTAB(burn_object,	"burn_object"),
-    TTAB(hatch_egg,	"hatch_egg"),
-    TTAB(fig_transform,	"fig_transform")
+static const ttable timeout_funcs[NUM_TIME_FUNCS] = {
+    TTAB(rot_organic,	(timeout_proc)0,	"rot_organic"),
+    TTAB(rot_corpse,	(timeout_proc)0,	"rot_corpse"),
+    TTAB(revive_mon,	(timeout_proc)0,	"revive_mon"),
+    TTAB(burn_object,	cleanup_burn,		"burn_object"),
+    TTAB(hatch_egg,	(timeout_proc)0,	"hatch_egg"),
+    TTAB(fig_transform,	(timeout_proc)0,	"fig_transform")
 };
 #undef TTAB
 
@@ -1418,6 +1485,8 @@ genericptr_t arg;
 	timeout = doomed->timeout;
 	if (doomed->kind == TIMER_OBJECT)
 	    ((struct obj *)arg)->timed--;
+	if (timeout_funcs[doomed->func_index].cleanup)
+	    (*timeout_funcs[doomed->func_index].cleanup)(arg, timeout);
 	free((genericptr_t) doomed);
 	return timeout;
     }
@@ -1483,6 +1552,9 @@ obj_stop_timers(obj)
 		prev->next = curr->next;
 	    else
 		timer_base = curr->next;
+	    if (timeout_funcs[curr->func_index].cleanup)
+		(*timeout_funcs[curr->func_index].cleanup)(curr->arg,
+			curr->timeout);
 	    free((genericptr_t) curr);
 	} else {
 	    prev = curr;

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)you.h	3.3	2000/05/21	*/
+/*	SCCS Id: @(#)you.h	3.4	2000/05/21	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -233,6 +233,7 @@ struct you {
 	xchar ux, uy;
 	schar dx, dy, dz;	/* direction of move (or zap or ... ) */
 	schar di;		/* direction of FF */
+	xchar tx, ty;		/* destination of travel */
 	xchar ux0, uy0;		/* initial position FF */
 	d_level uz, uz0;	/* your level on this and the previous turn */
 	d_level utolev;		/* level monster teleported you to, or uz */
@@ -301,7 +302,8 @@ struct you {
 	Bitfield(mfemale,1);		/* saved human value of flags.female */
 	Bitfield(uinvulnerable,1);	/* you're invulnerable (praying) */
 	Bitfield(uburied,1);		/* you're buried */
-	/* 2 free bits! */
+	Bitfield(uedibility,1);		/* blessed food detection; sense unsafe food */
+	/* 1 free bit! */
 
 	unsigned udg_cnt;		/* how long you have been demigod */
 	struct u_event	uevent;		/* certain events have happened */
@@ -334,7 +336,11 @@ struct you {
 	int ugangr;			/* if the gods are angry at you */
 	int ugifts;			/* number of artifacts bestowed */
 	int ublessed, ublesscnt;	/* blessing/duration from #pray */
+#ifndef GOLDOBJ
 	long	ugold, ugold0;
+#else
+	long	umoney0;
+#endif
 	long	uexp, urexp;
 	long	ucleansed;	/* to record moves when player was cleansed */
 	long	usleep;		/* sleeping; monstermove you last started */

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)bones.c	3.3	2000/05/28	*/
+/*	SCCS Id: @(#)bones.c	3.4	2003/09/06	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985,1993. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -106,6 +106,7 @@ boolean restore;
 				otmp->quan = (long)otmp->spe;
 			    otmp->spe = 0;
 			    otmp->owt = weight(otmp);
+			    curse(otmp);
 			} else if (otmp->otyp == BELL_OF_OPENING) {
 			    otmp->otyp = BELL;
 			    curse(otmp);
@@ -124,13 +125,15 @@ struct obj *cont;
 {
 	struct obj *otmp;
 
+	uswapwep = 0; /* ensure curse() won't cause swapwep to drop twice */
 	while ((otmp = invent) != 0) {
 		obj_extract_self(otmp);
+		obj_no_longer_held(otmp);
 
 		otmp->owornmask = 0;
 		/* lamps don't go out when dropped */
-		if (cont && obj_is_burning(otmp))	/* smother in statue */
-			end_burn(otmp, otmp->otyp != MAGIC_LAMP);
+		if ((cont || artifact_light(otmp)) && obj_is_burning(otmp))
+		    end_burn(otmp, TRUE);	/* smother in statue */
 
 		if(otmp->otyp == SLIME_MOLD) goodfruit(otmp->spe);
 
@@ -138,17 +141,20 @@ struct obj *cont;
 		if (mtmp)
 			(void) add_to_minv(mtmp, otmp);
 		else if (cont)
-			add_to_container(cont, otmp);
+			(void) add_to_container(cont, otmp);
 		else
 			place_object(otmp, u.ux, u.uy);
 	}
+#ifndef GOLDOBJ
 	if(u.ugold) {
 		long ugold = u.ugold;
 		if (mtmp) mtmp->mgold = ugold;
-		else if (cont) add_to_container(cont, mkgoldobj(ugold));
+		else if (cont) (void) add_to_container(cont, mkgoldobj(ugold));
 		else (void)mkgold(ugold, u.ux, u.uy);
 		u.ugold = ugold;	/* undo mkgoldobj()'s removal */
 	}
+#endif
+	if (cont) cont->owt = weight(cont);
 }
 
 /* check whether bones are feasible */
@@ -161,6 +167,9 @@ can_make_bones()
 	    return FALSE;
 	if (no_bones_level(&u.uz))
 	    return FALSE;		/* no bones for specific levels */
+	if (u.uswallow) {
+	    return FALSE;		/* no bones when swallowed */
+	}
 	if (!Is_branchlev(&u.uz)) {
 	    /* no bones on non-branches with portals */
 	    for(ttmp = ftrap; ttmp; ttmp = ttmp->ntrap)
@@ -190,9 +199,11 @@ struct obj *corpse;
 	struct permonst *mptr;
 	struct fruit *f;
 	char c, *bonesid;
+	char whynot[BUFSZ];
 
 	/* caller has already checked `can_make_bones()' */
 
+	clear_bypasses();
 	fd = open_bonesfile(&u.uz, &bonesid);
 	if (fd >= 0) {
 		(void) close(fd);
@@ -208,7 +219,9 @@ struct obj *corpse;
 		return;
 	}
 
+#ifdef WIZARD
  make_bones:
+#endif
 	unleash_all();
 	/* in case these characters are not in their home bases */
 	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
@@ -220,14 +233,7 @@ struct obj *corpse;
 		mongone(mtmp);
 	}
 #ifdef STEED
-	if (u.usteed) {
-	    coord cc;
-
-	    /* Move the steed to an adjacent square */
-	    if (enexto(&cc, u.ux, u.uy, u.usteed->data))
-		rloc_to(u.usteed, cc.x, cc.y);
-	    u.usteed = 0;
-	}
+	if (u.usteed) dismount_steed(DISMOUNT_BONES);
 #endif
 	dmonsfree();		/* discard dead or gone monsters */
 
@@ -309,12 +315,16 @@ struct obj *corpse;
 	    levl[x][y].glyph = cmap_to_glyph(S_stone);
 	}
 
-	fd = create_bonesfile(&u.uz, &bonesid);
+	fd = create_bonesfile(&u.uz, &bonesid, whynot);
 	if(fd < 0) {
 #ifdef WIZARD
 		if(wizard)
-			pline("Cannot create bones file - create failed");
+			pline("%s", whynot);
 #endif
+		/* bones file creation problems are silent to the player.
+		 * Keep it that way, but place a clue into the paniclog.
+		 */
+		paniclog("savebones", whynot);
 		return;
 	}
 	c = (char) (strlen(bonesid) + 1);
@@ -398,32 +408,41 @@ getbones()
 #endif
 		mread(fd, (genericptr_t) &c, sizeof c);	/* length incl. '\0' */
 		mread(fd, (genericptr_t) oldbonesid, (unsigned) c); /* DD.nnn */
-		if (strcmp(bonesid, oldbonesid)) {
+		if (strcmp(bonesid, oldbonesid) != 0) {
+			char errbuf[BUFSZ];
+
+			Sprintf(errbuf, "This is bones level '%s', not '%s'!",
+				oldbonesid, bonesid);
 #ifdef WIZARD
 			if (wizard) {
-				pline("This is bones level '%s', not '%s'!",
-					oldbonesid, bonesid);
+				pline("%s", errbuf);
 				ok = FALSE;	/* won't die of trickery */
 			}
 #endif
-			trickery();
+			trickery(errbuf);
 		} else {
 			register struct monst *mtmp;
-			int mndx;
 
 			getlev(fd, 0, 0, TRUE);
 
-			/* to correctly reset named artifacts on the level and
-			   to keep tabs on unique monsters like demon lords */
+			/* Note that getlev() now keeps tabs on unique
+			 * monsters such as demon lords, and tracks the
+			 * birth counts of all species just as makemon()
+			 * does.  If a bones monster is extinct or has been
+			 * subject to genocide, their mhpmax will be
+			 * set to the magic DEFUNCT_MONSTER cookie value.
+			 */
 			for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
-			    mndx = monsndx(mtmp->data);
-			    if (mvitals[mndx].mvflags & G_EXTINCT) {
+			    if (mtmp->mhpmax == DEFUNCT_MONSTER) {
+#if defined(DEBUG) && defined(WIZARD)
+				if (wizard)
+				    pline("Removing defunct monster %s from bones.",
+					mtmp->data->mname);
+#endif
 				mongone(mtmp);
-			    } else {
-				if (mons[mndx].geno & G_UNIQ)
-				    mvitals[mndx].mvflags |= G_EXTINCT;
+			    } else
+				/* to correctly reset named artifacts on the level */
 				resetobjs(mtmp->minvent,TRUE);
-			    }
 			}
 			resetobjs(fobj,TRUE);
 			resetobjs(level.buriedobjlist,TRUE);

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)gnmain.c	3.3	2000/07/16	*/
+/*	SCCS Id: @(#)gnmain.c	3.4	2000/07/16	*/
 /* Copyright (C) 1998 by Erik Andersen <andersee@debian.org> */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -11,6 +11,7 @@
 #include <gdk/gdk.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <signal.h>
 #include "hack.h"
 #include "date.h"
 
@@ -137,7 +138,8 @@ ghack_about_cb(GtkWidget *widget, gpointer data)
       _("\nSend comments and bug reports to: nethack-bugs@nethack.org\n"
       "This game is free software. See License for details."));
     about = gnome_about_new(_("Nethack"), 
-	    buf1, "(C) 1985-2000 Mike Stephenson", (const char **)authors, buf,
+	    buf1, "Copyright (C) 1985-2002 Mike Stephenson",
+	    (const char **)authors, buf,
 	    NULL);
 
     gtk_signal_connect (GTK_OBJECT (about), "destroy",
@@ -214,8 +216,8 @@ GnomeUIInfo game_tree[] =
     GNOMEUIINFO_MENU_SAVE_ITEM(ghack_save_game_cb, NULL),
     { 
 	GNOME_APP_UI_ITEM, N_("Exit"), NULL, 
-	ghack_quit_game_cb, GINT_TO_POINTER('Q'), NULL, 
-	GNOME_APP_PIXMAP_STOCK, GNOME_STOCK_MENU_ABOUT, 'Q', GDK_SHIFT_MASK
+	ghack_quit_game_cb, GINT_TO_POINTER(M('Q')), NULL, 
+	GNOME_APP_PIXMAP_STOCK, GNOME_STOCK_MENU_ABOUT, 'Q', GDK_MOD1_MASK
     }, 
     GNOMEUIINFO_END
 };
@@ -358,6 +360,12 @@ GnomeUIInfo action_menu[] = {
 	       N_("throw or shoot a weapon"),
 	       ghack_accelerator_selected, 
 	       GINT_TO_POINTER('t'), NULL, GNOME_APP_PIXMAP_NONE, NULL, 't',0
+	   },
+	   {
+	       GNOME_APP_UI_ITEM, N_("Quiver/Ready"),
+	       N_("ready or quiver some ammunition"),
+	       ghack_accelerator_selected,
+	       GINT_TO_POINTER('Q'), NULL, GNOME_APP_PIXMAP_NONE, NULL, 'Q',GDK_SHIFT_MASK,
 	   },
 	   { 
 	       GNOME_APP_UI_ITEM, N_("Open Door"), 
@@ -651,9 +659,55 @@ parse_args (int argc, char *argv[])
   return;
 }
 
+/*
+ * [ALI] Gnome installs its own handler(s) for SIGBUS, SIGFPE and SIGSEGV.
+ * These handlers will fork and exec a helper program. When that helper
+ * comes to initialize GTK+, it may fail if setuid/setgid. We solve this
+ * by dropping privileges before passing the signal along the chain.
+ * Note: We don't need to either drop or mask the saved ID since this
+ * will be reset when the child process performs the execve() anyway.
+ */
+
+static struct {
+    int signum;
+    void (*handler)(int);
+} ghack_chain[] = {
+    {SIGBUS},
+    {SIGFPE},
+    {SIGSEGV},
+    {SIGILL}		/* Not currently handled by Gnome */
+};
+
+static void ghack_sig_handler(int signum)
+{
+    int i;
+    uid_t uid, euid;
+    gid_t gid, egid;
+    uid = getuid();
+    euid = geteuid();
+    gid = getgid();
+    egid = getegid();
+    if (gid != egid)
+	setgid(gid);
+    if (uid != euid)
+	setuid(uid);
+    for(i = SIZE(ghack_chain) - 1; i >= 0; i--)
+	if (ghack_chain[i].signum == signum) {
+	    ghack_chain[i].handler(signum);
+	    break;
+	}
+    if (i < 0)
+	impossible("Unhandled ghack signal");
+    if (uid != euid)
+	setuid(euid);
+    if (gid != egid)
+	setgid(egid);
+}
+
 /* initialize gnome and fir up the main window */
 void ghack_init_main_window( int argc, char** argv)
 {
+    int i;
     struct timeval tv;
     uid_t uid, euid;
 
@@ -672,7 +726,10 @@ void ghack_init_main_window( int argc, char** argv)
     euid = geteuid();
     if (uid != euid)
       setuid(uid);
+    hide_privileges(TRUE);
+    /* XXX gnome_init must print nethack options for --help, but does not */
     gnome_init ("nethack", VERSION_STRING, argc, argv);
+    hide_privileges(FALSE);
     parse_args (argc, argv);
 
     /* Initialize the i18n stuff (not that gnomehack supperts it yet...) */
@@ -699,7 +756,7 @@ void ghack_init_main_window( int argc, char** argv)
 
     /* Put some stuff into our main window */
     vBoxMain = gtk_vbox_new (FALSE, 0);
-    hBoxFirstRow = gtk_hbox_new (TRUE, 0);
+    hBoxFirstRow = gtk_hbox_new (FALSE, 0);
    
     /* pack Boxes into other boxes to produce the right structure */
     gtk_box_pack_start (GTK_BOX (vBoxMain), hBoxFirstRow, FALSE, TRUE, 0);   
@@ -712,6 +769,9 @@ void ghack_init_main_window( int argc, char** argv)
      * has already been shown */
     if (uid != euid)
       setuid(euid);
+    for(i = 0; i < SIZE(ghack_chain); i++)
+	ghack_chain[i].handler =
+	  signal(ghack_chain[i].signum, ghack_sig_handler);
 }
 
 void ghack_main_window_add_map_window(GtkWidget* win) 
@@ -739,7 +799,14 @@ ghack_main_window_add_message_window(GtkWidget* win)
 void
 ghack_main_window_add_status_window(GtkWidget* win)
 {
-    gtk_box_pack_start (GTK_BOX (hBoxFirstRow), win, TRUE, TRUE, 2);
+    gtk_box_pack_start (GTK_BOX (hBoxFirstRow), win, FALSE, TRUE, 2);
+    gtk_widget_show_all(win);
+}
+
+void
+ghack_main_window_add_worn_window(GtkWidget* win)
+{
+    gtk_box_pack_end (GTK_BOX (hBoxFirstRow), win, FALSE, TRUE, 2);
     gtk_widget_show_all(win);
 }
 
@@ -758,10 +825,11 @@ ghack_main_window_remove_window(GtkWidget *win)
 void
 ghack_main_window_update_inventory()
 {
-/* For now, do nothing.  Eventually we may allow the inv. window
+/* For now, do very little.  Eventually we may allow the inv. window
      to stay active.  When we do this, we'll need to implement this...
    g_warning("Fixme!!! updateInventory is not yet implemented");
 */
+	gnome_display_nhwindow(WIN_WORN, FALSE);
 }
 
 GtkWidget*
@@ -769,4 +837,3 @@ ghack_get_main_window()
 {
       return( GTK_WIDGET(mainWindow) );
 }
-

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)artifact.c 3.3	2000/08/13	*/
+/*	SCCS Id: @(#)artifact.c 3.4	2003/08/11	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -20,16 +20,21 @@ extern boolean notonhead;	/* for long worms */
 
 #define get_artifact(o) \
 		(((o)&&(o)->oartifact) ? &artilist[(int) (o)->oartifact] : 0)
+
 STATIC_DCL int FDECL(spec_applies, (const struct artifact *,struct monst *));
 STATIC_DCL int FDECL(arti_invoke, (struct obj*));
+STATIC_DCL boolean FDECL(Mb_hit, (struct monst *magr,struct monst *mdef,
+				  struct obj *,int *,int,BOOLEAN_P,char *));
 
-/* The amount added to normal damage which should guarantee that the
+/* The amount added to the victim's total hit points to insure that the
    victim will be killed even after damage bonus/penalty adjustments.
-   It needs to be big enough so that halving will still kill, but not
-   so big that doubling ends up overflowing 15 bits.  This value used
-   to be 1234, but it was possible for players to accumulate enough
-   hit points so that taking (uhp + 1234)/2 damage was survivable. */
-#define FATAL_DAMAGE 9999
+   Most such penalties are small, and 200 is plenty; the exception is
+   half physical damage.  3.3.1 and previous versions tried to use a very
+   large number to account for this case; now, we just compute the fatal
+   damage by adding it to 2 times the total hit points instead of 1 time.
+   Note: this will still break if they have more than about half the number
+   of hit points that will fit in a 15 bit integer. */
+#define FATAL_DAMAGE_MODIFIER 200
 
 #ifndef OVLB
 STATIC_DCL int spec_dbon_applies;
@@ -246,6 +251,34 @@ unsigned long abil;
 	return((boolean)(arti && (arti->spfx & abil)));
 }
 
+/* used so that callers don't need to known about SPFX_ codes */
+boolean
+confers_luck(obj)
+struct obj *obj;
+{
+    /* might as well check for this too */
+    if (obj->otyp == LUCKSTONE) return TRUE;
+
+    return (obj->oartifact && spec_ability(obj, SPFX_LUCK));
+}
+
+/* used to check whether a monster is getting reflection from an artifact */
+boolean
+arti_reflects(obj)
+struct obj *obj;
+{
+    const struct artifact *arti = get_artifact(obj);
+
+    if (arti) {      
+	/* while being worn */
+	if ((obj->owornmask & ~W_ART) && (arti->spfx & SPFX_REFLECT))
+	    return TRUE;
+	/* just being carried */
+	if (arti->cspfx & SPFX_REFLECT) return TRUE;
+    }
+    return FALSE;
+}
+
 #endif /* OVL0 */
 #ifdef OVLB
 
@@ -387,7 +420,7 @@ long wp_mask;
 	     * that can print a message--need to guard against being printed
 	     * when restoring a game
 	     */
-	    make_hallucinated((long)!on, restoring ? FALSE : TRUE, wp_mask);
+	    (void) make_hallucinated((long)!on, restoring ? FALSE : TRUE, wp_mask);
 	}
 	if (spfx & SPFX_ESP) {
 	    if(on) ETelepat |= wp_mask;
@@ -437,6 +470,7 @@ long wp_mask;
 	    /* this assumes that no one else is using xray_range */
 	    if (on) u.xray_range = 3;
 	    else u.xray_range = -1;
+	    vision_full_recalc = 1;
 	}
 	if ((spfx & SPFX_REFLECT) && (wp_mask & W_WEP)) {
 	    if (on) EReflecting |= wp_mask;
@@ -472,16 +506,18 @@ touch_artifact(obj,mon)
     /* all quest artifacts are self-willed; it this ever changes, `badclass'
        will have to be extended to explicitly include quest artifacts */
     self_willed = ((oart->spfx & SPFX_INTEL) != 0);
-    if (yours || !(mon->data->mflags3 & M3_WANTSALL)) {
-	badclass = (self_willed && (!yours ||
-			(oart->role != NON_PM && !Role_if(oart->role)) ||
-			(oart->race != NON_PM && !Race_if(oart->race))));
-	badalign = (oart->spfx & SPFX_RESTR) &&
-		   oart->alignment != A_NONE &&
-	    ((oart->alignment !=
-	      (yours ? u.ualign.type : sgn(mon->data->maligntyp))) ||
-	     (yours && u.ualign.record < 0));
-    } else {	/* an M3_WANTSxxx monster */
+    if (yours) {
+	badclass = self_willed &&
+		   ((oart->role != NON_PM && !Role_if(oart->role)) ||
+		    (oart->race != NON_PM && !Race_if(oart->race)));
+	badalign = (oart->spfx & SPFX_RESTR) && oart->alignment != A_NONE &&
+		   (oart->alignment != u.ualign.type || u.ualign.record < 0);
+    } else if (!is_covetous(mon->data) && !is_mplayer(mon->data)) {
+	badclass = self_willed &&
+		   oart->role != NON_PM && oart != &artilist[ART_EXCALIBUR];
+	badalign = (oart->spfx & SPFX_RESTR) && oart->alignment != A_NONE &&
+		   (oart->alignment != sgn(mon->data->maligntyp));
+    } else {    /* an M3_WANTSxxx monster or a fake player */
 	/* special monsters trying to take the Amulet, invocation tools or
 	   quest item can touch anything except for `spec_applies' artifacts */
 	badclass = badalign = FALSE;
@@ -511,7 +547,7 @@ touch_artifact(obj,mon)
 
     /* can pick it up unless you're totally non-synch'd with the artifact */
     if (badclass && badalign && self_willed) {
-	if (yours) pline("%s evades your grasp!", The(xname(obj)));
+	if (yours) pline("%s your grasp!", Tobjnam(obj, "evade"));
 	return 0;
     }
 
@@ -543,8 +579,9 @@ struct monst *mtmp;
 	} else if (weap->spfx & SPFX_DFLAG1) {
 	    return ((ptr->mflags1 & weap->mtype) != 0L);
 	} else if (weap->spfx & SPFX_DFLAG2) {
-	    return ((ptr->mflags2 & weap->mtype) ||
-		(yours && !Upolyd && (urace.selfmask & weap->mtype)));
+	    return ((ptr->mflags2 & weap->mtype) || (yours &&
+			((!Upolyd && (urace.selfmask & weap->mtype)) ||
+			 ((weap->mtype & M2_WERE) && u.ulycn >= LOW_PM))));
 	} else if (weap->spfx & SPFX_DALIGN) {
 	    return yours ? (u.ualign.type != weap->alignment) :
 			   (ptr->maligntyp == A_NONE ||
@@ -596,8 +633,11 @@ struct monst *mon;
 {
 	register const struct artifact *weap = get_artifact(otmp);
 
-	if (weap && spec_applies(weap, mon))
-	    return weap->attk.damn ? rnd((int)weap->attk.damn) : 0;
+	/* no need for an extra check for `NO_ATTK' because this will
+	   always return 0 for any artifact which has that attribute */
+
+	if (weap && weap->attk.damn && spec_applies(weap, mon))
+	    return rnd((int)weap->attk.damn);
 	return 0;
 }
 
@@ -610,7 +650,13 @@ int tmp;
 {
 	register const struct artifact *weap = get_artifact(otmp);
 
-	if ((spec_dbon_applies = (weap && spec_applies(weap, mon))) != 0)
+	if (!weap || (weap->attk.adtyp == AD_PHYS && /* check for `NO_ATTK' */
+			weap->attk.damn == 0 && weap->attk.damd == 0))
+	    spec_dbon_applies = FALSE;
+	else
+	    spec_dbon_applies = spec_applies(weap, mon);
+
+	if (spec_dbon_applies)
 	    return weap->attk.damd ? rnd((int)weap->attk.damd) : max(tmp,1);
 	return 0;
 }
@@ -661,7 +707,7 @@ winid tmpwin;		/* supplied by dodiscover() */
 
     for (i = 0; i < NROFARTIFACTS; i++) {
 	if (artidisco[i] == 0) break;	/* empty slot implies end of list */
-	if (i == 0) putstr(tmpwin, ATR_INVERSE, "Artifacts");
+	if (i == 0) putstr(tmpwin, iflags.menu_headings, "Artifacts");
 	m = artidisco[i];
 	otyp = artilist[m].otyp;
 	Sprintf(buf, "  %s [%s %s]", artiname(m),
@@ -675,6 +721,209 @@ winid tmpwin;		/* supplied by dodiscover() */
 
 #ifdef OVLB
 
+
+	/*
+	 * Magicbane's intrinsic magic is incompatible with normal
+	 * enchantment magic.  Thus, its effects have a negative
+	 * dependence on spe.  Against low mr victims, it typically
+	 * does "double athame" damage, 2d4.  Occasionally, it will
+	 * cast unbalancing magic which effectively averages out to
+	 * 4d4 damage (3d4 against high mr victims), for spe = 0.
+	 *
+	 * Prior to 3.4.1, the cancel (aka purge) effect always
+	 * included the scare effect too; now it's one or the other.
+	 * Likewise, the stun effect won't be combined with either
+	 * of those two; it will be chosen separately or possibly
+	 * used as a fallback when scare or cancel fails.
+	 *
+	 * [Historical note: a change to artifact_hit() for 3.4.0
+	 * unintentionally made all of Magicbane's special effects
+	 * be blocked if the defender successfully saved against a
+	 * stun attack.  As of 3.4.1, those effects can occur but
+	 * will be slightly less likely than they were in 3.3.x.]
+	 */
+#define MB_MAX_DIEROLL		8	/* rolls above this aren't magical */
+static const char * const mb_verb[2][4] = {
+	{ "probe", "stun", "scare", "cancel" },
+	{ "prod", "amaze", "tickle", "purge" },
+};
+#define MB_INDEX_PROBE		0
+#define MB_INDEX_STUN		1
+#define MB_INDEX_SCARE		2
+#define MB_INDEX_CANCEL		3
+
+/* called when someone is being hit by Magicbane */
+STATIC_OVL boolean
+Mb_hit(magr, mdef, mb, dmgptr, dieroll, vis, hittee)
+struct monst *magr, *mdef;	/* attacker and defender */
+struct obj *mb;			/* Magicbane */
+int *dmgptr;			/* extra damage target will suffer */
+int dieroll;			/* d20 that has already scored a hit */
+boolean vis;			/* whether the action can be seen */
+char *hittee;			/* target's name: "you" or mon_nam(mdef) */
+{
+    struct permonst *old_uasmon;
+    const char *verb;
+    boolean youattack = (magr == &youmonst),
+	    youdefend = (mdef == &youmonst),
+	    resisted = FALSE, do_stun, do_confuse, result;
+    int attack_indx, scare_dieroll = MB_MAX_DIEROLL / 2;
+
+    result = FALSE;		/* no message given yet */
+    /* the most severe effects are less likely at higher enchantment */
+    if (mb->spe >= 3)
+	scare_dieroll /= (1 << (mb->spe / 3));
+    /* if target successfully resisted the artifact damage bonus,
+       reduce overall likelihood of the assorted special effects */
+    if (!spec_dbon_applies) dieroll += 1;
+
+    /* might stun even when attempting a more severe effect, but
+       in that case it will only happen if the other effect fails;
+       extra damage will apply regardless; 3.4.1: sometimes might
+       just probe even when it hasn't been enchanted */
+    do_stun = (max(mb->spe,0) < rn2(spec_dbon_applies ? 11 : 7));
+
+    /* the special effects also boost physical damage; increments are
+       generally cumulative, but since the stun effect is based on a
+       different criterium its damage might not be included; the base
+       damage is either 1d4 (athame) or 2d4 (athame+spec_dbon) depending
+       on target's resistance check against AD_STUN (handled by caller)
+       [note that a successful save against AD_STUN doesn't actually
+       prevent the target from ending up stunned] */
+    attack_indx = MB_INDEX_PROBE;
+    *dmgptr += rnd(4);			/* (2..3)d4 */
+    if (do_stun) {
+	attack_indx = MB_INDEX_STUN;
+	*dmgptr += rnd(4);		/* (3..4)d4 */
+    }
+    if (dieroll <= scare_dieroll) {
+	attack_indx = MB_INDEX_SCARE;
+	*dmgptr += rnd(4);		/* (3..5)d4 */
+    }
+    if (dieroll <= (scare_dieroll / 2)) {
+	attack_indx = MB_INDEX_CANCEL;
+	*dmgptr += rnd(4);		/* (4..6)d4 */
+    }
+
+    /* give the hit message prior to inflicting the effects */
+    verb = mb_verb[!!Hallucination][attack_indx];
+    if (youattack || youdefend || vis) {
+	result = TRUE;
+	pline_The("magic-absorbing blade %s %s!",
+		  vtense((const char *)0, verb), hittee);
+	/* assume probing has some sort of noticeable feedback
+	   even if it is being done by one monster to another */
+	if (attack_indx == MB_INDEX_PROBE && !canspotmon(mdef))
+	    map_invisible(mdef->mx, mdef->my);
+    }
+
+    /* now perform special effects */
+    switch (attack_indx) {
+    case MB_INDEX_CANCEL:
+	old_uasmon = youmonst.data;
+	/* No mdef->mcan check: even a cancelled monster can be polymorphed
+	 * into a golem, and the "cancel" effect acts as if some magical
+	 * energy remains in spellcasting defenders to be absorbed later.
+	 */
+	if (!cancel_monst(mdef, mb, youattack, FALSE, FALSE)) {
+	    resisted = TRUE;
+	} else {
+	    do_stun = FALSE;
+	    if (youdefend) {
+		if (youmonst.data != old_uasmon)
+		    *dmgptr = 0;    /* rehumanized, so no more damage */
+		if (u.uenmax > 0) {
+		    You("lose magical energy!");
+		    u.uenmax--;
+		    if (u.uen > 0) u.uen--;
+		    flags.botl = 1;
+		}
+	    } else {
+		if (mdef->data == &mons[PM_CLAY_GOLEM])
+		    mdef->mhp = 1;	/* cancelled clay golems will die */
+		if (youattack && attacktype(mdef->data, AT_MAGC)) {
+		    You("absorb magical energy!");
+		    u.uenmax++;
+		    u.uen++;
+		    flags.botl = 1;
+		}
+	    }
+	}
+	break;
+
+    case MB_INDEX_SCARE:
+	if (youdefend) {
+	    if (Antimagic) {
+		resisted = TRUE;
+	    } else {
+		nomul(-3);
+		nomovemsg = "";
+		if (magr && magr == u.ustuck && sticks(youmonst.data)) {
+		    u.ustuck = (struct monst *)0;
+		    You("release %s!", mon_nam(magr));
+		}
+	    }
+	} else {
+	    if (rn2(2) && resist(mdef, WEAPON_CLASS, 0, NOTELL))
+		resisted = TRUE;
+	    else
+		monflee(mdef, 3, FALSE, (mdef->mhp > *dmgptr));
+	}
+	if (!resisted) do_stun = FALSE;
+	break;
+
+    case MB_INDEX_STUN:
+	do_stun = TRUE;		/* (this is redundant...) */
+	break;
+
+    case MB_INDEX_PROBE:
+	if (youattack && (mb->spe == 0 || !rn2(3 * abs(mb->spe)))) {
+	    pline_The("%s is insightful.", verb);
+	    /* pre-damage status */
+	    probe_monster(mdef);
+	}
+	break;
+    }
+    /* stun if that was selected and a worse effect didn't occur */
+    if (do_stun) {
+	if (youdefend)
+	    make_stunned((HStun + 3), FALSE);
+	else
+	    mdef->mstun = 1;
+	/* avoid extra stun message below if we used mb_verb["stun"] above */
+	if (attack_indx == MB_INDEX_STUN) do_stun = FALSE;
+    }
+    /* lastly, all this magic can be confusing... */
+    do_confuse = !rn2(12);
+    if (do_confuse) {
+	if (youdefend)
+	    make_confused(HConfusion + 4, FALSE);
+	else
+	    mdef->mconf = 1;
+    }
+
+    if (youattack || youdefend || vis) {
+	(void) upstart(hittee);	/* capitalize */
+	if (resisted) {
+	    pline("%s %s!", hittee, vtense(hittee, "resist"));
+	    shieldeff(youdefend ? u.ux : mdef->mx,
+		      youdefend ? u.uy : mdef->my);
+	}
+	if ((do_stun || do_confuse) && flags.verbose) {
+	    char buf[BUFSZ];
+
+	    buf[0] = '\0';
+	    if (do_stun) Strcat(buf, "stunned");
+	    if (do_stun && do_confuse) Strcat(buf, " and ");
+	    if (do_confuse) Strcat(buf, "confused");
+	    pline("%s %s %s%c", hittee, vtense(hittee, "are"),
+		  buf, (do_stun && do_confuse) ? '!' : '.');
+	}
+    }
+
+    return result;
+}
+  
 /* Function used when someone attacks someone else with an artifact
  * weapon.  Only adds the special (artifact) damage, and returns a 1 if it
  * did something special (in which case the caller won't print the normal
@@ -693,11 +942,14 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 	boolean youattack = (magr == &youmonst);
 	boolean youdefend = (mdef == &youmonst);
 	boolean vis = (!youattack && magr && cansee(magr->mx, magr->my))
-		|| (!youdefend && cansee(mdef->mx, mdef->my));
+	    || (!youdefend && cansee(mdef->mx, mdef->my))
+	    || (youattack && u.uswallow && mdef == u.ustuck && !Blind);
 	boolean realizes_damage;
-
+	const char *wepdesc;
 	static const char you[] = "you";
-	const char *hittee = youdefend ? you : mon_nam(mdef);
+	char hittee[BUFSZ];
+
+	Strcpy(hittee, youdefend ? you : mon_nam(mdef));
 
 	/* The following takes care of most of the damage, but not all--
 	 * the exception being for level draining, which is specially
@@ -706,230 +958,74 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 	*dmgptr += spec_dbon(otmp, mdef, *dmgptr);
 
 	if (youattack && youdefend) {
-		impossible("attacking yourself with weapon?");
-		return FALSE;
-	} else if (!spec_dbon_applies) {
-		/* since damage bonus didn't apply, nothing more to do */
-		return FALSE;
+	    impossible("attacking yourself with weapon?");
+	    return FALSE;
 	}
 
-	realizes_damage = (youdefend || vis);
+	realizes_damage = (youdefend || vis || 
+			   /* feel the effect even if not seen */
+			   (youattack && mdef == u.ustuck));
 
 	/* the four basic attacks: fire, cold, shock and missiles */
 	if (attacks(AD_FIRE, otmp)) {
-	    if (realizes_damage) {
-		pline_The("fiery blade %s %s!",
+	    if (realizes_damage)
+		pline_The("fiery blade %s %s%c",
+			!spec_dbon_applies ? "hits" :
 			(mdef->data == &mons[PM_WATER_ELEMENTAL]) ?
-			"vaporizes part of" : "burns", hittee);
-		if (!rn2(4)) (void) destroy_mitem(mdef, POTION_CLASS, AD_FIRE);
-		if (!rn2(4)) (void) destroy_mitem(mdef, SCROLL_CLASS, AD_FIRE);
-		if (!rn2(7)) (void) destroy_mitem(mdef, SPBOOK_CLASS, AD_FIRE);
-		return TRUE;
-	    }
+			"vaporizes part of" : "burns",
+			hittee, !spec_dbon_applies ? '.' : '!');
+	    if (!rn2(4)) (void) destroy_mitem(mdef, POTION_CLASS, AD_FIRE);
+	    if (!rn2(4)) (void) destroy_mitem(mdef, SCROLL_CLASS, AD_FIRE);
+	    if (!rn2(7)) (void) destroy_mitem(mdef, SPBOOK_CLASS, AD_FIRE);
+	    if (youdefend && Slimed) burn_away_slime();
+	    return realizes_damage;
 	}
 	if (attacks(AD_COLD, otmp)) {
-	    if (realizes_damage) {
-		pline_The("ice-cold blade freezes %s!", hittee);
-		if (!rn2(4)) (void) destroy_mitem(mdef, POTION_CLASS, AD_COLD);
-		return TRUE;
-	    }
+	    if (realizes_damage)
+		pline_The("ice-cold blade %s %s%c",
+			!spec_dbon_applies ? "hits" : "freezes",
+			hittee, !spec_dbon_applies ? '.' : '!');
+	    if (!rn2(4)) (void) destroy_mitem(mdef, POTION_CLASS, AD_COLD);
+	    return realizes_damage;
 	}
 	if (attacks(AD_ELEC, otmp)) {
-	    if (realizes_damage) {
-		if(youattack && otmp != uwep)
-		    pline("%s hits %s!", The(xname(otmp)), hittee);
-		pline("Lightning strikes %s!", hittee);
-		if (!rn2(5)) (void) destroy_mitem(mdef, RING_CLASS, AD_ELEC);
-		if (!rn2(5)) (void) destroy_mitem(mdef, WAND_CLASS, AD_ELEC);
-		return TRUE;
-	    }
+	    if (realizes_damage)
+		pline_The("massive hammer hits%s %s%c",
+			  !spec_dbon_applies ? "" : "!  Lightning strikes",
+			  hittee, !spec_dbon_applies ? '.' : '!');
+	    if (!rn2(5)) (void) destroy_mitem(mdef, RING_CLASS, AD_ELEC);
+	    if (!rn2(5)) (void) destroy_mitem(mdef, WAND_CLASS, AD_ELEC);
+	    return realizes_damage;
 	}
 	if (attacks(AD_MAGM, otmp)) {
-		if (realizes_damage) {
-			if(youattack && otmp != uwep)
-			    pline("%s hits %s!", The(xname(otmp)), hittee);
-			pline("A hail of magic missiles strikes %s!", hittee);
-			return TRUE;
-		}
+	    if (realizes_damage)
+		pline_The("imaginary widget hits%s %s%c",
+			  !spec_dbon_applies ? "" :
+				"!  A hail of magic missiles strikes",
+			  hittee, !spec_dbon_applies ? '.' : '!');
+	    return realizes_damage;
 	}
 
-	/*
-	 * Magicbane's intrinsic magic is incompatible with normal
-	 * enchantment magic.  Thus, its effects have a negative
-	 * dependence on spe.  Against low mr victims, it typically
-	 * does "double athame" damage, 2d4.  Occasionally, it will
-	 * cast unbalancing magic which effectively averages out to
-	 * 4d4 damage (2.5d4 against high mr victims), for spe = 0.
-	 */
-
-#define MB_MAX_DIEROLL		8    /* rolls above this aren't magical */
-#define MB_INDEX_INIT		(-1)
-#define MB_INDEX_PROBE		0
-#define MB_INDEX_STUN		1
-#define MB_INDEX_SCARE		2
-#define MB_INDEX_PURGE		3
-#define MB_RESIST_ATTACK	(resist_index = attack_index)
-#define MB_RESISTED_ATTACK	(resist_index == attack_index)
-#define MB_UWEP_ATTACK		(youattack && (otmp == uwep))
-
-	if (attacks(AD_STUN, otmp) && (dieroll <= MB_MAX_DIEROLL)) {
-		int attack_index = MB_INDEX_INIT;
-		int resist_index = MB_INDEX_INIT;
-		int scare_dieroll = MB_MAX_DIEROLL / 2;
-
-		if (otmp->spe >= 3)
-			scare_dieroll /= (1 << (otmp->spe / 3));
-
-		*dmgptr += rnd(4);			/* 3d4 */
-
-		if (otmp->spe > rn2(10))		/* probe */
-			attack_index = MB_INDEX_PROBE;
-		else {					/* stun */
-			attack_index = MB_INDEX_STUN;
-			*dmgptr += rnd(4);		/* 4d4 */
-
-			if (youdefend)
-				make_stunned((HStun + 3), FALSE);
-			else
-				mdef->mstun = 1;
-		}
-		if (dieroll <= scare_dieroll) {		/* scare */
-			attack_index = MB_INDEX_SCARE;
-			*dmgptr += rnd(4);		/* 5d4 */
-
-			if (youdefend) {
-				if (Antimagic)
-					MB_RESIST_ATTACK;
-				else {
-					nomul(-3);
-					nomovemsg = "";
-					if ((magr == u.ustuck)
-						&& sticks(youmonst.data)) {
-					    u.ustuck = (struct monst *)0;
-					    You("release %s!", mon_nam(magr));
-					}
-				}
-			} else if (youattack) {
-				if (rn2(2) && resist(mdef,SPBOOK_CLASS,0,0)) {
-				    MB_RESIST_ATTACK;
-				} else {
-				    if (mdef == u.ustuck) {
-					if (u.uswallow)
-					    expels(mdef,mdef->data,TRUE);
-					else {
-					    if (!sticks(youmonst.data)) {
-						u.ustuck = (struct monst *)0;
-						You("get released!");
-					    }
-					}
-				    }
-				    mdef->mflee = 1;
-				    mdef->mfleetim += 3;
-				}
-			}
-		}
-		if (dieroll <= (scare_dieroll / 2)) {	/* purge */
-			struct obj *ospell;
-			struct permonst *old_uasmon = youmonst.data;
-
-			attack_index = MB_INDEX_PURGE;
-			*dmgptr += rnd(4);		/* 6d4 */
-
-			/* Create a fake spell object, ala spell.c */
-			ospell = mksobj(SPE_CANCELLATION, FALSE, FALSE);
-			ospell->blessed = ospell->cursed = 0;
-			ospell->quan = 20L;
-
-			cancel_monst(mdef, ospell, youattack, FALSE, FALSE);
-
-			if (youdefend) {
-				if (old_uasmon != youmonst.data)
-					/* rehumanized, no more damage */
-					*dmgptr = 0;
-				if (Antimagic)
-					MB_RESIST_ATTACK;
-			} else {
-				if (!mdef->mcan)
-					MB_RESIST_ATTACK;
-
-				/* cancelled clay golems will die ... */
-				else if (mdef->data == &mons[PM_CLAY_GOLEM])
-					mdef->mhp = 1;
-			}
-
-			obfree(ospell, (struct obj *)0);
-		}
-
-		if (youdefend || mdef->mhp > 0) {  /* ??? -dkh- */
-			static const char *mb_verb[4] =
-				{"probe", "stun", "scare", "purge"};
-
-			if (youattack || youdefend || vis) {
-				pline_The("magic-absorbing blade %ss %s!",
-					mb_verb[attack_index], hittee);
-
-				if (MB_RESISTED_ATTACK) {
-					pline("%s resist%s!",
-					youdefend ? "You" : Monnam(mdef),
-					youdefend ? "" : "s");
-
-					shieldeff(youdefend ? u.ux : mdef->mx,
-						youdefend ? u.uy : mdef->my);
-				}
-			}
-
-			/* Much ado about nothing.  More magic fanfare! */
-			if (MB_UWEP_ATTACK) {
-				if (attack_index == MB_INDEX_PURGE) {
-				    if (!MB_RESISTED_ATTACK &&
-					attacktype(mdef->data, AT_MAGC)) {
-					You("absorb magical energy!");
-					u.uenmax++;
-					u.uen++;
-					flags.botl = 1;
-				    }
-				} else if (attack_index == MB_INDEX_PROBE) {
-				    if (!rn2(4 * otmp->spe)) {
-					pline_The("probe is insightful!");
-					if (!canspotmon(mdef))
-					    map_invisible(u.ux+u.dx,u.uy+u.dy);
-					/* pre-damage status */
-					probe_monster(mdef);
-				    }
-				}
-			} else if (youdefend && !MB_RESISTED_ATTACK
-				   && (attack_index == MB_INDEX_PURGE)) {
-				You("lose magical energy!");
-				if (u.uenmax > 0) u.uenmax--;
-				if (u.uen > 0) u.uen--;
-					flags.botl = 1;
-			}
-
-			/* all this magic is confusing ... */
-			if (!rn2(12)) {
-			    if (youdefend)
-				make_confused((HConfusion + 4), FALSE);
-			    else
-				mdef->mconf = 1;
-
-			    if (youattack || youdefend || vis)
-				pline("%s %s confused.",
-				      youdefend ? "You" : Monnam(mdef),
-				      youdefend ? "are" : "is");
-			}
-		}
-		return TRUE;
+	if (attacks(AD_STUN, otmp) && dieroll <= MB_MAX_DIEROLL) {
+	    /* Magicbane's special attacks (possibly modifies hittee[]) */
+	    return Mb_hit(magr, mdef, otmp, dmgptr, dieroll, vis, hittee);
 	}
-	/* end of Magicbane code */
+
+	if (!spec_dbon_applies) {
+	    /* since damage bonus didn't apply, nothing more to do;  
+	       no further attacks have side-effects on inventory */
+	    return FALSE;
+	}
 
 	/* We really want "on a natural 20" but Nethack does it in */
 	/* reverse from AD&D. */
 	if (spec_ability(otmp, SPFX_BEHEAD)) {
 	    if (otmp->oartifact == ART_TSURUGI_OF_MURAMASA && dieroll == 1) {
+		wepdesc = "The razor-sharp blade";
 		/* not really beheading, but so close, why add another SPFX */
 		if (youattack && u.uswallow && mdef == u.ustuck) {
 		    You("slice %s wide open!", mon_nam(mdef));
-		    *dmgptr = mdef->mhp + FATAL_DAMAGE;
+		    *dmgptr = 2 * mdef->mhp + FATAL_DAMAGE_MODIFIER;
 		    return TRUE;
 		}
 		if (!youdefend) {
@@ -943,19 +1039,18 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 						mon_nam(mdef));
 				else if (vis)
 					pline("%s cuts deeply into %s!",
-					      Monnam(magr), mon_nam(mdef));
+					      Monnam(magr), hittee);
 				*dmgptr *= 2;
 				return TRUE;
 			}
-			*dmgptr = mdef->mhp + FATAL_DAMAGE;
-			pline_The("razor-sharp blade cuts %s in half!",
-			      mon_nam(mdef));
+			*dmgptr = 2 * mdef->mhp + FATAL_DAMAGE_MODIFIER;
+			pline("%s cuts %s in half!", wepdesc, mon_nam(mdef));
 			otmp->dknown = TRUE;
 			return TRUE;
 		} else {
 			if (bigmonst(youmonst.data)) {
 				pline("%s cuts deeply into you!",
-					Monnam(magr));
+				      magr ? Monnam(magr) : wepdesc);
 				*dmgptr *= 2;
 				return TRUE;
 			}
@@ -965,20 +1060,21 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 			 * value to the damage so that this reduction in
 			 * damage does not prevent death.
 			 */
-			*dmgptr = (Upolyd ? u.mh : u.uhp) + FATAL_DAMAGE;
-			pline_The("razor-sharp blade cuts you in half!");
+			*dmgptr = 2 * (Upolyd ? u.mh : u.uhp) + FATAL_DAMAGE_MODIFIER;
+			pline("%s cuts you in half!", wepdesc);
 			otmp->dknown = TRUE;
 			return TRUE;
 		}
 	    } else if (otmp->oartifact == ART_VORPAL_BLADE &&
 			(dieroll == 1 || mdef->data == &mons[PM_JABBERWOCK])) {
-		static const char *behead_msg[2] = {
+		static const char * const behead_msg[2] = {
 		     "%s beheads %s!",
 		     "%s decapitates %s!"
 		};
 
 		if (youattack && u.uswallow && mdef == u.ustuck)
 			return FALSE;
+		wepdesc = artilist[ART_VORPAL_BLADE].name;
 		if (!youdefend) {
 			if (!has_head(mdef->data) || notonhead || u.uswallow) {
 				if (youattack)
@@ -991,32 +1087,32 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 				return ((boolean)(youattack || vis));
 			}
 			if (noncorporeal(mdef->data) || amorphous(mdef->data)) {
-				pline("%s slices through %s %s.",
-				      artilist[ART_VORPAL_BLADE].name,
-				      s_suffix(mon_nam(mdef)), mbodypart(mdef,NECK));
+				pline("%s slices through %s %s.", wepdesc,
+				      s_suffix(mon_nam(mdef)),
+				      mbodypart(mdef,NECK));
 				return TRUE;
 			}
-			*dmgptr = mdef->mhp + FATAL_DAMAGE;
+			*dmgptr = 2 * mdef->mhp + FATAL_DAMAGE_MODIFIER;
 			pline(behead_msg[rn2(SIZE(behead_msg))],
-			      artilist[ART_VORPAL_BLADE].name,
-			      mon_nam(mdef));
+			      wepdesc, mon_nam(mdef));
 			otmp->dknown = TRUE;
 			return TRUE;
 		} else {
 			if (!has_head(youmonst.data)) {
 				pline("Somehow, %s misses you wildly.",
-					mon_nam(magr));
+				      magr ? mon_nam(magr) : wepdesc);
 				*dmgptr = 0;
 				return TRUE;
 			}
 			if (noncorporeal(youmonst.data) || amorphous(youmonst.data)) {
 				pline("%s slices through your %s.",
-				      artilist[ART_VORPAL_BLADE].name, body_part(NECK));
+				      wepdesc, body_part(NECK));
 				return TRUE;
 			}
-			*dmgptr = (Upolyd ? u.mh : u.uhp) + FATAL_DAMAGE;
+			*dmgptr = 2 * (Upolyd ? u.mh : u.uhp)
+				  + FATAL_DAMAGE_MODIFIER;
 			pline(behead_msg[rn2(SIZE(behead_msg))],
-			      artilist[ART_VORPAL_BLADE].name, "you");
+			      wepdesc, "you");
 			otmp->dknown = TRUE;
 			/* Should amulets fall off? */
 			return TRUE;
@@ -1028,7 +1124,7 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 			if (vis) {
 			    if(otmp->oartifact == ART_STORMBRINGER)
 				pline_The("%s blade draws the life from %s!",
-				      hcolor(Black),
+				      hcolor(NH_BLACK),
 				      mon_nam(mdef));
 			    else
 				pline("%s draws the life from %s!",
@@ -1036,7 +1132,7 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 				      mon_nam(mdef));
 			}
 			if (mdef->m_lev == 0) {
-			    *dmgptr = mdef->mhp + FATAL_DAMAGE;
+			    *dmgptr = 2 * mdef->mhp + FATAL_DAMAGE_MODIFIER;
 			} else {
 			    int drain = rnd(8);
 			    *dmgptr += drain;
@@ -1055,13 +1151,13 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 				    "unholy blade" : "object");
 			else if (otmp->oartifact == ART_STORMBRINGER)
 				pline_The("%s blade drains your life!",
-				      hcolor(Black));
+				      hcolor(NH_BLACK));
 			else
 				pline("%s drains your life!",
 				      The(distant_name(otmp, xname)));
 			losexp("life drainage");
-			if (magr->mhp < magr->mhpmax) {
-			    magr->mhp += (u.uhpmax - oldhpmax)/2;
+			if (magr && magr->mhp < magr->mhpmax) {
+			    magr->mhp += (oldhpmax - u.uhpmax)/2;
 			    if (magr->mhp > magr->mhpmax) magr->mhp = magr->mhpmax;
 			}
 			return TRUE;
@@ -1080,7 +1176,8 @@ doinvoke()
     register struct obj *obj;
 
     obj = getobj(invoke_types, "invoke");
-    if(!obj) return 0;
+    if (!obj) return 0;
+    if (obj->oartifact && !touch_artifact(obj, &youmonst)) return 1;
     return arti_invoke(obj);
 }
 
@@ -1102,7 +1199,8 @@ arti_invoke(obj)
 	/* It's a special power, not "just" a property */
 	if(obj->age > monstermoves) {
 	    /* the artifact is tired :-) */
-	    You_feel("that %s is ignoring you.", the(xname(obj)));
+	    You_feel("that %s %s ignoring you.",
+		     the(xname(obj)), otense(obj, "are"));
 	    /* and just got more so; patience is essential... */
 	    obj->age += (long) d(3,10);
 	    return 1;
@@ -1111,17 +1209,19 @@ arti_invoke(obj)
 
 	switch(oart->inv_prop) {
 	case TAMING: {
-	    struct obj *pseudo = mksobj(SPE_CHARM_MONSTER, FALSE, FALSE);
-	    pseudo->blessed = pseudo->cursed = 0;
-	    pseudo->quan = 20L;			/* do not let useup get it */
-	    (void) seffects(pseudo);
-	    obfree(pseudo, (struct obj *)0);	/* now, get rid of it */
+	    struct obj pseudo;
+
+	    pseudo = zeroobj;	/* neither cursed nor blessed */
+	    pseudo.otyp = SCR_TAMING;
+	    (void) seffects(&pseudo);
 	    break;
 	  }
 	case HEALING: {
 	    int healamt = (u.uhpmax + 1 - u.uhp) / 2;
+	    long creamed = (long)u.ucreamed;
+
 	    if (Upolyd) healamt = (u.mhmax + 1 - u.mh) / 2;
-	    if(healamt || Sick || (Blinded > 1))
+	    if (healamt || Sick || Slimed || Blinded > creamed)
 		You_feel("better.");
 	    else
 		goto nothing_special;
@@ -1131,7 +1231,7 @@ arti_invoke(obj)
 	    }
 	    if(Sick) make_sick(0L,(char *)0,FALSE,SICK_ALL);
 	    if(Slimed) Slimed = 0L;
-	    if(Blinded > 1) make_blinded(0L,FALSE);
+	    if (Blinded > creamed) make_blinded(creamed, FALSE);
 	    flags.botl = 1;
 	    break;
 	  }
@@ -1162,8 +1262,10 @@ arti_invoke(obj)
 		obj->age = 0;
 		return 0;
 	    }
-	    b_effect = obj->blessed && (Role_switch == oart->role || !oart->role);
+	    b_effect = obj->blessed &&
+		(Role_switch == oart->role || !oart->role);
 	    recharge(otmp, b_effect ? 1 : obj->cursed ? -1 : 0);
+	    update_inventory();
 	    break;
 	  }
 	case LEV_TELE:
@@ -1249,13 +1351,17 @@ arti_invoke(obj)
 	  }
 	}
     } else {
-	long cprop = (u.uprops[oart->inv_prop].extrinsic ^= W_ARTI);
-	boolean on = (cprop & W_ARTI) != 0; /* true if invoked prop just set */
+	long eprop = (u.uprops[oart->inv_prop].extrinsic ^= W_ARTI),
+	     iprop = u.uprops[oart->inv_prop].intrinsic;
+	boolean on = (eprop & W_ARTI) != 0; /* true if invoked prop just set */
 
 	if(on && obj->age > monstermoves) {
 	    /* the artifact is tired :-) */
 	    u.uprops[oart->inv_prop].extrinsic ^= W_ARTI;
-	    You_feel("that %s is ignoring you.", the(xname(obj)));
+	    You_feel("that %s %s ignoring you.",
+		     the(xname(obj)), otense(obj, "are"));
+	    /* can't just keep repeatedly trying */
+	    obj->age += (long) d(3,10);
 	    return 1;
 	} else if(!on) {
 	    /* when turning off property, determine downtime */
@@ -1263,7 +1369,7 @@ arti_invoke(obj)
 	    obj->age = monstermoves + rnz(100);
 	}
 
-	if(cprop & ~W_ARTI) {
+	if ((eprop & ~W_ARTI) || iprop) {
 nothing_special:
 	    /* you had the property from some other source too */
 	    if (carried(obj))
@@ -1276,19 +1382,19 @@ nothing_special:
 	    else You_feel("the tension decrease around you.");
 	    break;
 	case LEVITATION:
-	    if(on) float_up();
-	    else (void) float_down(I_SPECIAL|TIMEOUT, W_ARTI);
+	    if(on) {
+		float_up();
+		spoteffects(FALSE);
+	    } else (void) float_down(I_SPECIAL|TIMEOUT, W_ARTI);
 	    break;
 	case INVIS:
-	    if (!See_invisible && !Blind) {
-		newsym(u.ux,u.uy);
-		if (on) {
-		    Your("body takes on a %s transparency...",
-			 Hallucination ? "normal" : "strange");
-		} else {
-		    Your("body seems to unfade...");
-		}
-	    } else goto nothing_special;
+	    if (BInvis || Blind) goto nothing_special;
+	    newsym(u.ux, u.uy);
+	    if (on)
+		Your("body takes on a %s transparency...",
+		     Hallucination ? "normal" : "strange");
+	    else
+		Your("body seems to unfade...");
 	    break;
 	}
     }
@@ -1297,8 +1403,17 @@ nothing_special:
 }
 
 
+/* WAC return TRUE if artifact is always lit */
+boolean
+artifact_light(obj)
+    struct obj *obj;
+{
+    return (get_artifact(obj) && obj->oartifact == ART_SUNSWORD);
+}
+
 /* KMH -- Talking artifacts are finally implemented */
-void arti_speak(obj)
+void
+arti_speak(obj)
     struct obj *obj;
 {
 	register const struct artifact *oart = get_artifact(obj);
@@ -1313,11 +1428,33 @@ void arti_speak(obj)
 	line = getrumor(bcsign(obj), buf, TRUE);
 	if (!*line)
 		line = "NetHack rumors file closed for renovation.";
-	pline("%s whispers:", The(xname(obj)));
+	pline("%s:", Tobjnam(obj, "whisper"));
 	verbalize("%s", line);
 	return;
 }
 
+boolean
+artifact_has_invprop(otmp, inv_prop)
+struct obj *otmp;
+uchar inv_prop;
+{
+	const struct artifact *arti = get_artifact(otmp);
+
+	return((boolean)(arti && (arti->inv_prop == inv_prop)));
+}
+
+/* Return the price sold to the hero of a given artifact or unique item */
+long
+arti_cost(otmp)
+struct obj *otmp;
+{
+	if (!otmp->oartifact)
+	    return ((long)objects[otmp->otyp].oc_cost);
+	else if (artilist[(int) otmp->oartifact].cost)
+	    return (artilist[(int) otmp->oartifact].cost);
+	else
+	    return (100L * (long)objects[otmp->otyp].oc_cost);
+}
 
 #endif /* OVLB */
 

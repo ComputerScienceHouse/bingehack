@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)allmain.c	3.3	2000/05/05	*/
+/*	SCCS Id: @(#)allmain.c	3.4	2003/04/02	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -19,7 +19,7 @@ STATIC_DCL void NDECL(do_positionbar);
 void
 moveloop()
 {
-#ifdef MICRO
+#if defined(MICRO) || defined(WIN32)
     char ch;
     int abort_lev;
 #endif
@@ -60,9 +60,6 @@ moveloop()
     youmonst.movement = NORMAL_SPEED;	/* give the hero some movement points */
 
     for(;;) {
-#ifdef CLIPPING
-	cliparound(u.ux, u.uy);
-#endif
 	get_nh_event();
 #ifdef POSITIONBAR
 	do_positionbar();
@@ -100,7 +97,7 @@ moveloop()
 
 		    /* calculate how much time passed. */
 #ifdef STEED
-		    if (u.usteed && flags.mv) {
+		    if (u.usteed && u.umoved) {
 			/* your speed doesn't augment steed's speed */
 			moveamt = mcalcmove(u.usteed);
 		    } else
@@ -138,6 +135,7 @@ moveloop()
 		    /* once-per-turn things go here */
 		    /********************************/
 
+		    if (flags.bypasses) clear_bypasses();
 		    if(Glib) glibr();
 		    nh_timeout();
 		    run_regions();
@@ -156,16 +154,22 @@ moveloop()
 		    if (u.uinvulnerable) {
 			/* for the moment at least, you're in tiptop shape */
 			wtcap = UNENCUMBERED;
+		    } else if (Upolyd && youmonst.data->mlet == S_EEL && !is_pool(u.ux,u.uy) && !Is_waterlevel(&u.uz)) {
+			if (u.mh > 1) {
+			    u.mh--;
+			    flags.botl = 1;
+			} else if (u.mh < 1)
+			    rehumanize();
 		    } else if (Upolyd && u.mh < u.mhmax) {
 			if (u.mh < 1)
-			   rehumanize();
+			    rehumanize();
 			else if (Regeneration ||
 				    (wtcap < MOD_ENCUMBER && !(moves%20))) {
 			    flags.botl = 1;
 			    u.mh++;
 			}
 		    } else if (u.uhp < u.uhpmax &&
-			 (wtcap < MOD_ENCUMBER || !flags.mv || Regeneration)) {
+			 (wtcap < MOD_ENCUMBER || !u.umoved || Regeneration)) {
 			if (u.ulevel > 9 && !(moves % 3)) {
 			    int heal, Con = (int) ACURR(A_CON);
 
@@ -187,7 +191,8 @@ moveloop()
 			}
 		    }
 
-		    if (wtcap > MOD_ENCUMBER && flags.mv) {
+		    /* moving around while encumbered is hard work */
+		    if (wtcap > MOD_ENCUMBER && u.umoved) {
 			if(!(wtcap < EXT_ENCUMBER ? moves%30 : moves%10)) {
 			    if (Upolyd && u.mh > 1) {
 				u.mh--;
@@ -213,21 +218,27 @@ moveloop()
 
 		    if(!u.uinvulnerable) {
 			if(Teleportation && !rn2(85)) {
-#ifdef REDO
 			    xchar old_ux = u.ux, old_uy = u.uy;
-#endif
 			    tele();
-#ifdef REDO
 			    if (u.ux != old_ux || u.uy != old_uy) {
+				if (!next_to_u()) {
+				    check_leash(old_ux, old_uy);
+				}
+#ifdef REDO
 				/* clear doagain keystrokes */
 				pushch(0);
 				savech(0);
-			    }
 #endif
+			    }
 			}
+			/* delayed change may not be valid anymore */
+			if ((change == 1 && !Polymorph) ||
+			    (change == 2 && u.ulycn == NON_PM))
+			    change = 0;
 			if(Polymorph && !rn2(100))
 			    change = 1;
-			else if (u.ulycn >= LOW_PM && !rn2(80 - (20 * night())))
+			else if (u.ulycn >= LOW_PM && !Upolyd &&
+				 !rn2(80 - (20 * night())))
 			    change = 2;
 			if (change && !Unchanging) {
 			    if (multi >= 0) {
@@ -235,7 +246,7 @@ moveloop()
 				    stop_occupation();
 				else
 				    nomul(0);
-				if (change == 1) polyself();
+				if (change == 1) polyself(FALSE);
 				else you_were();
 				change = 0;
 			    }
@@ -270,10 +281,13 @@ moveloop()
 
 		    /* when immobile, count is in turns */
 		    if(multi < 0) {
-			if (++multi == 0)	/* finished yet? */
+			if (++multi == 0) {	/* finished yet? */
 			    unmul((char *)0);
+			    /* if unmul caused a level change, take it now */
+			    if (u.utotype) deferred_goto();
+			}
 		    }
-		}			
+		}
 	    } while (youmonst.movement<NORMAL_SPEED); /* hero can't move loop */
 
 	    /******************************************/
@@ -307,7 +321,7 @@ moveloop()
 	flags.move = 1;
 
 	if(multi >= 0 && occupation) {
-#ifdef MICRO
+#if defined(MICRO) || defined(WIN32)
 	    abort_lev = 0;
 	    if (kbhit()) {
 		if ((ch = Getchar()) == ABORT)
@@ -323,14 +337,14 @@ moveloop()
 #endif
 		occupation = 0;
 	    if(
-#ifdef MICRO
+#if defined(MICRO) || defined(WIN32)
 		   abort_lev ||
 #endif
 		   monster_nearby()) {
 		stop_occupation();
 		reset_eat();
 	    }
-#ifdef MICRO
+#if defined(MICRO) || defined(WIN32)
 	    if (!(++occtime % 7))
 		display_nhwindow(WIN_MAP, FALSE);
 #endif
@@ -364,6 +378,11 @@ moveloop()
 	    sanity_check();
 #endif
 
+#ifdef CLIPPING
+	/* just before rhack */
+	cliparound(u.ux, u.uy);
+#endif
+
 	u.umoved = FALSE;
 
 	if (multi > 0) {
@@ -371,11 +390,12 @@ moveloop()
 	    if (!multi) {
 		/* lookaround may clear multi */
 		flags.move = 0;
+		if (flags.time) flags.botl = 1;
 		continue;
 	    }
 	    if (flags.mv) {
 		if(multi < COLNO && !--multi)
-		    flags.mv = flags.run = 0;
+		    flags.travel = iflags.travel1 = flags.mv = flags.run = 0;
 		domove();
 	    } else {
 		--multi;
@@ -394,8 +414,12 @@ moveloop()
 	    flags.botl = 1;
 
 	if (vision_full_recalc) vision_recalc(0);	/* vision! */
-	if (multi && multi%7 == 0)
+	/* when running in non-tport mode, this gets done through domove() */
+	if ((!flags.run || iflags.runmode == RUN_TPORT) &&
+		(multi && (!flags.travel ? !(multi % 7) : !(moves % 7L)))) {
+	    if (flags.time && flags.run) flags.botl = 1;
 	    display_nhwindow(WIN_MAP, FALSE);
+	}
     }
 }
 
@@ -406,8 +430,10 @@ void
 stop_occupation()
 {
 	if(occupation) {
-		You("stop %s.", occtxt);
+		if (!maybe_finished_meal(TRUE))
+		    You("stop %s.", occtxt);
 		occupation = 0;
+		flags.botl = 1; /* in case u.uhs changed */
 /* fainting stops your occupation, there's no reason to sync.
 		sync_hunger();
 */
@@ -471,10 +497,11 @@ newgame()
 				 * and init_artifacts() */
 
 	init_dungeons();	/* must be before u_init() to avoid rndmonst()
-				 * creating odd monsters for initial tins and
-				 * eggs */
+				 * creating odd monsters for any tins and eggs
+				 * in hero's initial inventory */
+	init_artifacts();	/* before u_init() in case $WIZKIT specifies
+				 * any artifacts */
 	u_init();
-	init_artifacts();
 
 #ifndef NO_SIGNAL
 	(void) signal(SIGINT, (SIG_RET_TYPE) done1);

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)display.c	3.3	2000/07/27	*/
+/*	SCCS Id: @(#)display.c	3.4	2003/02/19	*/
 /* Copyright (c) Dean Luick, with acknowledgements to Kevin Darcy */
 /* and Dave Cohrs, 1990.					  */
 /* NetHack may be freely redistributed.  See license for details. */
@@ -272,9 +272,11 @@ void
 map_invisible(x, y)
 register xchar x, y;
 {
-    if (level.flags.hero_memory)
-	levl[x][y].glyph = GLYPH_INVISIBLE;
-    show_glyph(x, y, GLYPH_INVISIBLE);
+    if (x != u.ux || y != u.uy) { /* don't display I at hero's location */
+	if (level.flags.hero_memory)
+	    levl[x][y].glyph = GLYPH_INVISIBLE;
+	show_glyph(x, y, GLYPH_INVISIBLE);
+    }
 }
 
 /*
@@ -331,12 +333,16 @@ unmap_object(x, y)
 	map_background(x,y,show);					\
 }
 
-void map_location(x,y,show)
+void
+map_location(x,y,show)
     int x, y, show;
 {
     _map_location(x,y,show);
 }
 
+#define DETECTED 	2
+#define PHYSICALLY_SEEN 1
+#define is_worm_tail(mon)	((mon) && ((x != (mon)->mx)  || (y != (mon)->my)))
 
 /*
  * display_monster()
@@ -350,10 +356,11 @@ void map_location(x,y,show)
  *
  */
 STATIC_OVL void
-display_monster(x, y, mon, in_sight, worm_tail)
+display_monster(x, y, mon, sightflags, worm_tail)
     register xchar x, y;	/* display position */
     register struct monst *mon;	/* monster to display */
-    int in_sight;		/* TRUE if the monster is physically seen */
+    int sightflags;		/* 1 if the monster is physically seen */
+    				/* 2 if detected using Detect_monsters */
     register xchar worm_tail;	/* mon is actually a worm tail */
 {
     register boolean mon_mimic = (mon->m_ap_type != M_AP_NOTHING);
@@ -366,7 +373,7 @@ display_monster(x, y, mon, in_sight, worm_tail)
      * the mimic was mimicing.
      */
 
-    if (mon_mimic && in_sight) {
+    if (mon_mimic && (sightflags == PHYSICALLY_SEEN)) {
 	switch (mon->m_ap_type) {
 	    default:
 		impossible("display_monster:  bad m_ap_type value [ = %d ]",
@@ -403,7 +410,7 @@ display_monster(x, y, mon, in_sight, worm_tail)
 	    }
 
 	    case M_AP_MONSTER:
-		show_glyph(x,y, monnum_to_glyph(what_mon(mon->mappearance)));
+		show_glyph(x,y, monnum_to_glyph(what_mon((int)mon->mappearance)));
 		break;
 	}
 	
@@ -413,7 +420,10 @@ display_monster(x, y, mon, in_sight, worm_tail)
     if (!mon_mimic || sensed) {
 	int num;
 
-	if (Detect_monsters) {
+	/* [ALI] Only use detected glyphs when monster wouldn't be
+	 * visible by any other means.
+	 */
+	if (sightflags == DETECTED) {
 	    if (worm_tail)
 		num = detected_monnum_to_glyph(what_mon(PM_LONG_WORM_TAIL));
 	    else
@@ -452,6 +462,9 @@ display_warning(mon)
 
     if (mon_warning(mon)) {
         if (wl > WARNCOUNT - 1) wl = WARNCOUNT - 1;
+	/* 3.4.1: this really ought to be rn2(WARNCOUNT), but value "0"
+	   isn't handled correctly by the what_is routine so avoid it */
+	if (Hallucination) wl = rn1(WARNCOUNT-1,1);
         glyph = warning_to_glyph(wl);
     } else if (MATCH_WARN_OF_MON(mon)) {
 	glyph = mon_to_glyph(mon);
@@ -529,6 +542,13 @@ feel_location(x, y)
 	     * underneath if already seen.  Otherwise, show the appropriate
 	     * floor symbol.
 	     *
+	     * Similarly, if the hero digs a hole in a wall or feels a location
+	     * that used to contain an unseen monster.  In these cases,
+	     * there's no reason to assume anything was underneath, so
+	     * just show the appropriate floor symbol.  If something was
+	     * embedded in the wall, the glyph will probably already
+	     * reflect that.  Don't change the symbol in this case.
+	     *
 	     * This isn't quite correct.  If the boulder was on top of some
 	     * other objects they should be seen once the boulder is removed.
 	     * However, we have no way of knowing that what is there now
@@ -544,6 +564,12 @@ feel_location(x, y)
 					       cmap_to_glyph(S_stone);
 		    show_glyph(x,y,lev->glyph);
 		}
+	    } else if ((lev->glyph >= cmap_to_glyph(S_stone) &&
+			lev->glyph < cmap_to_glyph(S_room)) ||
+		       glyph_is_invisible(levl[x][y].glyph)) {
+		lev->glyph = lev->waslit ? cmap_to_glyph(S_room) :
+					   cmap_to_glyph(S_stone);
+		show_glyph(x,y,lev->glyph);
 	    }
 	} else {
 	    /* We feel it (I think hallways are the only things left). */
@@ -589,7 +615,9 @@ feel_location(x, y)
     }
     /* draw monster on top if we can sense it */
     if ((x != u.ux || y != u.uy) && (mon = m_at(x,y)) && sensemon(mon))
-	display_monster(x,y,mon,1,((x != mon->mx)  || (y != mon->my)));
+	display_monster(x, y, mon,
+		(tp_sensemon(mon) || MATCH_WARN_OF_MON(mon)) ? PHYSICALLY_SEEN : DETECTED,
+		is_worm_tail(mon));
 }
 
 /*
@@ -644,7 +672,7 @@ newsym(x,y)
 	    return;
 	}
 	if (x == u.ux && y == u.uy) {
-	    if (canseeself()) {
+	    if (senseself()) {
 		_map_location(x,y,0);	/* map *under* self */
 		display_self();
 	    } else
@@ -653,15 +681,27 @@ newsym(x,y)
 	}
 	else {
 	    mon = m_at(x,y);
-	    worm_tail = mon && ((x != mon->mx)  || (y != mon->my));
-	    if (mon &&
-		 ((see_it = (worm_tail
-			? (!mon->minvis || See_invisible)
-			: (mon_visible(mon)) || sensemon(mon))))) {
+	    worm_tail = is_worm_tail(mon);
+	    see_it = mon && (worm_tail
+		? (!mon->minvis || See_invisible)
+		: (mon_visible(mon)) || tp_sensemon(mon) || MATCH_WARN_OF_MON(mon));
+	    if (mon && (see_it || (!worm_tail && Detect_monsters))) {
+		if (mon->mtrapped) {
+		    struct trap *trap = t_at(x, y);
+		    int tt = trap ? trap->ttyp : NO_TRAP;
+
+		    /* if monster is in a physical trap, you see the trap too */
+		    if (tt == BEAR_TRAP || tt == PIT ||
+			tt == SPIKED_PIT ||tt == WEB) {
+			trap->tseen = TRUE;
+		    }
+		}
 		_map_location(x,y,0);	/* map under the monster */
 		/* also gets rid of any invisibility glyph */
-		display_monster(x,y,mon,see_it,worm_tail);
+		display_monster(x, y, mon, see_it ? PHYSICALLY_SEEN : DETECTED, worm_tail);
 	    }
+	    else if (mon && mon_warning(mon) && !is_worm_tail(mon))
+	        display_warning(mon);
 	    else if (glyph_is_invisible(levl[x][y].glyph))
 		map_invisible(x, y);
 	    else
@@ -674,18 +714,19 @@ newsym(x,y)
 	if (x == u.ux && y == u.uy) {
 	    feel_location(u.ux, u.uy);		/* forces an update */
 
-	    if (canseeself()) display_self();
+	    if (senseself()) display_self();
 	}
 	else if ((mon = m_at(x,y))
-		&& (sensemon(mon)
-		    || (see_with_infrared(mon) && mon_visible(mon)))
-		&& !((x != mon->mx) || (y != mon->my))) {
+		&& ((see_it = (tp_sensemon(mon) || MATCH_WARN_OF_MON(mon)
+		    		|| (see_with_infrared(mon) && mon_visible(mon))))
+		    || Detect_monsters)
+		&& !is_worm_tail(mon)) {
 	    /* Monsters are printed every time. */
 	    /* This also gets rid of any invisibility glyph */
-	    display_monster(x,y,mon,0,0);
+	    display_monster(x, y, mon, see_it ? 0 : DETECTED, 0);
 	}
 	else if ((mon = m_at(x,y)) && mon_warning(mon) &&
-		 !((x != mon->mx) || (y != mon->my))) {
+		 !is_worm_tail(mon)) {
 	        display_warning(mon);
 	}		
 
@@ -705,14 +746,14 @@ newsym(x,y)
 	 *  Note:  If flags.lit_corridor is set, then corridors act like room
 	 *	   squares.  That is, they light up if in night vision range.
 	 *	   If flags.lit_corridor is not set, then corridors will
-	 *	   remain dark unless lit by a light spell.
+	 *	   remain dark unless lit by a light spell and may darken
+	 *	   again, as discussed above.
 	 *
 	 * These checks and changes must be here and not in back_to_glyph().
 	 * They are dependent on the position being out of sight.
 	 */
 	else if (!lev->waslit) {
-	    if (flags.lit_corridor && lev->glyph == cmap_to_glyph(S_litcorr) &&
-							    lev->typ == CORR)
+	    if (lev->glyph == cmap_to_glyph(S_litcorr) && lev->typ == CORR)
 		show_glyph(x, y, lev->glyph = cmap_to_glyph(S_corr));
 	    else if (lev->glyph == cmap_to_glyph(S_room) && lev->typ == ROOM)
 		show_glyph(x, y, lev->glyph = cmap_to_glyph(S_stone));
@@ -725,6 +766,7 @@ show_mem:
     }
 }
 
+#undef is_worm_tail
 
 /*
  * shieldeff()
@@ -738,6 +780,7 @@ shieldeff(x,y)
 {
     register int i;
 
+    if (!flags.sparkle) return;
     if (cansee(x,y)) {	/* Don't see anything if can't see the location */
 	for (i = 0; i < SHIELD_COUNT; i++) {
 	    show_glyph(x, y, cmap_to_glyph(shield_static[i]));
@@ -1022,11 +1065,17 @@ void
 see_monsters()
 {
     register struct monst *mon;
+
     for (mon = fmon; mon; mon = mon->nmon) {
 	if (DEADMONSTER(mon)) continue;
 	newsym(mon->mx,mon->my);
 	if (mon->wormno) see_wsegs(mon);
     }
+#ifdef STEED
+    /* when mounted, hero's location gets caught by monster loop */
+    if (!u.usteed)
+#endif
+    newsym(u.ux, u.uy);
 }
 
 /*
@@ -1038,16 +1087,19 @@ void
 set_mimic_blocking()
 {
     register struct monst *mon;
-    for (mon = fmon; mon; mon = mon->nmon)
-	if(!DEADMONSTER(mon) && mon->minvis &&
+
+    for (mon = fmon; mon; mon = mon->nmon) {
+	if (DEADMONSTER(mon)) continue;
+	if (mon->minvis &&
 	   ((mon->m_ap_type == M_AP_FURNITURE &&
-	      (mon->mappearance == S_vcdoor || mon->mappearance == S_hcdoor))||
+	     (mon->mappearance == S_vcdoor || mon->mappearance == S_hcdoor)) ||
 	    (mon->m_ap_type == M_AP_OBJECT && mon->mappearance == BOULDER))) {
 	    if(See_invisible)
 		block_point(mon->mx, mon->my);
 	    else
 		unblock_point(mon->mx, mon->my);
 	}
+    }
 }
 
 /*
@@ -1183,6 +1235,8 @@ show_glyph(x,y,glyph)
 	    text = "swallow border";	offset = glyph - GLYPH_SWALLOW_OFF;
 	} else if (glyph >= GLYPH_ZAP_OFF) {		/* zap beam */
 	    text = "zap beam";		offset = glyph - GLYPH_ZAP_OFF;
+	} else if (glyph >= GLYPH_EXPLODE_OFF) {	/* explosion */
+	    text = "explosion";		offset = glyph - GLYPH_EXPLODE_OFF;
 	} else if (glyph >= GLYPH_CMAP_OFF) {		/* cmap */
 	    text = "cmap_index";	offset = glyph - GLYPH_CMAP_OFF;
 	} else if (glyph >= GLYPH_OBJ_OFF) {		/* object */
@@ -1290,8 +1344,11 @@ flush_screen(cursor_on_u)
      *	    flush_screen->print_glyph->impossible->pline->flush_screen
      */
     static   boolean flushing = 0;
+    static   boolean delay_flushing = 0;
     register int x,y;
 
+    if (cursor_on_u == -1) delay_flushing = !delay_flushing;
+    if (delay_flushing) return;
     if (flushing) return;	/* if already flushing then return */
     flushing = 1;
 
@@ -1817,7 +1874,7 @@ STATIC_OVL void
 t_warn(lev)
     struct rm *lev;
 {
-    static const char *warn_str = "wall_angle: %s: case %d: seenv = 0x%x";
+    static const char warn_str[] = "wall_angle: %s: case %d: seenv = 0x%x";
     const char *wname;
 
     if (lev->typ == TUWALL) wname = "tuwall";

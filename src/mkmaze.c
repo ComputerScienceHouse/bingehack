@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mkmaze.c	3.3	2000/01/03	*/
+/*	SCCS Id: @(#)mkmaze.c	3.4	2002/04/04	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -29,9 +29,12 @@ STATIC_OVL boolean
 iswall(x,y)
 int x,y;
 {
-	if (!isok(x,y)) return FALSE;
-	return (IS_WALL(levl[x][y].typ) || IS_DOOR(levl[x][y].typ)
-		|| levl[x][y].typ == SDOOR);
+    register int type;
+
+    if (!isok(x,y)) return FALSE;
+    type = levl[x][y].typ;
+    return (IS_WALL(type) || IS_DOOR(type) ||
+	    type == SDOOR || type == IRONBARS);
 }
 
 STATIC_OVL boolean
@@ -44,7 +47,8 @@ iswall_or_stone(x,y)
     if (!isok(x,y)) return TRUE;
 
     type = levl[x][y].typ;
-    return (type == STONE || IS_WALL(type) || IS_DOOR(type) || type == SDOOR);
+    return (type == STONE || IS_WALL(type) || IS_DOOR(type) ||
+	    type == SDOOR || type == IRONBARS);
 }
 
 /* return TRUE if out of bounds, wall or rock */
@@ -258,11 +262,9 @@ place_lregion(lx, ly, hx, hy, nlx, nly, nhx, nhy, rtype, lev)
     /* first a probabilistic approach */
 
     oneshot = (lx == hx && ly == hy);
-    for(trycnt = 0; trycnt < 100; trycnt ++) {
-
+    for (trycnt = 0; trycnt < 200; trycnt++) {
 	x = rn1((hx - lx) + 1, lx);
 	y = rn1((hy - ly) + 1, ly);
-
 	if (put_lregion_here(x,y,nlx,nly,nhx,nhy,rtype,oneshot,lev))
 	    return;
     }
@@ -286,14 +288,19 @@ xchar rtype;
 boolean oneshot;
 d_level *lev;
 {
-    if(oneshot) {
-	/* must make due with the only location possible */
-	/* avoid failure due to a misplaced trap */
-	/* it might still fail if there's a dungeon feature here */
-	struct trap *t = t_at(x,y);
-	if (t) deltrap(t);
+    if (bad_location(x, y, nlx, nly, nhx, nhy)) {
+	if (!oneshot) {
+	    return FALSE;		/* caller should try again */
+	} else {
+	    /* Must make do with the only location possible;
+	       avoid failure due to a misplaced trap.
+	       It might still fail if there's a dungeon feature here. */
+	    struct trap *t = t_at(x,y);
+
+	    if (t && t->ttyp != MAGIC_PORTAL) deltrap(t);
+	    if (bad_location(x, y, nlx, nly, nhx, nhy)) return FALSE;
+	}
     }
-    if(bad_location(x, y, nlx, nly, nhx, nhy)) return(FALSE);
     switch (rtype) {
     case LR_TELE:
     case LR_UPTELE:
@@ -301,7 +308,7 @@ d_level *lev;
 	/* "something" means the player in this case */
 	if(MON_AT(x, y)) {
 	    /* move the monster if no choice, or just try again */
-	    if(oneshot) rloc(m_at(x,y));
+	    if(oneshot) (void) rloc(m_at(x,y), FALSE);
 	    else return(FALSE);
 	}
 	u_on_newpos(x, y);
@@ -410,7 +417,7 @@ fixup_special()
 	croom = &rooms[0]; /* only one room on the medusa level */
 	for (tryct = rnd(4); tryct; tryct--) {
 	    x = somex(croom); y = somey(croom);
-	    if (goodpos(x, y, (struct monst *)0)) {
+	    if (goodpos(x, y, (struct monst *)0, 0)) {
 		otmp = mk_tt_object(STATUE, x, y);
 		while (otmp && (poly_when_stoned(&mons[otmp->corpsenm]) ||
 				pm_resistance(&mons[otmp->corpsenm],MR_STONE))) {
@@ -513,12 +520,36 @@ register const char *s;
 
 	} else Strcpy(protofile, "");
 
+#ifdef WIZARD
+	/* SPLEVTYPE format is "level-choice,level-choice"... */
+	if (wizard && *protofile && sp && sp->rndlevs) {
+	    char *ep = getenv("SPLEVTYPE");	/* not nh_getenv */
+	    if (ep) {
+		/* rindex always succeeds due to code in prior block */
+		int len = (rindex(protofile, '-') - protofile) + 1;
+
+		while (ep && *ep) {
+		    if (!strncmp(ep, protofile, len)) {
+			int pick = atoi(ep + len);
+			/* use choice only if valid */
+			if (pick > 0 && pick <= (int) sp->rndlevs)
+			    Sprintf(protofile + len, "%d", pick);
+			break;
+		    } else {
+			ep = index(ep, ',');
+			if (ep) ++ep;
+		    }
+		}
+	    }
+	}
+#endif
+
 	if(*protofile) {
 	    Strcat(protofile, LEV_EXT);
 	    if(load_special(protofile)) {
 		fixup_special();
 		/* some levels can end up with monsters
-                   on dead mon list, including light source monsters */
+		   on dead mon list, including light source monsters */
 		dmonsfree();
 		return;	/* no mazification right now */
 	    }
@@ -540,7 +571,7 @@ register const char *s;
 	maze0xy(&mm);
 	walkfrom((int) mm.x, (int) mm.y);
 	/* put a boulder at the maze center */
-	(void) mksobj_at(BOULDER, (int) mm.x, (int) mm.y, TRUE);
+	(void) mksobj_at(BOULDER, (int) mm.x, (int) mm.y, TRUE, FALSE);
 
 #ifdef WALLIFIED_MAZE
 	wallification(2, 2, x_maze_max, y_maze_max);
@@ -603,7 +634,7 @@ register const char *s;
 	}
 	for(x = rn1(10,2); x; x--) {
 		mazexy(&mm);
-		(void) mksobj_at(BOULDER, mm.x, mm.y, TRUE);
+		(void) mksobj_at(BOULDER, mm.x, mm.y, TRUE, FALSE);
 	}
 	for (x = rn2(3); x; x--) {
 		mazexy(&mm);
@@ -880,24 +911,12 @@ register xchar x, y, todnum, todlevel;
 /* to ease the work of debuggers at this stage */
 #define register
 
-struct container {
-	struct container *next;
-	xchar x, y;
-	short what;
-	genericptr_t list;
-};
 #define CONS_OBJ   0
 #define CONS_MON   1
 #define CONS_HERO  2
 #define CONS_TRAP  3
 
-static struct bubble {
-	xchar x, y;	/* coordinates of the upper left corner */
-	schar dx, dy;	/* the general direction of the bubble's movement */
-	uchar *bm;	/* pointer to the bubble bit mask */
-	struct bubble *prev, *next; /* need to traverse the list up and down */
-	struct container *cons;
-} *bbubbles, *ebubbles;
+static struct bubble *bbubbles, *ebubbles;
 
 static struct trap *wportal;
 static int xmin, ymin, xmax, ymax;	/* level boundaries */
@@ -1123,6 +1142,34 @@ register int fd;
 	ebubbles = b;
 	b->next = (struct bubble *)0;
 	was_waterlevel = TRUE;
+}
+
+const char *waterbody_name(x, y)
+xchar x,y;
+{
+	register struct rm *lev;
+	schar ltyp;
+
+	if (!isok(x,y))
+		return "drink";		/* should never happen */
+	lev = &levl[x][y];
+	ltyp = lev->typ;
+
+	if (is_lava(x,y))
+		return "lava";
+	else if (ltyp == ICE ||
+		 (ltyp == DRAWBRIDGE_UP &&
+		  (levl[x][y].drawbridgemask & DB_UNDER) == DB_ICE))
+		return "ice";
+	else if (((ltyp != POOL) && (ltyp != WATER) &&
+	  !Is_medusa_level(&u.uz) && !Is_waterlevel(&u.uz) && !Is_juiblex_level(&u.uz)) ||
+	   (ltyp == DRAWBRIDGE_UP && (levl[x][y].drawbridgemask & DB_UNDER) == DB_MOAT))
+		return "moat";
+	else if ((ltyp != POOL) && (ltyp != WATER) && Is_juiblex_level(&u.uz))
+		return "swamp";
+	else if (ltyp == POOL)
+		return "pool of water";
+	else return "water";
 }
 
 STATIC_OVL void

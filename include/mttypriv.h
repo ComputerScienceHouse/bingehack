@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)mttypriv.h 3.3	93/03/01	*/
+/*	SCCS Id: @(#)mttypriv.h 3.4	1993/03/01	*/
 /* Copyright (c) Jon W{tte 1993.					*/
 /* NetHack may be freely redistributed.  See license for details.	*/
 
@@ -15,9 +15,11 @@
 #include "mactty.h"
 # endif
 
-#include <QDOffscreen.h>
-#include <Gestalt.h>
-#include <Errors.h>
+#if !TARGET_API_MAC_CARBON
+# include <QDOffscreen.h>
+# include <Gestalt.h>
+# include <Errors.h>
+#endif
 
 #define TA_TO_RGB(ta,rgb) (((rgb).red=(((ta)>>16)&0xff)*257),((rgb).green=(((ta)>>8)&0xff)*257),\
 	((rgb).blue=((ta)&0xff)*257)),rgb

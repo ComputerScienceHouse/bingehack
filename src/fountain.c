@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)fountain.c	3.3	1999/08/16	*/
+/*	SCCS Id: @(#)fountain.c	3.4	2003/03/23	*/
 /*	Copyright Scott R. Turner, srt@ucla, 10/27/86 */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -43,9 +43,9 @@ STATIC_OVL
 void
 dowaterdemon() /* Water demon */
 {
-	register struct monst *mtmp;
+    register struct monst *mtmp;
 
-	if(mvitals[PM_WATER_DEMON].mvflags & G_GONE) return;
+    if(!(mvitals[PM_WATER_DEMON].mvflags & G_GONE)) {
 	if((mtmp = makemon(&mons[PM_WATER_DEMON],u.ux,u.uy, NO_MM_FLAGS))) {
 	    if (!Blind)
 		You("unleash %s!", a_monnam(mtmp));
@@ -61,6 +61,8 @@ dowaterdemon() /* Water demon */
 	    } else if (t_at(mtmp->mx, mtmp->my))
 		(void) mintrap(mtmp);
 	}
+    } else
+	pline_The("fountain bubbles furiously for a moment, then calms.");
 }
 
 STATIC_OVL void
@@ -68,8 +70,8 @@ dowaternymph() /* Water Nymph */
 {
 	register struct monst *mtmp;
 
-	if(mvitals[PM_WATER_NYMPH].mvflags & G_GONE) return;
-	if((mtmp = makemon(&mons[PM_WATER_NYMPH],u.ux,u.uy, NO_MM_FLAGS))) {
+	if(!(mvitals[PM_WATER_NYMPH].mvflags & G_GONE) &&
+	   (mtmp = makemon(&mons[PM_WATER_NYMPH],u.ux,u.uy, NO_MM_FLAGS))) {
 		if (!Blind)
 		   You("attract %s!", a_monnam(mtmp));
 		else
@@ -126,7 +128,7 @@ genericptr_t poolcnt;
 	water_damage(level.objects[x][y], FALSE, TRUE);
 
 	if ((mtmp = m_at(x, y)) != 0)
-		(void) minwater(mtmp);
+		(void) minliquid(mtmp);
 	else
 		newsym(x,y);
 }
@@ -135,9 +137,10 @@ STATIC_OVL void
 dofindgem() /* Find a gem in the sparkling waters. */
 {
 	if (!Blind) You("spot a gem in the sparkling waters!");
+	else You_feel("a gem here!");
 	(void) mksobj_at(rnd_class(DILITHIUM_CRYSTAL, LUCKSTONE-1),
-						u.ux, u.uy, FALSE);
-	levl[u.ux][u.uy].looted |= F_LOOTED;
+			 u.ux, u.uy, FALSE, FALSE);
+	SET_FOUNTAIN_LOOTED(u.ux,u.uy);
 	newsym(u.ux, u.uy);
 	exercise(A_WIS, TRUE);			/* a discovery! */
 }
@@ -148,12 +151,10 @@ xchar x, y;
 boolean isyou;
 {
 	if (IS_FOUNTAIN(levl[x][y].typ) &&
-	    (!rn2(3) || (levl[x][y].looted & F_WARNED))) {
-		s_level *slev = Is_special(&u.uz);
-		if(isyou && slev && slev->flags.town &&
-		   !(levl[x][y].looted & F_WARNED)) {
+	    (!rn2(3) || FOUNTAIN_IS_WARNED(x,y))) {
+		if(isyou && in_town(x, y) && !FOUNTAIN_IS_WARNED(x,y)) {
 			struct monst *mtmp;
-			levl[x][y].looted |= F_WARNED;
+			SET_FOUNTAIN_WARNED(x,y);
 			/* Warn about future fountain use. */
 			for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
 			    if (DEADMONSTER(mtmp)) continue;
@@ -176,15 +177,16 @@ boolean isyou;
 				return;
 		}
 #endif
-		if (cansee(x,y)) pline_The("fountain dries up!");
+		/* replace the fountain with ordinary floor */
 		levl[x][y].typ = ROOM;
 		levl[x][y].looted = 0;
 		levl[x][y].blessedftn = 0;
+		if (cansee(x,y)) pline_The("fountain dries up!");
 		/* The location is seen if the hero/monster is invisible */
 		/* or felt if the hero is blind.			 */
 		newsym(x, y);
 		level.flags.nfountains--;
-		if(isyou && slev && slev->flags.town)
+		if(isyou && in_town(x, y))
 		    (void) angry_guards(FALSE);
 	}
 }
@@ -253,7 +255,9 @@ drinkfountain()
 
 			pline_The("water is contaminated!");
 			if (Poison_resistance) {
-	   pline("Perhaps it is runoff from the nearby %s farm.", pl_fruit);
+			   pline(
+			      "Perhaps it is runoff from the nearby %s farm.",
+				 fruitname(FALSE));
 			   losehp(rnd(4),"unrefrigerated sip of juice",
 				KILLED_BY_AN);
 			   break;
@@ -286,12 +290,12 @@ drinkfountain()
 		case 25: /* See invisible */
 
 			if (Blind) {
-			  if (Invisible) {
-			    You("feel very self-conscious.");
-			    pline("Then it passes.");
-			  } else {
-			    You("feel transparent.");
-			  }
+			    if (Invisible) {
+				You("feel transparent.");
+			    } else {
+			    	You("feel very self-conscious.");
+			    	pline("Then it passes.");
+			    }
 			} else {
 			   You("see an image of someone stalking you.");
 			   pline("But it disappears.");
@@ -309,7 +313,7 @@ drinkfountain()
 
 		case 27: /* Find a gem in the sparkling waters. */
 
-			if (!levl[u.ux][u.uy].looted) {
+			if (!FOUNTAIN_IS_LOOTED(u.ux,u.uy)) {
 				dofindgem();
 				break;
 			}
@@ -325,7 +329,7 @@ drinkfountain()
 			pline("This water gives you bad breath!");
 			for(mtmp = fmon; mtmp; mtmp = mtmp->nmon)
 			    if(!DEADMONSTER(mtmp))
-				mtmp->mflee = 1;
+				monflee(mtmp, 0, FALSE, FALSE);
 			}
 			break;
 
@@ -358,7 +362,6 @@ register struct obj *obj;
 	    && u.ulevel >= 5 && !rn2(6)
 	    && !obj->oartifact
 	    && !exist_artifact(LONG_SWORD, artiname(ART_EXCALIBUR))) {
-		s_level *slev = Is_special(&u.uz);
 
 		if (u.ualign.type != A_LAWFUL) {
 			/* Ha!  Trying to cheat her. */
@@ -380,14 +383,16 @@ register struct obj *obj;
 			obj->oerodeproof = TRUE;
 			exercise(A_WIS, TRUE);
 		}
+		update_inventory();
 		levl[u.ux][u.uy].typ = ROOM;
 		levl[u.ux][u.uy].looted = 0;
-		if(Invisible) newsym(u.ux, u.uy);
+		newsym(u.ux, u.uy);
 		level.flags.nfountains--;
-		if(slev && slev->flags.town)
+		if(in_town(u.ux, u.uy))
 		    (void) angry_guards(FALSE);
 		return;
-	} else (void) get_wet(obj);
+	} else if (get_wet(obj) && !rn2(2))
+		return;
 
 	/* Acid and water don't mix */
 	if (obj->otyp == POT_ACID) {
@@ -421,7 +426,7 @@ register struct obj *obj;
 			dowatersnakes();
 			break;
 		case 24: /* Find a gem */
-			if (!levl[u.ux][u.uy].looted) {
+			if (!FOUNTAIN_IS_LOOTED(u.ux,u.uy)) {
 				dofindgem();
 				break;
 			}
@@ -437,12 +442,34 @@ register struct obj *obj;
 			break;
 		case 28: /* Strange feeling */
 			pline("An urge to take a bath overwhelms you.");
+#ifndef GOLDOBJ
 			if (u.ugold > 10) {
 			    u.ugold -= somegold() / 10;
 			    You("lost some of your gold in the fountain!");
-			    levl[u.ux][u.uy].looted &= ~F_LOOTED;
+			    CLEAR_FOUNTAIN_LOOTED(u.ux,u.uy);
 			    exercise(A_WIS, FALSE);
 			}
+#else
+			{
+			    long money = money_cnt(invent);
+			    struct obj *otmp;
+                            if (money > 10) {
+				/* Amount to loose.  Might get rounded up as fountains don't pay change... */
+			        money = somegold(money) / 10; 
+			        for (otmp = invent; otmp && money > 0; otmp = otmp->nobj) if (otmp->oclass == COIN_CLASS) {
+				    int denomination = objects[otmp->otyp].oc_cost;
+				    long coin_loss = (money + denomination - 1) / denomination;
+                                    coin_loss = min(coin_loss, otmp->quan);
+				    otmp->quan -= coin_loss;
+				    money -= coin_loss * denomination;				  
+				    if (!otmp->quan) delobj(otmp);
+				}
+			        You("lost some of your money in the fountain!");
+				CLEAR_FOUNTAIN_LOOTED(u.ux,u.uy);
+			        exercise(A_WIS, FALSE);
+                            }
+			}
+#endif
 			break;
 		case 29: /* You see coins */
 
@@ -450,8 +477,8 @@ register struct obj *obj;
 		 * surface.  After all, there will have been more people going
 		 * by.	Just like a shopping mall!  Chris Woodbury  */
 
-		    if (levl[u.ux][u.uy].looted) break;
-		    levl[u.ux][u.uy].looted |= F_LOOTED;
+		    if (FOUNTAIN_IS_LOOTED(u.ux,u.uy)) break;
+		    SET_FOUNTAIN_LOOTED(u.ux,u.uy);
 		    (void) mkgold((long)
 			(rnd((dunlevs_in_dungeon(&u.uz)-dunlev(&u.uz)+1)*2)+5),
 			u.ux, u.uy);
@@ -461,6 +488,7 @@ register struct obj *obj;
 		    newsym(u.ux,u.uy);
 		    break;
 	}
+	update_inventory();
 	dryup(u.ux, u.uy, TRUE);
 }
 
@@ -503,8 +531,9 @@ drinksink()
 			else {
 				mtmp = makemon(&mons[PM_SEWER_RAT],
 						u.ux, u.uy, NO_MM_FLAGS);
-				pline("Eek!  There's %s in the sink!",
-					Blind ? "something squirmy" :
+				if (mtmp) pline("Eek!  There's %s in the sink!",
+					(Blind || !canspotmon(mtmp)) ?
+					"something squirmy" :
 					a_monnam(mtmp));
 			}
 			break;
@@ -521,7 +550,7 @@ drinksink()
 			      hcolor(OBJ_DESCR(objects[otmp->otyp])));
 			otmp->dknown = !(Blind || Hallucination);
 			otmp->quan++; /* Avoid panic upon useup() */
-			otmp->corpsenm = 1; /* kludge for docall() */
+			otmp->fromsink = 1; /* kludge for docall() */
 			(void) dopotion(otmp);
 			obfree(otmp, (struct obj *)0);
 			break;
@@ -552,7 +581,7 @@ drinksink()
 		case 10: pline("This water contains toxic wastes!");
 			if (!Unchanging) {
 				You("undergo a freakish metamorphosis!");
-				polyself();
+				polyself(FALSE);
 			}
 			break;
 		/* more odd messages --JJB */

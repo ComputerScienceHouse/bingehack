@@ -1,9 +1,10 @@
-/*	SCCS Id: @(#)save.c	3.3	2000/07/27	*/
+/*	SCCS Id: @(#)save.c	3.4	2003/11/14	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 #include "lev.h"
+#include "quest.h"
 
 #ifndef NO_SIGNAL
 #include <signal.h>
@@ -12,15 +13,13 @@
 #include <fcntl.h>
 #endif
 
-#include "quest.h"
-
 #ifdef MFLOPPY
 long bytes_counted;
 static int count_only;
 #endif
 
 #ifdef MICRO
-int dotcnt;	/* also used in restore */
+int dotcnt, dotrow;	/* also used in restore */
 #endif
 
 #ifdef ZEROCOMP
@@ -43,14 +42,10 @@ static long nulls[10];
 #define nulls nul
 #endif
 
-#if defined(UNIX) || defined(VMS) || defined(__EMX__)
+#if defined(UNIX) || defined(VMS) || defined(__EMX__) || defined(WIN32)
 #define HUP	if (!program_state.done_hup)
 #else
-# ifdef WIN32
-#define HUP	if (!program_state.exiting)
-# else
 #define HUP
-# endif
 #endif
 
 /* need to preserve these during save to avoid accessing freed memory */
@@ -70,6 +65,7 @@ dosave()
 		program_state.done_hup = 0;
 #endif
 		if(dosave0()) {
+			program_state.something_worth_saving = 0;
 			u.uhp = -1;		/* universal game's over indicator */
 			/* make sure they see the Saving message */
 			display_nhwindow(WIN_MESSAGE, TRUE);
@@ -81,7 +77,7 @@ dosave()
 }
 
 
-#if defined(UNIX) || defined(VMS) || defined (__EMX__)
+#if defined(UNIX) || defined(VMS) || defined (__EMX__) || defined(WIN32)
 /*ARGSUSED*/
 void
 hangup(sig_unused)  /* called as signal() handler, so sent at least one arg */
@@ -94,14 +90,18 @@ int sig_unused;
 	terminate(EXIT_FAILURE);
 #  endif
 # else	/* SAVEONHANGUP */
-	if (!program_state.done_hup++ && program_state.something_worth_saving) {
+	if (!program_state.done_hup++) {
+	    if (program_state.something_worth_saving)
 		(void) dosave0();
 #  ifdef VMS
-		/* don't call exit when already within an exit handler;
-		   that would cancel any other pending user-mode handlers */
-		if (!program_state.exiting)
+	    /* don't call exit when already within an exit handler;
+	       that would cancel any other pending user-mode handlers */
+	    if (!program_state.exiting)
 #  endif
-			terminate(EXIT_FAILURE);
+	    {
+		clearlocks();
+		terminate(EXIT_FAILURE);
+	    }
 	}
 # endif
 	return;
@@ -116,6 +116,7 @@ dosave0()
 	register int fd, ofd;
 	xchar ltmp;
 	d_level uz_save;
+	char whynot[BUFSZ];
 
 	if (!SAVEF[0])
 		return 0;
@@ -149,13 +150,15 @@ dosave0()
 	HUP mark_synch();	/* flush any buffered screen output */
 
 	fd = create_savefile();
-
 	if(fd < 0) {
 		HUP pline("Cannot open save file.");
 		(void) delete_savefile();	/* ab@unido */
 		return(0);
 	}
 
+	vision_recalc(2);	/* shut down vision to prevent problems
+				   in the event of an impossible() call */
+	
 	/* undo date-dependent luck adjustments made at startup time */
 	if(flags.moonphase == FULL_MOON)	/* ut-sally!fletcher */
 		change_luck(-1);		/* and unido!ab */
@@ -166,6 +169,7 @@ dosave0()
 
 #ifdef MICRO
 	dotcnt = 0;
+	dotrow = 2;
 	curs(WIN_MAP, 1, 1);
 	if (strncmpi("X11", windowprocs.name, 3))
 	  putstr(WIN_MAP, 0, "Saving:");
@@ -182,9 +186,6 @@ dosave0()
 	    for (ltmp = 1; ltmp <= maxledgerno(); ltmp++)
 		if (ltmp != ledger_no(&u.uz) && level_info[ltmp].where)
 		    needed += level_info[ltmp].size + (sizeof ltmp);
-# ifdef AMIGA
-	    needed += ami_wbench_iconsize(fq_save);
-# endif
 	    fds = freediskspace(fq_save);
 	    if (needed > fds) {
 		HUP {
@@ -202,6 +203,9 @@ dosave0()
 #endif /* MFLOPPY */
 
 	store_version(fd);
+#ifdef STORE_PLNAME_IN_FILE
+	bwrite(fd, (genericptr_t) plname, PL_NSIZ);
+#endif
 	ustuck_id = (u.ustuck ? u.ustuck->m_id : 0);
 #ifdef STEED
 	usteed_id = (u.usteed ? u.usteed->m_id : 0);
@@ -216,22 +220,34 @@ dosave0()
 	 */
 	uz_save = u.uz;
 	u.uz.dnum = u.uz.dlevel = 0;
+	/* these pointers are no longer valid, and at least u.usteed
+	 * may mislead place_monster() on other levels
+	 */
+	u.ustuck = (struct monst *)0;
+#ifdef STEED
+	u.usteed = (struct monst *)0;
+#endif
 
 	for(ltmp = (xchar)1; ltmp <= maxledgerno(); ltmp++) {
 		if (ltmp == ledger_no(&uz_save)) continue;
 		if (!(level_info[ltmp].flags & LFILE_EXISTS)) continue;
 #ifdef MICRO
-		curs(WIN_MAP, 1 + dotcnt++, 2);
+		curs(WIN_MAP, 1 + dotcnt++, dotrow);
+		if (dotcnt >= (COLNO - 1)) {
+			dotrow++;
+			dotcnt = 0;
+		}
 		if (strncmpi("X11", windowprocs.name, 3)){
 		  putstr(WIN_MAP, 0, ".");
 		}
 		mark_synch();
 #endif
-		ofd = open_levelfile(ltmp);
+		ofd = open_levelfile(ltmp, whynot);
 		if (ofd < 0) {
-		    HUP pline("Cannot read level %d.", ltmp);
+		    HUP pline("%s", whynot);
 		    (void) close(fd);
 		    (void) delete_savefile();
+		    HUP killer = whynot;
 		    HUP done(TRICKED);
 		    return(0);
 		}
@@ -250,9 +266,6 @@ dosave0()
 	delete_levelfile(ledger_no(&u.uz));
 	delete_levelfile(0);
 	compress(fq_save);
-#ifdef AMIGA
-	ami_wbench_iconwrite(fq_save);
-#endif
 	return(1);
 }
 
@@ -315,6 +328,7 @@ savestateinlock()
 {
 	int fd, hpid;
 	static boolean havestate = TRUE;
+	char whynot[BUFSZ];
 
 	/* When checkpointing is on, the full state needs to be written
 	 * on each checkpoint.  When checkpointing is off, only the pid
@@ -334,24 +348,30 @@ savestateinlock()
 		 * to any internal compression schemes since they must be
 		 * readable by an external utility
 		 */
-		fd = open_levelfile(0);
+		fd = open_levelfile(0, whynot);
 		if (fd < 0) {
-		    pline("Cannot open level 0.");
+		    pline("%s", whynot);
 		    pline("Probably someone removed it.");
+		    killer = whynot;
 		    done(TRICKED);
 		    return;
 		}
 
 		(void) read(fd, (genericptr_t) &hpid, sizeof(hpid));
 		if (hackpid != hpid) {
-		    pline("Level 0 pid bad!");
+		    Sprintf(whynot,
+			    "Level #0 pid (%d) doesn't match ours (%d)!",
+			    hpid, hackpid);
+		    pline("%s", whynot);
+		    killer = whynot;
 		    done(TRICKED);
 		}
 		(void) close(fd);
 
-		fd = create_levelfile(0);
+		fd = create_levelfile(0, whynot);
 		if (fd < 0) {
-		    pline("Cannot rewrite level 0.");
+		    pline("%s", whynot);
+		    killer = whynot;
 		    done(TRICKED);
 		    return;
 		}
@@ -362,6 +382,9 @@ savestateinlock()
 		    (void) write(fd, (genericptr_t) &currlev, sizeof(currlev));
 		    save_savefile_name(fd);
 		    store_version(fd);
+#ifdef STORE_PLNAME_IN_FILE
+		    bwrite(fd, (genericptr_t) plname, PL_NSIZ);
+#endif
 		    ustuck_id = (u.ustuck ? u.ustuck->m_id : 0);
 #ifdef STEED
 		    usteed_id = (u.usteed ? u.usteed->m_id : 0);
@@ -831,7 +854,8 @@ register struct obj *otmp;
 	    if (Has_contents(otmp))
 		saveobjchn(fd,otmp->cobj,mode);
 	    if (release_data(mode)) {
-		if(otmp->oclass == FOOD_CLASS) food_disappears(otmp);
+		if (otmp->oclass == FOOD_CLASS) food_disappears(otmp);
+		if (otmp->oclass == SPBOOK_CLASS) book_disappears(otmp);
 		otmp->where = OBJ_FREE;	/* set to free so dealloc will work */
 		otmp->timed = 0;	/* not timed any more */
 		otmp->lamplit = 0;	/* caller handled lights */
@@ -981,6 +1005,17 @@ freedynamicdata()
 	free_waterlevel();
 	free_dungeons();
 
+	/* some pointers in iflags */
+	if (iflags.wc_font_map) free(iflags.wc_font_map);
+	if (iflags.wc_font_message) free(iflags.wc_font_message);
+	if (iflags.wc_font_text) free(iflags.wc_font_text);
+	if (iflags.wc_font_menu) free(iflags.wc_font_menu);
+	if (iflags.wc_font_status) free(iflags.wc_font_status);
+	if (iflags.wc_tile_file) free(iflags.wc_tile_file);
+#ifdef AUTOPICKUP_EXCEPTIONS
+	free_autopickup_exceptions();
+#endif
+
 #endif	/* FREE_ALL_MEMORY */
 	return;
 }
@@ -1003,7 +1038,7 @@ int lev;
 	}
 # ifdef WIZARD
 	if (wizard) {
-		pline("Swapping in `%s'", from);
+		pline("Swapping in `%s'.", from);
 		wait_synch();
 	}
 # endif

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)priest.c	3.3	2000/02/19	*/
+/*	SCCS Id: @(#)priest.c	3.4	2002/11/06	*/
 /* Copyright (c) Izchak Miller, Steve Linhart, 1989.		  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -7,6 +7,9 @@
 #include "eshk.h"
 #include "epri.h"
 #include "emin.h"
+
+/* this matches the categorizations shown by enlightenment */
+#define ALGN_SINNED	(-4)	/* worse than strayed */
 
 #ifdef OVLB
 
@@ -46,10 +49,7 @@ register xchar omx,omy,gx,gy;
 	else allowflags = ALLOW_SSM | ALLOW_SANCT;
 	if (passes_walls(mtmp->data)) allowflags |= (ALLOW_ROCK|ALLOW_WALL);
 	if (throws_rocks(mtmp->data)) allowflags |= ALLOW_ROCK;
-	if (tunnels(mtmp->data) &&
-		    (!needspick(mtmp->data) || m_carrying(mtmp, PICK_AXE) ||
-		     m_carrying(mtmp, DWARVISH_MATTOCK)))
-		allowflags |= ALLOW_DIG;
+	if (tunnels(mtmp->data)) allowflags |= ALLOW_DIG;
 	if (!nohands(mtmp->data) && !verysmall(mtmp->data)) {
 		allowflags |= OPENDOOR;
 		if (m_carrying(mtmp, SKELETON_KEY)) allowflags |= BUSTDOOR;
@@ -190,12 +190,12 @@ struct mkroom *sroom;
 int sx, sy;
 boolean sanctum;   /* is it the seat of the high priest? */
 {
-	register struct monst *priest;
-	register struct obj *otmp;
-	register int cnt;
+	struct monst *priest;
+	struct obj *otmp;
+	int cnt;
 
 	if(MON_AT(sx+1, sy))
-		rloc(m_at(sx+1, sy)); /* insurance */
+		(void) rloc(m_at(sx+1, sy), FALSE); /* insurance */
 
 	priest = makemon(&mons[sanctum ? PM_HIGH_PRIEST : PM_ALIGNED_PRIEST],
 			 sx + 1, sy, NO_MM_FLAGS);
@@ -216,25 +216,17 @@ boolean sanctum;   /* is it the seat of the high priest? */
 		     on_level(&sanctum_level, &u.uz)) {
 			(void) mongets(priest, AMULET_OF_YENDOR);
 		}
-		/* Do NOT put the rest in m_initinv.    */
-		/* Priests created elsewhere than in a  */
-		/* temple should not carry these items, */
-		cnt = rn1(2,3);
-		while(cnt) {
-		    otmp = mkobj(SPBOOK_CLASS, FALSE);
-		    if(otmp) (void) mpickobj(priest, otmp);
-		    cnt--;
+		/* 2 to 4 spellbooks */
+		for (cnt = rn1(3,2); cnt > 0; --cnt) {
+		    (void) mpickobj(priest, mkobj(SPBOOK_CLASS, FALSE));
 		}
-		if(p_coaligned(priest))
-		    (void) mongets(priest, ROBE);
-		else {
-		    otmp = mksobj(ROBE, TRUE, FALSE);
-		    if(otmp) {
-			if(!rn2(2)) curse(otmp);
-			(void) mpickobj(priest, otmp);
-		    }
+		/* robe [via makemon()] */
+		if (rn2(2) && (otmp = which_armor(priest, W_ARMC)) != 0) {
+		    if (p_coaligned(priest))
+			uncurse(otmp);
+		    else
+			curse(otmp);
 		}
-		m_dowear(priest, TRUE);
 	}
 }
 
@@ -344,14 +336,22 @@ register int roomno;
 		shrined = has_shrine(priest);
 		sanctum = (priest->data == &mons[PM_HIGH_PRIEST] &&
 			   (Is_sanctum(&u.uz) || In_endgame(&u.uz)));
-		can_speak = (priest->mcanmove && !priest->msleeping);
-		if (can_speak)
+		can_speak = (priest->mcanmove && !priest->msleeping &&
+			     flags.soundok);
+		if (can_speak) {
+		    unsigned save_priest = priest->ispriest;
+		    /* don't reveal the altar's owner upon temple entry in
+		       the endgame; for the Sanctum, the next message names
+		       Moloch so suppress the "of Moloch" for him here too */
+		    if (sanctum && !Hallucination) priest->ispriest = 0;
 		    pline("%s intones:",
-			  (!Blind ? Monnam(priest) : "A nearby voice"));
+			canseemon(priest) ? Monnam(priest) : "A nearby voice");
+		    priest->ispriest = save_priest;
+		}
 		msg2 = 0;
 		if(sanctum && Is_sanctum(&u.uz)) {
 		    if(priest->mpeaceful) {
-			msg1 = "Infidel, you entered Moloch's Sanctum!";
+			msg1 = "Infidel, you have entered Moloch's Sanctum!";
 			msg2 = "Be gone!";
 			priest->mpeaceful = 0;
 			set_malign(priest);
@@ -368,8 +368,8 @@ register int roomno;
 		}
 		if(!sanctum) {
 		    /* !tended -> !shrined */
-		    if(!shrined || !p_coaligned(priest) ||
-						   u.ualign.record < -5)
+		    if (!shrined || !p_coaligned(priest) ||
+			    u.ualign.record <= ALGN_SINNED)
 			You("have a%s forbidding feeling...",
 				(!shrined) ? "" : " strange");
 		    else You("experience a strange sense of peace.");
@@ -386,7 +386,9 @@ register int roomno;
 
 		    if(!(mtmp = makemon(&mons[PM_GHOST],u.ux,u.uy,NO_MM_FLAGS)))
 			return;
-		    pline("An enormous ghost appears next to you!");
+		    if (!Blind || sensemon(mtmp))
+			pline("An enormous ghost appears next to you!");
+		    else You("sense a presence close by!");
 		    mtmp->mpeaceful = 0;
 		    set_malign(mtmp);
 		    if(flags.verbose)
@@ -404,7 +406,6 @@ register struct monst *priest;
 {
 	boolean coaligned = p_coaligned(priest);
 	boolean strayed = (u.ualign.record < 0);
-
 
 	/* KMH, conduct */
 	u.uconduct.gnostic++;
@@ -443,7 +444,7 @@ register struct monst *priest;
 	    priest->mpeaceful = 0;
 	    return;
 	}
-
+#ifndef GOLDOBJ
 	if(!u.ugold) {
 	    if(coaligned && !strayed) {
 		if (priest->mgold > 0L) {
@@ -456,6 +457,16 @@ register struct monst *priest;
 			u.ugold = 1L;
 		    priest->mgold -= u.ugold;
 		    flags.botl = 1;
+#else
+	if(!money_cnt(invent)) {
+	    if(coaligned && !strayed) {
+                long pmoney = money_cnt(priest->minvent);
+		if (pmoney > 0L) {
+		    /* Note: two bits is actually 25 cents.  Hmm. */
+		    pline("%s gives you %s for an ale.", Monnam(priest),
+			(pmoney == 1L) ? "one bit" : "two bits");
+		     money2u(priest, pmoney > 1L ? 2 : 1);
+#endif
 		} else
 		    pline("%s preaches the virtues of poverty.", Monnam(priest));
 		exercise(A_WIS, TRUE);
@@ -471,7 +482,11 @@ register struct monst *priest;
 		verbalize("Thou shalt regret thine action!");
 		if(coaligned) adjalign(-1);
 	    } else if(offer < (u.ulevel * 200)) {
+#ifndef GOLDOBJ
 		if(u.ugold > (offer * 2L)) verbalize("Cheapskate.");
+#else
+		if(money_cnt(invent) > (offer * 2L)) verbalize("Cheapskate.");
+#endif
 		else {
 		    verbalize("I thank thee for thy contribution.");
 		    /*  give player some token  */
@@ -479,8 +494,13 @@ register struct monst *priest;
 		}
 	    } else if(offer < (u.ulevel * 400)) {
 		verbalize("Thou art indeed a pious individual.");
+#ifndef GOLDOBJ
 		if(u.ugold < (offer * 2L)) {
-		    if(coaligned && u.ualign.record < -5) adjalign(1);
+#else
+		if(money_cnt(invent) < (offer * 2L)) {
+#endif
+		    if (coaligned && u.ualign.record <= ALGN_SINNED)
+			adjalign(1);
 		    verbalize("I bestow upon thee a blessing.");
 		    incr_itimeout(&HClairvoyant, rn1(500,500));
 		}
@@ -494,7 +514,11 @@ register struct monst *priest;
 		} else u.ublessed++;
 	    } else {
 		verbalize("Thy selfless generosity is deeply appreciated.");
+#ifndef GOLDOBJ
 		if(u.ugold < (offer * 2L) && coaligned) {
+#else
+		if(money_cnt(invent) < (offer * 2L) && coaligned) {
+#endif
 		    if(strayed && (moves - u.ucleansed) > 5000L) {
 			u.ualign.record = 0; /* cleanse thee */
 			u.ucleansed = moves;
@@ -519,7 +543,7 @@ boolean peaceful;
 	if (ptr != &mons[PM_ALIGNED_PRIEST] && ptr != &mons[PM_ANGEL])
 		return((struct monst *)0);
 	
-	if (MON_AT(x, y)) rloc(m_at(x, y));	/* insurance */
+	if (MON_AT(x, y)) (void) rloc(m_at(x, y), FALSE);	/* insurance */
 
 	if (!(roamer = makemon(ptr, x, y, NO_MM_FLAGS)))
 		return((struct monst *)0);
@@ -565,7 +589,7 @@ xchar x, y;
 	    if (is_minion(mon->data) || is_rider(mon->data)) return FALSE;
 	    x = mon->mx, y = mon->my;
 	}
-	if (u.ualign.record < -3)		/* sinned or worse */
+	if (u.ualign.record <= ALGN_SINNED)	/* sinned or worse */
 	    return FALSE;
 	if ((roomno = temple_occupied(u.urooms)) == 0 ||
 		roomno != *in_rooms(x, y, TEMPLE))

@@ -90,6 +90,6 @@ struct NewMenu GTHackMenu[] = {
     {  NM_ITEM, "M-w  #wipe off your face",                0, 0, 0, (void *)(128+'w')},
     {  NM_ITEM, "     Your #conduct",                      0, 0, 0, (void *)'#'}, /* "#co\n" */
     {  NM_ITEM, "     #ride your steed",                   0, 0, 0, (void *)'#'}, /* "#ri\n" */
-    {  NM_ITEM, "     Switch #twoweapon mode on/off",      0, 0, 0, (void *)'#'}, /* "#tw\n" */
+    {  NM_ITEM, "M-2  Switch #twoweapon mode on/off",      0, 0, 0, (void *)(128+'2')},
     {  NM_END,  NULL,                                      0, 0, 0, 0}
 };

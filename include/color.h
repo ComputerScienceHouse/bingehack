@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)color.h	3.3	92/02/02	*/
+/*	SCCS Id: @(#)color.h	3.4	1992/02/02	*/
 /* Copyright (c) Steve Linhart, Eric Raymond, 1989. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -46,6 +46,7 @@
 #define HI_PAPER	CLR_WHITE
 #define HI_GLASS	CLR_BRIGHT_CYAN
 #define HI_MINERAL	CLR_GRAY
+#define DRAGON_SILVER	CLR_BRIGHT_CYAN
 #define HI_ZAP		CLR_BRIGHT_BLUE
 
 #endif /* COLOR_H */

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)questpgr.c	3.3	2000/05/05	*/
+/*	SCCS Id: @(#)questpgr.c	3.4	2000/05/05	*/
 /*	Copyright 1991, M. Stephenson		  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -60,7 +60,7 @@ dlb	*stream;
 
 	if ((cnt = dlb_fread(ptr, size, nitems, stream)) != nitems) {
 
-	    panic("PREMATURE EOF ON QUEST TEXT FILE!\nExpected %d bytes - got %d\n",
+	    panic("PREMATURE EOF ON QUEST TEXT FILE! Expected %d bytes, got %d",
 		    (size * nitems), (size * cnt));
 	}
 }
@@ -96,7 +96,7 @@ load_qtlist()
 
 	msg_file = dlb_fopen(QTEXT_FILE, RDBMODE);
 	if (!msg_file)
-	    panic("\rCANNOT OPEN QUEST TEXT FILE %s.", QTEXT_FILE);
+	    panic("CANNOT OPEN QUEST TEXT FILE %s.", QTEXT_FILE);
 
 	/*
 	 * Read in the number of classes, then the ID's & offsets for
@@ -207,15 +207,6 @@ STATIC_OVL const char *
 homebase()	/* return your role leader's location */
 {
 	return(urole.homebase);
-}
-
-boolean
-leaderless()	/* return true iff leader is dead */
-{
-	int i = urole.ldrnum;
-	/* BUG: This doesn't take the possibility of resurrection
-		via wand or spell of undead turning into account. */
-	return (boolean)(mvitals[i].died > 0);
 }
 
 STATIC_OVL struct qtmsg *

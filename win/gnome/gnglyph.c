@@ -1,8 +1,12 @@
-/*	SCCS Id: @(#)gnglyph.c	3.3	2000/07/16	*/
+/*	SCCS Id: @(#)gnglyph.c	3.4	2000/07/16	*/
 /* Copyright (C) 1998 by Erik Andersen <andersee@debian.org> */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "gnglyph.h"
+#include "tile2x11.h"
+
+/* from tile.c */
+extern int total_tiles_used;
 
 static GHackGlyphs     ghack_glyphs;
 static GdkImlibImage** ghack_tiles = NULL;
@@ -28,8 +32,9 @@ static GdkImlibImage** ghack_tiles = NULL;
  * NOTES:
  *     The glyphs (tiles) must be in the image in a certain way: the
  *     glyphs must be stacked such that the resultant image is
- *     TILE_X wide, and TILE_Y * (number of glyphs) high.  In this
- *     sense, TILE_X == TILE_Y, and can be any reasonable integer--
+ *     TILE_X * TILES_PER_ROW wide, and
+ *     TILE_Y * (number of glyphs) / TILES_PER_ROW high (rounded up).
+ *     In this sense, TILE_X == TILE_Y, and can be any reasonable integer
  *     say, 16 <= TILE_X <= 64.  Because the glyph number is tightly
  *     coupled to the Nethack object it represents, the order of the
  *     glyphs in the image is imporant: Glyph 1 is at the top of the
@@ -43,31 +48,36 @@ static GdkImlibImage** ghack_tiles = NULL;
  */
 
 int
-ghack_init_glyphs( const char *xpmFile)
+ghack_init_glyphs(const char *xpmFile)
 {
-  ghack_glyphs.im = gdk_imlib_load_image((char *) xpmFile);
-  if ( ! ghack_glyphs.im )
-    {
-      g_error("Couldn't load required xpmFile!");
-      return -1;
+    ghack_glyphs.im = gdk_imlib_load_image((char *) xpmFile);
+    if ( ! ghack_glyphs.im ) {
+	g_error("Couldn't load required xpmFile!");
+	return -1;
     }
 
-  gdk_imlib_render(ghack_glyphs.im, ghack_glyphs.im->rgb_width,
-	  ghack_glyphs.im->rgb_height);
+    gdk_imlib_render(ghack_glyphs.im, ghack_glyphs.im->rgb_width,
+		     ghack_glyphs.im->rgb_height);
 
-  ghack_glyphs.count = ghack_glyphs.im->rgb_height / ghack_glyphs.im->rgb_width;
-  ghack_glyphs.width  = ghack_glyphs.im->rgb_width;
-  ghack_glyphs.height = ghack_glyphs.im->rgb_height / ghack_glyphs.count;
+    if ((ghack_glyphs.im->rgb_width % TILES_PER_ROW) != 0 ||
+	ghack_glyphs.im->rgb_width <= TILES_PER_ROW) {
+	g_error("%s is not a multiple of %d (number of tiles/row) pixels wide",
+		xpmFile, TILES_PER_ROW);
+	return -1;
+    }
+    ghack_glyphs.count = total_tiles_used;
+    if ((ghack_glyphs.count % TILES_PER_ROW) != 0) {
+	ghack_glyphs.count +=
+	    TILES_PER_ROW - (ghack_glyphs.count % TILES_PER_ROW);
+    }
+    ghack_glyphs.width = ghack_glyphs.im->rgb_width / TILES_PER_ROW;
+    ghack_glyphs.height =
+	ghack_glyphs.im->rgb_height / (ghack_glyphs.count / TILES_PER_ROW);
 
 
-  /* Assume the tiles are stacked vertically.
-   * Further, assume that the tiles are SQUARE
-   */
-  ghack_tiles = g_new0( GdkImlibImage*, ghack_glyphs.count );
-  if (ghack_tiles == NULL)
-      return -1;
-  else
-      return 0;
+    /* Assume the tiles are organized in rows of TILES_PER_ROW */
+    ghack_tiles = g_new0( GdkImlibImage*, ghack_glyphs.count );
+    return (ghack_tiles == NULL) ? -1 : 0;
 }
 
 void
@@ -186,8 +196,8 @@ ghack_image_from_glyph( int glyph, gboolean force )
 	    (force==TRUE)? "TRUE" : "FALSE");
     }
 
-  if (!ghack_tiles[tile] || force)
-  {
+  if (!ghack_tiles[tile] || force) {
+      int src_x, src_y;
 #if 0
       fprintf( stderr, "crop_and_clone: glyph=%d, tile=%d, ptr=%p, x=%d, y=%d, w=%d, h=%d\n", glyph, tile,
 	      (void*)&(ghack_tiles[tile]), 0,
@@ -197,10 +207,12 @@ ghack_image_from_glyph( int glyph, gboolean force )
 #endif
       if (ghack_glyphs.im->pixmap == NULL)
 	  g_warning( "Aiiee!  ghack_glyphs.im->pixmap==NULL!!!!\n");
-      ghack_tiles[tile] = gdk_imlib_crop_and_clone_image(ghack_glyphs.im, 0,
-	      tile * ghack_glyphs.width,
-	      ghack_glyphs.height,
-	      ghack_glyphs.width);
+      src_x = (tile % TILES_PER_ROW) * ghack_glyphs.width;
+      src_y = (tile / TILES_PER_ROW) * ghack_glyphs.height;
+      ghack_tiles[tile] = gdk_imlib_crop_and_clone_image(ghack_glyphs.im,
+	      src_x, src_y,
+	      ghack_glyphs.width,
+	      ghack_glyphs.height);
   }
 
   if (ghack_tiles[tile] && (!ghack_tiles[tile]->pixmap || force))
@@ -216,4 +228,3 @@ ghack_image_from_glyph( int glyph, gboolean force )
 
   return ghack_tiles[tile];
 }
-

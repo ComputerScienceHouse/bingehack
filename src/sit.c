@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)sit.c	3.3	96/07/15	*/
+/*	SCCS Id: @(#)sit.c	3.4	2002/09/21	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -8,6 +8,7 @@
 void
 take_gold()
 {
+#ifndef GOLDOBJ
 	if (u.ugold <= 0)  {
 		You_feel("a strange sensation.");
 	} else {
@@ -15,12 +16,29 @@ take_gold()
 		u.ugold = 0;
 		flags.botl = 1;
 	}
+#else
+        struct obj *otmp, *nobj;
+	int lost_money = 0;
+	for (otmp = invent; otmp; otmp = nobj) {
+		nobj = otmp->nobj;
+		if (otmp->oclass == COIN_CLASS) {
+			lost_money = 1;
+			delobj(otmp);
+		}
+	}
+	if (!lost_money)  {
+		You_feel("a strange sensation.");
+	} else {
+		You("notice you have no money!");
+		flags.botl = 1;
+	}
+#endif
 }
 
 int
 dosit()
 {
-	static const char *sit_message = "sit on the %s.";
+	static const char sit_message[] = "sit on the %s.";
 	register struct trap *trap;
 	register int typ = levl[u.ux][u.uy].typ;
 
@@ -38,6 +56,8 @@ dosit()
 	    else
 		You("are sitting on air.");
 	    return 0;
+	} else if (is_pool(u.ux, u.uy) && !Underwater) {  /* water walking */
+	    goto in_water;
 	}
 
 	if(OBJ_AT(u.ux, u.uy)) {
@@ -45,9 +65,11 @@ dosit()
 
 	    obj = level.objects[u.ux][u.uy];
 	    You("sit on %s.", the(xname(obj)));
-	    if(!Is_box(obj)) pline("It's not very comfortable...");
+	    if (!(Is_box(obj) || objects[obj->otyp].oc_material == CLOTH))
+		pline("It's not very comfortable...");
 
-	} else if ((trap = t_at(u.ux, u.uy)) != 0) {
+	} else if ((trap = t_at(u.ux, u.uy)) != 0 ||
+		   (u.utrap && (u.utraptype >= TT_LAVA))) {
 
 	    if (u.utrap) {
 		exercise(A_WIS, FALSE);	/* you're getting stuck longer */
@@ -76,7 +98,7 @@ dosit()
 		}
 	    } else {
 	        You("sit down.");
-		dotrap(trap);
+		dotrap(trap, 0);
 	    }
 	} else if(Underwater || Is_waterlevel(&u.uz)) {
 	    if (Is_waterlevel(&u.uz))
@@ -84,7 +106,7 @@ dosit()
 	    else
 		You("sit down on the muddy bottom.");
 	} else if(is_pool(u.ux, u.uy)) {
-
+ in_water:
 	    You("sit in the water.");
 	    if (!rn2(10) && uarm)
 		(void) rust_dmg(uarm, "armor", 1, TRUE, &youmonst);
@@ -191,7 +213,7 @@ dosit()
 			pline("A voice echoes:");
 			verbalize("By thy Imperious order, %s...",
 				  flags.female ? "Dame" : "Sire");
-			do_genocide(1);
+			do_genocide(5);	/* REALLY|ONTHRONE, see do_genocide() */
 			break;
 		    case 9:
 			pline("A voice echoes:");
@@ -241,13 +263,18 @@ dosit()
 		    default:	impossible("throne effect");
 				break;
 		}
-	    } else	You_feel("somehow out of place...");
+	    } else {
+		if (is_prince(youmonst.data))
+		    You_feel("very comfortable here.");
+		else
+		    You_feel("somehow out of place...");
+	    }
 
 	    if (!rn2(3) && IS_THRONE(levl[u.ux][u.uy].typ)) {
 		/* may have teleported */
-		pline_The("throne vanishes in a puff of logic.");
 		levl[u.ux][u.uy].typ = ROOM;
-		if(Invisible) newsym(u.ux,u.uy);
+		pline_The("throne vanishes in a puff of logic.");
+		newsym(u.ux,u.uy);
 	    }
 
 	} else if (lays_eggs(youmonst.data)) {
@@ -287,7 +314,7 @@ rndcurse()			/* curse a few inventory items at random! */
 	int	nobj = 0;
 	int	cnt, onum;
 	struct	obj	*otmp;
-	static const char *mal_aura = "feel a malignant aura surround %s.";
+	static const char mal_aura[] = "feel a malignant aura surround %s.";
 
 	if (uwep && (uwep->oartifact == ART_MAGICBANE) && rn2(20)) {
 	    You(mal_aura, "the magic-absorbing blade");
@@ -299,18 +326,31 @@ rndcurse()			/* curse a few inventory items at random! */
 	    You(mal_aura, "you");
 	}
 
-	for (otmp = invent; otmp; otmp = otmp->nobj)  nobj++;
-
-	if (nobj)
+	for (otmp = invent; otmp; otmp = otmp->nobj) {
+#ifdef GOLDOBJ
+	    /* gold isn't subject to being cursed or blessed */
+	    if (otmp->oclass == COIN_CLASS) continue;
+#endif
+	    nobj++;
+	}
+	if (nobj) {
 	    for (cnt = rnd(6/((!!Antimagic) + (!!Half_spell_damage) + 1));
 		 cnt > 0; cnt--)  {
-		onum = rn2(nobj);
-		for(otmp = invent; onum != 0; onum--)
-		    otmp = otmp->nobj;
+		onum = rnd(nobj);
+		for (otmp = invent; otmp; otmp = otmp->nobj) {
+#ifdef GOLDOBJ
+		    /* as above */
+		    if (otmp->oclass == COIN_CLASS) continue;
+#endif
+		    if (--onum == 0) break;	/* found the target */
+		}
+		/* the !otmp case should never happen; picking an already
+		   cursed item happens--avoid "resists" message in that case */
+		if (!otmp || otmp->cursed) continue;	/* next target */
 
 		if(otmp->oartifact && spec_ability(otmp, SPFX_INTEL) &&
 		   rn2(10) < 8) {
-		    pline("%s resists!", The(xname(otmp)));
+		    pline("%s!", Tobjnam(otmp, "resist"));
 		    continue;
 		}
 
@@ -319,6 +359,27 @@ rndcurse()			/* curse a few inventory items at random! */
 		else
 			curse(otmp);
 	    }
+	    update_inventory();
+	}
+
+#ifdef STEED
+	/* treat steed's saddle as extended part of hero's inventory */
+	if (u.usteed && !rn2(4) &&
+		(otmp = which_armor(u.usteed, W_SADDLE)) != 0 &&
+		!otmp->cursed) {	/* skip if already cursed */
+	    if (otmp->blessed)
+		unbless(otmp);
+	    else
+		curse(otmp);
+	    if (!Blind) {
+		pline("%s %s %s.",
+		      s_suffix(upstart(y_monnam(u.usteed))),
+		      aobjnam(otmp, "glow"),
+		      hcolor(otmp->cursed ? NH_BLACK : (const char *)"brown"));
+		otmp->bknown = TRUE;
+	    }
+	}
+#endif	/*STEED*/
 }
 
 void

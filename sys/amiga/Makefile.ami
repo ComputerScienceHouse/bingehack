@@ -1,5 +1,5 @@
 #	NetHack Makefile.
-#	SCCS Id: @(#)Makefile.ami	3.2	2000/01/12
+#	SCCS Id: @(#)Makefile.ami	3.4	2002/21/02
 # Copyright (c) Kenneth Lorber, Bethesda, Maryland, 1991,1992,1993,1996.
 # NetHack may be freely redistributed.  See license for details.
 
@@ -131,7 +131,7 @@ OO = $(NH)objo/
 #   of SAS/C, we would comment out these following two lines.
 #   If we don't use precompiled header files, we uncomment it as well.
 
-HDEP	= $(I)hack.h
+HDEP	= $(I)hack.h $(I)pm.h $(I)onames.h
 CSYM	=
 
 #[MANX]
@@ -212,21 +212,22 @@ ASM	= asm
 # undefine this to not compile with GSTs
 #GST=gst=$(GSTFILE)
 #
-#DEBUG=debug=sf
-OPTFLAGS=opt opttime optpeep optgo optinl optsched optcomp=10 optdep=5 optrdep=5 #optalias +OPTTIME -OPTSIZE
-CFLAGS	= data=far nominc $(DEBUG) idir=$(I) cpu=any nostkchk nover \
+DEBUG=debug=symbol
+CPU=cpu=68000
+#OPTFLAGS=opt opttime optpeep optgo optinl optsched optcomp=10 optdep=5 optrdep=5 #optalias +OPTTIME -OPTSIZE
+CFLAGS	= data=far nominc $(DEBUG) idir=$(I) $(CPU) nostkchk nover \
 	codename=nhcode dataname=nhdata strmerge $(OPTFLAGS) $(TILES) $(SAVEDS) \
 	afp $(ERRREXX) $(GST)
 # for files that are too large for the standard flags:
 CFLAGS2 = code=far strmerge $(SAVEDS)
-WBCFLAGS = ignore=217,62 data=far ansi nminc code=far idir=$(I) cpu=any afp \
+WBCFLAGS = ignore=217,62 data=far ansi nminc code=far idir=$(I) $(CPU) afp \
 	$(DEBUG) $(ERRREXX) define=AMIGA $(GST)
-XXX = data=far ansi nminc idir=$(I) cpu=any afp opt optinline optinlocal \
+XXX = data=far ansi nminc idir=$(I) $(CPU) afp opt optinline optinlocal \
 	optloop opttime
 WBC2FLAGS = define=CLI
 SPLFLAGS = define=SPLIT #dollarok
 #for amistack.c
-CFLAGS3	= data=near dataname=__MERGED nominc $(DEBUG) idir=$(I) cpu=any nover nostkchk \
+CFLAGS3	= data=near dataname=__MERGED nominc $(DEBUG) idir=$(I) $(CPU) nover nostkchk \
 	codename=nhcode strmerge $(OPTFLAGS) $(TILES) $(SAVEDS) \
 	afp $(ERRREXX) $(GST)
 
@@ -289,7 +290,7 @@ AOBJSPEC = -o
 
 #[SAS6]
 
-LINK	= slink noicons verbose maxhunk 65536 stripdebug
+LINK	= slink noicons verbose maxhunk 262144 stripdebug
 LIN	= from lib:catch.o
 LLINK	= with $(AMI)ami.lnk
 LLIB	= lib lib:scnb.lib BATCH #lib lib:amiga.lib BATCH #scnb.lib or sc.lib
@@ -366,32 +367,32 @@ COMMOBJ = \
 	$(O)eat.o	$(O)end.o	$(O)engrave.o	$(O)exper.o	\
 	$(O)explode.o	$(O)extralev.o	$(O)files.o 	$(O)fountain.o	\
 	$(O)hack.o	$(O)hacklib.o	$(O)invent.o	$(O)light.o	\
-	$(O)lock.o	$(O)mail.o	$(O)makemon.o	$(O)mcastu.o	\
-	$(O)mhitm.o	$(O)mhitu.o	$(O)minion.o	$(O)mklev.o	\
-	$(O)mkmap.o	$(O)mkmaze.o	$(O)mkobj.o	$(O)mkroom.o	\
-	$(O)mon.o	$(O)mondata.o	$(O)monmove.o	$(O)monst.o	\
-	$(O)mplayer.o	$(O)mthrowu.o	$(O)muse.o	$(O)music.o	\
-	$(O)o_init.o	$(O)objects.o	$(O)objnam.o	$(O)options.o	\
-	$(O)pager.o	$(O)pickup.o	$(O)pline.o	$(O)polyself.o	\
-	$(O)potion.o	$(O)pray.o	$(O)priest.o	$(O)quest.o	\
-	$(O)questpgr.o	$(O)read.o	$(O)rect.o	$(O)region.o	\
-	$(O)restore.o	$(O)rnd.o	$(O)role.o	$(O)rumors.o	\
-	$(O)save.o	$(O)shk.o	$(O)shknam.o	$(O)sit.o	\
-	$(O)sounds.o	$(O)sp_lev.o	$(O)spell.o	$(O)steal.o	\
-	$(O)steed.o	$(O)teleport.o	$(O)timeout.o	$(O)topten.o	\
-	$(O)track.o	$(O)trap.o	$(O)u_init.o	$(O)uhitm.o	\
-	$(O)vault.o	$(O)version.o	$(O)vision.o	$(O)weapon.o	\
-	$(O)were.o	$(O)wield.o	$(O)windows.o	$(O)wizard.o	\
-	$(O)worm.o	$(O)worn.o	$(O)write.o	$(O)zap.o
+	$(O)lock.o	$(O)mail.o	$(O)makemon.o	$(O)mapglyph.o  \
+	$(O)mcastu.o	$(O)mhitm.o	$(O)mhitu.o	$(O)minion.o	\
+	$(O)mklev.o	$(O)mkmap.o	$(O)mkmaze.o	$(O)mkobj.o	\
+	$(O)mkroom.o	$(O)mon.o	$(O)mondata.o	$(O)monmove.o	\
+	$(O)monst.o	$(O)mplayer.o	$(O)mthrowu.o	$(O)muse.o	\
+	$(O)music.o	$(O)o_init.o	$(O)objects.o	$(O)objnam.o	\
+	$(O)options.o	$(O)pager.o	$(O)pickup.o	$(O)pline.o	\
+	$(O)polyself.o	$(O)potion.o	$(O)pray.o	$(O)priest.o	\
+	$(O)quest.o	$(O)questpgr.o	$(O)read.o	$(O)rect.o	\
+	$(O)region.o	$(O)restore.o	$(O)rnd.o	$(O)role.o	\
+	$(O)rumors.o	$(O)save.o	$(O)shk.o	$(O)shknam.o	\
+	$(O)sit.o	$(O)sounds.o	$(O)sp_lev.o	$(O)spell.o	\
+	$(O)steal.o	$(O)steed.o	$(O)teleport.o	$(O)timeout.o	\
+	$(O)topten.o	$(O)track.o	$(O)trap.o	$(O)u_init.o	\
+	$(O)uhitm.o	$(O)vault.o	$(O)version.o	$(O)vision.o	\
+	$(O)weapon.o	$(O)were.o	$(O)wield.o	$(O)windows.o	\
+	$(O)wizard.o	$(O)worm.o	$(O)worn.o	$(O)write.o	\
+	$(O)zap.o
 
 MAKEDEFOBJ = \
 	$(O)monstr.o
 
 AMIGAOBJ = \
-	$(O)amidos.o	$(O)amirip.o 	$(O)amisnd.o	$(O)amiwbench.o	\
+	$(O)amidos.o	$(O)amirip.o 	$(O)amisnd.o	$(O)amistack.o \
 	$(O)amiwind.o	$(O)winami.o	$(O)winchar.o	$(O)winfuncs.o	\
-	$(O)winkey.o	$(O)winmenu.o	$(O)winreq.o	$(O)winstr.o \
-	$(O)amistack.o
+	$(O)winkey.o	$(O)winmenu.o	$(O)winreq.o	$(O)winstr.o
 
 # Objects from assembly sources (because DMake can't handle default rules)
 AMIGAOBJ2 = \
@@ -516,8 +517,7 @@ INSTDUNGEONFILES= $(NETHACK)NetHack.cnf $(INSTDUNGEONFILES1)
 INSTDATAFILES= \
 	$(NETHACK)license	$(NETHACK)logfile	$(NETHACK)record \
 	$(NETHACK)tomb.iff	$(NETHACK)amii.hlp 	$(NETHACK)Recover.txt \
-	$(NETHACK)GuideBook.txt	$(NETHACK)NetHack.txt	$(NETHACK)Install.ami \
-#	$(NETHACK)HackWB.hlp	$(NETHACK)WBDefaults.def
+	$(NETHACK)GuideBook.txt	$(NETHACK)NetHack.txt	$(NETHACK)Install.ami
 
 LIBFILES= \
 	$(INSTDUNGEONFILES1) \
@@ -532,12 +532,10 @@ LIBFILES= \
 
 #SFD_INSTEAD all:  $(SBIN)lev_comp $(SBIN)dgn_comp $(SBIN)NetHack \
 all:  $(COMPACT_HEADERS) $(SBIN)lev_comp $(SBIN)dgn_comp $(SBIN)NetHack \
-	$(SBIN)dlb $(NETHACK)recover #$(NETHACK)HackCli $(SBIN)splitter \
-#	$(NETHACK)HackWB 
+	$(SBIN)dlb $(NETHACK)recover
 
-install: inst-data inst-dungeon inst-fonts inst-sounds inst-tiles \
-	 $(NETHACK)recover $(NETHACK)NetHack $(NETHACK)nhdat
-	#$(NETHACK)NetHack.dir inst-icons
+install: all inst-data inst-dungeon inst-fonts inst-sounds inst-tiles \
+	$(NETHACK)nhdat $(NETHACK)NetHack
 
 $(SBIN)NetHack:  $(HOBJ) $(AMI)ami.lnk
 	$(LINK) $(LNSPEC) $(SBIN)NetHack $(LIN) $(LLINK) $(LLIB)
@@ -1334,7 +1332,7 @@ $(NETHACK)HackWB.info:  $(AMI)HackWB.uu
 
 # If DLB is defined, create the nhdat library file in the playground
 # directory.  If not, move all the data files there.
-$(NETHACK)nhdat:  $(LIBFILES)
+$(NETHACK)nhdat:  $(LIBFILES) $(SBIN)dlb
 	list to T:nhdat.lst $(SLIB) QUICK NOHEAD FILES
 	echo  >T:make-nhdat $(SBIN)dlb cCfI $(SLIB) $(NETHACK)nhdat T:nhdat.lst
 	echo >>T:make-nhdat if not exists $(NETHACK)nhdat
@@ -1425,6 +1423,8 @@ $(O)lock.o:  $(NHS)lock.c $(HDEP)
 $(O)mail.o:  $(NHS)mail.c $(HDEP) $(I)mail.h
 
 $(O)makemon.o:  $(NHS)makemon.c $(HDEP) $(I)epri.h $(I)emin.h $(I)edog.h
+
+$(O)mapglyph.o:  $(NHS)mapglyph.c $(HDEP)
 
 $(O)mcastu.o:  $(NHS)mcastu.c $(HDEP)
 
@@ -1676,3 +1676,4 @@ $(I)vault.h: $(I)dungeon.h
 #notes
 #  install keeps doing re-install because it keeps rebuilding lev_comp???
 #  fixed(?) - deleted setdate
+#  make nhdat rebuils sys/amiga objects

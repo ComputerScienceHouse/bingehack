@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)sp_lev.c	3.3	1999/11/16	*/
+/*	SCCS Id: @(#)sp_lev.c	3.4	2001/09/06	*/
 /*	Copyright (c) 1989 by Jean-Christophe Collet */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -850,8 +850,8 @@ struct mkroom	*croom;
 
 		    case M_AP_OBJECT:
 			for (i = 0; i < NUM_OBJECTS; i++)
-			    if (!strcmp(OBJ_NAME(objects[i]),
-					m->appear_as.str))
+			    if (OBJ_NAME(objects[i]) &&
+				!strcmp(OBJ_NAME(objects[i]),m->appear_as.str))
 				break;
 			if (i == NUM_OBJECTS) {
 			    impossible(
@@ -912,8 +912,10 @@ struct mkroom	*croom;
     struct obj *otmp;
     schar x, y;
     char c;
+    boolean named;	/* has a name been supplied in level description? */
 
     if (rn2(100) < o->chance) {
+	named = o->name.str ? TRUE : FALSE;
 
 	x = o->x; y = o->y;
 	if (croom)
@@ -929,9 +931,9 @@ struct mkroom	*croom;
 	    c = 0;
 
 	if (!c)
-	    otmp = mkobj_at(RANDOM_CLASS, x, y, TRUE);
+	    otmp = mkobj_at(RANDOM_CLASS, x, y, !named);
 	else if (o->id != -1)
-	    otmp = mksobj_at(o->id, x, y, TRUE);
+	    otmp = mksobj_at(o->id, x, y, TRUE, !named);
 	else {
 	    /*
 	     * The special levels are compiled with the default "text" object
@@ -943,10 +945,10 @@ struct mkroom	*croom;
 		panic("create_object:  unexpected object class '%c'",c);
 
 	    /* KMH -- Create piles of gold properly */
-	    if (oclass == GOLD_CLASS)
-	    	otmp = mkgold(0L, x, y);
+	    if (oclass == COIN_CLASS)
+		otmp = mkgold(0L, x, y);
 	    else
-	    	otmp = mkobj_at(oclass, x, y, TRUE);
+		otmp = mkobj_at(oclass, x, y, !named);
 	}
 
 	if (o->spe != -127)	/* That means NOT RANDOM! */
@@ -973,9 +975,8 @@ struct mkroom	*croom;
 		attach_egg_hatch_timeout(otmp);	/* attach new hatch timeout */
 	}
 
-	if (o->name.str) {	/* Give a name to that object */
+	if (named)
 	    otmp = oname(otmp, o->name.str);
-	}
 
 	switch(o->containment) {
 	    static struct obj *container = 0;
@@ -987,7 +988,7 @@ struct mkroom	*croom;
 		    break;
 		}
 		remove_object(otmp);
-		add_to_container(container, otmp);
+		(void) add_to_container(container, otmp);
 		goto o_done;		/* don't stack, but do other cleanup */
 	    /* container */
 	    case 2:
@@ -1025,8 +1026,9 @@ struct mkroom	*croom;
 		obj = was->minvent;
 		obj->owornmask = 0;
 		obj_extract_self(obj);
-		add_to_container(otmp, obj);
+		(void) add_to_container(otmp, obj);
 	    }
+	    otmp->owt = weight(otmp);
 	    mongone(was);
 	}
 
@@ -1128,7 +1130,7 @@ create_altar(a, croom)
 	levl[x][y].typ = ALTAR;
 	levl[x][y].altarmask = amask;
 
-	if (a->shrine == -11) a->shrine = rn2(1);  /* handle random case */
+	if (a->shrine < 0) a->shrine = rn2(2);	/* handle random case */
 
 	if (oldtyp == FOUNTAIN)
 	    level.flags.nfountains--;
@@ -1309,7 +1311,7 @@ schar ftyp, btyp;
 		if(ftyp != CORR || rn2(100)) {
 			crm->typ = ftyp;
 			if(nxcor && !rn2(50))
-				(void) mksobj_at(BOULDER, xx, yy, TRUE);
+				(void) mksobj_at(BOULDER, xx, yy, TRUE, FALSE);
 		} else {
 			crm->typ = SCORR;
 		}
@@ -1951,13 +1953,13 @@ dlb *fd;
 		} else
 		    r->monsters = 0;
 
-		/* read the objects */
+		/* read the objects, in same order as mazes */
 		Fread((genericptr_t) &r->nobject, 1, sizeof(r->nobject), fd);
 		if ((n = r->nobject) != 0) {
 		    r->objects = NewTab(object, n);
-		    while (n--) {
-			r->objects[(int)n] = New(object);
-			load_one_object(fd, r->objects[(int)n]);
+		    for (j = 0; j < n; ++j) {
+			r->objects[j] = New(object);
+			load_one_object(fd, r->objects[j]);
 		    }
 		} else
 		    r->objects = 0;
@@ -2165,6 +2167,11 @@ dlb *fd;
 		for(x = xstart; x < xstart+xsize; x++) {
 		    levl[x][y].typ = Fgetc(fd);
 		    levl[x][y].lit = FALSE;
+		    /* clear out levl: load_common_data may set them */
+		    levl[x][y].flags = 0;
+		    levl[x][y].horizontal = 0;
+		    levl[x][y].roomno = 0;
+		    levl[x][y].edge = 0;
 		    /*
 		     * Note: Even though levl[x][y].typ is type schar,
 		     *	 lev_comp.y saves it as type char. Since schar != char
@@ -2196,6 +2203,8 @@ dlb *fd;
 			has_bounds = TRUE;
 		    Map[x][y] = 1;
 		}
+	    if (init_lev.init_present && init_lev.joined)
+		remove_rooms(xstart, ystart, xstart+xsize, ystart+ysize);
 	}
 
 	Fread((genericptr_t) &n, 1, sizeof(n), fd);
@@ -2585,7 +2594,7 @@ dlb *fd;
 	    }
 	    for(x = rnd((int) (12 * mapfact) / 100); x; x--) {
 		    maze1xy(&mm, DRY);
-		    (void) mksobj_at(BOULDER, mm.x, mm.y, TRUE);
+		    (void) mksobj_at(BOULDER, mm.x, mm.y, TRUE, FALSE);
 	    }
 	    for (x = rn2(2); x; x--) {
 		maze1xy(&mm, DRY);

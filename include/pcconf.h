@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)pcconf.h	3.3	95/10/11	*/
+/*	SCCS Id: @(#)pcconf.h	3.4	1995/10/11	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -17,7 +17,7 @@
  *     _MSC_VER is defined automatically by Microsoft C.
  *     __BORLANDC__ is defined automatically by Borland C.
  *     __SC__ is defined automatically by Symantec C.
- *	Note: 3.3.0 was not verified with Symantec C.
+ *	Note: 3.4.1 was not verified with Symantec C.
  */
 
 /*
@@ -29,7 +29,7 @@
  *  For pre-V7.0 Microsoft Compilers only, manually define OVERLAY here.
  */
 
-/*#define OVERLAY	/* Manual overlay definition (MSC 6.0ax only) */
+/*#define OVERLAY */	/* Manual overlay definition (MSC 6.0ax only) */
 
 # ifndef __GO32__
 #define MFLOPPY		/* Support for floppy drives and ramdisks by dgk */
@@ -51,23 +51,23 @@
  *		  or   NO_TERMS
  */
 
-/* # define TERMLIB	   /* enable use of termcap file /etc/termcap */
+/* # define TERMLIB */	   /* enable use of termcap file /etc/termcap */
 			/* or ./termcap for MSDOS (SAC) */
 			/* compile and link in Fred Fish's termcap library, */
 			/* enclosed in TERMCAP.ARC, to use this */
 
-/* # define ANSI_DEFAULT    /* allows NetHack to run without a ./termcap */
+/* # define ANSI_DEFAULT */   /* allows NetHack to run without a ./termcap */
 
 # define NO_TERMS	/* Allows Nethack to run without ansi.sys by linking */
 			/* screen routines into the .exe     */
 
 # ifdef NO_TERMS	/* if NO_TERMS select one screen package below */
 #define SCREEN_BIOS		/* Use bios calls for all screen control */
-/* #define SCREEN_DJGPPFAST	/* Use djgpp fast screen routines	*/
+/* #define SCREEN_DJGPPFAST */	/* Use djgpp fast screen routines	*/
 # endif
 
 
-/* # define PC9800	/* Allows NetHack to run on NEC PC-9800 machines */
+/* # define PC9800 */	/* Allows NetHack to run on NEC PC-9800 machines */
 			/* Yamamoto Keizo */
 
 
@@ -99,10 +99,6 @@
 			/* amiconf.h).	In the future this will be the */
 			/* hook for mail reader implementation.        */
 
-/*# define PC_LOCKING	/* Allow confirmation before overwriting game  */
-			/* that is in progress or aborted when another */
-			/* game is started with the same player name.  */
-
 /* The following is needed for prototypes of certain functions */
 
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__SC__)
@@ -117,6 +113,9 @@
 #define _NAIVE_DOS_REGS
 #include <stdlib.h>
 #include <string.h>	/* Provides prototypes of strncmpi(), etc.     */
+# ifndef M
+#define M(c)		((char) (0x80 | (c)))
+# endif
 #endif
 
 /*
@@ -139,6 +138,10 @@
 # ifdef PCMUSIC
 #define TIMED_DELAY	/* need it anyway */
 # endif
+#define NOCWD_ASSUMPTIONS	/* Allow paths to be specified for HACKDIR,
+				   LEVELDIR, SAVEDIR, BONESDIR, DATADIR,
+				   SCOREDIR, LOCKDIR, CONFIGDIR, and TROUBLEDIR. */
+
 #endif /* MSDOS configuration stuff */
 
 #define PATHLEN		64	/* maximum pathlength */
@@ -146,6 +149,7 @@
 #ifndef MICRO_H
 #include "micro.h"		/* contains necessary externs for [os_name].c */
 #endif
+
 
 /* ===================================================
  *  The remaining code shouldn't need modification.
@@ -155,12 +159,16 @@
 #include "system.h"
 #endif
 
-#ifdef __GO32__
+#ifdef __DJGPP__
 #include <unistd.h> /* close(), etc. */
-/* setmode is in io.h but lock() in io.h interferes with lock[] in decl.h */
-extern int FDECL(setmode, (int,int));
+/* lock() in io.h interferes with lock[] in decl.h */
+#define lock djlock
+#include <io.h>
+#undef lock
 #include <pc.h> /* kbhit() */
 #define PC_LOCKING
+#define HOLD_LOCKFILE_OPEN
+#define SELF_RECOVER		/* NetHack itself can recover games */
 #endif
 
 # ifdef MSDOS

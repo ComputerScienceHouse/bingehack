@@ -1,10 +1,11 @@
-/*	SCCS Id: @(#)monmove.c	3.3	2000/07/24	*/
+/*	SCCS Id: @(#)monmove.c	3.4	2002/04/06	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 #include "mfndpos.h"
 #include "artifact.h"
+#include "epri.h"
 
 extern boolean notonhead;
 
@@ -48,10 +49,9 @@ STATIC_OVL void
 watch_on_duty(mtmp)
 register struct monst *mtmp;
 {
-	register s_level *slev = Is_special(&u.uz);
 	int	x, y;
 
-	if(slev && slev->flags.town && mtmp->mpeaceful &&
+	if(mtmp->mpeaceful && in_town(u.ux+u.dx, u.uy+u.dy) &&
 	   mtmp->mcansee && m_canseeu(mtmp) && !rn2(3)) {
 
 	    if(picking_lock(&x, &y) && IS_DOOR(levl[x][y].typ) &&
@@ -69,6 +69,9 @@ register struct monst *mtmp;
 		  }
 		  stop_occupation();
 		}
+	    } else if (is_digging()) {
+		/* chewing, wand/spell of digging are checked elsewhere */
+		watch_dig(mtmp, digging.pos.x, digging.pos.y, FALSE);
 	    }
 	}
 }
@@ -113,6 +116,7 @@ dochugw(mtmp)
 	    /* can see it now, or sense it and would normally see it */
 	    (canseemon(mtmp) ||
 		(sensemon(mtmp) && couldsee(mtmp->mx,mtmp->my))) &&
+	    mtmp->mcanmove &&
 	    !noattacks(mtmp->data) && !onscary(u.ux, u.uy, mtmp))
 		stop_occupation();
 
@@ -128,9 +132,9 @@ int x, y;
 struct monst *mtmp;
 {
 	if (mtmp->isshk || mtmp->isgd || mtmp->iswiz || !mtmp->mcansee ||
-			mtmp->mpeaceful || mtmp->data->mlet == S_HUMAN ||
-			is_lminion(mtmp->data) || is_rider(mtmp->data) ||
-			mtmp->data == &mons[PM_MINOTAUR])
+	    mtmp->mpeaceful || mtmp->data->mlet == S_HUMAN ||
+	    is_lminion(mtmp) || mtmp->data == &mons[PM_ANGEL] ||
+	    is_rider(mtmp->data) || mtmp->data == &mons[PM_MINOTAUR])
 		return(FALSE);
 
 	return (boolean)(sobj_at(SCR_SCARE_MONSTER, x, y)
@@ -198,6 +202,41 @@ disturb(mtmp)
 	return(0);
 }
 
+/* monster begins fleeing for the specified time, 0 means untimed flee
+ * if first, only adds fleetime if monster isn't already fleeing
+ * if fleemsg, prints a message about new flight, otherwise, caller should */
+void
+monflee(mtmp, fleetime, first, fleemsg)
+struct monst *mtmp;
+int fleetime;
+boolean first;
+boolean fleemsg;
+{
+	if (u.ustuck == mtmp) {
+	    if (u.uswallow)
+		expels(mtmp, mtmp->data, TRUE);
+	    else if (!sticks(youmonst.data)) {
+		unstuck(mtmp);	/* monster lets go when fleeing */
+		You("get released!");
+	    }
+	}
+
+	if (!first || !mtmp->mflee) {
+	    /* don't lose untimed scare */
+	    if (!fleetime)
+		mtmp->mfleetim = 0;
+	    else if (!mtmp->mflee || mtmp->mfleetim) {
+		fleetime += mtmp->mfleetim;
+		/* ensure monster flees long enough to visibly stop fighting */
+		if (fleetime == 1) fleetime++;
+		mtmp->mfleetim = min(fleetime, 127);
+	    }
+	    if (!mtmp->mflee && fleemsg && canseemon(mtmp) && !mtmp->mfrozen)
+		pline("%s turns to flee!", (Monnam(mtmp)));
+	    mtmp->mflee = 1;
+	}
+}
+
 STATIC_OVL void
 distfleeck(mtmp,inrange,nearby,scared)
 register struct monst *mtmp;
@@ -227,18 +266,11 @@ int *inrange, *nearby, *scared;
 			       (!mtmp->mpeaceful &&
 				    in_your_sanctuary(mtmp, 0, 0))));
 
-	if(*scared && !mtmp->mflee) {
-		if (!sticks(youmonst.data))
-			unstuck(mtmp);	/* monster lets go when fleeing */
-		mtmp->mflee = 1;
-#ifdef STUPID
+	if(*scared) {
 		if (rn2(7))
-		    mtmp->mfleetim = rnd(10);
+		    monflee(mtmp, rnd(10), TRUE, TRUE);
 		else
-		    mtmp->mfleetim = rnd(100);
-#else
-		mtmp->mfleetim = rnd(rn2(7) ? 10 : 100);
-#endif
+		    monflee(mtmp, rnd(100), TRUE, TRUE);
 	}
 
 }
@@ -265,6 +297,9 @@ register struct monst *mtmp;
 	register struct permonst *mdat;
 	register int tmp=0;
 	int inrange, nearby, scared;
+#ifdef GOLDOBJ
+        struct obj *ygold = 0, *lepgold = 0;
+#endif
 
 /*	Pre-movement adjustments	*/
 
@@ -309,12 +344,12 @@ register struct monst *mtmp;
 	/* some monsters teleport */
 	if (mtmp->mflee && !rn2(40) && can_teleport(mdat) && !mtmp->iswiz &&
 	    !level.flags.noteleport) {
-		rloc(mtmp);
+		(void) rloc(mtmp, FALSE);
 		return(0);
 	}
 	if (mdat->msound == MS_SHRIEK && !um_dist(mtmp->mx, mtmp->my, 1))
 	    m_respond(mtmp);
-	if (mdat == &mons[PM_MEDUSA] && cansee(mtmp->mx, mtmp->my))
+	if (mdat == &mons[PM_MEDUSA] && couldsee(mtmp->mx, mtmp->my))
 	    m_respond(mtmp);
 	if (mtmp->mhp <= 0) return(1); /* m_respond gaze can kill medusa */
 
@@ -352,7 +387,7 @@ register struct monst *mtmp;
 
 			if (is_demon(youmonst.data)) {
 			  /* "Good hunting, brother" */
-			    if (!tele_restrict(mtmp)) rloc(mtmp);
+			    if (!tele_restrict(mtmp)) (void) rloc(mtmp, FALSE);
 			} else {
 			    mtmp->minvis = mtmp->perminvis = 0;
 			    /* Why?  For the same reason in real demon talk */
@@ -406,10 +441,13 @@ register struct monst *mtmp;
 				m2->mhp -= rnd(15);
 				if (m2->mhp <= 0)
 				    monkilled(m2, "", AD_DRIN);
+				else
+				    m2->msleeping = 0;
 			}
 		}
 	}
 toofar:
+
 	/* If monster is nearby you, and has to wield a weapon, do so.   This
 	 * costs the monster a move, of course.
 	 */
@@ -420,11 +458,15 @@ toofar:
 
 	    /* The scared check is necessary.  Otherwise a monster that is
 	     * one square near the player but fleeing into a wall would keep	
-	     * switching between pick-axe and weapon.
+	     * switching between pick-axe and weapon.  If monster is stuck
+	     * in a trap, prefer ranged weapon (wielding is done in thrwmu).
+	     * This may cost the monster an attack, but keeps the monster
+	     * from switching back and forth if carrying both.
 	     */
 	    mw_tmp = MON_WEP(mtmp);
 	    if (!(scared && mw_tmp && is_pick(mw_tmp)) &&
-		    mtmp->weapon_check == NEED_WEAPON) {
+		mtmp->weapon_check == NEED_WEAPON &&
+		!(mtmp->mtrapped && !nearby && select_rwep(mtmp))) {
 		mtmp->weapon_check = NEED_HTH_WEAPON;
 		if (mon_wield_item(mtmp) != 0) return(0);
 	    }
@@ -432,11 +474,40 @@ toofar:
 
 /*	Now the actual movement phase	*/
 
+#ifndef GOLDOBJ
 	if(!nearby || mtmp->mflee || scared ||
 	   mtmp->mconf || mtmp->mstun || (mtmp->minvis && !rn2(3)) ||
 	   (mdat->mlet == S_LEPRECHAUN && !u.ugold && (mtmp->mgold || rn2(2))) ||
+#else
+        if (mdat->mlet == S_LEPRECHAUN) {
+	    ygold = findgold(invent);
+	    lepgold = findgold(mtmp->minvent);
+	}
+
+	if(!nearby || mtmp->mflee || scared ||
+	   mtmp->mconf || mtmp->mstun || (mtmp->minvis && !rn2(3)) ||
+	   (mdat->mlet == S_LEPRECHAUN && !ygold && (lepgold || rn2(2))) ||
+#endif
 	   (is_wanderer(mdat) && !rn2(4)) || (Conflict && !mtmp->iswiz) ||
 	   (!mtmp->mcansee && !rn2(4)) || mtmp->mpeaceful) {
+		/* Possibly cast an undirected spell if not attacking you */
+		/* note that most of the time castmu() will pick a directed
+		   spell and do nothing, so the monster moves normally */
+		/* arbitrary distance restriction to keep monster far away
+		   from you from having cast dozens of sticks-to-snakes
+		   or similar spells by the time you reach it */
+		if (dist2(mtmp->mx, mtmp->my, u.ux, u.uy) <= 49 && !mtmp->mspec_used) {
+		    struct attack *a;
+
+		    for (a = &mdat->mattk[0]; a < &mdat->mattk[NATTK]; a++) {
+			if (a->aatyp == AT_MAGC && (a->adtyp == AD_SPEL || a->adtyp == AD_CLRC)) {
+			    if (castmu(mtmp, a, FALSE, FALSE)) {
+				tmp = 3;
+				break;
+			    }
+			}
+		    }
+		}
 
 		tmp = m_move(mtmp, 0);
 		distfleeck(mtmp,&inrange,&nearby,&scared);	/* recalc */
@@ -445,6 +516,10 @@ toofar:
 		    case 0:	/* no movement, but it can still attack you */
 		    case 3:	/* absolutely no movement */
 				/* for pets, case 0 and 3 are equivalent */
+			/* vault guard might have vanished */
+			if (mtmp->isgd && (mtmp->mhp < 1 ||
+					    (mtmp->mx == 0 && mtmp->my == 0)))
+			    return 1;	/* behave as if it died */
 			/* During hallucination, monster appearance should
 			 * still change - even if it doesn't move.
 			 */
@@ -526,7 +601,8 @@ register int after;
 	boolean likegold=0, likegems=0, likeobjs=0, likemagic=0, conceals=0;
 	boolean likerock=0, can_tunnel=0;
 	boolean can_open=0, can_unlock=0, doorbuster=0;
-	boolean uses_items=0;
+	boolean uses_items=0, setlikes=0;
+	boolean avoid=FALSE;
 	struct permonst *ptr;
 	struct monst *mtoo;
 	schar mmoved = 0;	/* not strictly nec.: chi >= 0 will do */
@@ -554,12 +630,10 @@ register int after;
 	/* Not necessary if m_move called from this file, but necessary in
 	 * other calls of m_move (ex. leprechauns dodging)
 	 */
-	can_tunnel = tunnels(ptr) &&
 #ifdef REINCARNATION
-		!Is_rogue_level(&u.uz) &&
+	if (!Is_rogue_level(&u.uz))
 #endif
-		(!needspick(ptr) || m_carrying(mtmp, PICK_AXE) ||
-		(m_carrying(mtmp, DWARVISH_MATTOCK) && !which_armor(mtmp, W_ARMS)));
+	    can_tunnel = tunnels(ptr);
 	can_open = !(nohands(ptr) || verysmall(ptr));
 	can_unlock = ((can_open && m_carrying(mtmp, SKELETON_KEY)) ||
 		      mtmp->iswiz || is_rider(ptr));
@@ -627,7 +701,7 @@ register int after;
 	if(ptr == &mons[PM_TENGU] && !rn2(5) && !mtmp->mcan &&
 	   !tele_restrict(mtmp)) {
 	    if(mtmp->mhp < 7 || mtmp->mpeaceful || rn2(2))
-		rloc(mtmp);
+		(void) rloc(mtmp, FALSE);
 	    else
 		mnexto(mtmp);
 	    mmoved = 1;
@@ -643,6 +717,9 @@ not_special:
 	if (mtmp->mconf || (u.uswallow && mtmp == u.ustuck))
 		appr = 0;
 	else {
+#ifdef GOLDOBJ
+		struct obj *lepgold, *ygold;
+#endif
 		boolean should_see = (couldsee(omx, omy) &&
 				      (levl[gx][gy].lit ||
 				       !levl[omx][omy].lit) &&
@@ -658,7 +735,12 @@ not_special:
 			appr = 0;
 
 		if(monsndx(ptr) == PM_LEPRECHAUN && (appr == 1) &&
+#ifndef GOLDOBJ
 		   (mtmp->mgold > u.ugold))
+#else
+		   ( (lepgold = findgold(mtmp->minvent)) && 
+                   (lepgold->quan > ((ygold = findgold(invent)) ? ygold->quan : 0L)) ))
+#endif
 			appr = -1;
 
 		if (!should_see && can_track(ptr)) {
@@ -699,6 +781,7 @@ not_special:
 		likemagic = (likes_magic(ptr) && pctload < 85);
 		likerock = (throws_rocks(ptr) && pctload < 50 && !In_sokoban(&u.uz));
 		conceals = hides_under(ptr);
+		setlikes = TRUE;
 	    }
 	}
 
@@ -742,7 +825,7 @@ not_special:
 			 (mtoo->mappearance && !mtoo->iswiz) ||
 			 !mtoo->data->mmove)) continue;
 
-		    if(((likegold && otmp->oclass == GOLD_CLASS) ||
+		    if(((likegold && otmp->oclass == COIN_CLASS) ||
 		       (likeobjs && index(practical, otmp->oclass) &&
 			(otmp->otyp != CORPSE || (ptr->mlet == S_NYMPH
 			   && !is_rider(&mons[otmp->corpsenm])))) ||
@@ -795,9 +878,10 @@ not_special:
 	}
       }
 
+	/* don't tunnel if hostile and close enough to prefer a weapon */
 	if (can_tunnel && needspick(ptr) &&
-		(mw_tmp = MON_WEP(mtmp)) != 0 && !is_pick(mw_tmp) &&
-		mw_tmp->cursed && mtmp->weapon_check == NO_WEAPON_WANTED)
+	    ((!mtmp->mpeaceful || Conflict) &&
+	     dist2(mtmp->mx, mtmp->my, mtmp->mux, mtmp->muy) <= 8))
 	    can_tunnel = FALSE;
 
 	nix = omx;
@@ -807,8 +891,10 @@ not_special:
 	    flag |= (ALLOW_SANCT | ALLOW_SSM);
 	else flag |= ALLOW_U;
 	if (is_minion(ptr) || is_rider(ptr)) flag |= ALLOW_SANCT;
-	if (is_unicorn(ptr)) flag |= NOTONL;
+	/* unicorn may not be able to avoid hero on a noteleport level */
+	if (is_unicorn(ptr) && !level.flags.noteleport) flag |= NOTONL;
 	if (passes_walls(ptr)) flag |= (ALLOW_WALL | ALLOW_ROCK);
+	if (passes_bars(ptr)) flag |= ALLOW_BARS;
 	if (can_tunnel) flag |= ALLOW_DIG;
 	if (is_human(ptr) || ptr == &mons[PM_MINOTAUR]) flag |= ALLOW_SSM;
 	if (is_undead(ptr) && ptr->mlet != S_GHOST) flag |= NOGARLIC;
@@ -831,8 +917,14 @@ not_special:
 	    /* allow monsters be shortsighted on some levels for balance */
 	    if(!mtmp->mpeaceful && level.flags.shortsighted &&
 	       nidist > (couldsee(nix,niy) ? 144 : 36) && appr == 1) appr = 0;
+	    if (is_unicorn(ptr) && level.flags.noteleport) {
+		/* on noteleport levels, perhaps we cannot avoid hero */
+		for(i = 0; i < cnt; i++)
+		    if(!(info[i] & NOTONL)) avoid=TRUE;
+	    }
 
 	    for(i=0; i < cnt; i++) {
+		if (avoid && (info[i] & NOTONL)) continue;
 		nx = poss[i].x;
 		ny = poss[i].y;
 
@@ -864,11 +956,20 @@ not_special:
 	    if (mmoved==1 && (u.ux != nix || u.uy != niy) && itsstuck(mtmp))
 		return(3);
 
-	    if(IS_ROCK(levl[nix][niy].typ) && may_dig(nix,niy) &&
-		    mmoved==1 && can_tunnel && needspick(ptr) &&
-		    (!(mw_tmp = MON_WEP(mtmp)) || !is_pick(mw_tmp))) {
-		mtmp->weapon_check = NEED_PICK_AXE;
-		if (mon_wield_item(mtmp))
+	    if (((IS_ROCK(levl[nix][niy].typ) && may_dig(nix,niy)) ||
+		 closed_door(nix, niy)) &&
+		mmoved==1 && can_tunnel && needspick(ptr)) {
+		if (closed_door(nix, niy)) {
+		    if (!(mw_tmp = MON_WEP(mtmp)) ||
+			!is_pick(mw_tmp) || !is_axe(mw_tmp))
+			mtmp->weapon_check = NEED_PICK_OR_AXE;
+		} else if (IS_TREE(levl[nix][niy].typ)) {
+		    if (!(mw_tmp = MON_WEP(mtmp)) || !is_axe(mw_tmp))
+			mtmp->weapon_check = NEED_AXE;
+		} else if (!(mw_tmp = MON_WEP(mtmp)) || !is_pick(mw_tmp)) {
+		    mtmp->weapon_check = NEED_PICK_AXE;
+		}
+		if (mtmp->weapon_check >= NEED_PICK_AXE && mon_wield_item(mtmp))
 		    return(3);
 	    }
 	    /* If ALLOW_U is set, either it's trying to attack you, or it
@@ -934,7 +1035,7 @@ not_special:
 	    if (mtmp->wormno) worm_move(mtmp);
 	} else {
 	    if(is_unicorn(ptr) && rn2(2) && !tele_restrict(mtmp)) {
-		rloc(mtmp);
+		(void) rloc(mtmp, FALSE);
 		return(1);
 	    }
 	    if(mtmp->wormno) worm_nomove(mtmp);
@@ -961,10 +1062,10 @@ postmov:
 
 		    if(here->doormask & (D_LOCKED|D_CLOSED) && amorphous(ptr)) {
 			if (flags.verbose && canseemon(mtmp))
-			    pline("%s %ss under the door.", Monnam(mtmp),
+			    pline("%s %s under the door.", Monnam(mtmp),
 				  (ptr == &mons[PM_FOG_CLOUD] ||
 				   ptr == &mons[PM_YELLOW_LIGHT])
-				  ? "flow" : "ooze");
+				  ? "flows" : "oozes");
 		    } else if(here->doormask & D_LOCKED && can_unlock) {
 			if(btrapped) {
 			    here->doormask = D_NODOOR;
@@ -1023,6 +1124,12 @@ postmov:
 			if (*in_rooms(mtmp->mx, mtmp->my, SHOPBASE))
 			    add_damage(mtmp->mx, mtmp->my, 0L);
 		    }
+		} else if (levl[mtmp->mx][mtmp->my].typ == IRONBARS) {
+			if (flags.verbose && canseemon(mtmp))
+			    Norep("%s %s %s the iron bars.", Monnam(mtmp),
+				  /* pluralization fakes verb conjugation */
+				  makeplural(locomotion(ptr, "pass")),
+				  passes_walls(ptr) ? "through" : "between");
 		}
 
 		/* possibly dig */
@@ -1042,9 +1149,27 @@ postmov:
 		newsym(mtmp->mx,mtmp->my);
 	    }
 	    if(OBJ_AT(mtmp->mx, mtmp->my) && mtmp->mcanmove) {
+		/* recompute the likes tests, in case we polymorphed
+		 * or if the "likegold" case got taken above */
+		if (setlikes) {
+		    register int pctload = (curr_mon_load(mtmp) * 100) /
+			max_mon_load(mtmp);
+
+		    /* look for gold or jewels nearby */
+		    likegold = (likes_gold(ptr) && pctload < 95);
+		    likegems = (likes_gems(ptr) && pctload < 85);
+		    uses_items = (!mindless(ptr) && !is_animal(ptr)
+				  && pctload < 75);
+		    likeobjs = (likes_objs(ptr) && pctload < 75);
+		    likemagic = (likes_magic(ptr) && pctload < 85);
+		    likerock = (throws_rocks(ptr) && pctload < 50 &&
+				!In_sokoban(&u.uz));
+		    conceals = hides_under(ptr);
+		}
+
 		/* Maybe a rock mole just ate some metal object */
 		if (metallivorous(ptr)) {
-		    if (meatgold(mtmp) == 2) return 2;	/* it died */
+		    if (meatmetal(mtmp) == 2) return 2;	/* it died */
 		}
 
 		if(g_at(mtmp->mx,mtmp->my) && likegold) mpickgold(mtmp);
@@ -1082,6 +1207,9 @@ postmov:
 			(is_pool(mtmp->mx, mtmp->my) && !Is_waterlevel(&u.uz));
 		newsym(mtmp->mx, mtmp->my);
 	    }
+	    if (mtmp->isshk) {
+		after_shk_move(mtmp);
+	    }
 	}
 	return(mmoved);
 }
@@ -1114,6 +1242,9 @@ register struct monst *mtmp;
 {
 	boolean notseen, gotu;
 	register int disp, mx = mtmp->mux, my = mtmp->muy;
+#ifdef GOLDOBJ
+	long umoney = money_cnt(invent);
+#endif
 
 	/*
 	 * do cheapest and/or most likely tests first
@@ -1128,8 +1259,21 @@ register struct monst *mtmp;
 
 	notseen = (!mtmp->mcansee || (Invis && !perceives(mtmp->data)));
 	/* add cases as required.  eg. Displacement ... */
-	disp = ((notseen || Underwater) ? 1 :
-		Displaced ? (couldsee(mx, my) ? 2 : 1) : 0);
+	if (notseen || Underwater) {
+	    /* Xorns can smell valuable metal like gold, treat as seen */
+	    if ((mtmp->data == &mons[PM_XORN]) &&
+#ifndef GOLDOBJ
+			u.ugold
+#else
+			umoney
+#endif
+			&& !Underwater)
+		disp = 0;
+	    else
+		disp = 1;
+	} else if (Displaced) {
+	    disp = couldsee(mx, my) ? 2 : 1;
+	} else disp = 0;
 	if (!disp) goto found_you;
 
 	/* without something like the following, invis. and displ.
@@ -1152,7 +1296,8 @@ register struct monst *mtmp;
 		  || ((mx != u.ux || my != u.uy) &&
 		      !passes_walls(mtmp->data) &&
 		      (!ACCESSIBLE(levl[mx][my].typ) ||
-			(closed_door(mx, my) && !can_ooze(mtmp)))));
+		       (closed_door(mx, my) && !can_ooze(mtmp))))
+		  || !couldsee(mx, my));
 	} else {
 found_you:
 	    mx = u.ux;
@@ -1171,15 +1316,22 @@ struct monst *mtmp;
 
 	if (!amorphous(mtmp->data)) return FALSE;
 	if (mtmp == &youmonst) {
+#ifndef GOLDOBJ
 		if (u.ugold > 100L) return FALSE;
+#endif
 		chain = invent;
 	} else {
+#ifndef GOLDOBJ
 		if (mtmp->mgold > 100L) return FALSE;
+#endif
 		chain = mtmp->minvent;
 	}
 	for (obj = chain; obj; obj = obj->nobj) {
 		int typ = obj->otyp;
 
+#ifdef GOLDOBJ
+                if (typ == COIN_CLASS && obj->quan > 100L) return FALSE;
+#endif
 		if (obj->oclass != GEM_CLASS &&
 		    !(typ >= ARROW && typ <= BOOMERANG) &&
 		    !(typ >= DAGGER && typ <= CRYSKNIFE) &&

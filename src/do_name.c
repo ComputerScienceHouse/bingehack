@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)do_name.c	3.3	2000/06/12	*/
+/*	SCCS Id: @(#)do_name.c	3.4	2003/01/14	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -49,7 +49,7 @@ const char *goal;
     int cx, cy, i, c;
     int sidx, tx, ty;
     boolean msg_given = TRUE;	/* clear message window by default */
-    static const char *pick_chars = ".,;:";
+    static const char pick_chars[] = ".,;:";
     const char *cp;
     const char *sdp;
     if(iflags.num_pad) sdp = ndir; else sdp = sdir;	/* DICE workaround */
@@ -155,7 +155,7 @@ const char *goal;
 			    }	/* column */
 			}	/* row */
 		    }		/* pass */
-		    pline("Can't find dungeon feature '%c'", c);
+		    pline("Can't find dungeon feature '%c'.", c);
 		    msg_given = TRUE;
 		    goto nxtc;
 		} else {
@@ -268,19 +268,17 @@ do_mname()
 		return(0);
 	}
 	/* special case similar to the one in lookat() */
-	if (mtmp->data != &mons[PM_HIGH_PRIEST])
-	    Strcpy(buf, x_monnam(mtmp, ARTICLE_THE, (char *)0, 0, TRUE));
-	else
-	    Sprintf(buf, "the high priest%s", mtmp->female ? "ess" : "");
+	(void) distant_monnam(mtmp, ARTICLE_THE, buf);
 	Sprintf(qbuf, "What do you want to call %s?", buf);
 	getlin(qbuf,buf);
 	if(!*buf || *buf == '\033') return(0);
 	/* strip leading and trailing spaces; unnames monster if all spaces */
 	(void)mungspaces(buf);
 
-	if (mtmp->iswiz || type_is_pname(mtmp->data))
+	if (mtmp->data->geno & G_UNIQ)
 	    pline("%s doesn't like being called names!", Monnam(mtmp));
-	else (void) christen_monst(mtmp, buf);
+	else
+	    (void) christen_monst(mtmp, buf);
 	return(0);
 }
 
@@ -299,7 +297,7 @@ register struct obj *obj;
 	short objtyp;
 
 	Sprintf(qbuf, "What do you want to name %s %s?",
-		(obj->quan > 1L) ? "these" : "this", xname(obj));
+		is_plural(obj) ? "these" : "this", xname(obj));
 	getlin(qbuf, buf);
 	if(!*buf || *buf == '\033')	return;
 	/* strip leading and trailing spaces; unnames item if all spaces */
@@ -364,8 +362,12 @@ const char *name;
 	}
 
 	if (obj->owornmask) {
+		boolean save_twoweap = u.twoweap;
+		/* unwearing the old instance will clear dual-wield mode
+		   if this object is either of the two weapons */
 		setworn((struct obj *)0, obj->owornmask);
 		setworn(otmp, otmp->owornmask);
+		u.twoweap = save_twoweap;
 	}
 
 	/* replace obj with otmp */
@@ -424,7 +426,12 @@ const char *name;
 			      (genericptr_t)obj->oextra, lth, name);
 	}
 	if (lth) artifact_exists(obj, name, TRUE);
-	if (obj->oartifact && obj == uswapwep) untwoweapon();
+	if (obj->oartifact) {
+	    /* can't dual-wield with artifact as secondary weapon */
+	    if (obj == uswapwep) untwoweapon();
+	    /* activate warning if you've just named your weapon "Sting" */
+	    if (obj == uwep) set_artifact_intrinsic(obj, TRUE, W_WEP);
+	}
 	if (carried(obj)) update_inventory();
 	return obj;
 }
@@ -463,6 +470,11 @@ ddocall()
 #endif
 		obj = getobj(callable, "call");
 		if (obj) {
+			/* behave as if examining it in inventory;
+			   this might set dknown if it was picked up
+			   while blind and the hero can now see */
+			(void) xname(obj);
+
 			if (!obj->dknown) {
 				You("would never recognize another one.");
 				return 0;
@@ -487,7 +499,7 @@ register struct obj *obj;
 	otemp.quan = 1L;
 	otemp.onamelth = 0;
 	otemp.oxlth = 0;
-	if (objects[otemp.otyp].oc_class == POTION_CLASS && otemp.corpsenm)
+	if (objects[otemp.otyp].oc_class == POTION_CLASS && otemp.fromsink)
 	    /* kludge, meaning it's sink water */
 	    Sprintf(qbuf,"Call a stream of %s fluid:",
 		    OBJ_DESCR(objects[otemp.otyp]));
@@ -519,7 +531,7 @@ register struct obj *obj;
 #endif /*OVLB*/
 #ifdef OVL0
 
-static const char *ghostnames[] = {
+static const char * const ghostnames[] = {
 	/* these names should have length < PL_NSIZ */
 	/* Capitalize the names for aesthetics -dgk */
 	"Adri", "Andries", "Andreas", "Bert", "David", "Dirk", "Emile",
@@ -580,6 +592,7 @@ boolean called;
 	struct permonst *mdat = mtmp->data;
 	boolean do_hallu, do_invis, do_it, do_saddle;
 	boolean name_at_start, has_adjectives;
+	char *bp;
 
 	if (program_state.gameover)
 	    suppress |= SUPPRESS_HALLUCINATION;
@@ -600,6 +613,12 @@ boolean called;
 
 	buf[0] = 0;
 
+	/* unseen monsters, etc.  Use "it" */
+	if (do_it) {
+	    Strcpy(buf, "it");
+	    return buf;
+	}
+
 	/* priests and minions: don't even use this function */
 	if (mtmp->ispriest || mtmp->isminion) {
 	    char priestnambuf[BUFSZ];
@@ -616,12 +635,6 @@ boolean called;
 	    if (article == ARTICLE_NONE && !strncmp(name, "the ", 4))
 		name += 4;
 	    return strcpy(buf, name);
-	}
-
-	/* unseen monsters, etc.  Use "it" */
-	if (do_it) {
-	    Strcpy(buf, "it");
-	    return buf;
 	}
 
 	/* Shopkeepers: use shopkeeper name.  For normal shopkeepers, just
@@ -654,7 +667,8 @@ boolean called;
 	if (do_invis)
 	    Strcat(buf, "invisible ");
 #ifdef STEED
-	if (do_saddle && (mtmp->misc_worn_check & W_SADDLE) && !Blind)
+	if (do_saddle && (mtmp->misc_worn_check & W_SADDLE) &&
+	    !Blind && !Hallucination)
 	    Strcat(buf, "saddled ");
 #endif
 	if (buf[0] != 0)
@@ -669,13 +683,25 @@ boolean called;
 	    name_at_start = FALSE;
 	} else if (mtmp->mnamelth) {
 	    char *name = NAME(mtmp);
-	    
+
 	    if (mdat == &mons[PM_GHOST]) {
 		Sprintf(eos(buf), "%s ghost", s_suffix(name));
 		name_at_start = TRUE;
 	    } else if (called) {
 		Sprintf(eos(buf), "%s called %s", mdat->mname, name);
 		name_at_start = (boolean)type_is_pname(mdat);
+	    } else if (is_mplayer(mdat) && (bp = strstri(name, " the ")) != 0) {
+		/* <name> the <adjective> <invisible> <saddled> <rank> */
+		char pbuf[BUFSZ];
+
+		Strcpy(pbuf, name);
+		pbuf[bp - name + 5] = '\0'; /* adjectives right after " the " */
+		if (has_adjectives)
+		    Strcat(pbuf, buf);
+		Strcat(pbuf, bp + 5);	/* append the rest of the name */
+		Strcpy(buf, pbuf);
+		article = ARTICLE_NONE;
+		name_at_start = TRUE;
 	    } else {
 		Strcat(buf, name);
 		name_at_start = TRUE;
@@ -692,11 +718,13 @@ boolean called;
 	    name_at_start = (boolean)type_is_pname(mdat);
 	}
 
-	if (name_at_start && !has_adjectives) {
+	if (name_at_start && (article == ARTICLE_YOUR || !has_adjectives)) {
 	    if (mdat == &mons[PM_WIZARD_OF_YENDOR])
 		article = ARTICLE_THE;
 	    else
 		article = ARTICLE_NONE;
+	} else if ((mdat->geno & G_UNIQ) && article == ARTICLE_A) {
+	    article = ARTICLE_THE;
 	}
 
 	{
@@ -790,8 +818,17 @@ char *
 y_monnam(mtmp)
 struct monst *mtmp;
 {
-	return x_monnam(mtmp, ARTICLE_YOUR, (char *)0, 
-		mtmp->mnamelth ? SUPPRESS_SADDLE : 0, FALSE);
+	int prefix, suppression_flag;
+
+	prefix = mtmp->mtame ? ARTICLE_YOUR : ARTICLE_THE;
+	suppression_flag = (mtmp->mnamelth
+#ifdef STEED
+			    /* "saddled" is redundant when mounted */
+			    || mtmp == u.usteed
+#endif
+			    ) ? SUPPRESS_SADDLE : 0;
+
+	return x_monnam(mtmp, prefix, (char *)0, suppression_flag, FALSE);
 }
 
 #endif /* OVL0 */
@@ -827,7 +864,28 @@ register struct monst *mtmp;
 	return(bp);
 }
 
-static const char *bogusmons[] = {
+/* used for monster ID by the '/', ';', and 'C' commands to block remote
+   identification of the endgame altars via their attending priests */
+char *
+distant_monnam(mon, article, outbuf)
+struct monst *mon;
+int article;	/* only ARTICLE_NONE and ARTICLE_THE are handled here */
+char *outbuf;
+{
+    /* high priest(ess)'s identity is concealed on the Astral Plane,
+       unless you're adjacent (overridden for hallucination which does
+       its own obfuscation) */
+    if (mon->data == &mons[PM_HIGH_PRIEST] && !Hallucination &&
+	    Is_astralevel(&u.uz) && distu(mon->mx, mon->my) > 2) {
+	Strcpy(outbuf, article == ARTICLE_THE ? "the " : "");
+	Strcat(outbuf, mon->female ? "high priestess" : "high priest");
+    } else {
+	Strcpy(outbuf, x_monnam(mon, article, (char *)0, 0, TRUE));
+    }
+    return outbuf;
+}
+
+static const char * const bogusmons[] = {
 	"jumbo shrimp", "giant pigmy", "gnu", "killer penguin",
 	"giant cockroach", "giant slug", "maggot", "pterodactyl",
 	"tyrannosaurus rex", "basilisk", "beholder", "nightmare",
@@ -924,7 +982,7 @@ roguename() /* Name of a Rogue player */
 
 #ifdef OVL2
 
-static NEARDATA const char *hcolors[] = {
+static NEARDATA const char * const hcolors[] = {
 	"ultraviolet", "infrared", "bluish-orange",
 	"reddish-green", "dark white", "light black", "sky blue-pink",
 	"salty", "sweet", "sour", "bitter",
@@ -944,10 +1002,18 @@ const char *colorpref;
 		hcolors[rn2(SIZE(hcolors))] : colorpref;
 }
 
+/* return a random real color unless hallucinating */
+const char *
+rndcolor()
+{
+	int k = rn2(CLR_MAX);
+	return Hallucination ? hcolor((char *)0) : (k == NO_COLOR) ?
+		"colorless" : c_obj_colors[k];
+}
+
 /* Aliases for road-runner nemesis
- * See also http://www.geocities.com/EnchantedForest/1141/latin.html
  */
-static const char *coynames[] = {
+static const char * const coynames[] = {
 	"Carnivorous Vulgaris","Road-Runnerus Digestus",
 	"Eatibus Anythingus"  ,"Famishus-Famishus",
 	"Eatibus Almost Anythingus","Eatius Birdius",
@@ -961,14 +1027,17 @@ static const char *coynames[] = {
 	"Nemesis Riduclii","Canis latrans"
 };
 	
-char *coyotename(buf)
+char *
+coyotename(mtmp, buf)
+struct monst *mtmp;
 char *buf;
 {
-	if (buf)
-		Sprintf(buf,
-			"coyote - %s",
-			coynames[rn2(SIZE(coynames)-1)]);
-	return buf;
+    if (mtmp && buf) {
+	Sprintf(buf, "%s - %s",
+	    x_monnam(mtmp, ARTICLE_NONE, (char *)0, 0, TRUE),
+	    mtmp->mcan ? coynames[SIZE(coynames)-1] : coynames[rn2(SIZE(coynames)-1)]);
+    }
+    return buf;
 }
 #endif /* OVL2 */
 

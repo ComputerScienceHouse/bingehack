@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)role.c	3.3	2000/05/21	*/
+/*	SCCS Id: @(#)role.c	3.4	2003/01/08	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985-1999. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -108,9 +108,9 @@ const struct Role roles[] = {
 	{"Empiric",        0},
 	{"Embalmer",       0},
 	{"Dresser",        0},
-	{"Medici ossium",  0},
+	{"Medicus ossium", "Medica ossium"},
 	{"Herbalist",      0},
-	{"Magister",       0},
+	{"Magister",       "Magistra"},
 	{"Physician",      0},
 	{"Chirurgeon",     0} },
 	"_Athena", "Hermes", "Poseidon", /* Greek */
@@ -122,7 +122,7 @@ const struct Role roles[] = {
 	MH_HUMAN|MH_GNOME | ROLE_MALE|ROLE_FEMALE | ROLE_NEUTRAL,
 	/* Str Int Wis Dex Con Cha */
 	{   7,  7, 13,  7, 11, 16 },
-	{  15, 20, 20, 15, 25, 10 },
+	{  15, 20, 20, 15, 25, 5 },
 	/* Init   Lower  Higher */
 	{ 11, 0,  0, 8,  1, 0 },	/* Hit points */
 	{  1, 4,  0, 1,  0, 2 },20,	/* Energy */
@@ -135,8 +135,8 @@ const struct Role roles[] = {
 	{"Sergeant",    0},
 	{"Knight",      0},
 	{"Banneret",    0},
-	{"Chevalier",   0},
-	{"Seignieur",   0},
+	{"Chevalier",   "Chevaliere"},
+	{"Seignieur",   "Dame"},
 	{"Paladin",     0} },
 	"Lugh", "_Brigit", "Manannan Mac Lir", /* Celtic */
 	"Kni", "Camelot Castle", "the Isle of Glass",
@@ -147,7 +147,7 @@ const struct Role roles[] = {
 	MH_HUMAN | ROLE_MALE|ROLE_FEMALE | ROLE_LAWFUL,
 	/* Str Int Wis Dex Con Cha */
 	{  13,  7, 14,  8, 10, 17 },
-	{  20, 15, 15, 10, 20, 10 },
+	{  30, 15, 15, 10, 20, 10 },
 	/* Init   Lower  Higher */
 	{ 14, 0,  0, 8,  2, 0 },	/* Hit points */
 	{  1, 4,  0, 1,  0, 2 },10,	/* Energy */
@@ -277,7 +277,7 @@ const struct Role roles[] = {
 {	{"Samurai", 0}, {
 	{"Hatamoto",    0},  /* Banner Knight */
 	{"Ronin",       0},  /* no allegiance */
-	{"Ninja",       0},  /* secret society */
+	{"Ninja",       "Kunoichi"},  /* secret society */
 	{"Joshu",       0},  /* heads a castle */
 	{"Ryoshu",      0},  /* has a territory */
 	{"Kokushu",     0},  /* heads a province */
@@ -293,7 +293,7 @@ const struct Role roles[] = {
 	MH_HUMAN | ROLE_MALE|ROLE_FEMALE | ROLE_LAWFUL,
 	/* Str Int Wis Dex Con Cha */
 	{  10,  8,  7, 10, 17,  6 },
-	{  30, 10, 10, 30, 14, 10 },
+	{  30, 10,  8, 30, 14,  8 },
 	/* Init   Lower  Higher */
 	{ 13, 0,  0, 8,  1, 0 },	/* Hit points */
 	{  1, 0,  0, 1,  0, 1 },11,	/* Energy */
@@ -362,9 +362,9 @@ const struct Role roles[] = {
 	{"Wizard",      0},
 	{"Mage",        0} },
 	"Ptah", "Thoth", "Anhur", /* Egyptian */
-	"Wiz", "the Tower of the Balance", "the Tower of Darkness",
+	"Wiz", "the Lonely Tower", "the Tower of Darkness",
 	PM_WIZARD, NON_PM, PM_KITTEN,
-	PM_WIZARD_OF_BALANCE, PM_APPRENTICE, PM_DARK_ONE,
+	PM_NEFERET_THE_GREEN, PM_APPRENTICE, PM_DARK_ONE,
 	PM_VAMPIRE_BAT, PM_XORN, S_BAT, S_WRAITH,
 	ART_EYE_OF_THE_AETHIOPICA,
 	MH_HUMAN|MH_ELF|MH_GNOME|MH_ORC | ROLE_MALE|ROLE_FEMALE |
@@ -501,6 +501,10 @@ const struct Align aligns[] = {
 	{"chaos",	"chaotic",	"Cha",	ROLE_CHAOTIC,	A_CHAOTIC},
 	{"evil",	"unaligned",	"Una",	0,		A_NONE}
 };
+
+STATIC_DCL char * FDECL(promptsep, (char *, int));
+STATIC_DCL int FDECL(role_gendercount, (int));
+STATIC_DCL int FDECL(race_alignmentcount, (int));
 
 /* used by str2XXX() */
 static char NEARDATA randomstr[] = "random";
@@ -1015,7 +1019,18 @@ rigid_role_checks()
      * you to choose anything further. Note the use of PICK_RIGID which
      * causes the pick_XX() routine to return a value only if there is one
      * single possible selection, otherwise it returns ROLE_NONE.
+     *
      */
+    if (flags.initrole == ROLE_RANDOM) {
+	/* If the role was explicitly specified as ROLE_RANDOM
+	 * via -uXXXX-@ then choose the role in here to narrow down
+	 * later choices. Pick a random role in this case.
+	 */
+	flags.initrole = pick_role(flags.initrace, flags.initgend,
+					flags.initalign, PICK_RANDOM);
+	if (flags.initrole < 0)
+	    flags.initrole = randrole();
+    }
     if (flags.initrole != ROLE_NONE) {
 	if (flags.initrace == ROLE_NONE)
 	     flags.initrace = pick_race(flags.initrole, flags.initgend,
@@ -1029,102 +1044,249 @@ rigid_role_checks()
     }
 }
 
+#define BP_ALIGN	0
+#define BP_GEND		1
+#define BP_RACE		2
+#define BP_ROLE		3
+#define NUM_BP		4
+
+STATIC_VAR char pa[NUM_BP], post_attribs;
+
+STATIC_OVL char *
+promptsep(buf, num_post_attribs)
+char *buf;
+int num_post_attribs;
+{
+	const char *conj = "and ";
+	if (num_post_attribs > 1
+	    && post_attribs < num_post_attribs && post_attribs > 1)
+	 	Strcat(buf, ","); 
+	Strcat(buf, " ");
+	--post_attribs;
+	if (!post_attribs && num_post_attribs > 1) Strcat(buf, conj);
+	return buf;
+}
+
+STATIC_OVL int
+role_gendercount(rolenum)
+int rolenum;
+{
+	int gendcount = 0;
+	if (validrole(rolenum)) {
+		if (roles[rolenum].allow & ROLE_MALE) ++gendcount;
+		if (roles[rolenum].allow & ROLE_FEMALE) ++gendcount;
+		if (roles[rolenum].allow & ROLE_NEUTER) ++gendcount;
+	}
+	return gendcount;
+}
+
+STATIC_OVL int
+race_alignmentcount(racenum)
+int racenum;
+{
+	int aligncount = 0;
+	if (racenum != ROLE_NONE && racenum != ROLE_RANDOM) {
+		if (races[racenum].allow & ROLE_CHAOTIC) ++aligncount;
+		if (races[racenum].allow & ROLE_LAWFUL) ++aligncount;
+		if (races[racenum].allow & ROLE_NEUTRAL) ++aligncount;
+	}
+	return aligncount;
+}
+
+char *
+root_plselection_prompt(suppliedbuf, buflen, rolenum, racenum, gendnum, alignnum)
+char *suppliedbuf;
+int buflen, rolenum, racenum, gendnum, alignnum;
+{
+	int k, gendercount = 0, aligncount = 0;
+	char buf[BUFSZ];
+	static char err_ret[] = " character's";
+	boolean donefirst = FALSE;
+
+	if (!suppliedbuf || buflen < 1) return err_ret;
+
+	/* initialize these static variables each time this is called */
+	post_attribs = 0;
+	for (k=0; k < NUM_BP; ++k)
+		pa[k] = 0;
+	buf[0] = '\0';
+	*suppliedbuf = '\0';
+	
+	/* How many alignments are allowed for the desired race? */
+	if (racenum != ROLE_NONE && racenum != ROLE_RANDOM)
+		aligncount = race_alignmentcount(racenum);
+
+	if (alignnum != ROLE_NONE && alignnum != ROLE_RANDOM) {
+		/* if race specified, and multiple choice of alignments for it */
+		if ((racenum >= 0) && (aligncount > 1)) {
+			if (donefirst) Strcat(buf, " ");
+			Strcat(buf, aligns[alignnum].adj);
+			donefirst = TRUE;
+		} else {
+			if (donefirst) Strcat(buf, " ");
+			Strcat(buf, aligns[alignnum].adj);
+			donefirst = TRUE;
+		}
+	} else {
+		/* if alignment not specified, but race is specified
+			and only one choice of alignment for that race then
+			don't include it in the later list */
+		if ((((racenum != ROLE_NONE && racenum != ROLE_RANDOM) &&
+			ok_race(rolenum, racenum, gendnum, alignnum))
+		      && (aligncount > 1))
+		     || (racenum == ROLE_NONE || racenum == ROLE_RANDOM)) {
+			pa[BP_ALIGN] = 1;
+			post_attribs++;
+		}
+	}
+	/* <your lawful> */
+
+	/* How many genders are allowed for the desired role? */
+	if (validrole(rolenum))
+		gendercount = role_gendercount(rolenum);
+
+	if (gendnum != ROLE_NONE  && gendnum != ROLE_RANDOM) {
+		if (validrole(rolenum)) {
+		     /* if role specified, and multiple choice of genders for it,
+			and name of role itself does not distinguish gender */
+			if ((rolenum != ROLE_NONE) && (gendercount > 1)
+						&& !roles[rolenum].name.f) {
+				if (donefirst) Strcat(buf, " ");
+				Strcat(buf, genders[gendnum].adj);
+				donefirst = TRUE;
+			}
+	        } else {
+			if (donefirst) Strcat(buf, " ");
+	        	Strcat(buf, genders[gendnum].adj);
+			donefirst = TRUE;
+	        }
+	} else {
+		/* if gender not specified, but role is specified
+			and only one choice of gender then
+			don't include it in the later list */
+		if ((validrole(rolenum) && (gendercount > 1)) || !validrole(rolenum)) {
+			pa[BP_GEND] = 1;
+			post_attribs++;
+		}
+	}
+	/* <your lawful female> */
+
+	if (racenum != ROLE_NONE && racenum != ROLE_RANDOM) {
+		if (validrole(rolenum) && ok_race(rolenum, racenum, gendnum, alignnum)) {
+			if (donefirst) Strcat(buf, " "); 
+			Strcat(buf, (rolenum == ROLE_NONE) ?
+				races[racenum].noun :
+				races[racenum].adj);
+			donefirst = TRUE;
+		} else if (!validrole(rolenum)) {
+			if (donefirst) Strcat(buf, " ");
+			Strcat(buf, races[racenum].noun);
+			donefirst = TRUE;
+		} else {
+			pa[BP_RACE] = 1;
+			post_attribs++;
+		}
+	} else {
+		pa[BP_RACE] = 1;
+		post_attribs++;
+	}
+	/* <your lawful female gnomish> || <your lawful female gnome> */
+
+	if (validrole(rolenum)) {
+		if (donefirst) Strcat(buf, " ");
+		if (gendnum != ROLE_NONE) {
+		    if (gendnum == 1  && roles[rolenum].name.f)
+			Strcat(buf, roles[rolenum].name.f);
+		    else
+  			Strcat(buf, roles[rolenum].name.m);
+		} else {
+			if (roles[rolenum].name.f) {
+				Strcat(buf, roles[rolenum].name.m);
+				Strcat(buf, "/");
+				Strcat(buf, roles[rolenum].name.f);
+			} else 
+				Strcat(buf, roles[rolenum].name.m);
+		}
+		donefirst = TRUE;
+	} else if (rolenum == ROLE_NONE) {
+		pa[BP_ROLE] = 1;
+		post_attribs++;
+	}
+	
+	if ((racenum == ROLE_NONE || racenum == ROLE_RANDOM) && !validrole(rolenum)) {
+		if (donefirst) Strcat(buf, " ");
+		Strcat(buf, "character");
+		donefirst = TRUE;
+	}
+	/* <your lawful female gnomish cavewoman> || <your lawful female gnome>
+	 *    || <your lawful female character>
+	 */
+	if (buflen > (int) (strlen(buf) + 1)) {
+		Strcpy(suppliedbuf, buf);
+		return suppliedbuf;
+	} else
+		return err_ret;
+}
+
 char *
 build_plselection_prompt(buf, buflen, rolenum, racenum, gendnum, alignnum)
 char *buf;
 int buflen, rolenum, racenum, gendnum, alignnum;
 {
 	const char *defprompt = "Shall I pick a character for you? [ynq] ";
-	int num_post_attribs, post_attribs = 0;
-	const char *conj = "and ";
-
+	int num_post_attribs = 0;
+	char tmpbuf[BUFSZ];
+	
 	if (buflen < QBUFSZ)
 		return (char *)defprompt;
-	Strcpy(buf, "Shall I pick ");
-	if (racenum != ROLE_NONE || rolenum != ROLE_NONE)
-		Strcat(buf, "your");
-	else
-		Strcat(buf, "a");
+
+	Strcpy(tmpbuf, "Shall I pick ");
+	if (racenum != ROLE_NONE || validrole(rolenum))
+		Strcat(tmpbuf, "your ");
+	else {
+		Strcat(tmpbuf, "a ");
+	}
 	/* <your> */
 
-	if (alignnum != ROLE_NONE) {
-		Strcat(buf, " ");
-		Strcat(buf, aligns[alignnum].adj);
-	} else post_attribs++;
-	/* <your lawful> */
+	(void)  root_plselection_prompt(eos(tmpbuf), buflen - strlen(tmpbuf),
+					rolenum, racenum, gendnum, alignnum);
+	Sprintf(buf, "%s", s_suffix(tmpbuf));
 
-
-	if (gendnum != ROLE_NONE) {
-		Strcat(buf, " ");
-		Strcat(buf, genders[gendnum].adj);
-	} else post_attribs++;
-	/* <your lawful female> */
-
-	if (racenum != ROLE_NONE) {
-		Strcat(buf, " "); 
-		Strcat(buf, (rolenum == ROLE_NONE) ?
-			s_suffix(races[racenum].noun) :
-			races[racenum].adj);
-	} else post_attribs++;
-	/* <your lawful female gnomish> || <your lawful female gnome's> */
-
-	if (rolenum != ROLE_NONE) {
-		Strcat(buf, " ");
-		Strcat(buf, ((gendnum != ROLE_NONE) && roles[rolenum].name.f) ?
-			s_suffix(roles[rolenum].name.f) :
-			s_suffix(roles[rolenum].name.m));
-	} else post_attribs++;
-
-	if (racenum == ROLE_NONE && rolenum == ROLE_NONE) {
-		Strcat(buf, " character's");
-	}
-	/* <your lawful female gnomish cavewoman's> || <your lawful female gnome's>
+	/* buf should now be:
+	 * < your lawful female gnomish cavewoman's> || <your lawful female gnome's>
 	 *    || <your lawful female character's>
+	 *
+         * Now append the post attributes to it
 	 */
 
-	/* Now the post attributes */
 	num_post_attribs = post_attribs;
 	if (post_attribs) {
-		if (racenum == ROLE_NONE) {
-			if (num_post_attribs > 1 &&
-			    post_attribs < num_post_attribs && post_attribs)
-			 	Strcat(buf, ","); 
-			Strcat(buf, " ");
-			--post_attribs;
-			if (!post_attribs && num_post_attribs > 1) Strcat(buf, conj);
+		if (pa[BP_RACE]) {
+			(void) promptsep(eos(buf), num_post_attribs);
 			Strcat(buf, "race");
 		}
-		if (rolenum == ROLE_NONE) {
-			if (num_post_attribs > 1 &&
-			    post_attribs < num_post_attribs && post_attribs)
-			 	Strcat(buf, ","); 
-			Strcat(buf, " ");
-			--post_attribs;
-			if (!post_attribs && num_post_attribs > 1) Strcat(buf, conj);
+		if (pa[BP_ROLE]) {
+			(void) promptsep(eos(buf), num_post_attribs);
 			Strcat(buf, "role");
 		}
-		if (gendnum == ROLE_NONE) {
-			if (num_post_attribs > 1
-			    && post_attribs < num_post_attribs && post_attribs)
-			 	Strcat(buf, ","); 
-			Strcat(buf, " ");
-			--post_attribs;
-			if (!post_attribs && num_post_attribs > 1) Strcat(buf, conj);
+		if (pa[BP_GEND]) {
+			(void) promptsep(eos(buf), num_post_attribs);
 			Strcat(buf, "gender");
 		}
-		if (alignnum == ROLE_NONE) {
-			if (num_post_attribs > 1
-			    && post_attribs < num_post_attribs && post_attribs)
-			 	Strcat(buf, ","); 
-			Strcat(buf, " ");
-			--post_attribs;
-			if (!post_attribs && num_post_attribs > 1) Strcat(buf, conj);
+		if (pa[BP_ALIGN]) {
+			(void) promptsep(eos(buf), num_post_attribs);
 			Strcat(buf, "alignment");
 		}
 	}
 	Strcat(buf, " for you? [ynq] ");
 	return buf;
 }
+
+#undef BP_ALIGN
+#undef BP_GEND
+#undef BP_RACE
+#undef BP_ROLE
+#undef NUM_BP
 
 void
 plnamesuffix()
@@ -1206,13 +1368,15 @@ role_init()
 	if (!validrace(flags.initrole, flags.initrace))
 	    flags.initrace = randrace(flags.initrole);
 
-	/* Check for a valid gender.  Try flags.igend first. */
+	/* Check for a valid gender.  If new game, check both initgend
+	 * and female.  On restore, assume flags.female is correct. */
+	if (flags.pantheon == -1) {	/* new game */
+	    if (!validgend(flags.initrole, flags.initrace, flags.female))
+		flags.female = !flags.female;
+	}
 	if (!validgend(flags.initrole, flags.initrace, flags.initgend))
-	    /* Use flags.female second.  Note that there is no way
-	     * to check for an unspecified gender.
-	     */
+	    /* Note that there is no way to check for an unspecified gender. */
 	    flags.initgend = flags.female;
-	/* Don't change flags.female; this may be a restore */
 
 	/* Check for a valid alignment */
 	if (!validalign(flags.initrole, flags.initrace, flags.initalign))

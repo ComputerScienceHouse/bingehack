@@ -8,12 +8,16 @@
 
 #include "hack.h"
 #include "macwin.h"
+
+#ifndef __MACH__
 #include <files.h>
 #include <errors.h>
 #include <resources.h>
 #include <memory.h>
 #include <TextUtils.h>
 #include <ToolUtils.h>
+#endif
+
 #include "dlb.h"
 
 /*
@@ -66,7 +70,6 @@ static int
 OpenHandleFile (const unsigned char *name, long fileType)
 {
 	int i;
-	OSErr err;
 	Handle h;
 	Str255 s;
 
@@ -74,15 +77,11 @@ OpenHandleFile (const unsigned char *name, long fileType)
 		if (theHandleFiles[i].data == 0L) break;
 	}
 	
-	if (i >= MAX_HF) {
-		error("Ran out of HandleFiles");
+	if (i >= MAX_HF)
 		return -1;
-	}
 
 	h = GetNamedResource (fileType, name);
-	err = ResError();
-	if (err == resNotFound) return -1;  /* Don't complain, this might be normal */
-	if (!itworked(err)) return -1;
+	if (!h) return (-1);
 	
 	theHandleFiles[i].data = h;
 	theHandleFiles[i].size = GetHandleSize (h);
@@ -97,7 +96,6 @@ static int
 CloseHandleFile (int fd)
 {
 	if (!IsHandleFile (fd)) {
-	   error("CloseHandleFile: isn't a handle");
 	   return -1;
 	}
 	fd -= FIRST_HF;
@@ -298,25 +296,14 @@ macread (int fd, void *ptr, unsigned len)
 	long amt = len;
 	
 	if (IsHandleFile (fd)) {
-
 		return ReadHandleFile (fd, ptr, amt);
 	} else {
-
 		short err = FSRead (fd, &amt, ptr);
-		if (err == eofErr && len) {
 
-			return amt;
-		}
-		if  (itworked (err)) {
-
-			return (amt);
-
-		} else {
-
-			return -1;
-		}
+		return ((err == noErr) || (err == eofErr && len)) ? amt : -1;
 	}
 }
+
 
 #if 0 /* this function isn't used, if you use it, uncomment prototype in macwin.h */
 char *
@@ -344,9 +331,10 @@ macwrite (int fd, void *ptr, unsigned len)
 	long amt = len;
 
 	if (IsHandleFile (fd)) return -1;
-	
-	if (itworked(FSWrite (fd, &amt, ptr))) return(amt);
-		else return(-1);
+	if (FSWrite(fd, &amt, ptr) == noErr)
+		return (amt);
+	else
+		return (-1);
 }
 
 
@@ -372,11 +360,24 @@ macseek (int fd, long where, short whence)
 			break;
 	}
 
-	if (itworked(SetFPos (fd, posMode, where)) && itworked(GetFPos (fd, &curPos)))
-		return(curPos);
-	   
-	return(-1);
+	if (SetFPos(fd, posMode, where) == noErr && GetFPos(fd, &curPos) == noErr)
+		return (curPos);
+	else
+		return(-1);
 }
+
+
+int
+macunlink(const char *name)
+{
+	Str255 pname;
+
+
+	C2P(name, pname);
+	return (HDelete(theDirs.dataRefNum, theDirs.dataDirID, pname) == noErr ? 0 : -1);
+}
+
+
 
 /* ---------------------------------------------------------------------- */
 
@@ -388,7 +389,7 @@ void rsrc_dlb_cleanup(void) {
 }
 
 boolean rsrc_dlb_fopen(dlb *dp, const char *name, const char *mode) {
-#if defined(applec) || defined(__MWERKS__)
+#if defined(__SC__) || defined(__MRC__)
 # pragma unused(mode)
 #endif
 	Str255 pname;

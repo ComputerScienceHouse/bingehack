@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)dbridge.c	3.3	2000/02/05	*/
+/*	SCCS Id: @(#)dbridge.c	3.4	2003/02/08	*/
 /*	Copyright (c) 1989 by Jean-Christophe Collet		  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -336,39 +336,14 @@ struct entity *etmp;
 const char *verb;
 {
 	static char wholebuf[80];
-	char verbbuf[30];
 
 	Strcpy(wholebuf, is_u(etmp) ? "You" : Monnam(etmp->emon));
-	if (!*verb)
-		return(wholebuf);
+	if (!*verb) return(wholebuf);
 	Strcat(wholebuf, " ");
-	verbbuf[0] = '\0';
 	if (is_u(etmp))
-		Strcpy(verbbuf, verb);
-	else {
-		if (!strcmp(verb, "are"))
-			Strcpy(verbbuf, "is");
-		if (!strcmp(verb, "have"))
-			Strcpy(verbbuf, "has");
-		if (!verbbuf[0]) {
-			Strcpy(verbbuf, verb);
-			switch (verbbuf[strlen(verbbuf) - 1]) {
-				case 'y':
-					verbbuf[strlen(verbbuf) - 1] = '\0';
-					Strcat(verbbuf, "ies");
-					break;
-				case 'h':
-				case 'o':
-				case 's':
-					Strcat(verbbuf, "es");
-					break;
-				default:
-					Strcat(verbbuf, "s");
-					break;
-			}
-		}
-	}
-	Strcat(wholebuf, verbbuf);
+	    Strcat(wholebuf, verb);
+	else
+	    Strcat(wholebuf, vtense((char *)0, verb));
 	return(wholebuf);
 }
 
@@ -425,7 +400,7 @@ int dest, how;
 			    if (enexto(&xy, etmp->ex, etmp->ey, etmp->edata)) {
 				pline("A %s force teleports you away...",
 				      Hallucination ? "normal" : "strange");
-				teleds(xy.x, xy.y);
+				teleds(xy.x, xy.y, FALSE);
 			    }
 			    /* otherwise on top of the drawbridge is the
 			     * only viable spot in the dungeon, so stay there
@@ -435,6 +410,8 @@ int dest, how;
 		/* we might have crawled out of the moat to survive */
 		etmp->ex = u.ux,  etmp->ey = u.uy;
 	} else {
+		int entitycnt;
+
 		killer = 0;
 		/* fake "digested to death" damage-type suppresses corpse */
 #define mk_message(dest) ((dest & 1) ? "" : (char *)0)
@@ -445,6 +422,13 @@ int dest, how;
 		else		/* you caused it */
 		    xkilled(etmp->emon, dest);
 		etmp->edata = (struct permonst *)0;
+
+		/* dead long worm handling */
+		for (entitycnt = 0; entitycnt < ENTITIES; entitycnt++) {
+		    if (etmp != &(occupants[entitycnt]) &&
+			etmp->emon == occupants[entitycnt].emon)
+			occupants[entitycnt].edata = (struct permonst *)0;
+		}
 #undef mk_message
 #undef mk_corpse
 	}
@@ -556,6 +540,7 @@ struct entity *etmp;
 			pline_The("%s passes through %s!",
 			      at_portcullis ? "portcullis" : "drawbridge",
 			      e_nam(etmp));
+		if (is_u(etmp)) spoteffects(FALSE);
 		return;
 	}
 	if (e_missed(etmp, FALSE)) {

@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)alloc.c	3.3	95/10/04	*/
+/*	SCCS Id: @(#)alloc.c	3.4	1995/10/04	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -56,7 +56,7 @@ register unsigned int lth;
 
 #if defined(MONITOR_HEAP) || defined(WIZARD)
 
-# ifdef MICRO
+# if defined(MICRO) || defined(WIN32)
 /* we actually want to know which systems have an ANSI run-time library
  * to know which support the new %p format for printing pointers.
  * due to the presence of things like gcc, NHSTDC is not a good test.
