@@ -967,15 +967,15 @@ dosacrifice()
       gods as easy to please as an angry dog!
 
       Now only accepts corpses, based on the game's evaluation of their
-      toughness.  Human sacrifice, as well as sacrificing unicorns of
-      your alignment, is strongly discouraged.  (We can't tell whether
-      a pet corpse was tame, so you can still sacrifice it.)
+      toughness.  Human and pet sacrifice, as well as sacrificing unicorns
+      of your alignment, is strongly discouraged.
      */
 
 #define MAXVALUE 24 /* Highest corpse value (besides Wiz) */
 
     if (otmp->otyp == CORPSE) {
 	register struct permonst *ptr = &mons[otmp->corpsenm];
+	struct monst *mtmp;
 	extern const int monstr[];
 
 	/* KMH, conduct */
@@ -1047,6 +1047,15 @@ dosacrifice()
 	    if (carried(otmp)) useup(otmp);
 	    else useupf(otmp, 1L);
 	    return(1);
+	} else if (otmp->oxlth && otmp->oattached == OATTACHED_MONST
+		    && ((mtmp = get_mtraits(otmp, FALSE)) != (struct monst *)0)
+		    && mtmp->mtame) {
+	    /* mtmp is a temporary pointer to a tame monster's attributes,
+	     * not a real monster */
+	    pline("So this is how you repay loyalty?");
+	    adjalign(-3);
+	    value = -1;
+	    HAggravate_monster |= FROMOUTSIDE;
 	} else if (is_undead(ptr)) { /* Not demons--no demon corpses */
 	    if (u.ualign.type != A_CHAOTIC)
 		value += 1;
