@@ -1817,11 +1817,23 @@ The very act of doing so will infuriate him, and give you advantage."
 "You can triumph, %p, if you trust in %d."
 %E
 %Cc Ran 00030
-You descend into the outer regions of %i.  You can hear
-clattering sounds in the corridors, and vague mumblings in the distance.
+This must be %i.
+
+You're in a cave with 20 rooms and 3 tunnels leading from each
+room. There are 4 bats and 2 bottomless pits scattered throughout
+the cave, and your quiver holds custom super anti-evil-wumpus
+arrows.  Good luck.
+
+You are in room 9 of the cave.  There are tunnels to rooms
+5, 8, and 10.
+*rustle* *rustle* (must be bats nearby)
+*sniff* (I can smell the evil wumpus nearby!)
 %E
-%Cp Ran 00031
+%Cc Ran 00031
 Once again, you descend into %i.
+
+*whoosh* (I feel a draft from some pits).
+*rustle* *rustle* (must be bats nearby)
 %E
 %Cc Ran 00040
 You descend into a weird place, in which roughly cut cave-like walls
