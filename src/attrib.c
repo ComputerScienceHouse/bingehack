@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)attrib.c	3.3	1999/08/16	*/
+/*	SCCS Id: @(#)attrib.c	3.3	2000/05/17	*/
 /*	Copyright 1988, 1989, 1990, 1992, M. Stephenson		  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -17,7 +17,7 @@ const char	*plusattr[] = {
 	"strong", "smart", "wise", "agile", "tough", "charismatic"
 },
 		*minusattr[] = {
-	"weak", "stupid", "foolish", "clumsy", "vulnerable", "ugly"
+	"weak", "stupid", "foolish", "clumsy", "fragile", "repulsive"
 };
 
 
