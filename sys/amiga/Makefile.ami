@@ -1389,6 +1389,7 @@ $(O)dokick.o:  $(NHS)dokick.c $(HDEP) $(I)eshk.h
 $(O)dothrow.o:  $(NHS)dothrow.c $(HDEP)
 
 $(O)drawing.o:  $(NHS)drawing.c $(HDEP) $(I)tcap.h
+	$(CC) $(CFLAGS) $(CFLAGS2) $(OBJSPEC)$@ $(NHS)drawing.c
 
 $(O)dungeon.o:  $(NHS)dungeon.c $(HDEP) $(I)dgn_file.h $(I)dlb.h
 
@@ -1459,6 +1460,7 @@ $(O)mplayer.o:	$(NHS)mplayer.c $(HDEP)
 $(O)mthrowu.o:  $(NHS)mthrowu.c $(HDEP)
 
 $(O)muse.o:	$(NHS)muse.c $(HDEP)
+	$(CC) $(CFLAGS) $(CFLAGS2) $(OBJSPEC)$@ $(NHS)muse.c
 
 $(O)music.o:  $(NHS)music.c $(HDEP) #interp.c
 
@@ -1542,6 +1544,7 @@ $(O)trap.o:  $(NHS)trap.c $(HDEP)
 $(O)u_init.o:  $(NHS)u_init.c $(HDEP)
 
 $(O)uhitm.o:  $(NHS)uhitm.c $(HDEP)
+	$(CC) $(CFLAGS) $(CFLAGS2) $(OBJSPEC)$@ $(NHS)uhitm.c
 
 $(O)vault.o:  $(NHS)vault.c $(HDEP) $(I)vault.h
 
