@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)apply.c	3.3	2000/07/07	*/
+/*	SCCS Id: @(#)apply.c	3.3	2000/07/23	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -2041,6 +2041,20 @@ struct obj *obj;
 					You("snatch %s %s!",
 						s_suffix(mon_nam(mtmp)),
 						onambuf);
+					if (otmp->otyp == CORPSE &&
+					    touch_petrifies(&mons[otmp->corpsenm]))
+					    && !uarmg && !Stone_resistance) {
+						if (!(poly_when_stoned(youmonst.data)
+						    && polymon(PM_STONE_GOLEM))) {
+							char kbuf[BUFSZ];
+							pline(
+						  "Snatching %s corpse is a fatal mistake.",
+							    an(mons[otmp->corpsenm].mname));
+							Sprintf(kbuf, "%s corpse",
+							    an(mons[otmp->corpsenm].mname));
+							instapetrify(kbuf);
+						}
+					}
 					otmp = hold_another_object(otmp,
 						"You drop %s!", doname(otmp),
 						(const char *)0);
