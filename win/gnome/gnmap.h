@@ -10,7 +10,7 @@
 #include "config.h"
 #include "global.h"
 
-GtkWidget* ghack_init_map_window( );
-void ghack_reinit_map_window ( );
+GtkWidget *ghack_init_map_window(void);
+void ghack_reinit_map_window(void);
 
 #endif /* GnomeHackMapWindow_h */

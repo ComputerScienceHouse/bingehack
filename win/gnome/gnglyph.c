@@ -7,7 +7,7 @@
 static GHackGlyphs     ghack_glyphs;
 static GdkImlibImage** ghack_tiles = NULL;
 
-/* NAME: 
+/* NAME:
  *     ghack_init_glyphs(char* xpm_file)
  *
  * ARGUMENTS:
@@ -43,16 +43,16 @@ static GdkImlibImage** ghack_tiles = NULL;
  */
 
 int
-ghack_init_glyphs( char *xpmFile)
+ghack_init_glyphs( const char *xpmFile)
 {
-  ghack_glyphs.im = gdk_imlib_load_image(xpmFile);
+  ghack_glyphs.im = gdk_imlib_load_image((char *) xpmFile);
   if ( ! ghack_glyphs.im )
     {
       g_error("Couldn't load required xpmFile!");
       return -1;
     }
 
-  gdk_imlib_render(ghack_glyphs.im, ghack_glyphs.im->rgb_width, 
+  gdk_imlib_render(ghack_glyphs.im, ghack_glyphs.im->rgb_width,
 	  ghack_glyphs.im->rgb_height);
 
   ghack_glyphs.count = ghack_glyphs.im->rgb_height / ghack_glyphs.im->rgb_width;
@@ -66,11 +66,11 @@ ghack_init_glyphs( char *xpmFile)
   ghack_tiles = g_new0( GdkImlibImage*, ghack_glyphs.count );
   if (ghack_tiles == NULL)
       return -1;
-  else 
+  else
       return 0;
 }
 
-int
+void
 ghack_free_glyphs( )
 {
     int i;
@@ -82,7 +82,7 @@ ghack_free_glyphs( )
 }
 
 
-/* NAME: 
+/* NAME:
  *     ghack_glyph_count( )
  *
  * ARGUMENTS:
@@ -96,13 +96,13 @@ ghack_free_glyphs( )
  */
 
 int
-ghack_glyph_count( ) 
+ghack_glyph_count( )
 {
   return ghack_glyphs.count;
 }
 
 
-/* NAME: 
+/* NAME:
  *     ghack_glyph_height()
  *
  * ARGUMENTS:
@@ -122,7 +122,7 @@ ghack_glyph_height()
 }
 
 
-/* NAME: 
+/* NAME:
  *     ghack_glyph_width()
  *
  * ARGUMENTS:
@@ -142,7 +142,7 @@ ghack_glyph_width()
 }
 
 
-/* NAME: 
+/* NAME:
  *     ghack_image_from_glyph( int glyph, gboolean force)
  *
  * ARGUMENTS:
@@ -160,8 +160,8 @@ GdkImlibImage*
 ghack_image_from_glyph( int glyph, gboolean force )
 {
   int tile = glyph2tile[glyph];
-    
-  if ( tile >= ghack_glyphs.count || tile < 0 ) 
+
+  if ( tile >= ghack_glyphs.count || tile < 0 )
     {
       g_warning("Aiiee! I've was asked for a tile outside the allowed range!\n"
 	    "Email this to other-gnomehack@lists.debian.org");
@@ -174,7 +174,7 @@ ghack_image_from_glyph( int glyph, gboolean force )
     {
     g_warning("Aiiee! I've been asked to clone from a null image.\n"
 	    "Email this to other-gnomehack@lists.debian.org");
-    g_warning( "making image from tile %d, force=%s\n", tile, 
+    g_warning( "making image from tile %d, force=%s\n", tile,
 	    (force==TRUE)? "TRUE": "FALSE");
     }
 
@@ -182,31 +182,31 @@ ghack_image_from_glyph( int glyph, gboolean force )
     {
     g_warning("Aiiee! I've been asked to force rendering.\n"
 	    "Email this to other-gnomehack@lists.debian.org");
-    g_warning( "making image from tile %d, force=%s\n", tile, 
+    g_warning( "making image from tile %d, force=%s\n", tile,
 	    (force==TRUE)? "TRUE" : "FALSE");
     }
 
-  if (!ghack_tiles[tile] || force) 
+  if (!ghack_tiles[tile] || force)
   {
 #if 0
-      fprintf( stderr, "crop_and_clone: glyph=%d, tile=%d, ptr=%p, x=%d, y=%d, w=%d, h=%d\n", glyph, tile, 
-	      (void*)&(ghack_tiles[tile]), 0, 
-              tile * ghack_glyphs.width, 
-              ghack_glyphs.height, 
-              ghack_glyphs.width);
+      fprintf( stderr, "crop_and_clone: glyph=%d, tile=%d, ptr=%p, x=%d, y=%d, w=%d, h=%d\n", glyph, tile,
+	      (void*)&(ghack_tiles[tile]), 0,
+	      tile * ghack_glyphs.width,
+	      ghack_glyphs.height,
+	      ghack_glyphs.width);
 #endif
       if (ghack_glyphs.im->pixmap == NULL)
 	  g_warning( "Aiiee!  ghack_glyphs.im->pixmap==NULL!!!!\n");
-      ghack_tiles[tile] = gdk_imlib_crop_and_clone_image(ghack_glyphs.im, 0, 
-	      tile * ghack_glyphs.width, 
-	      ghack_glyphs.height, 
+      ghack_tiles[tile] = gdk_imlib_crop_and_clone_image(ghack_glyphs.im, 0,
+	      tile * ghack_glyphs.width,
+	      ghack_glyphs.height,
 	      ghack_glyphs.width);
   }
 
   if (ghack_tiles[tile] && (!ghack_tiles[tile]->pixmap || force))
   {
-      if ( gdk_imlib_render(ghack_tiles[tile], 
-		  ghack_tiles[tile]->rgb_width, 
+      if ( gdk_imlib_render(ghack_tiles[tile],
+		  ghack_tiles[tile]->rgb_width,
 		  ghack_tiles[tile]->rgb_height) == 0) {
 	  g_error("GLYPH: couldn't create tile # %d", tile);
       }

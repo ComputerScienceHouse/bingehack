@@ -14,6 +14,9 @@
 
 GNHWinData gnome_windowlist[MAXWINDOWS];
 
+extern void tty_raw_print(const char *);
+extern void tty_raw_print_bold(const char *);
+
 
 /* Interface definition, for windows.c */
 struct window_procs Gnome_procs = {

@@ -179,7 +179,7 @@ ghack_init_map_window ( )
 		    NULL) );
 
   /* Tile the map background with a pretty image */ 
-  background = gdk_imlib_load_image( "mapbg.xpm");
+  background = gdk_imlib_load_image((char *) "mapbg.xpm");
   gdk_imlib_render( background, background->rgb_width,
 	  background->rgb_height);
   if (background == NULL) {
@@ -516,10 +516,9 @@ ghack_reinit_map_window ( )
 {
   GnomeCanvasImage  *bg;
   double width, height, x, y;
-  GList *listItem;
   int i;
 
-  //ghack_map_clear(NULL, NULL);
+  /* ghack_map_clear(NULL, NULL); */
 
   width = COLNO * ghack_glyph_width();
   height = ROWNO * ghack_glyph_height();

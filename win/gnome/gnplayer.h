@@ -6,8 +6,7 @@
 #define GnomeHackPlayerSelDialog_h
 
 
-
-int ghack_player_sel_dialog( const char** roles);
+int ghack_player_sel_dialog(const char **);
 
 
 #endif /* GnomeHackPlayerSelDialog_h */
