@@ -161,7 +161,7 @@ doride()
 {
 	boolean forcemount = FALSE;
 	if (u.usteed)
-	    dismount_steed(FALSE);
+	    dismount_steed(DISMOUNT_BYCHOICE);
 	else if(getdir((char *)0) && isok(u.ux+u.dx, u.uy+u.dy)) {
 #ifdef WIZARD
 	if (wizard && yn("Force the mount to succeed?") == 'y')
@@ -304,13 +304,14 @@ exercise_steed()
 void
 kick_steed()
 {
+	int tmptame;
 	if (!u.usteed)
 	    return;
 
 	/* Make the steed less tame and check if it resists */
-	if (u.usteed->mtame) u.usteed->mtame--;
-	if (!u.usteed->mtame || (u.ulevel+u.usteed->mtame < rnd(MAXULEV/2+5))) {
-	    dismount_steed(TRUE);
+	tmptame = u.usteed->mtame ? u.usteed->mtame - 1 : 0;
+	if (!tmptame || (u.ulevel+tmptame < rnd(MAXULEV/2+5))) {
+	    dismount_steed(DISMOUNT_THROWN);
 	    return;
 	}
 
@@ -322,12 +323,13 @@ kick_steed()
 
 /* Stop riding the current steed */
 void
-dismount_steed(fall)
-	boolean fall;		/* Player was thrown off */
+dismount_steed(reason)
+	int reason;		/* Player was thrown off */
 {
 	struct monst *mtmp;
 	struct obj *otmp;
 	coord cc;
+	const char *verb = "fall";
 
 
 	/* Sanity checks */
@@ -337,26 +339,39 @@ dismount_steed(fall)
 
 	/* Check the reason for dismounting */
 	otmp = which_armor(mtmp, W_SADDLE);
-	if (fall) {
-	    if (mtmp->mtame) mtmp->mtame--;
-	    You("are thrown off of %s!", mon_nam(mtmp));
-	    losehp(rn1(10,10), "riding accident", KILLED_BY_AN);
-	    HWounded_legs += rn1(5, 5);
-	    EWounded_legs |= BOTH_SIDES;
-	} else if (otmp && otmp->cursed) {
-	    You("can't.  The saddle seems to be cursed.");
-	    otmp->bknown = TRUE;
-	    return;
-	} else {
-	    if (!mtmp->mnamelth) {
-	    	pline("You've been through the dungeon on %s with no name.",
+	switch (reason) {
+	    case DISMOUNT_THROWN:
+		verb = "are thrown";
+		if (mtmp->mtame) mtmp->mtame--;
+	    case DISMOUNT_FELL:
+		You("%s off of %s!", verb, mon_nam(mtmp));
+		losehp(rn1(10,10), "riding accident", KILLED_BY_AN);
+		HWounded_legs += rn1(5, 5);
+		EWounded_legs |= BOTH_SIDES;
+		break;
+	    case DISMOUNT_POLY:
+		You("can no longer ride %s.", mon_nam(u.usteed));
+		break;
+	    case DISMOUNT_ENGULFED:
+		/* caller displays message */
+		break;
+	    case DISMOUNT_GENERIC:
+		/* no messages, just make it so */
+		break;
+	    case DISMOUNT_BYCHOICE:
+	    default:
+		if (otmp && otmp->cursed) {
+		    You("can't.  The saddle seems to be cursed.");
+		    otmp->bknown = TRUE;
+		    return;
+		}
+		if (!mtmp->mnamelth) {
+			pline("You've been through the dungeon on %s with no name.",
 	    			an(mtmp->data->mname));
-	    	if (Hallucination)
-	    	    pline("It felt good to get out of the rain.");
-	    } else
-	    	You("dismount %s.", mon_nam(mtmp));
-	    /* It's not your wounded legs */
-	    HWounded_legs = EWounded_legs = 0;
+			if (Hallucination)
+				pline("It felt good to get out of the rain.");
+		} else
+			You("dismount %s.", mon_nam(mtmp));
 	}
 
 	/* Release the steed and saddle */
@@ -389,7 +404,8 @@ dismount_steed(fall)
 
 	    /* Keep steed here, move the player to cc */
 	    teleds(cc.x, cc.y);
-	    vision_full_recalc = 1;
+	    if (reason != DISMOUNT_ENGULFED) /* being swallowed anyway in that case */
+		vision_full_recalc = 1;
 
 	    /* Put your steed in your trap */
 	    if (u.utrap && mtmp->mhp > 0)
@@ -409,7 +425,7 @@ dismount_steed(fall)
 	/* Return the player to the floor */
 	(void) float_down(0L, W_SADDLE);
 	flags.botl = 1;
-	(void)encumber_msg();
+	if (reason != DISMOUNT_ENGULFED) (void)encumber_msg();
 	return;
 }
 

@@ -428,10 +428,7 @@ int	mntmp;
 	    	Sprintf(buf, "riding %s", an(u.usteed->data->mname));
 	    	instapetrify(buf);
  	    }
-	    if (!can_ride(u.usteed)) {
-	    	You("can no longer ride %s.", mon_nam(u.usteed));
-	    	dismount_steed(TRUE);
-	    }
+	    if (!can_ride(u.usteed)) dismount_steed(DISMOUNT_POLY);
 	}
 #endif
 

@@ -1217,7 +1217,7 @@ register struct monst *mtmp;
 #ifdef STEED
 	/* Player is thrown from his steed when it dies */
 	if (mtmp == u.usteed)
-		dismount_steed(TRUE);
+		dismount_steed(DISMOUNT_GENERIC);
 #endif
 
 	mptr = mtmp->data;		/* save this for m_detach() */
@@ -1345,7 +1345,7 @@ register struct monst *mdef;
 #ifdef STEED
 	/* Player is thrown from his steed when it disappears */
 	if (mdef == u.usteed)
-		dismount_steed(TRUE);
+		dismount_steed(DISMOUNT_GENERIC);
 #endif
 
 	discard_minvent(mdef);	/* release monster's inventory */

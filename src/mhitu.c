@@ -1493,6 +1493,19 @@ gulpmu(mtmp, mattk)	/* monster swallows you, or damage if u.uswallow */
 		place_monster(mtmp, u.ux, u.uy);
 		u.ustuck = mtmp;
 		newsym(mtmp->mx,mtmp->my);
+#ifdef STEED
+		if (is_animal(mtmp->data) && u.usteed) {
+			char buf[BUFSZ];
+			/* Too many quirks presently if hero and steed
+			 * are swallowed. Pretend purple worms don't
+			 * like horses for now :-)
+			 */
+			strcpy(buf, mon_nam(u.usteed));
+			pline ("%s lunges forward and plucks you off %s!",
+				Monnam(mtmp), buf);
+			dismount_steed(DISMOUNT_ENGULFED);
+		} else
+#endif
 		pline("%s engulfs you!", Monnam(mtmp));
 		stop_occupation();
 		reset_occupations();	/* behave as if you had moved */

@@ -36,6 +36,16 @@
 #define BY_PAPER	2
 #define BY_OTHER	9
 
+#ifdef STEED
+/* Macros for why you are no longer riding */
+#define DISMOUNT_GENERIC	0
+#define DISMOUNT_FELL		1
+#define DISMOUNT_THROWN		2
+#define DISMOUNT_POLY		3
+#define DISMOUNT_ENGULFED	4
+#define DISMOUNT_BYCHOICE	5
+#endif
+
 /*
  * This is the way the game ends.  If these are rearranged, the arrays
  * in end.c and topten.c will need to be changed.  Some parts of the

@@ -589,7 +589,7 @@ struct monst *mon;
 				an(u.usteed->data->mname));
 		instapetrify(buf);
 	    }
-	    dismount_steed(TRUE);
+	    dismount_steed(DISMOUNT_FELL);
 	}
 #endif
 	return;

@@ -1686,7 +1686,7 @@ float_up()
 	    	pline("%s magically floats up!", Monnam(u.usteed));
 	    else {
 	    	You("cannot stay on %s.", mon_nam(u.usteed));
-	    	dismount_steed(TRUE);
+	    	dismount_steed(DISMOUNT_GENERIC);
 	    }
 #endif
 	return;
@@ -2131,7 +2131,7 @@ drown()
 	}
 #ifdef STEED
 	if (u.usteed) {
-		dismount_steed(TRUE);
+		dismount_steed(DISMOUNT_GENERIC);
 		if(!is_pool(u.ux,u.uy))
 			return(TRUE);
 	}
