@@ -132,7 +132,9 @@ aligntyp alignment;	/* target alignment, or A_NONE */
 		    (a->alignment == alignment ||
 			(a->alignment == A_NONE && u.ugifts > 0))) &&
 		(!(a->spfx & SPFX_NOGEN) || unique) && !artiexist[m]) {
-		if (by_align && a->role == Role_switch)
+		if (by_align && a->race != NON_PM && race_hostile(&mons[a->race]))
+		    continue;	/* skip enemies' equipment */
+		else if (by_align && Role_if(a->role))
 		    goto make_artif;	/* 'a' points to the desired one */
 		else
 		    eligible[n++] = m;
@@ -460,8 +462,9 @@ touch_artifact(obj,mon)
        will have to be extended to explicitly include quest artifacts */
     self_willed = ((oart->spfx & SPFX_INTEL) != 0);
     if (yours || !(mon->data->mflags3 & M3_WANTSALL)) {
-	badclass = (oart->role && self_willed &&
-		    (!yours || oart->role != Role_switch));
+	badclass = (self_willed && (!yours ||
+			oart->role != NON_PM && !Role_if(oart->role) ||
+			oart->race != NON_PM && !Race_if(oart->race)));
 	badalign = (oart->spfx & SPFX_RESTR) &&
 		   oart->alignment != A_NONE &&
 	    ((oart->alignment !=
