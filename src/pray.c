@@ -150,6 +150,8 @@ in_trouble()
 	   (uarmc && uarmc->cursed) ||	/* cloak */
 	   (uarmf && uarmf->cursed && uarmf->otyp != LEVITATION_BOOTS) ||
 					/* boots */
+	   (ublindf && ublindf->otyp == LENSES && ublindf->cursed) ||
+	   				/* lenses: blindfold is TROUBLE_CURSED_BLINDFOLD */
 #ifdef TOURIST
 	   (uarmu && uarmu->cursed) ||  /* shirt */
 #endif
