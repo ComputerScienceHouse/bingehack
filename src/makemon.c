@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)makemon.c	3.3	1999/02/08	*/
+/*	SCCS Id: @(#)makemon.c	3.3	1999/12/10	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -822,6 +822,9 @@ register int	mmflags;
 	if (is_female(ptr)) mtmp->female = TRUE;
 	else if (is_male(ptr)) mtmp->female = FALSE;
 	else mtmp->female = rn2(2);	/* ignored for neuters */
+
+	if (In_sokoban(&u.uz) && !mindless(ptr))  /* know about traps here */
+	    mtmp->mtrapseen = (1L << (PIT - 1)) | (1L << (HOLE - 1));
 
 	place_monster(mtmp, x, y);
 	mtmp->mcansee = mtmp->mcanmove = TRUE;
