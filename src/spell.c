@@ -671,14 +671,6 @@ boolean atme;
 		if (spellid(spell) != SPE_DETECT_FOOD) {
 			int hungr = energy * 2;
 
-			/* don't put player (quite) into fainting from
-			 * casting a spell, particularly since they might
-			 * not even be hungry at the beginning; however,
-			 * this is low enough that they must eat before
-			 * casting anything else except detect food
-			 */
-			if (hungr > u.uhunger-3)
-				hungr = u.uhunger-3;
 			/* If hero is a wizard, their current intelligence
 			 * (bonuses + temporary + current)
 			 * affects hunger reduction in casting a spell.
@@ -694,11 +686,20 @@ boolean atme;
 			 */
 			intell = acurr(A_INT);
 			switch (intell) {
-				case 18:
+				case 25: case 24: case 23: case 22:
+				case 21: case 20: case 19: case 18:
 				case 17: hungr = 0; break;
 				case 16: hungr /= 4; break;
 				case 15: hungr /= 2; break;
 			}
+			/* don't put player (quite) into fainting from
+			 * casting a spell, particularly since they might
+			 * not even be hungry at the beginning; however,
+			 * this is low enough that they must eat before
+			 * casting anything else except detect food
+			 */
+			if (hungr > u.uhunger-3)
+				hungr = u.uhunger-3;
 			morehungry(hungr);
 		}
 	}
