@@ -961,6 +961,7 @@ boolean your_fault;
 		    if (obj->blessed) {
 			pline("%s shrieks in pain!", Monnam(mon));
 			mon->mhp -= d(2,6);
+			/* should only be by you */
 			if (mon->mhp < 1) killed(mon);
 			else if (is_were(mon->data) && !is_human(mon->data))
 			    new_were(mon);	/* revert to human */
@@ -987,7 +988,12 @@ boolean your_fault;
 		if (!resists_acid(mon) && !resist(mon, POTION_CLASS, 0, NOTELL)) {
 		    pline("%s shrieks in pain!", Monnam(mon));
 		    mon->mhp -= d(obj->cursed ? 2 : 1, obj->blessed ? 4 : 8);
-		    if (mon->mhp < 1) killed(mon);
+		    if (mon->mhp < 1) {
+			if (your_fault)
+			    killed(mon);
+			else
+			    monkilled(mon, "", AD_ACID);
+		    }
 		}
 		break;
 	case POT_POLYMORPH:
