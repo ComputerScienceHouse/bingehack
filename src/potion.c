@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)potion.c	3.3	99/03/13	*/
+/*	SCCS Id: @(#)potion.c	3.3	1999/12/14	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -225,6 +225,7 @@ long mask;	/* nonzero if resistance status should change by mask */
 		/* The see_* routines should be called *before* the pline. */
 		see_monsters();
 		see_objects();
+		see_traps();
 	    }
 	    flags.botl = 1;
 	    if (!Blind && talk) pline(message);
