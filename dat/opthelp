@@ -61,6 +61,15 @@ news       print any news from game administrator on startup      [TRUE]
 Boolean option if MFLOPPY was set at compile time:
 checkspace check free disk space before writing files to disk     [TRUE]
 
+Boolean option if PARANOID was set at compile time:
+paranoid_hit   ask for explicit 'yes' when hitting peacefuls      [FALSE]
+
+Boolean option if PARANOID was set at compile time:
+paranoid_quit  ask for explicit 'yes' when quitting               [FALSE]
+
+Boolean option if PARANOID was set at compile time:
+paranoid_remove always show menu with the T and R commands        [FALSE]
+
 Boolean option if EXP_ON_BOTL was set at compile time:
 showexp    display your accumulated experience points             [FALSE]
 
