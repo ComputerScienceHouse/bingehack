@@ -1321,7 +1321,18 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 	    }
 		    
 	    if (!retcode) consume_oeaten(otmp, 2);	/* oeaten >>= 2 */
-	} else {
+	} else if (mnum==PM_COCKATRICE || mnum==PM_CHICKATRICE)
+		pline("Hmm... tastes like chicken.");
+	else if (mnum==PM_FLOATING_EYE && u.umonnum==PM_RAVEN)
+		You("peck the eyeball with delight.");
+/*
+	else if (u.usym==S_VAMPIRE && !vegetarian(&mons[mnum])
+	    	pline("%s%s still has some %sblood in it!",
+			!uniq ? "This " : !type_is_pname(&mons[mnum]) ? "The " : "",
+			food_xname(otmp, FALSE),
+			(rotted<1)?"fresh ":(rotted<2)?"":"stale ");
+*/
+	else {
 	    pline("%s%s %s!",
 		  !uniq ? "This " : !type_is_pname(&mons[mnum]) ? "The " : "",
 		  food_xname(otmp, FALSE),

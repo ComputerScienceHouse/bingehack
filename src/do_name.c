@@ -893,6 +893,7 @@ static const char * const bogusmons[] = {
 	"shadow", "hologram", "jester", "attorney", "sleazoid",
 	"killer tomato", "amazon", "robot", "battlemech",
 	"rhinovirus", "harpy", "lion-dog", "rat-ant", "Y2K bug",
+	"catoblepas", "phoenix", "amphisbaena",	"pink oliphaunt",
 						/* misc. */
 	"grue", "Christmas-tree monster", "luck sucker", "paskald",
 	"brogmoid", "dornbeast",		/* Quendor (Zork, &c.) */
@@ -901,8 +902,9 @@ static const char * const bogusmons[] = {
 	"emu", "kestrel", "xeroc", "venus flytrap",
 						/* Rogue */
 	"creeping coins",			/* Wizardry */
-	"hydra", "siren",			/* Greek legend */
-	"killer bunny",				/* Monty Python */
+	"hydra", "siren", "pegasus",    	/* Greek legend */
+	"killer bunny", "black knight",         /* Monty Python */
+	"Trogdor the Burninator",               /* Homestar runner */
 	"rodent of unusual size",		/* The Princess Bride */
 	"Smokey the bear",	/* "Only you can prevent forest fires!" */
 	"Luggage",				/* Discworld */

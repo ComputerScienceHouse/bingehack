@@ -1086,6 +1086,13 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 				*dmgptr = 0;
 				return ((boolean)(youattack || vis));
 			}
+			if (mdef->data==&mons[PM_CHROMATIC_DRAGON])
+			{
+				pline("%s cuts only a shallow wound in the thick skin of %s neck.",
+					wepdesc, s_suffix(mon_nam(mdef)));
+				/* The normal damage is still done. */
+				return TRUE;
+			}
 			if (noncorporeal(mdef->data) || amorphous(mdef->data)) {
 				pline("%s slices through %s %s.", wepdesc,
 				      s_suffix(mon_nam(mdef)),
@@ -1093,8 +1100,13 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 				return TRUE;
 			}
 			*dmgptr = 2 * mdef->mhp + FATAL_DAMAGE_MODIFIER;
-			pline(behead_msg[rn2(SIZE(behead_msg))],
-			      wepdesc, mon_nam(mdef));
+                        if(mdef->data==&mons[PM_ETTIN]
+                          ||mdef->data==&mons[PM_ETTIN_ZOMBIE])
+                                pline("%s goes through both necks of %s at once like butter!",
+                                      wepdesc, mon_nam(mdef));
+                        else			
+				pline(behead_msg[rn2(SIZE(behead_msg))],
+				      wepdesc, mon_nam(mdef));
 			otmp->dknown = TRUE;
 			return TRUE;
 		} else {
@@ -1111,6 +1123,11 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 			}
 			*dmgptr = 2 * (Upolyd ? u.mh : u.uhp)
 				  + FATAL_DAMAGE_MODIFIER;
+                        if(mdef->data==&mons[PM_ETTIN]
+                          ||mdef->data==&mons[PM_ETTIN_ZOMBIE])
+                                pline("%s goes through both your necks at once like butter!",
+                                      wepdesc);
+                        else			
 			pline(behead_msg[rn2(SIZE(behead_msg))],
 			      wepdesc, "you");
 			otmp->dknown = TRUE;
