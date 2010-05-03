@@ -836,6 +836,10 @@ register const char *let,*word;
 #ifdef TOURIST
 		     || (otmp==uarmu && (uarm || uarmc))
 #endif
+		     || (otmp==uarmh && uarmc &&
+			     OBJ_DESCR(objects[uarmc->otyp]) &&
+			     !strcmp(OBJ_DESCR(objects[uarmc->otyp]),
+				     "hooded cloak"))
 		    ))
 		|| (putting_on(word) &&
 		     (otmp->owornmask & (W_ARMOR | W_RING | W_AMUL | W_TOOL)))
