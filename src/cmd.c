@@ -139,7 +139,7 @@ STATIC_PTR int NDECL(wiz_show_stats);
 STATIC_DCL int NDECL(wiz_port_debug);
 #  endif
 # endif
-STATIC_PTR int NDECL(enter_explore_mode);
+int NDECL(enter_explore_mode);	/* deathexplore patch */
 STATIC_PTR int NDECL(doattributes);
 STATIC_PTR int NDECL(doconduct); /**/
 STATIC_PTR boolean NDECL(minimal_enlightenment);
@@ -475,7 +475,7 @@ domonability()
 	return 0;
 }
 
-STATIC_PTR int
+int	/* deathexplore patch */
 enter_explore_mode()
 {
 	if(!discover && !wizard) {
