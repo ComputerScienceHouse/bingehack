@@ -61,7 +61,7 @@ SYSOBJ = ioctl.o unixmain.o unixtty.o unixunix.o unixres.o
 #	if you get setcgtty() warnings during execution, you are feeding gcc
 #		a non-ANSI <sys/ioctl.h> -- either run fixincludes on it or use
 #		-traditional in CFLAGS
-# CC = gcc
+CC = gcc
 #
 #	For Bull DPX/2 systems at B.O.S. 2.0 or higher use the following:
 #
@@ -124,7 +124,7 @@ SYSOBJ = ioctl.o unixmain.o unixtty.o unixunix.o unixres.o
 
 # flags for Linux
 #   compile normally
-# CFLAGS = -O2 -fomit-frame-pointer -I../include
+CFLAGS = -O2 -fomit-frame-pointer -I../include
 # LFLAGS = -L/usr/X11R6/lib
 #   OR compile backwards compatible a.out format
 # CFLAGS = -O2 -b i486-linuxaout -fomit-frame-pointer -I../include
@@ -151,7 +151,7 @@ GNOMEINC=-I/usr/lib/glib/include -I/usr/lib/gnome-libs/include -I../win/gnome
 # flags for debugging:
 # CFLAGS = -g -I../include
 
-CFLAGS = -O -I../include
+# CFLAGS = -O -I../include
 LFLAGS = 
 
 # The Qt and Be window systems are written in C++, while the rest of
@@ -230,8 +230,8 @@ WINOBJ = $(WINTTYOBJ)
 # WINTTYLIB = -ltermcap
 # WINTTYLIB = -lcurses
 # WINTTYLIB = -lcurses16
-# WINTTYLIB = -lncurses
-WINTTYLIB = -ltermlib
+WINTTYLIB = -lncurses
+# WINTTYLIB = -ltermlib
 #
 # libraries for X11
 # If USE_XPM is defined in config.h, you will also need -lXpm here.
