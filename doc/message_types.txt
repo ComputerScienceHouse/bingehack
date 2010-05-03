@@ -1,0 +1,41 @@
+Message types to implement:
+(* = required field)
+Chat
+	Sender*
+	Receiver
+	Message*
+
+Mail
+	Sender*
+	Receiver*
+	Message*
+	Item
+
+Item
+	B/U/C
+	Name
+	Type
+	Enchantment
+
+DeathMessage
+	Score
+	Name
+	Epitapth
+	PlayerData
+	Inventory
+
+PlayerData
+	Turn #
+	DungeonLevel
+	PlayerLevel
+	HP
+	HP Max
+	Name
+	Class
+	Gender
+	AC
+	Level Type
+	MP
+	MP Max
+	Allignment
+	Race
