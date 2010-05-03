@@ -1723,6 +1723,8 @@ new players if it detects some anticipated mistakes (default on).
 .lp "confirm "
 Have user confirm attacks on pets, shopkeepers, and other
 peaceable creatures (default on).
+.lp death_explore
+Prompt for changing to explore mode when your character dies.
 .lp DECgraphics
 Use a predefined selection of characters from the DEC VT-xxx/DEC
 Rainbow/ANSI line-drawing character set to display the dungeon/effects/traps

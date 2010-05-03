@@ -61,6 +61,9 @@ news       print any news from game administrator on startup      [TRUE]
 Boolean option if MFLOPPY was set at compile time:
 checkspace check free disk space before writing files to disk     [TRUE]
 
+Boolean option if DEATH_EXPLORE was set at compile time:
+death_explore prompt for changing to explore mode when you die    [FALSE]
+
 Boolean option if EXP_ON_BOTL was set at compile time:
 showexp    display your accumulated experience points             [FALSE]
 

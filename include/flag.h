@@ -216,6 +216,9 @@ struct instance_flags {
 	boolean lan_mail;	/* mail is initialized */
 	boolean lan_mail_fetched; /* mail is awaiting display */
 #endif
+#ifdef DEATH_EXPLORE
+	boolean death_expl;	/* prompt for explore mode at death */
+#endif
 /*
  * Window capability support.
  */
