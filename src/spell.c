@@ -11,6 +11,9 @@ static NEARDATA struct obj *book;	/* last/current book being xscribed */
 #define SPELLMENU_CAST (-2)
 #define SPELLMENU_VIEW (-1)
 
+#define crball_divin(uwep,spell) \
+    (uwep && (uwep->otyp == CRYSTAL_BALL) && (spell_skilltype(spellid(spell)) == P_DIVINATION_SPELL))
+
 #define KEEN 20000
 #define MAX_SPELL_STUDY 3
 #define incrnknow(spell)        spl_book[spell].sp_know = KEEN
@@ -796,13 +799,24 @@ boolean atme;
 	}
 
 	chance = percent_success(spell);
-	if (confused || (rnd(100) > chance)) {
-		You("fail to cast the spell correctly.");
-		u.uen -= energy / 2;
-		flags.botl = 1;
-		return(1);
+	/* if the crystal ball is cursed, then we block the divination spell completely */
+	if (confused || (rnd(100) > chance) || (crball_divin(uwep,spell) && uwep->cursed)) {
+            if (crball_divin(uwep,spell) && uwep->cursed) {
+		You_feel("your concentration break.");
+		exercise(A_WIS, FALSE);
+            }
+	    You("fail to cast the spell correctly.");
+	    u.uen -= energy / 2;
+	    flags.botl = 1;
+	    return(1);
 	}
 
+	if (crball_divin(uwep,spell)) {
+	    You_feel("your mind expand as you focus on %s.",yname(uwep));
+	    touch_artifact(uwep,&youmonst); /* just get the blast effects */
+	    if (uwep->blessed)
+		energy = (energy * 2) / 3; /* Using a blessed crystal ball you recoup 1/3 of your energy */
+	}
 	u.uen -= energy;
 	flags.botl = 1;
 	exercise(A_WIS, TRUE);
@@ -1185,6 +1199,11 @@ int spell;
 	 * in that spell type.
 	 */
 	skill = P_SKILL(spell_skilltype(spellid(spell)));
+
+	/* A player may focus through a crystal ball to increase their chances
+	   on a divination spell */
+	if (crball_divin(uwep,spell) && (!Blind || Blind_telepat || Unblind_telepat))
+	    skill += 1; /* make it as if they are more skilled */
 	skill = max(skill,P_UNSKILLED) - 1;	/* unskilled => 0 */
 	difficulty= (spellev(spell)-1) * 4 - ((skill * 6) + (u.ulevel/3) + 1);
 
