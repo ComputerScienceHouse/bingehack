@@ -227,6 +227,9 @@ struct instance_flags {
 	boolean  paranoid_quit; /* Ask for 'yes' when quitting */
 	boolean  paranoid_remove; /* Always show menu for 'T' and 'R' */
 #endif
+#ifdef SORTLOOT
+	char sortloot;          /* sort items to loot alphabetically */
+#endif
 /*
  * Window capability support.
  */
