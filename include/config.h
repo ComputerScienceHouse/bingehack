@@ -169,11 +169,11 @@
 
 #ifdef UNIX
 /* path and file name extension for compression program */
-#define COMPRESS "/usr/bin/compress"	/* Lempel-Ziv compression */
-#define COMPRESS_EXTENSION ".Z"		/* compress's extension */
+//#define COMPRESS "/usr/bin/compress"	/* Lempel-Ziv compression */
+//#define COMPRESS_EXTENSION ".Z"		/* compress's extension */
 /* An example of one alternative you might want to use: */
-/* #define COMPRESS "/usr/local/bin/gzip" */	/* FSF gzip compression */
-/* #define COMPRESS_EXTENSION ".gz" */		/* normal gzip extension */
+#define COMPRESS "/bin/gzip"		/* FSF gzip compression */
+#define COMPRESS_EXTENSION ".gz"		/* normal gzip extension */
 #endif
 
 #ifndef COMPRESS
@@ -185,7 +185,7 @@
  *	a tar-like file, thus making a neater installation.  See *conf.h
  *	for detailed configuration.
  */
-/* #define DLB */	/* not supported on all platforms */
+#define DLB		/* not supported on all platforms */
 
 /*
  *	Defining INSURANCE slows down level changes, but allows games that
@@ -326,7 +326,7 @@ typedef unsigned char	uchar;
 #define STEED		/* Riding steeds */
 #define TOURIST		/* Tourist players with cameras and Hawaiian shirts */
 /* difficulty */
-#define ELBERETH	/* Engraving the E-word repels monsters */
+//#define ELBERETH	/* Engraving the E-word repels monsters */
 /* I/O */
 #define REDO		/* support for redoing last command - DGK */
 #if !defined(MAC)
@@ -349,7 +349,7 @@ typedef unsigned char	uchar;
  */
 
 /*#define GOLDOBJ */	/* Gold is kept on obj chains - Helge Hafting */
-/*#define AUTOPICKUP_EXCEPTIONS */ /* exceptions to autopickup */
+#define AUTOPICKUP_EXCEPTIONS /* exceptions to autopickup */
 
 /* End of Section 5 */
 
