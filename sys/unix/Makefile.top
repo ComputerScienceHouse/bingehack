@@ -14,7 +14,7 @@
 # MAKE = make
 
 # make NetHack
-PREFIX	 = /home/russ/src/nethack
+PREFIX	 ?= /usr
 GAME     = nethack
 # GAME     = nethack.prg
 GAMEUID  = games
