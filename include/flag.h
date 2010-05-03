@@ -222,6 +222,11 @@ struct instance_flags {
 #ifdef DEATH_EXPLORE
 	boolean death_expl;	/* prompt for explore mode at death */
 #endif
+#ifdef PARANOID
+	boolean  paranoid_hit;  /* Ask for 'yes' when hitting peacefuls */
+	boolean  paranoid_quit; /* Ask for 'yes' when quitting */
+	boolean  paranoid_remove; /* Always show menu for 'T' and 'R' */
+#endif
 /*
  * Window capability support.
  */
