@@ -1098,10 +1098,8 @@ boolean ask;
 		    }
 		    putstr(klwin, 0, buf);
 		}
-	    /*
-	     * if (Hallucination)
-	     *     putstr(klwin, 0, "and a partridge in a pear tree");
-	     */
+	    if (Hallucination && (ntypes>10))
+	        putstr(klwin, 0, "and a partridge in a pear tree");
 	    if (ntypes > 1) {
 		putstr(klwin, 0, "");
 		Sprintf(buf, "%ld creatures vanquished.", total_killed);
