@@ -65,7 +65,19 @@ dosit()
 
 	    obj = level.objects[u.ux][u.uy];
 	    You("sit on %s.", the(xname(obj)));
-	    if (!(Is_box(obj) || objects[obj->otyp].oc_material == CLOTH))
+            if (youmonst.data->mlet == S_DRAGON && obj->oclass == GOLD_CLASS) {
+                /* dragons enjoy resting on a hoard of gold */
+                You("coil up around your hoard.");
+                if (!rn2(5)) {
+                    You("comfortably doze off on %s.", the(xname(obj)));
+                    fall_asleep(rn2(9) + 1, TRUE);
+                } else
+                    You_feel("especially draconian.");
+
+                /* always excersize wisdom */
+                exercise(A_WIS, TRUE);
+            } else if (!(Is_box(obj) ||
+                    objects[obj->otyp].oc_material == CLOTH))
 		pline("It's not very comfortable...");
 
 	} else if ((trap = t_at(u.ux, u.uy)) != 0 ||
