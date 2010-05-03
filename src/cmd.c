@@ -5,6 +5,7 @@
 #include "hack.h"
 #include "func_tab.h"
 /* #define DEBUG */	/* uncomment for debugging */
+#include "mail.h"
 
 /*
  * Some systems may have getchar() return EOF for various reasons, and
@@ -108,6 +109,7 @@ STATIC_PTR int NDECL(timed_occupation);
 STATIC_PTR int NDECL(doextcmd);
 STATIC_PTR int NDECL(domonability);
 STATIC_PTR int NDECL(dotravel);
+STATIC_PTR int NDECL(testmail);
 # ifdef WIZARD
 STATIC_PTR int NDECL(wiz_wish);
 STATIC_PTR int NDECL(wiz_identify);
@@ -490,6 +492,13 @@ enter_explore_mode()
 			pline("Resuming normal game.");
 		}
 	}
+	return 0;
+}
+
+STATIC_PTR int
+testmail()
+{
+	trigger_mail();
 	return 0;
 }
 
@@ -1502,6 +1511,7 @@ struct ext_func_tab extcmdlist[] = {
 		doextversion, TRUE},
 	{"wipe", "wipe off your face", dowipe, FALSE},
 	{"?", "get this list of extended commands", doextlist, TRUE},
+	{"testmail", "DEBUG USE ONLY - Test mail command", testmail, TRUE},
 #if defined(WIZARD)
 	/*
 	 * There must be a blank entry here for every entry in the table

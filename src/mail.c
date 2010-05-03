@@ -459,6 +459,14 @@ struct obj *otmp;
 
 # endif /* !UNIX && !VMS && !LAN_MAIL */
 
+
+void
+trigger_mail()
+{
+        static struct mail_info deliver = {MSG_MAIL,"Tom's message delivery service!",0,0};
+        newmail(&deliver);
+}
+
 # ifdef UNIX
 
 void
