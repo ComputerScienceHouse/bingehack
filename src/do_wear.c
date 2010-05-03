@@ -1050,7 +1050,10 @@ dotakeoff()
 	int armorpieces = 0;
 
 #define MOREARM(x) if (x) { armorpieces++; otmp = x; }
-	MOREARM(uarmh);
+	if (!uarmc || ( OBJ_DESCR(objects[uarmc->otyp]) && 
+				strcmp(OBJ_DESCR(objects[uarmc->otyp]),
+					"hooded cloak") ) )
+		MOREARM(uarmh);
 	MOREARM(uarms);
 	MOREARM(uarmg);
 	MOREARM(uarmf);
@@ -1091,6 +1094,10 @@ dotakeoff()
 #ifdef TOURIST
 			  || ((otmp == uarmu) && (uarmc || uarm))
 #endif
+			  || ((otmp == uarmh) && uarmc && 
+				  OBJ_DESCR(objects[uarmc->otyp]) &&
+				  !strcmp(OBJ_DESCR(objects[uarmc->otyp]),
+					  "hooded cloak"))
 		) {
 	    You_cant("take that off.");
 	    return 0;
@@ -1295,6 +1302,11 @@ boolean noisy;
 	    if (noisy)
 		pline_The("%s won't fit over your horn%s.",
 			  c_helmet, plur(num_horns(youmonst.data)));
+	    err++;
+	} else if (uarmc && OBJ_DESCR(objects[uarmc->otyp]) &&
+			!strcmp(OBJ_DESCR(objects[uarmc->otyp]),
+				"hooded cloak")) {
+	    if (noisy) You_cant("wear that over your hood.");
 	    err++;
 	} else
 	    *mask = W_ARMH;
@@ -1686,9 +1698,14 @@ struct obj *
 some_armor(victim)
 struct monst *victim;
 {
-	register struct obj *otmph, *otmp;
+	register struct obj *otmph, *otmp, *hood;
 
 	otmph = (victim == &youmonst) ? uarmc : which_armor(victim, W_ARMC);
+	if (otmph && OBJ_DESCR(objects[otmph->otyp])
+			&& !strcmp(OBJ_DESCR(objects[otmph->otyp]),
+				"hooded cloak") )
+		hood = otmph;
+	else hood = NULL;
 	if (!otmph)
 	    otmph = (victim == &youmonst) ? uarm : which_armor(victim, W_ARM);
 #ifdef TOURIST
@@ -1696,7 +1713,8 @@ struct monst *victim;
 	    otmph = (victim == &youmonst) ? uarmu : which_armor(victim, W_ARMU);
 #endif
 	
-	otmp = (victim == &youmonst) ? uarmh : which_armor(victim, W_ARMH);
+	if (hood) otmp = hood;
+	else otmp = (victim == &youmonst) ? uarmh : which_armor(victim, W_ARMH);
 	if(otmp && (!otmph || !rn2(4))) otmph = otmp;
 	otmp = (victim == &youmonst) ? uarmg : which_armor(victim, W_ARMG);
 	if(otmp && (!otmph || !rn2(4))) otmph = otmp;
