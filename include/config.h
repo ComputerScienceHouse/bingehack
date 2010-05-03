@@ -37,6 +37,7 @@
 
 #include "config1.h"	/* should auto-detect MSDOS, MAC, AMIGA, and WIN32 */
 
+#define DEATH_EXPLORE
 
 /* Windowing systems...
  * Define all of those you want supported in your binary.
