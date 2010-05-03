@@ -1932,6 +1932,7 @@ E void FDECL(place_monster, (struct monst *,int,int));
 E boolean FDECL(goodpos, (int,int,struct monst *,unsigned));
 E boolean FDECL(enexto, (coord *,XCHAR_P,XCHAR_P,struct permonst *));
 E boolean FDECL(enexto_core, (coord *,XCHAR_P,XCHAR_P,struct permonst *,unsigned));
+E boolean FDECL(teleok, (int,int,BOOLEAN_P));
 E void FDECL(teleds, (int,int,BOOLEAN_P));
 E boolean FDECL(safe_teleds, (BOOLEAN_P));
 E boolean FDECL(teleport_pet, (struct monst *,BOOLEAN_P));

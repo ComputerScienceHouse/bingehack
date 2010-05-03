@@ -326,6 +326,34 @@ struct obj *obj;
 	if(obj->cursed && !rn2(2)) {
 		You("produce a high-pitched humming noise.");
 		wake_nearby();
+	} else if (Confusion) {
+		int pet_cnt = 0;
+		struct monst *pet = NULL;
+		coord cc;
+
+		pline("Being confused, you accidentally suck in through %s.",
+			the(xname(obj)));
+
+		if (!level.flags.noteleport) {
+		    /* select a random pet to move you next to */	
+		    for(mtmp = fmon; mtmp; mtmp = nextmon) {
+		        nextmon = mtmp->nmon;
+		        if (DEADMONSTER(mtmp)) continue;
+		        if (mtmp->mtame) {
+		   	    pet_cnt++;
+			    if (!rn2(pet_cnt)) pet = mtmp;
+		        }
+		    }
+
+		
+   		    if (pet_cnt > 0 &&
+                        enexto(&cc, pet->mx, pet->my, youmonst.data) &&
+			teleok(cc.x, cc.y, TRUE)) {
+
+			teleds(cc.x, cc.y, FALSE);
+		        makeknown(obj->otyp);
+		    }
+		}
 	} else {
 		int pet_cnt = 0;
 		You(whistle_str, Hallucination ? "normal" : "strange");
