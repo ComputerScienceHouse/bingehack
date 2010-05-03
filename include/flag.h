@@ -186,6 +186,9 @@ struct instance_flags {
 #ifdef MENU_COLOR
 	boolean use_menu_color;	/* use color in menus; only if wc_color */
 #endif
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+	boolean use_status_colors; /* use color in status line; only if wc_color */
+#endif
 #ifdef MFLOPPY
 	boolean  checkspace;	/* check disk space before writing files */
 				/* (in iflags to allow restore after moving

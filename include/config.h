@@ -364,6 +364,7 @@ typedef unsigned char	uchar;
  * pmatch() provides basic globbing: '*' and '?' wildcards.
  */
 #endif
+#define STATUS_COLORS
 
 /*#define GOLDOBJ */	/* Gold is kept on obj chains - Helge Hafting */
 #define AUTOPICKUP_EXCEPTIONS /* exceptions to autopickup */
