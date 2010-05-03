@@ -1461,7 +1461,7 @@ struct monst *mtmp;
 	case PM_VALKYRIE:
 	    return (
 #ifdef MAIL
-	    		mtmp && mtmp->data == &mons[PM_MAIL_DAEMON] ? "Hallo" :
+	    		mtmp && mtmp->data == &mons[PM_PHILBRICK_THE_MAIL_DAEMON] ? "Hallo" :
 #endif
 	    		"Velkommen");   /* Norse */
 	default:

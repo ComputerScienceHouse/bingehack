@@ -89,7 +89,7 @@ experience(mtmp, nk)	/* return # of exp points for mtmp after nk killed */
 
 #ifdef MAIL
 	/* Mail daemons put up no fight. */
-	if(mtmp->data == &mons[PM_MAIL_DAEMON]) tmp = 1;
+	if(mtmp->data == &mons[PM_PHILBRICK_THE_MAIL_DAEMON]) tmp = 1;
 #endif
 
 	return(tmp);

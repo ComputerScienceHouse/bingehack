@@ -2568,7 +2568,7 @@ typfnd:
 			if (!(mons[mntmp].geno & G_UNIQ)
 			    && !is_human(&mons[mntmp])
 #ifdef MAIL
-			    && mntmp != PM_MAIL_DAEMON
+			    && mntmp != PM_PHILBRICK_THE_MAIL_DAEMON
 #endif
 							)
 				otmp->corpsenm = mntmp;

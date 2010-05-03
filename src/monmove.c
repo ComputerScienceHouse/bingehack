@@ -689,7 +689,7 @@ register int after;
 	}
 
 #ifdef MAIL
-	if(ptr == &mons[PM_MAIL_DAEMON]) {
+	if(ptr == &mons[PM_PHILBRICK_THE_MAIL_DAEMON]) {
 	    if(flags.soundok && canseemon(mtmp))
 		verbalize("I'm late!");
 	    mongone(mtmp);
