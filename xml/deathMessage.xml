@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE dm-message SYSTEM "dm-message.dtd">
+<dm-message>
+	<deathMessage>
+		<score>100</score>
+		<epitaph>here lies russ, killed by a grue, while helpless</epitaph>
+		<playerData>
+			<turn>100</turn>
+			<name>russ</name>
+			<dungeonLevel>10</dungeonLevel>
+			<playerLevel>5</playerLevel>
+			<hp>100</hp>
+			<hpMax>100</hpMax>
+			<class>monk</class>
+			<gender>male</gender>
+			<levelType>Dungeons of Doom</levelType>
+			<ac>5</ac>
+			<mp>100</mp>
+			<mpMax>100</mpMax>
+			<alignment>chaotic</alignment>
+			<race>human</race>
+		</playerData>
+		<inventory>
+			<item>
+				<buc>cursed</buc>
+				<name></name>
+				<type>silver dragon scale mail</type>
+				<enchantment>-10</enchantment>
+			</item>
+			<item>
+				<buc>blessed</buc>
+				<name></name>
+				<type>silver dragon scale mail</type>
+				<enchantment>-10</enchantment>
+			</item>
+		</inventory>
+	</deathMessage>
+</dm-message>

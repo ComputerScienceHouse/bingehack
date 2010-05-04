@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE dm-message SYSTEM "dm-message.dtd">
+<dm-message>
+	<mail>
+		<sender>
+			<name>russ</name>
+		</sender>
+		<receiver>
+			<name>devnull</name>
+		</receiver>
+		<message>Hello World!</message>
+		<item>
+			<buc>cursed</buc>
+			<name></name>
+			<type>silver dragon scale mail</type>
+			<enchantment>-10</enchantment>
+		</item>
+	</mail>
+</dm-message>
