@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!DOCTYPE dm-message SYSTEM "dm-message.dtd">
 <dm-message>
 	<deathMessage>
 		<score>100</score>
@@ -23,13 +22,11 @@
 		<inventory>
 			<item>
 				<buc>cursed</buc>
-				<name></name>
 				<type>silver dragon scale mail</type>
 				<enchantment>-10</enchantment>
 			</item>
 			<item>
 				<buc>blessed</buc>
-				<name></name>
 				<type>silver dragon scale mail</type>
 				<enchantment>-10</enchantment>
 			</item>

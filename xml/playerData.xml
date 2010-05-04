@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!DOCTYPE dm-message SYSTEM "dm-message.dtd">
 <dm-message>
 	<playerData>
 		<turn>100</turn>
