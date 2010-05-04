@@ -19,7 +19,6 @@ Item
 
 DeathMessage
 	Score
-	Name
 	Epitapth
 	PlayerData
 	Inventory
