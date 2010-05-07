@@ -35,7 +35,7 @@ typedef struct {
   NhRect *rects;		/* Rectangles composing the region */
   short  nrects;		/* Number of rectangles  */
   boolean attach_2_u;		/* Region attached to player ? */
-  unsigned int attach_2_m;	/* Region attached to monster ? */
+  unsigned long attach_2_m;	/* Region attached to monster ? */
   /*struct obj *attach_2_o;*/	/* Region attached to object ? UNUSED YET */
   const char* enter_msg;	/* Message when entering */
   const char* leave_msg;	/* Message when leaving */
@@ -50,7 +50,7 @@ typedef struct {
   short inside_f;		/* Function to call every turn if player's
 				   inside */
   boolean player_flags;	/* (see above) */
-  unsigned int* monsters;	/* Monsters currently inside this region */
+  unsigned long* monsters;	/* Monsters currently inside this region */
   short n_monst;		/* Number of monsters inside this region */
   short max_monst;		/* Maximum number of monsters that can be
 				   listed without having to grow the array */

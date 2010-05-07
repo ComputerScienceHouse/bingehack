@@ -506,7 +506,7 @@ initoptions()
 	flags.end_own = FALSE;
 	flags.end_top = 3;
 	flags.end_around = 2;
-	iflags.runmode = RUN_LEAP;
+	iflags.runmode = RUN_TPORT;
 	iflags.msg_history = 20;
 #ifdef TTY_GRAPHICS
 	iflags.prevmsg_window = 's';

@@ -338,6 +338,37 @@ int how;
 	t0->fpos = -1L;
 #endif
 
+	if (
+#ifdef WIZARD
+	    !wizard &&
+#endif
+	    mcast_socket >= 0 /* && !flags.run */ ) {
+	    u_stat.race = *urace.adj;
+	    u_stat.gender = *genders[Upolyd ? u.mfemale : flags.female].adj;
+	    strncpy(u_stat.class, ((Upolyd ? u.mfemale : flags.female) && urole.name.f) ? urole.name.f : urole.name.m, 3);
+	    u_stat.status = STATUS_INACTIVE;
+	    u_stat.align = u.ualign.type;
+	    u_stat.have = *(char *) &u.uhave;
+	    u_stat.hp = u.uhp;
+	    u_stat.hpmax = u.uhpmax;
+	    u_stat.pow = u.uen;
+	    u_stat.powmax = u.uenmax;
+	    u_stat.ac = u.uac;
+	    u_stat.ulevel = u.ulevel;
+	    u_stat.dlevel = depth(&u.uz);
+	    u_stat.wishes = u.uconduct.wishes;
+	    u_stat.prayers = u.uconduct.gnostic;
+	    u_stat.deaths = u.umortality;
+	    u_stat.moves = moves;
+	    bzero(u_stat.dungeon_or_death, sizeof(u_stat.dungeon_or_death));
+	    strncpy(u_stat.dungeon_or_death, t0->death, sizeof(u_stat.dungeon_or_death) - 1);
+
+	    /* report all stats */
+	    sendto(mcast_socket, &u_stat, sizeof(u_stat), 0,
+		   (struct sockaddr *) &mcast_addr,
+		   (socklen_t) sizeof(mcast_addr));
+	}
+
 #ifdef LOGFILE		/* used for debugging (who dies of what, where) */
 	if (lock_file(LOGFILE, SCOREPREFIX, 10)) {
 	    if(!(lfile = fopen_datafile(LOGFILE, "a", SCOREPREFIX))) {
