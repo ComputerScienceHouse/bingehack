@@ -386,6 +386,37 @@ struct autopickup_exception {
 };
 #endif /* AUTOPICKUP_EXCEPTIONS */
 
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+#define STATUS_ACTIVE   0
+#define STATUS_SAVED    1
+#define STATUS_INACTIVE 2
+
+E int mcast_socket;
+E struct sockaddr_in mcast_addr;
+
+E struct u_stat_t {
+  char race;
+  char gender;
+  char align;
+  char have;
+  short hp, hpmax;
+  short pow, powmax;
+  short ac;
+  short ulevel;
+  short dlevel;
+  short wishes;
+  short prayers;
+  short deaths;
+  char class[3];
+  char status;
+  long moves; /* 8 bytes */
+  char plname[PL_NSIZ];
+  char dungeon_or_death[1024 - 32];
+} u_stat;
+
 #undef E
 
 #endif /* DECL_H */

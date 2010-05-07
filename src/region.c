@@ -173,11 +173,11 @@ NhRegion *reg;
 struct monst *mon;
 {
     int i;
-    unsigned *tmp_m;
+    unsigned long *tmp_m;
 
     if (reg->max_monst <= reg->n_monst) {
-	tmp_m = (unsigned *)
-		    alloc(sizeof (unsigned) * (reg->max_monst + MONST_INC));
+	tmp_m = (unsigned long *)
+		    alloc(sizeof (unsigned long) * (reg->max_monst + MONST_INC));
 	if (reg->max_monst > 0) {
 	    for (i = 0; i < reg->max_monst; i++)
 		tmp_m[i] = reg->monsters[i];
@@ -617,7 +617,7 @@ int fd;
 int mode;
 {
     int i, j;
-    unsigned n;
+    unsigned long n;
 
     if (!perform_bwrite(mode)) goto skip_lots;
 
@@ -630,7 +630,7 @@ int mode;
 	    bwrite(fd, (genericptr_t) &regions[i]->rects[j], sizeof (NhRect));
 	bwrite(fd, (genericptr_t) &regions[i]->attach_2_u, sizeof (boolean));
 	n = 0;
-	bwrite(fd, (genericptr_t) &regions[i]->attach_2_m, sizeof (unsigned));
+	bwrite(fd, (genericptr_t) &regions[i]->attach_2_m, sizeof (unsigned long));
 	n = regions[i]->enter_msg != NULL ? strlen(regions[i]->enter_msg) : 0;
 	bwrite(fd, (genericptr_t) &n, sizeof n);
 	if (n > 0)
@@ -650,7 +650,7 @@ int mode;
 	bwrite(fd, (genericptr_t) &regions[i]->n_monst, sizeof (short));
 	for (j = 0; j < regions[i]->n_monst; j++)
 	    bwrite(fd, (genericptr_t) &regions[i]->monsters[j],
-	     sizeof (unsigned));
+	     sizeof (unsigned long));
 	bwrite(fd, (genericptr_t) &regions[i]->visible, sizeof (boolean));
 	bwrite(fd, (genericptr_t) &regions[i]->glyph, sizeof (int));
 	bwrite(fd, (genericptr_t) &regions[i]->arg, sizeof (genericptr_t));
@@ -690,7 +690,7 @@ boolean ghostly; /* If a bones file restore */
 	for (j = 0; j < regions[i]->nrects; j++)
 	    mread(fd, (genericptr_t) &regions[i]->rects[j], sizeof (NhRect));
 	mread(fd, (genericptr_t) &regions[i]->attach_2_u, sizeof (boolean));
-	mread(fd, (genericptr_t) &regions[i]->attach_2_m, sizeof (unsigned));
+	mread(fd, (genericptr_t) &regions[i]->attach_2_m, sizeof (unsigned long));
 
 	mread(fd, (genericptr_t) &n, sizeof n);
 	if (n > 0) {
@@ -729,13 +729,13 @@ boolean ghostly; /* If a bones file restore */
 	mread(fd, (genericptr_t) &regions[i]->n_monst, sizeof (short));
 	if (regions[i]->n_monst > 0)
 	    regions[i]->monsters =
-		(unsigned *) alloc(sizeof (unsigned) * regions[i]->n_monst);
+		(unsigned long *) alloc(sizeof (unsigned long) * regions[i]->n_monst);
 	else
 	    regions[i]->monsters = NULL;
 	regions[i]->max_monst = regions[i]->n_monst;
 	for (j = 0; j < regions[i]->n_monst; j++)
 	    mread(fd, (genericptr_t) &regions[i]->monsters[j],
-		  sizeof (unsigned));
+		  sizeof (unsigned long));
 	mread(fd, (genericptr_t) &regions[i]->visible, sizeof (boolean));
 	mread(fd, (genericptr_t) &regions[i]->glyph, sizeof (int));
 	mread(fd, (genericptr_t) &regions[i]->arg, sizeof (genericptr_t));
@@ -755,7 +755,7 @@ reset_region_mids(reg)
 NhRegion *reg;
 {
     int i = 0, n = reg->n_monst;
-    unsigned *mid_list = reg->monsters;
+    unsigned long *mid_list = reg->monsters;
 
     while (i < n)
 	if (!lookup_id_mapping(mid_list[i], &mid_list[i])) {
@@ -900,7 +900,7 @@ genericptr_t p2;
 {
     NhRegion *reg;
     struct monst *mtmp;
-    int dam;
+    long dam;
 
     reg = (NhRegion *) p1;
     dam = (size_t) reg->arg;

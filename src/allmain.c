@@ -16,6 +16,11 @@ STATIC_DCL void NDECL(do_positionbar);
 
 #ifdef OVL0
 
+int mcast_socket = -1;
+struct sockaddr_in mcast_addr;
+
+struct u_stat_t u_stat;
+
 void
 moveloop()
 {
@@ -25,6 +30,17 @@ moveloop()
 #endif
     int moveamt = 0, wtcap = 0, change = 0;
     boolean didmove = FALSE, monscanmove = FALSE;
+    int last_dnum = -1;
+
+    bzero(u_stat.plname, sizeof(u_stat.plname));
+    strncpy(u_stat.plname, plname, sizeof(u_stat.plname) - 1);
+
+    if( (mcast_socket = socket(PF_INET, SOCK_DGRAM, 0)) >= 0 ) {
+      memset(&mcast_addr, 0, sizeof(mcast_addr));
+      mcast_addr.sin_family = AF_INET;
+      mcast_addr.sin_addr.s_addr = inet_addr("225.0.0.37");
+      mcast_addr.sin_port = htons(12345);
+    }
 
     flags.moonphase = phase_of_the_moon();
     if(flags.moonphase == FULL_MOON) {
@@ -58,6 +74,41 @@ moveloop()
 
     u.uz0.dlevel = u.uz.dlevel;
     youmonst.movement = NORMAL_SPEED;	/* give the hero some movement points */
+
+    if (
+#ifdef WIZARD
+	!wizard &&
+#endif
+	mcast_socket >= 0 /* && !flags.run */ ) {
+	u_stat.race = *urace.adj;
+	u_stat.gender = *genders[Upolyd ? u.mfemale : flags.female].adj;
+	strncpy(u_stat.class, ((Upolyd ? u.mfemale : flags.female) && urole.name.f) ? urole.name.f : urole.name.m, 3);
+	u_stat.status = STATUS_ACTIVE;
+	u_stat.align = u.ualign.type;
+	u_stat.have = *(char *) &u.uhave;
+	u_stat.hp = u.uhp;
+	u_stat.hpmax = u.uhpmax;
+	u_stat.pow = u.uen;
+	u_stat.powmax = u.uenmax;
+	u_stat.ac = u.uac;
+	u_stat.ulevel = u.ulevel;
+	u_stat.dlevel = depth(&u.uz);
+	u_stat.wishes = u.uconduct.wishes;
+	u_stat.prayers = u.uconduct.gnostic;
+	u_stat.deaths = u.umortality;
+	u_stat.moves = moves;
+	if( last_dnum != u.uz.dnum ) {
+	  bzero(u_stat.dungeon_or_death, sizeof(u_stat.dungeon_or_death));
+	  strncpy(u_stat.dungeon_or_death, dungeons[u.uz.dnum].dname,
+		  sizeof(u_stat.dungeon_or_death) - 1);
+	  last_dnum = u.uz.dnum;
+	}
+
+	/* report all stats */
+	sendto(mcast_socket, &u_stat, sizeof(u_stat), 0,
+	       (struct sockaddr *) &mcast_addr,
+	       (socklen_t) sizeof(mcast_addr));
+    }
 
     for(;;) {
 	get_nh_event();
@@ -134,6 +185,41 @@ moveloop()
 		    /********************************/
 		    /* once-per-turn things go here */
 		    /********************************/
+
+		    if (
+#ifdef WIZARD
+			!wizard &&
+#endif
+			mcast_socket >= 0 /* && !flags.run */ ) {
+			u_stat.race = *urace.adj;
+			u_stat.gender = *genders[Upolyd ? u.mfemale : flags.female].adj;
+			strncpy(u_stat.class, ((Upolyd ? u.mfemale : flags.female) && urole.name.f) ? urole.name.f : urole.name.m, 3);
+			u_stat.status = STATUS_ACTIVE;
+			u_stat.align = u.ualign.type;
+			u_stat.have = *(char *) &u.uhave;
+			u_stat.hp = u.uhp;
+			u_stat.hpmax = u.uhpmax;
+			u_stat.pow = u.uen;
+			u_stat.powmax = u.uenmax;
+			u_stat.ac = u.uac;
+			u_stat.ulevel = u.ulevel;
+			u_stat.dlevel = depth(&u.uz);
+			u_stat.wishes = u.uconduct.wishes;
+			u_stat.prayers = u.uconduct.gnostic;
+			u_stat.deaths = u.umortality;
+			u_stat.moves = moves;
+			if( last_dnum != u.uz.dnum ) {
+			    bzero(u_stat.dungeon_or_death, sizeof(u_stat.dungeon_or_death));
+			    strncpy(u_stat.dungeon_or_death, dungeons[u.uz.dnum].dname,
+				    sizeof(u_stat.dungeon_or_death) - 1);
+			    last_dnum = u.uz.dnum;
+			}
+
+			/* report all stats */
+			sendto(mcast_socket, &u_stat, sizeof(u_stat), 0,
+			       (struct sockaddr *) &mcast_addr,
+			       (socklen_t) sizeof(mcast_addr));
+		    }
 
 		    if (flags.bypasses) clear_bypasses();
 		    if(Glib) glibr();

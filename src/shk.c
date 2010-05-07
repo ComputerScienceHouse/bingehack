@@ -1821,7 +1821,7 @@ register struct bill_x *bp;
  */
 struct obj *
 find_oid(id)
-unsigned id;
+unsigned long id;
 {
 	struct obj *obj;
 	struct monst *mon, *mmtmp[3];

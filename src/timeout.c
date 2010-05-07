@@ -1830,7 +1830,7 @@ relink_timers(ghostly)
     boolean ghostly;
 {
     timer_element *curr;
-    unsigned nid;
+    unsigned long nid;
 
     for (curr = timer_base; curr; curr = curr->next) {
 	if (curr->needs_fixup) {
@@ -1841,7 +1841,7 @@ relink_timers(ghostly)
 		} else
 		    nid = (size_t) curr->arg;
 		curr->arg = (genericptr_t) find_oid(nid);
-		if (!curr->arg) panic("cant find o_id %d", nid);
+		if (!curr->arg) panic("cant find o_id %ld", nid);
 		curr->needs_fixup = 0;
 	    } else if (curr->kind == TIMER_MONSTER) {
 		panic("relink_timers: no monster timer implemented");

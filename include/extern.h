@@ -1692,7 +1692,7 @@ E int FDECL(dorecover, (int));
 E void FDECL(trickery, (char *));
 E void FDECL(getlev, (int,int,XCHAR_P,BOOLEAN_P));
 E void NDECL(minit);
-E boolean FDECL(lookup_id_mapping, (unsigned, unsigned *));
+E boolean FDECL(lookup_id_mapping, (unsigned long, unsigned long *));
 #ifdef ZEROCOMP
 E int FDECL(mread, (int,genericptr_t,unsigned int));
 #else
@@ -1806,7 +1806,7 @@ E void FDECL(make_angry_shk, (struct monst *,XCHAR_P,XCHAR_P));
 E int NDECL(dopay);
 E boolean FDECL(paybill, (int));
 E void NDECL(finish_paybill);
-E struct obj *FDECL(find_oid, (unsigned));
+E struct obj *FDECL(find_oid, (unsigned long));
 E long FDECL(contained_cost, (struct obj *,struct monst *,long,BOOLEAN_P, BOOLEAN_P));
 E long FDECL(contained_gold, (struct obj *));
 E void FDECL(picked_container, (struct obj *));
