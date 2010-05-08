@@ -227,16 +227,18 @@ static Widget FDECL(init_info_form, (Widget,Widget,Widget));
 #define F_ALIGN	   16
 #define F_TIME     17
 #define F_SCORE	   18
+#define F_WEIGHT   19 /* showweight by nickca@io.com */
+#define F_MAXWGT   20 /* showweight by nickca@io.com */
 
-#define F_HUNGER   19
-#define F_CONFUSED 20
-#define F_SICK	   21
-#define F_BLIND	   22
-#define F_STUNNED  23
-#define F_HALLU    24
-#define F_ENCUMBER 25
+#define F_HUNGER   21
+#define F_CONFUSED 22
+#define F_SICK	   23
+#define F_BLIND	   24
+#define F_STUNNED  25
+#define F_HALLU    26
+#define F_ENCUMBER 27
 
-#define NUM_STATS  26
+#define NUM_STATS  28
 
 /*
  * Notes:
@@ -265,6 +267,8 @@ static struct X_status_value shown_stats[NUM_STATS] = {
     { "Alignment",	SV_VALUE, (Widget) 0, -2, 0, FALSE, FALSE },
     { "Time",		SV_VALUE, (Widget) 0, -1, 0, FALSE, FALSE },
     { "Score",		SV_VALUE, (Widget) 0, -1, 0, FALSE, FALSE },
+    { "Weight",		SV_VALUE, (Widget) 0, -1, 0, FALSE, FALSE }, /*showweight*/
+    { "Max Wgt",	SV_VALUE, (Widget) 0, -1, 0, FALSE, FALSE }, /*showweight*/
 
     { "",		SV_NAME,  (Widget) 0, -1, 0, FALSE, TRUE }, /* hunger*/
     { "Confused",	SV_NAME,  (Widget) 0,  0, 0, FALSE, TRUE },	/*20*/
@@ -472,6 +476,21 @@ update_val(attr_rec, new_value)
 #endif
 	}
 
+    /* special case: showweight. added by nickca@io.com */
+	else if (attr_rec == &shown_stats[F_WEIGHT]) {
+	    static boolean flagweight = TRUE;
+	    if(flags.showweight && !flagweight) {
+		set_name(attr_rec->w, shown_stats[F_WEIGHT].name);
+		force_update = TRUE;
+		flagweight = flags.showweight;
+	    } else if(!flags.showweight && flagweight) {
+		set_name(attr_rec->w, "");
+		set_value(attr_rec->w, "");
+		flagweight = flags.showweight;
+	    }
+	    if(!flagweight) return;
+	}
+
 	/* special case: when polymorphed, show "HD", disable exp */
 	else if (attr_rec == &shown_stats[F_LEVEL]) {
 	    static boolean lev_was_poly = FALSE;
@@ -626,6 +645,8 @@ update_fancy_status(wp)
 #else
 	    case F_SCORE:	val = 0L; break;
 #endif
+	    case F_WEIGHT:	val = flags.showweight ? (long)(inv_weight()+weight_cap()):0L; break;
+	    case F_MAXWGT:	val = flags.showweight ? (long)(weight_cap()):0L; break;
 	    default:
 	    {
 		/*
@@ -708,6 +729,8 @@ width_string(sv_index)
 	case F_ALIGN:	return "Neutral";
 	case F_TIME:	return "4294967295";	/* max ulong */
 	case F_SCORE:	return "4294967295";	/* max ulong */
+	case F_WEIGHT:	return "9999"; /* showweight, by nickca@io.com */
+	case F_MAXWGT:	return "9999"; /* showweight, by nickca@io.com */
     }
     impossible("width_string: unknown index %d\n", sv_index);
     return "";
@@ -865,9 +888,9 @@ static int status_indices[] = { F_HUNGER, F_CONFUSED, F_SICK, F_BLIND,
 				F_STUNNED, F_HALLU, F_ENCUMBER, -1,0,0 };
 
 static int col2_indices[] = { F_MAXHP,    F_ALIGN, F_TIME, F_EXP,
-			      F_MAXPOWER, -1,0,0 };
+			      F_MAXPOWER, F_MAXWGT, -1,0,0 };
 static int col1_indices[] = { F_HP,       F_AC,    F_GOLD, F_LEVEL,
-			      F_POWER,    F_SCORE, -1,0,0 };
+			      F_POWER, F_WEIGHT, F_SCORE, -1,0,0 };
 
 
 /*

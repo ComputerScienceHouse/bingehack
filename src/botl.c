@@ -398,6 +398,9 @@ bot2()
 	else
 		Sprintf(nb = eos(nb), " Exp:%u", u.ulevel);
 
+	if(flags.showweight)
+		Sprintf(nb = eos(nb), " Wt:%ld/%ld", (long)(inv_weight()+weight_cap()), (long)(weight_cap()));
+
 	if(flags.time)
 	    Sprintf(nb = eos(nb), " T:%ld", moves);
 	if(strcmp(hu_stat[u.uhs], "        "))

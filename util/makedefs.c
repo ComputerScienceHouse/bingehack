@@ -703,6 +703,7 @@ static const char *build_opts[] = {
 #  endif
 # endif
 #endif
+ 		"inventory weight on status line",
 #ifdef REDO
 		"redo command",
 #endif

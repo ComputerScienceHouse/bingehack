@@ -73,6 +73,7 @@ struct flag {
 #ifdef SCORE_ON_BOTL
 	boolean  showscore;	/* show score */
 #endif
+	boolean  showweight;
 	boolean  silent;	/* whether the bell rings or not */
 	boolean  sortpack;	/* sorted inventory */
 	boolean  soundok;	/* ok to tell about sounds heard */

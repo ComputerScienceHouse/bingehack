@@ -2735,6 +2735,9 @@
             Show your approximate accumulated score on bottom line (default
             off).
 
+          showweight
+               Show your inventory weight on bottom line (if compiled in).
+
           silent
             Suppress terminal beeps (default on).
 
