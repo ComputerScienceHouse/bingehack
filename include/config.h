@@ -40,6 +40,8 @@
 #define DEATH_EXPLORE
 #define PARANOID
 
+#define HACKDIR "/nh343"
+
 /* Windowing systems...
  * Define all of those you want supported in your binary.
  * Some combinations make no sense.  See the installation document.
