@@ -301,17 +301,17 @@ relink_light_sources(ghostly)
     boolean ghostly;
 {
     char which;
-    unsigned nid;
+    unsigned long nid;
     light_source *ls;
 
     for (ls = light_base; ls; ls = ls->next) {
 	if (ls->flags & LSF_NEEDS_FIXUP) {
 	    if (ls->type == LS_OBJECT || ls->type == LS_MONSTER) {
 		if (ghostly) {
-		    if (!lookup_id_mapping((unsigned)ls->id, &nid))
+		    if (!lookup_id_mapping((unsigned long)ls->id, &nid))
 			impossible("relink_light_sources: no id mapping");
 		} else
-		    nid = (unsigned) ls->id;
+		    nid = (unsigned long) ls->id;
 		if (ls->type == LS_OBJECT) {
 		    which = 'o';
 		    ls->id = (genericptr_t) find_oid(nid);
@@ -320,7 +320,7 @@ relink_light_sources(ghostly)
 		    ls->id = (genericptr_t) find_mid(nid, FM_EVERYWHERE);
 		}
 		if (!ls->id)
-		    impossible("relink_light_sources: cant find %c_id %d",
+		    impossible("relink_light_sources: cant find %c_id %ld",
 			       which, nid);
 	    } else
 		impossible("relink_light_sources: bad type (%d)", ls->type);
@@ -391,15 +391,15 @@ write_ls(fd, ls)
 		otmp = (struct obj *)ls->id;
 		ls->id = (genericptr_t)otmp->o_id;
 #ifdef DEBUG
-		if (find_oid((unsigned)ls->id) != otmp)
-		    panic("write_ls: can't find obj #%u!", (unsigned)ls->id);
+		if (find_oid((unsigned long)ls->id) != otmp)
+		    panic("write_ls: can't find obj #%lu!", (unsigned long)ls->id);
 #endif
 	    } else { /* ls->type == LS_MONSTER */
 		mtmp = (struct monst *)ls->id;
 		ls->id = (genericptr_t)mtmp->m_id;
 #ifdef DEBUG
-		if (find_mid((unsigned)ls->id, FM_EVERYWHERE) != mtmp)
-		    panic("write_ls: can't find mon #%u!", (unsigned)ls->id);
+		if (find_mid((unsigned long)ls->id, FM_EVERYWHERE) != mtmp)
+		    panic("write_ls: can't find mon #%lu!", (unsigned long)ls->id);
 #endif
 	    }
 	    ls->flags |= LSF_NEEDS_FIXUP;

@@ -366,7 +366,7 @@ xchar	w,h;
 xchar	xal,yal;
 xchar	rtype, rlit;
 {
-	xchar	xabs, yabs;
+	xchar	xabs = 0, yabs = 0;
 	int	wtmp, htmp, xaltmp, yaltmp, xtmp, ytmp;
 	NhRect	*r1 = 0, r2;
 	int	trycnt = 0;
