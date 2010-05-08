@@ -800,6 +800,12 @@ ring:
 		Strcpy(prefix, "an ");
 		Strcpy(prefix+3, tmpbuf+2);
 	}
+
+	  /* [max] weight inventory */
+	if ((obj->otyp != BOULDER) || !throws_rocks (youmonst.data))
+	  if ((obj->otyp < LUCKSTONE) && (obj->otyp != CHEST) && (obj->otyp != LARGE_BOX) &&
+	      (obj->otyp != ICE_BOX) && (!Hallucination && flags.invweight))
+		        Sprintf (eos(bp), " {%d}", obj->owt);
 	bp = strprepend(bp, prefix);
 	return(bp);
 }
@@ -929,6 +935,7 @@ register struct obj *otmp;
 char *FDECL((*func), (OBJ_P));
 {
 	long savequan;
+	unsigned saveowt;
 	char *nam;
 
 	/* Note: using xname for corpses will not give the monster type */
@@ -937,8 +944,11 @@ char *FDECL((*func), (OBJ_P));
 
 	savequan = otmp->quan;
 	otmp->quan = 1L;
+	saveowt = otmp->owt;
+	otmp->owt = weight(otmp);
 	nam = (*func)(otmp);
 	otmp->quan = savequan;
+	otmp->owt = saveowt;
 	return nam;
 }
 

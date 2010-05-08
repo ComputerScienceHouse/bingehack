@@ -48,6 +48,7 @@ struct flag {
 	boolean  ins_chkpt;	/* checkpoint as appropriate */
 #endif
 	boolean  invlet_constant; /* let objects keep their inventory symbol */
+	boolean  invweight;    /* show weight in inventory and when picking up */
 	boolean  legacy;	/* print game entry "story" */
 	boolean  lit_corridor;	/* show a dark corr as lit if it is in sight */
 	boolean  made_amulet;
