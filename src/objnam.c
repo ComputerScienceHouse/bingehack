@@ -812,7 +812,8 @@ ring:
 			ininventory = TRUE;
 	}
 	if (ininventory || objects[obj->otyp].oc_name_known)
-	  if ((obj->otyp != CHEST) && (obj->otyp != LARGE_BOX) &&
+	  if ((obj->otyp != CHEST) && (obj->otyp != LARGE_BOX) && 
+	      (obj->otyp < SACK || obj->otyp > BAG_OF_TRICKS) &&
 	      (obj->otyp != ICE_BOX) && (!Hallucination && flags.invweight))
 			Sprintf (eos(bp), " {%d}", obj->owt);
 
