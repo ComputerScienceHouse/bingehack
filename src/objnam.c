@@ -579,6 +579,8 @@ register struct obj *obj;
 	 * end (Strcat is used on the end)
 	 */
 	register char *bp = xname(obj);
+	int container_where = 0;
+	boolean ininventory = FALSE;
 
 	/* When using xname, we want "poisoned arrow", and when using
 	 * doname, we want "poisoned +0 arrow".  This kludge is about the only
@@ -801,11 +803,19 @@ ring:
 		Strcpy(prefix+3, tmpbuf+2);
 	}
 
-	  /* [max] weight inventory */
-	if ((obj->otyp != BOULDER) || !throws_rocks (youmonst.data))
-	  if ((obj->otyp < LUCKSTONE) && (obj->otyp != CHEST) && (obj->otyp != LARGE_BOX) &&
+	switch (obj->where) {
+		case OBJ_CONTAINED:
+			if (get_container_location(obj->ocontainer,
+			    &container_where, (int *)0) &&
+			    container_where != OBJ_INVENT) break;
+		case OBJ_INVENT:
+			ininventory = TRUE;
+	}
+	if (ininventory || objects[obj->otyp].oc_name_known)
+	  if ((obj->otyp != CHEST) && (obj->otyp != LARGE_BOX) &&
 	      (obj->otyp != ICE_BOX) && (!Hallucination && flags.invweight))
-		        Sprintf (eos(bp), " {%d}", obj->owt);
+			Sprintf (eos(bp), " {%d}", obj->owt);
+
 	bp = strprepend(bp, prefix);
 	return(bp);
 }
