@@ -910,6 +910,7 @@ register const char *let,*word;
 		|| (!strcmp(word, "untrap with") &&
 		    (otmp->oclass == TOOL_CLASS && otyp != CAN_OF_GREASE))
 		|| (!strcmp(word, "charge") && !is_chargeable(otmp))
+		|| (!strcmp(word, "open") && otyp != TIN)
 		    )
 			foo--;
 		/* ugly check for unworn armor that can't be worn */
