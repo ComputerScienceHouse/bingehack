@@ -397,12 +397,7 @@ boolean taken;
 	    if (!done_stopprint) {
 		c = ask ? yn_function(qbuf, ynqchars, defquery) : defquery;
 		if (c == 'y') {
-			struct obj *obj;
-
-			for (obj = invent; obj; obj = obj->nobj) {
-			    makeknown(obj->otyp);
-			    obj->known = obj->bknown = obj->dknown = obj->rknown = 1;
-			}
+			dump_ID_on();
 			(void) display_inventory((char *)0, TRUE);
 			container_contents(invent, TRUE, TRUE);
 		}
@@ -1068,7 +1063,9 @@ boolean identified, all_containers;
 		if (box->otyp == BAG_OF_TRICKS && box->spe) {
 		    continue;	/* bag of tricks with charges can't contain anything */
 		} else if (box->cobj) {
+		    int saveknown = objects[box->otyp].oc_name_known;
 		    winid tmpwin = create_nhwindow(NHW_MENU);
+		    objects[box->otyp].oc_name_known = 1;
 #ifdef SORTLOOT
 		    /* count the number of items */
 		    for (n = 0, obj = box->cobj; obj; obj = obj->nobj) n++;
@@ -1104,6 +1101,7 @@ boolean identified, all_containers;
 		    }
 #endif /* SORTLOOT */
 		    Sprintf(buf, "Contents of %s:", the(xname(box)));
+		    objects[box->otyp].oc_name_known = saveknown;
 		    putstr(tmpwin, 0, buf);
 		    putstr(tmpwin, 0, "");
 #ifdef SORTLOOT
@@ -1112,11 +1110,6 @@ boolean identified, all_containers;
 #else
 		    for (obj = box->cobj; obj; obj = obj->nobj) {
 #endif
-			if (identified) {
-			    makeknown(obj->otyp);
-			    obj->known = obj->bknown =
-			    obj->dknown = obj->rknown = 1;
-			}
 			putstr(tmpwin, 0, doname(obj));
 		    }
 		    display_nhwindow(tmpwin, TRUE);
@@ -1124,7 +1117,10 @@ boolean identified, all_containers;
 		    if (all_containers)
 			container_contents(box->cobj, identified, TRUE);
 		} else {
+		    int saveknown = objects[box->otyp].oc_name_known;
+		    objects[box->otyp].oc_name_known = 1;
 		    pline("%s empty.", Tobjnam(box, "are"));
+		    objects[box->otyp].oc_name_known = saveknown;
 		    display_nhwindow(WIN_MESSAGE, FALSE);
 		}
 	    }

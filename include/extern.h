@@ -1350,6 +1350,8 @@ E void NDECL(objects_init);
 
 /* ### objnam.c ### */
 
+E void NDECL(dump_ID_on);
+E void NDECL(dump_ID_off);
 E char *FDECL(obj_typename, (int));
 E char *FDECL(simple_typename, (int));
 E boolean FDECL(obj_is_pname, (struct obj *));
