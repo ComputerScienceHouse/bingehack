@@ -1116,6 +1116,16 @@ boolean at_stairs, falling, portal;
 	vision_reset();		/* clear old level's line-of-sight */
 	vision_full_recalc = 0;	/* don't let that reenable vision yet */
 	flush_screen(-1);	/* ensure all map flushes are postponed */
+	
+	if (!u.uevent.valley_entered) {
+	    if (Upolyd) {
+   	        if (self_genocided(1))
+		    u.uconduct.humhell=2; /* you're the last of your race */
+		else
+		    u.uconduct.humhell=1;
+            }
+	    u.uevent.valley_entered=1;
+	}
 
 	if (portal && !In_endgame(&u.uz)) {
 	    /* find the portal on the new level */

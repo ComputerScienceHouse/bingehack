@@ -27,6 +27,20 @@ set_uasmon()
 	set_mon_data(&youmonst, &mons[u.umonnum], 0);
 }
 
+/* check if the player has genocided h{im,er}self */
+int self_genocided(int justrace)
+{
+	if ((mvitals[urole.malenum].mvflags & G_GENOD) ||
+			(urole.femalenum != NON_PM &&
+			(mvitals[urole.femalenum].mvflags & G_GENOD)))
+	    return 1;
+	if ((mvitals[urace.malenum].mvflags & G_GENOD) ||
+			(urace.femalenum != NON_PM &&
+			(mvitals[urace.femalenum].mvflags & G_GENOD)))
+	    return 1;
+	return 0;
+}
+
 /* make a (new) human out of the player */
 STATIC_OVL void
 polyman(fmt, arg)
@@ -61,12 +75,8 @@ const char *fmt, *arg;
 
 	You(fmt, arg);
 	/* check whether player foolishly genocided self while poly'd */
-	if ((mvitals[urole.malenum].mvflags & G_GENOD) ||
-			(urole.femalenum != NON_PM &&
-			(mvitals[urole.femalenum].mvflags & G_GENOD)) ||
-			(mvitals[urace.malenum].mvflags & G_GENOD) ||
-			(urace.femalenum != NON_PM &&
-			(mvitals[urace.femalenum].mvflags & G_GENOD))) {
+	if (self_genocided(0))
+	{
 	    /* intervening activity might have clobbered genocide info */
 	    killer = delayed_killer;
 	    if (!killer || !strstri(killer, "genocid")) {
@@ -75,6 +85,8 @@ const char *fmt, *arg;
 	    }
 	    done(GENOCIDED);
 	}
+	if (u.uevent.valley_entered)
+	    u.uconduct.humhell=0;
 
 	if (u.twoweap && !could_twoweap(youmonst.data))
 	    untwoweapon();

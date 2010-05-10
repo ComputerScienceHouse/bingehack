@@ -52,6 +52,13 @@ long mask;
 	register struct obj *oobj;
 	register int p;
 
+        if (mask&(W_ARM|W_ARMC|W_ARMH|W_ARMS|W_ARMG|W_ARMF
+#ifdef TOURIST
+            |W_ARMU
+#endif
+            ))
+            u.uconduct.armour=moves;
+        
 	if ((mask & (W_ARM|I_SPECIAL)) == (W_ARM|I_SPECIAL)) {
 	    /* restoring saved game; no properties are conferred via skin */
 	    uskin = obj;

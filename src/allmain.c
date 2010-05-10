@@ -387,6 +387,8 @@ moveloop()
 	/* once-per-player-input things go here */
 	/****************************************/
 
+	time_check();
+
 	find_ac();
 	if(!flags.mv || Blind) {
 	    /* redo monsters if hallu or wearing a helm of telepathy */

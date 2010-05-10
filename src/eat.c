@@ -1542,6 +1542,9 @@ struct obj *otmp;
 			makeknown(typ);
 		    }
 		    break;
+		  case RIN_CONFLICT:
+		    u.uconduct.conflict++;
+		    break;
 		}
 		break;
 	    case RIN_ADORNMENT:

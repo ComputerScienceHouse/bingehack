@@ -1400,7 +1400,11 @@ nothing_special:
 	}
 	switch(oart->inv_prop) {
 	case CONFLICT:
-	    if(on) You_feel("like a rabble-rouser.");
+	    if(on)
+	    {
+	    	You_feel("like a rabble-rouser.");
+	    	u.uconduct.conflict++;
+	    }
 	    else You_feel("the tension decrease around you.");
 	    break;
 	case LEVITATION:

@@ -1061,6 +1061,7 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 	if (Lifesaved)
 		enl_msg("Your life ", "will be", "would have been", " saved");
 	if (u.twoweap) you_are("wielding two weapons at once");
+	if (self_genocided(0) && final<2) you_are("dead inside");
 
 	/*** Miscellany ***/
 	if (Luck) {
@@ -1297,11 +1298,33 @@ doconduct()
 	return 0;
 }
 
+char *
+short_time(char *buf, time_t t)
+{
+	char *obuf;
+	int y;
+	
+	if (t<0)
+		return strcpy(buf, "a negative amount");
+	if (!t)
+		return strcpy(buf, "not even a second");
+	obuf=buf;
+#define UNIT(T,x) if (t>=(T)) {buf+=sprintf(buf,"%d%s ",y=t/(T),x);t-=y*(T);}
+	UNIT(365*24*3600, "y");
+	UNIT(    24*3600, "d");
+	UNIT(       3600, "h");
+	UNIT(         60, "m");
+	UNIT(          1, "s");
+#undef UNIT
+	*--buf=0;
+	return obuf;
+}
+
 void
 show_conduct(final)
 int final;
 {
-	char buf[BUFSZ];
+	char buf[BUFSZ],buf2[BUFSZ];
 	int ngenocided;
 
 	/* Create the conduct window */
@@ -1382,6 +1405,47 @@ int final;
 		enl_msg(You_, "have not wished", "did not wish",
 			" for any artifacts");
 	}
+	
+	if (!u.uconduct.sex)
+	   you_have_been("celibate");
+	
+	switch(u.uconduct.humhell)
+	{
+	case 1:
+	    Sprintf(buf, "defiled %s brain with the depravity of hell",
+	    	an(urace.noun));
+	    you_have_never(buf);
+	    break;
+	case 2:
+	    Sprintf(buf, "the last %s to ever enter Hell", urace.noun);
+	    you_have_been(buf);
+	}
+	
+	if (!u.uconduct.conflict && (final||objects[RIN_CONFLICT].oc_name_known))
+	    you_have_never("caused conflict");
+	
+	if (!u.uconduct.imbibe)
+	    you_have_never("drank anything");
+	
+	if (!u.uconduct.elbereth)
+	    you_have_never("invoked the word of protection");
+	    /* 1KB: personally, I believe it should say "used the cheat code",
+	       but somehow I don't think the patch would get accepted */
+	
+        if (u.uconduct.armour<10 && !uarm && !uarmc && !uarmh && !uarmg
+                && !uarms && !uarmf
+#ifdef TOURIST
+                && !uarmu
+#endif
+                )
+            you_have_never("used armour");
+            /* "used" not "worn", as we give a bit of leeway */
+
+        if (Blind && u.uconduct.sight<10)
+            you_have_been("true to the spirit of Zen");
+
+        Sprintf(buf, "wasted %s of time%s", short_time(buf2, u.uage), final?"":" so far");
+        you_have_X(buf);
 
 	/* Pop up the window and wait for a key */
 	display_nhwindow(en_win, TRUE);

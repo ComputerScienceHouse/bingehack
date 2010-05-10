@@ -2477,6 +2477,7 @@ int cha_penalty;
 	}
 	if (u.ualign.type == A_CHAOTIC)
 		adjalign(1);
+	u.uconduct.sex++;
 
 	/* by this point you have discovered mon's identity, blind or not... */
 	pline("Time stands still while you and %s lie in each other's arms...",

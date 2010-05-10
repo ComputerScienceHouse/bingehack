@@ -1417,6 +1417,9 @@ domove()
 	    nomovemsg = "";
 	}
 
+	if (!Blind)
+	    u.uconduct.sight=moves;
+
 	if (flags.run && iflags.runmode != RUN_TPORT) {
 	    /* display every step or every 7th step depending upon mode */
 	    if (iflags.runmode != RUN_LEAP || !(moves % 7L)) {
@@ -2163,6 +2166,31 @@ boolean k_format;
 	} else if (n > 0 && u.uhp*10 < u.uhpmax) {
 		maybe_wail();
 	}
+}
+
+/* 1KB: call this whenever the player gave any input */
+/* As of the moment of writing, this function gets called from only a couple
+   places, making it very inaccurate.  We really should put in win/ everywhere
+   where keyboard/mouse input is received. */
+void 
+time_check()
+{
+	time_t now, elapsed;
+	
+#if defined(BSD) && !defined(POSIX_TYPES)
+        (void) time((long *)&now);
+#else
+        (void) time(&now);
+#endif
+	elapsed=now-u.timecheck;
+	u.timecheck=now;
+	if (elapsed<0)		/* the clock was adjusted */
+		return;
+	if (elapsed>10*365*24*3600)	/* start or something fishy */
+		return;
+	if (elapsed>30)		/* beer/bathroom/work/rgrn or otherwise idle */
+		elapsed=30;
+	u.uage+=elapsed;
 }
 
 int

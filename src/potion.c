@@ -236,6 +236,8 @@ boolean talk;
 	    flags.botl = 1;
 	    vision_full_recalc = 1;	/* blindness just got toggled */
 	    if (Blind_telepat || Infravision) see_monsters();
+	    if (!invocation_pos(u.ux, u.uy))
+	    	u.uconduct.sight=moves;
 	}
 }
 
@@ -391,6 +393,7 @@ register struct obj *otmp;
 
 	otmp->in_use = TRUE;
 	nothing = unkn = 0;
+	u.uconduct.imbibe++;
 	if((retval = peffects(otmp)) >= 0) return(retval);
 
 	if(nothing) {

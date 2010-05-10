@@ -66,6 +66,8 @@ pline VA_DECL(const char *, line)
 	if (vision_full_recalc) vision_recalc(0);
 	if (u.ux) flush_screen(1);		/* %% */
 	putstr(WIN_MESSAGE, 0, line);
+	
+	time_check();	/* actually, we should do this once the hero dismisses the command */
 }
 
 /*VARARGS1*/

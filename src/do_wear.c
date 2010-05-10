@@ -693,6 +693,10 @@ register struct obj *obj;
     if ((oldprop & W_RING) != W_RING) oldprop &= ~W_RING;
 
     switch(obj->otyp){
+    	case RIN_CONFLICT:
+    		u.uconduct.conflict++;
+    		/* 1KB: enlightenment will say "You cause conflict.", so we need
+		   to mark the conduct even if it no monster was ever affected */
 	case RIN_TELEPORTATION:
 	case RIN_REGENERATION:
 	case RIN_SEARCHING:
@@ -703,7 +707,6 @@ register struct obj *obj;
 	case RIN_FIRE_RESISTANCE:
 	case RIN_COLD_RESISTANCE:
 	case RIN_SHOCK_RESISTANCE:
-	case RIN_CONFLICT:
 	case RIN_TELEPORT_CONTROL:
 	case RIN_POLYMORPH:
 	case RIN_POLYMORPH_CONTROL:
@@ -934,6 +937,7 @@ register struct obj *otmp;
 	    if (Blind_telepat || Infravision) see_monsters();
 	    vision_full_recalc = 1;	/* recalc vision limits */
 	    flags.botl = 1;
+	    u.uconduct.sight=moves;
 	}
 }
 
@@ -969,6 +973,7 @@ register struct obj *otmp;
 	    if (Blind_telepat || Infravision) see_monsters();
 	    vision_full_recalc = 1;	/* recalc vision limits */
 	    flags.botl = 1;
+	    u.uconduct.sight=moves;
 	}
 }
 

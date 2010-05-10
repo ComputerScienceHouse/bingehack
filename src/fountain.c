@@ -203,6 +203,7 @@ drinkfountain()
 		return;
 	}
 
+	u.uconduct.imbibe++;
 	if (mgkftn && u.uluck >= 0 && fate >= 10) {
 		int i, ii, littleluck = (u.uluck < 4);
 
@@ -516,6 +517,7 @@ drinksink()
 		floating_above("sink");
 		return;
 	}
+	u.uconduct.imbibe++;
 	switch(rn2(20)) {
 		case 0: You("take a sip of very cold water.");
 			break;

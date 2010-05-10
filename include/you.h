@@ -51,6 +51,7 @@ struct u_event {
 #endif
 	Bitfield(udemigod,1);		/* killed the wiz */
 	Bitfield(ascended,1);		/* has offered the Amulet */
+	Bitfield(valley_entered,1);	/* entered Hell */
 };
 
 /* KMH, conduct --
@@ -69,6 +70,16 @@ struct u_conduct {		/* number of times... */
 	long	polyselfs;	/* transformed yourself */
 	long	wishes;		/* used a wish */
 	long	wisharti;	/* wished for an artifact */
+	long	sex;		/* consorted with a foocubi */
+	long	conflict;	/* caused conflict */
+	long	imbibe;		/* drank anything */
+#ifdef ELBERETH
+	long	elbereth;	/* wrote Elbereth */
+#endif
+				/* Different logic: */
+	long	humhell;	/* been in Hell as yourself: 1:no, 2:no+self-genocide */
+	long	armour;		/* the last turn you _removed_ a piece of armour */
+	long	sight;		/* the last turn you could see in a non-invocation spot */
 				/* genocides already listed at end of game */
 };
 
@@ -360,7 +371,8 @@ struct you {
 	xchar	skill_record[P_SKILL_LIMIT];	/* skill advancements */
 	struct skills weapon_skills[P_NUM_SKILLS];
 	boolean twoweap;		/* KMH -- Using two-weapon combat */
-
+	time_t	uage;		/* time wasted */
+	time_t	timecheck;	/* last time check */
 };	/* end of `struct you' */
 
 #define Upolyd (u.umonnum != u.umonster)
