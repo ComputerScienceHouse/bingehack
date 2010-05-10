@@ -351,6 +351,7 @@ typedef unsigned char	uchar;
 #define ASTR_ESC /* Allow escape from Astral plane (with the Amulet) - CWC */
 /* #define SCORE_ON_BOTL */	/* added by Gary Erickson (erickson@ucivax) */
 #define ENLIGHTENMENT_DIP
+#define PET_FOLLOW /* Pets adjacent to pets follow you */
 
 /*
  * Section 5:  EXPERIMENTAL STUFF

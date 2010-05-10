@@ -479,6 +479,29 @@ long nmv;		/* number of moves */
 #endif /* OVLB */
 #ifdef OVL2
 
+#ifdef PET_FOLLOW
+#define FOLLOWBIT 0x80000000
+
+void
+findfollowers(x, y)
+xchar x;
+xchar y;
+{
+    struct monst *mtmp;
+    for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+        if (DEADMONSTER(mtmp)) continue;
+        if (!mtmp->mtame) continue;
+        if(monnear(mtmp, x, y) && levl_follower(mtmp) &&
+                !(mtmp->misc_worn_check & FOLLOWBIT)) {
+            mtmp->misc_worn_check |= FOLLOWBIT;
+            findfollowers(mtmp->mx, mtmp->my);
+        }
+    }
+    
+    return;
+}
+#endif /* PET_FOLLOW */
+
 /* called when you move to another level */
 void
 keepdogs(pets_only)
@@ -488,9 +511,19 @@ boolean pets_only;	/* true for ascension or final escape */
 	register struct obj *obj;
 	int num_segs;
 	boolean stay_behind;
+#ifdef PET_FOLLOW
+        boolean follower;
+
+        findfollowers(u.ux, u.uy);
+#endif
 
 	for (mtmp = fmon; mtmp; mtmp = mtmp2) {
 	    mtmp2 = mtmp->nmon;
+#ifdef PET_FOLLOW
+            follower = !!(mtmp->misc_worn_check & FOLLOWBIT);
+            mtmp->misc_worn_check &= ~FOLLOWBIT;
+#endif
+                
 	    if (DEADMONSTER(mtmp)) continue;
 	    if (pets_only && !mtmp->mtame) continue;
 	    if (((monnear(mtmp, u.ux, u.uy) && levl_follower(mtmp)) ||
@@ -500,7 +533,11 @@ boolean pets_only;	/* true for ascension or final escape */
 		/* the wiz will level t-port from anywhere to chase
 		   the amulet; if you don't have it, will chase you
 		   only if in range. -3. */
-			(u.uhave.amulet && mtmp->iswiz))
+			(u.uhave.amulet && mtmp->iswiz)
+#ifdef PET_FOLLOW
+                        || follower
+#endif
+                        )
 		&& ((!mtmp->msleeping && mtmp->mcanmove)
 #ifdef STEED
 		    /* eg if level teleport or new trap, steed has no control
