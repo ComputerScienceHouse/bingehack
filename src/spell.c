@@ -712,6 +712,18 @@ int spell;
     return;
 }
 
+void
+destroy_uwep_gems()
+{
+  if (uwep && uwep->oclass == GEM_CLASS &&
+      objects[uwep->otyp].oc_material != MINERAL) {
+      pline_The("gem%s in your %s turn%s to dust!",
+		uwep->quan == 1 ? "" : "s", body_part(HAND),
+		uwep->quan == 1 ? "s" : "");
+      useupall(uwep);
+  }
+}
+
 int
 spelleffects(spell, atme)
 int spell;
@@ -722,16 +734,27 @@ boolean atme;
 	boolean confused = (Confusion != 0);
 	struct obj *pseudo;
 	coord cc;
+	int gempower = 0;
+
+	if (uwep && uwep->oclass == GEM_CLASS &&
+	    objects[uwep->otyp].oc_material == GEMSTONE)
+	    gempower = (uwep->quan * objects[uwep->otyp].oc_cost)/300;
 
 	/*
 	 * Spell casting no longer affects knowledge of the spell. A
 	 * decrement of spell knowledge is done every turn.
 	 */
 	if (spellknow(spell) <= 0) {
+	  if (!gempower || !rn2(max(gempower,2))) {
 	    Your("knowledge of this spell is twisted.");
 	    pline("It invokes nightmarish images in your mind...");
 	    spell_backfire(spell);
 	    return(0);
+	  } else {
+	    gempower = 0;
+	    destroy_uwep_gems();
+	    Your("memory becomes crystal clear for a moment.");
+	  }
 	} else if (spellknow(spell) <= 100) {
 	    You("strain to recall the spell.");
 	} else if (spellknow(spell) <= 1000) {
@@ -739,24 +762,29 @@ boolean atme;
 	}
 	energy = (spellev(spell) * 5);    /* 5 <= energy <= 35 */
 
-	if (u.uhunger <= 10 && spellid(spell) != SPE_DETECT_FOOD) {
+	if (!gempower) {
+	    if (u.uhunger <= 10 && spellid(spell) != SPE_DETECT_FOOD) {
 		You("are too hungry to cast that spell.");
 		return(0);
-	} else if (ACURR(A_STR) < 4)  {
+	    } else if (ACURR(A_STR) < 4)  {
 		You("lack the strength to cast spells.");
 		return(0);
-	} else if(check_capacity(
+	    } else if(check_capacity(
 		"Your concentration falters while carrying so much stuff.")) {
-	    return (1);
-	} else if (!freehand()) {
+		return (1);
+	    } else if (!freehand()) {
 		Your("arms are not free to cast!");
 		return (0);
+	    }
 	}
 
 	if (u.uhave.amulet) {
 		You_feel("the amulet draining your energy away.");
 		energy += rnd(2*energy);
 	}
+
+	energy -= min(gempower, (energy/2));
+
 	if(energy > u.uen)  {
 		You("don't have enough energy to cast that spell.");
 		return(0);
@@ -797,6 +825,8 @@ boolean atme;
 			morehungry(hungr);
 		}
 	}
+
+	destroy_uwep_gems();
 
 	chance = percent_success(spell);
 	/* if the crystal ball is cursed, then we block the divination spell completely */
