@@ -95,7 +95,6 @@ static struct Bool_Opt
 	{"fast_map", (boolean *)0, TRUE, SET_IN_FILE},
 #endif
 	{"female", &flags.female, FALSE, DISP_IN_GAME},
-	{"fixinv", &flags.invlet_constant, TRUE, SET_IN_GAME},
 #ifdef AMIFLUSH
 	{"flush", &flags.amiflush, FALSE, SET_IN_GAME},
 #else
@@ -258,6 +257,8 @@ static struct Comp_Opt
 						MAXDCHARS+1, SET_IN_FILE },
 	{ "effects",  "the symbols to use in drawing special effects",
 						MAXECHARS+1, SET_IN_FILE },
+	{ "fixinv",   "how objects reorder inventory",
+						sizeof "none", SET_IN_GAME},
 	{ "font_map", "the font to use in the map window", 40, DISP_IN_GAME },	/*WC*/
 	{ "font_menu", "the font to use in menus", 40, DISP_IN_GAME },		/*WC*/
 	{ "font_message", "the font to use in the message window",
@@ -542,6 +543,7 @@ initoptions()
 	flags.end_top = 3;
 	flags.end_around = 2;
 	iflags.runmode = RUN_TPORT;
+	flags.invlet_constant = FIXINV_NEXT;
 	iflags.msg_history = 20;
 #ifdef TTY_GRAPHICS
 	iflags.prevmsg_window = 's';
@@ -1482,6 +1484,27 @@ boolean tinitial, tfrom_file;
 			iflags.msg_history = negated ? 0 : atoi(op);
 		} else if (negated) bad_negation(fullname, TRUE);
 		return;
+	}
+
+	fullname="fixinv";
+	/* fixinv:none, next or move */
+	if (match_optname(opts, fullname, 6, TRUE)) {
+	    if (!(op = string_for_opt(opts, TRUE))) {
+		flags.invlet_constant = negated ? FIXINV_NONE : FIXINV_NEXT;
+	    } else {
+		if (negated) {
+		    bad_negation(fullname, TRUE);
+		    return;
+		}
+		if (!strncmpi(op, "next", strlen(op)))
+		    flags.invlet_constant = FIXINV_NEXT;
+		else if (!strncmpi(op, "move", strlen(op)))
+		    flags.invlet_constant = FIXINV_MOVE;
+		else if (!strncmpi(op, "none", strlen(op)))
+		    flags.invlet_constant = FIXINV_NONE;
+		else badoption(opts);
+	    }
+	    return;
 	}
 
 	fullname="msg_window";
@@ -2571,10 +2594,6 @@ goodfruit:
 #endif
 			    )
 			    flags.botl = TRUE;
-
-			else if ((boolopt[i].addr) == &flags.invlet_constant) {
-			    if (flags.invlet_constant) reassign();
-			}
 #ifdef LAN_MAIL
 			else if ((boolopt[i].addr) == &flags.biff) {
 			    if (flags.biff) lan_mail_init();
@@ -2923,13 +2942,33 @@ boolean setinitial,setfromfile;
     char buf[BUFSZ];
     boolean retval = FALSE;
     
-    /* Special handling of menustyle, pickup_burden, pickup_types,
+    /* Special handling of menustyle, pickup_burden, pickup_types, fixinv
      * disclose, runmode, msg_window, menu_headings, number_pad and sortloot
 #ifdef AUTOPICKUP_EXCEPTIONS
      * Also takes care of interactive autopickup_exception_handling changes.
 #endif
      */
-    if (!strcmp("menustyle", optname)) {
+    if (!strcmp("fixinv", optname)) {
+	menu_item *window_pick = (menu_item *)0;
+	tmpwin = create_nhwindow(NHW_MENU);
+	start_menu(tmpwin);
+	any.a_char = FIXINV_NONE;
+	add_menu(tmpwin, NO_GLYPH, &any, FIXINV_NONE, 0,
+		ATR_NONE, "none", MENU_UNSELECTED);
+	any.a_char = FIXINV_NEXT;
+	add_menu(tmpwin, NO_GLYPH, &any, FIXINV_NEXT, 0,
+		ATR_NONE, "next", MENU_UNSELECTED);
+	any.a_char = FIXINV_MOVE;
+	add_menu(tmpwin, NO_GLYPH, &any, FIXINV_MOVE, 0,
+		ATR_NONE, "move", MENU_UNSELECTED);
+	end_menu(tmpwin, "Select inventory letter persistance type:");
+	if (select_menu(tmpwin, PICK_ONE, &window_pick) > 0) {
+		flags.invlet_constant = window_pick->item.a_char;
+		free((genericptr_t)window_pick);
+	}
+	destroy_nhwindow(tmpwin);
+        retval = TRUE;
+    } else if (!strcmp("menustyle", optname)) {
 	const char *style_name;
 	menu_item *style_pick = (menu_item *)0;
         tmpwin = create_nhwindow(NHW_MENU);
@@ -3341,6 +3380,10 @@ char *buf;
 		Sprintf(buf, "%s", to_be_done);
 	else if (!strcmp(optname, "effects"))
 		Sprintf(buf, "%s", to_be_done);
+	else if (!strcmp(optname, "fixinv"))
+		Sprintf(buf, "%s",
+			(flags.invlet_constant == FIXINV_MOVE) ? "move" :
+			(flags.invlet_constant == FIXINV_NEXT) ? "next" : "none" );
 	else if (!strcmp(optname, "font_map"))
 		Sprintf(buf, "%s", iflags.wc_font_map ? iflags.wc_font_map : defopt);
 	else if (!strcmp(optname, "font_message"))

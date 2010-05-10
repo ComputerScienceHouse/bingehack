@@ -12,7 +12,6 @@ confirm        ask before hitting tame or peaceful monsters       [TRUE]
 DECgraphics    use DEC/VT line-drawing characters for the dungeon [FALSE]
 eight_bit_tty  send 8-bit characters straight to terminal         [FALSE]
 extmenu        use a menu for selecting extended commands (#)     [FALSE]
-fixinv         try to retain the same letter for the same object  [TRUE]
 help           print all available info when using the / command  [TRUE]
 IBMgraphics    use IBM extended characters for the dungeon        [FALSE]
 ignintr        ignore interrupt signal, including breaks          [FALSE]
@@ -107,6 +106,13 @@ Compound options which can be set during the game are:
 boulder       override the default boulder symbol with another default: [`]
 disclose      the types of information you want offered at the end of the
               game  [ni na nv ng nc]
+fixinv        how picking and dropping objects reorders the inventory:
+              None -- objects do not remember inventory letters;
+              Next -- put object into next free slot;
+              Move -- put object into the slot where it previously
+                      was, moving any object underneath to next free slot;
+              boolean style negation is also usable, False is synonym for
+              None and True is Next  [Next]
 fruit         the name of a fruit you enjoy eating  [slime mold]
               (basically a whimsy which NetHack uses from time to time).
 menustyle     user interface for selection of multiple objects:

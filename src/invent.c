@@ -51,6 +51,8 @@ register struct obj *otmp;
 	boolean inuse[52];
 	register int i;
 	register struct obj *obj;
+	struct obj *displaceobj = (struct obj *)0;
+	char ilet;
 
 #ifdef GOLDOBJ
         /* There is only one of these in inventory... */        
@@ -65,17 +67,34 @@ register struct obj *otmp;
 		i = obj->invlet;
 		if('a' <= i && i <= 'z') inuse[i - 'a'] = TRUE; else
 		if('A' <= i && i <= 'Z') inuse[i - 'A' + 26] = TRUE;
-		if(i == otmp->invlet) otmp->invlet = 0;
+		if(i == otmp->invlet) {
+		    if (flags.invlet_constant == FIXINV_NEXT)
+			otmp->invlet = 0;
+		    else displaceobj = obj;
+		}
 	}
-	if((i = otmp->invlet) &&
+	if((i = otmp->invlet) && flags.invlet_constant == FIXINV_NEXT &&
 	    (('a' <= i && i <= 'z') || ('A' <= i && i <= 'Z')))
 		return;
-	for(i = lastinvnr+1; i != lastinvnr; i++) {
+	if (flags.invlet_constant == FIXINV_NEXT) {
+	    for(i = lastinvnr+1; i != lastinvnr; i++) {
 		if(i == 52) { i = -1; continue; }
 		if(!inuse[i]) break;
+	    }
+	} else {
+	    for(i = 0; i <52; i++)
+		if(!inuse[i]) break;
 	}
-	otmp->invlet = (inuse[i] ? NOINVSYM :
-			(i < 26) ? ('a'+i) : ('A'+i-26));
+	ilet = (inuse[i] ? NOINVSYM :
+		(i < 26) ? ('a'+i) : ('A'+i-26));
+	if (flags.invlet_constant == FIXINV_NEXT) {
+	    otmp->invlet = ilet;
+	} else {
+	    if (displaceobj) {
+		otmp->invlet = displaceobj->invlet;
+		displaceobj->invlet = ilet;
+	    } else otmp->invlet = ilet;
+	}
 	lastinvnr = i;
 }
 
@@ -302,6 +321,7 @@ addinv(obj)
 struct obj *obj;
 {
 	struct obj *otmp, *prev;
+	boolean fixinv = (flags.invlet_constant != FIXINV_NONE);
 
 	if (obj->where != OBJ_FREE)
 	    panic("addinv: obj not free");
@@ -321,11 +341,11 @@ struct obj *obj;
 		goto added;
 	    }
 	/* didn't merge, so insert into chain */
-	if (flags.invlet_constant || !prev) {
-	    if (flags.invlet_constant) assigninvlet(obj);
+	if (fixinv || !prev) {
+	    if (fixinv) assigninvlet(obj);
 	    obj->nobj = invent;		/* insert at beginning */
 	    invent = obj;
-	    if (flags.invlet_constant) reorder_invent();
+	    if (fixinv) reorder_invent();
 	} else {
 	    prev->nobj = obj;		/* insert at end */
 	    obj->nobj = 0;
@@ -815,7 +835,7 @@ register const char *let,*word;
 
 	ilet = 'a';
 	for (otmp = invent; otmp; otmp = otmp->nobj) {
-	    if (!flags.invlet_constant)
+	    if (flags.invlet_constant == FIXINV_NONE)
 #ifdef GOLDOBJ
 		if (otmp->invlet != GOLD_SYM) /* don't reassign this */
 #endif
@@ -1575,7 +1595,7 @@ register struct obj *obj;
 	if (obj->oclass == COIN_CLASS)
 		return GOLD_SYM;
 #endif
-	if (!flags.invlet_constant) {
+	if (flags.invlet_constant == FIXINV_NONE) {
 		obj->invlet = NOINVSYM;
 		reassign();
 	}
@@ -1615,7 +1635,7 @@ long quan;		/* if non-0, print this quantity, not obj->quan */
 #else
     static char li[BUFSZ];
 #endif
-    boolean use_invlet = flags.invlet_constant && let != CONTAINED_SYM;
+    boolean use_invlet = (flags.invlet_constant != FIXINV_NONE) && let != CONTAINED_SYM;
     long savequan = 0;
 
     if (quan && obj) {
@@ -1747,7 +1767,7 @@ long* out_cnt;
 	}
 
 	/* oxymoron? temporarily assign permanent inventory letters */
-	if (!flags.invlet_constant) reassign();
+	if (flags.invlet_constant == FIXINV_NONE) reassign();
 
 	if (lets && strlen(lets) == 1) {
 	    /* when only one item of interest, use pline instead of menus;
@@ -1973,7 +1993,7 @@ dounpaid()
     win = create_nhwindow(NHW_MENU);
     cost = totcost = 0;
     num_so_far = 0;	/* count of # printed so far */
-    if (!flags.invlet_constant) reassign();
+    if (flags.invlet_constant == FIXINV_NONE) reassign();
 
     do {
 	classcount = 0;
@@ -2148,7 +2168,7 @@ dotypeinv()
 	    this_type = oclass;
 	}
 	if (query_objlist((char *) 0, invent,
-		    (flags.invlet_constant ? USE_INVLET : 0)|INVORDER_SORT,
+		    ((flags.invlet_constant != FIXINV_NONE) ? USE_INVLET : 0)|INVORDER_SORT,
 		    &pick_list, PICK_NONE, this_type_only) > 0)
 	    free((genericptr_t)pick_list);
 	return 0;
@@ -2726,7 +2746,7 @@ doorganize()	/* inventory organizer by Del Lamb */
 	char allowall[2];
 	const char *adj_type;
 
-	if (!flags.invlet_constant) reassign();
+	if (flags.invlet_constant == FIXINV_NONE) reassign();
 	/* get a pointer to the object the user wants to organize */
 	allowall[0] = ALL_CLASSES; allowall[1] = '\0';
 	if (!(obj = getobj(allowall,"adjust"))) return(0);

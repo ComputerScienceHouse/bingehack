@@ -47,7 +47,7 @@ struct flag {
 #ifdef INSURANCE
 	boolean  ins_chkpt;	/* checkpoint as appropriate */
 #endif
-	boolean  invlet_constant; /* let objects keep their inventory symbol */
+	char     invlet_constant; /* let objects keep their inventory symbol */
 	boolean  invweight;    /* show weight in inventory and when picking up */
 	boolean  legacy;	/* print game entry "story" */
 	boolean  lit_corridor;	/* show a dark corr as lit if it is in sight */
@@ -333,4 +333,10 @@ extern NEARDATA struct instance_flags iflags;
 #define RUN_STEP	2	/* update display every single step */
 #define RUN_CRAWL	3	/* walk w/ extra delay after each update */
 
+
+/* fixinv options */
+#define FIXINV_NONE	'n'	/* objects don't remember inventory letters */
+#define FIXINV_NEXT	'x'	/* put object to next free slot */
+#define FIXINV_MOVE	'm'	/* put object in old slot, moving any object in the slot
+				   to next free slot */
 #endif /* FLAG_H */
