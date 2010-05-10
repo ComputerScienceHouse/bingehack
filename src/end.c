@@ -76,7 +76,11 @@ static NEARDATA const char *deaths[] = {		/* the array of death */
 	"burning", "dissolving under the heat and pressure",
 	"crushed", "turned to stone", "turned into slime",
 	"genocided", "panic", "trickery",
+#ifdef ASTR_ESC
+	"quit", "escaped", "defied the gods then escaped", "ascended"
+#else
 	"quit", "escaped", "ascended"
+#endif
 };
 
 static NEARDATA const char *ends[] = {		/* "when you..." */
@@ -84,7 +88,11 @@ static NEARDATA const char *ends[] = {		/* "when you..." */
 	"burned", "dissolved in the lava",
 	"were crushed", "turned to stone", "turned into slime",
 	"were genocided", "panicked", "were tricked",
+#ifdef ASTR_ESC
+	"quit", "escaped", "defied the gods then escaped", "ascended"
+#else
 	"quit", "escaped", "ascended"
+#endif
 };
 
 extern const char * const killed_by_prefix[];	/* from topten.c */
@@ -753,7 +761,11 @@ die:
 			Strcpy(kilbuf, "quit while already on Charon's boat");
 		}
 	}
+#ifdef ASTR_ESC
+	if (how == ESCAPED || how == DEFIED || how == PANICKED)
+#else
 	if (how == ESCAPED || how == PANICKED)
+#endif
 		killer_format = NO_KILLER_PREFIX;
 
 	if (how != PANICKED) {
@@ -801,7 +813,11 @@ die:
 	    u.urexp += 50L * (long)(deepest - 1);
 	    if (deepest > 20)
 		u.urexp += 1000L * (long)((deepest > 30) ? 10 : deepest - 20);
+#ifdef ASTR_ESC
+	    if (how == ASCENDED || how == DEFIED) u.urexp *= 2L;
+#else
 	    if (how == ASCENDED) u.urexp *= 2L;
+#endif
 #ifdef DEATH_EXPLORE
 	    if (goexplore) {
 	      discover = FALSE; /* a kludge to fool the topten function.. */
@@ -890,7 +906,11 @@ die:
 	    putstr(endwin, 0, "");
 	}
 
+#ifdef ASTR_ESC
+	if (how == ESCAPED || how == DEFIED || how == ASCENDED) {
+#else
 	if (how == ESCAPED || how == ASCENDED) {
+#endif
 	    register struct monst *mtmp;
 	    register struct obj *otmp;
 	    register struct val_list *val;
@@ -932,7 +952,12 @@ die:
 	    if (!done_stopprint) {
 		Sprintf(eos(pbuf), "%s with %ld point%s,",
 			how==ASCENDED ? "went to your reward" :
+#ifdef ASTR_ESC
+					(how==DEFIED ? "defied the Gods then escaped from the dungeon" :
+					"escaped from the dungeon"),
+#else
 					"escaped from the dungeon",
+#endif
 			u.urexp, plur(u.urexp));
 		putstr(endwin, 0, pbuf);
 	    }
@@ -1040,8 +1065,8 @@ boolean identified, all_containers;
 
 	for (box = list; box; box = box->nobj) {
 	    if (Is_container(box) || box->otyp == STATUE) {
-		if (box->otyp == BAG_OF_TRICKS) {
-		    continue;	/* wrong type of container */
+		if (box->otyp == BAG_OF_TRICKS && box->spe) {
+		    continue;	/* bag of tricks with charges can't contain anything */
 		} else if (box->cobj) {
 		    winid tmpwin = create_nhwindow(NHW_MENU);
 #ifdef SORTLOOT

@@ -48,6 +48,7 @@
 #define MS_SPELL	37	/* spellcaster not matching any of the above */
 #define MS_WERE		38	/* lycanthrope in human form */
 #define MS_BOAST	39	/* giants */
+#define MS_VICE		40	/* alternate astral level special */
 
 
 #define MR_FIRE		0x01	/* resists fire */

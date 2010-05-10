@@ -10,6 +10,8 @@
 #include <ctype.h>
 #endif
 
+#define FORCE_VICES
+
 STATIC_VAR NEARDATA struct monst zeromonst;
 
 /* this assumes that a human quest leader or nemesis is an archetype
@@ -32,6 +34,10 @@ STATIC_DCL void FDECL(m_initinv,(struct monst *));
 #endif /* OVL1 */
 
 extern const int monstr[];
+int rider_replacements = 0;
+int rider_replacement1_pm = 0;
+int rider_replacement2_pm = 0;
+int rider_replacement3_pm = 0;
 
 #define m_initsgrp(mtmp, x, y)	m_initgrp(mtmp, x, y, 3)
 #define m_initlgrp(mtmp, x, y)	m_initgrp(mtmp, x, y, 10)
@@ -878,6 +884,49 @@ register int	mmflags;
 		    pline("Explicitly creating extinct monster %s.",
 			mons[mndx].mname);
 #endif
+		if(is_rider(ptr)) {
+		    if(rider_replacements==0) { /* Then haven't decided yet */
+			rider_replacements = (rn2(2) ? 1 : 4);
+#ifdef FORCE_VICES
+			rider_replacements = 1;
+#endif
+		    }
+		    if(rider_replacements<4) { /* Decision made, we're replacing. */
+			switch(rider_replacements++) {
+			    case 1:
+				rider_replacement1_pm = rn1(7, PM_GLUTTONY);
+				mndx = rider_replacement1_pm;
+				break;
+			    case 2:
+				while(1) {
+				    rider_replacement2_pm = rn1(7, PM_GLUTTONY);
+				    if(rider_replacement2_pm != rider_replacement1_pm) break;
+				}
+				mndx = rider_replacement2_pm;
+				break;
+			    case 3:
+				while(1) {
+				    rider_replacement3_pm = rn1(7, PM_GLUTTONY);
+				    if((rider_replacement3_pm != rider_replacement2_pm) && (rider_replacement3_pm != rider_replacement1_pm)) break;
+				}
+				mndx = rider_replacement3_pm;
+				break;
+			}
+		    } else { /* Decided not to replace. */
+			rider_replacement1_pm = PM_DEATH;
+			rider_replacement2_pm = PM_FAMINE;
+			rider_replacement3_pm = PM_PESTILENCE;
+		    }
+#ifdef WIZARD
+		    if(wizard && rider_replacements==4) {
+			pline("The Terrible Trio this game are: %s, %s, %s.",
+			    mons[rider_replacement1_pm].mname,
+			    mons[rider_replacement2_pm].mname,
+			    mons[rider_replacement3_pm].mname);
+		    }
+#endif
+		    ptr = &mons[mndx];
+		}
 	} else {
 		/* make a random (common) monster that can survive here.
 		 * (the special levels ask for random monsters at specific
@@ -917,7 +966,7 @@ register int	mmflags;
 	mtmp->m_lev = adj_lev(ptr);
 	if (is_golem(ptr)) {
 	    mtmp->mhpmax = mtmp->mhp = golemhp(mndx);
-	} else if (is_rider(ptr)) {
+	} else if (is_endgamenasty(ptr)) {
 	    /* We want low HP, but a high mlevel so they can attack well */
 	    mtmp->mhpmax = mtmp->mhp = d(10,8);
 	} else if (ptr->mlevel > 49) {
@@ -1029,6 +1078,16 @@ register int	mmflags;
 		mitem = BELL_OF_OPENING;
 	} else if (mndx == PM_PESTILENCE) {
 		mitem = POT_SICKNESS;
+	} else if (mndx == PM_GLUTTONY) {
+		mitem = HUGE_CHUNK_OF_MEAT;
+	} else if (mndx == PM_PRIDE) {
+		mitem = MIRROR;
+	} else if (mndx == PM_LUST) {
+		/* mitem = BULLWHIP; */  /* You guys are so immature. */
+	} else if (mndx == PM_GREED || mndx == PM_ENVY) {
+		mitem = DIAMOND;
+	} else if (mndx == PM_SLOTH) {
+		mitem = TOWEL; /* closest thing to a pillow... */
 	}
 	if (mitem && allow_minvent) (void) mongets(mtmp, mitem);
 
@@ -1771,28 +1830,131 @@ assign_sym:
 	mtmp->mappearance = appear;
 }
 
-/* release a monster from a bag of tricks */
-void
+/* Bag of Tricks now trickier ... nda 5/13/2003 */
+int
 bagotricks(bag)
 struct obj *bag;
 {
     if (!bag || bag->otyp != BAG_OF_TRICKS) {
 	impossible("bad bag o' tricks");
     } else if (bag->spe < 1) {
-	pline(nothing_happens);
+		return use_container(bag, 1);
     } else {
-	boolean gotone = FALSE;
-	int cnt = 1;
+	
+	boolean gotone = TRUE;
+	int cnt;
+	struct monst *mtmp;
+	struct obj *otmp;
 
 	consume_obj_charge(bag, TRUE);
 
-	if (!rn2(23)) cnt += rn1(7, 1);
-	while (cnt-- > 0) {
-	    if (makemon((struct permonst *)0, u.ux, u.uy, NO_MM_FLAGS))
-		gotone = TRUE;
+	switch(rn2(20)) {
+	case 0:
+	case 1:
+		if(bag->recharged==0 && !bag->cursed) {
+			for(cnt=3;cnt>0 && (otmp = mkobj(RANDOM_CLASS,FALSE));cnt--) {
+				if(otmp->owt<100 && !objects[otmp->otyp].oc_big)
+					break;
+				obj_extract_self(otmp);
+				obfree(otmp, (struct obj *)0);
+				otmp = (struct obj*)0;
+			}
+			if(!otmp) {
+				pline_The("bag coughs nervously.");
+				break;
+			}
+		} else {
+			otmp = mksobj(IRON_CHAIN,FALSE,FALSE);
+		}
+		pline("%s spits %s out.", The(xname(bag)),something);
+		otmp = hold_another_object(otmp, "It slips away from you.", (char*)0, (char*)0); 
+		break;
+	case 2:
+		pline_The("bag wriggles away from you!");
+		dropx(bag);
+		break;
+	case 3:
+		nomul(-1*(rnd(4)), 0);
+		if(Hallucination) {
+			You("start climbing into the bag.");
+			nomovemsg = "You give up your attempt to climb into the bag.";
+		} else {
+			pline("%s tries to pull you into the bag!",Something);
+			nomovemsg = "You manage to free yourself.";
+		}
+		break;
+	case 4:
+		if(Blind)
+			You_hear("a loud eructation.");
+		else
+			pline_The("bag belches out %s.",
+				Hallucination ? "the alphabet":"a noxious cloud");
+		(void)create_gas_cloud(u.ux,u.uy,2,8);
+		break;
+	case 5:
+		if (Underwater)
+			pline_The("water around you vaporizes violently!");
+		else {
+			pline_The("bag belches out a ball of flame!");
+			burn_away_slime();
+		}
+		explode(u.ux, u.uy, 11, rn2(4)+2,TOOL_CLASS, EXPL_FIERY);
+		break;
+	case 6:
+		pline_The("bag yells \"%s\".", Hallucination ? "!ooB":"Boo!");
+		for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+			if (DEADMONSTER(mtmp)) continue;
+			if(cansee(mtmp->mx,mtmp->my)) {
+				if (! resist(mtmp, bag->oclass, 0, NOTELL))
+				monflee(mtmp, 0, FALSE, FALSE);
+			}
+		}
+		if((ACURR(A_WIS)<rnd(20) && !bag->blessed) || bag->cursed) {
+			You("are startled into immobility.");
+			nomul(-1*rnd(3), 0);
+			nomovemsg = "You regain your composure.";
+		}
+		break;
+	case 7:
+		pline_The("bag develops a huge set of %s you!", 
+			Hallucination ? "lips and kisses":"teeth and bites");
+		cnt = rnd(10);
+		if (Half_physical_damage) cnt = (cnt+1) / 2;
+		losehp(cnt, Hallucination ? "amorous bag":"carnivorous bag", KILLED_BY_AN);
+		break;
+	case 8:
+		if(uwep || uswapwep) {
+			otmp = rn2(2) ? uwep : uswapwep;
+			if(!otmp) otmp = uwep ? uwep : uswapwep;
+			if(Blind)
+				pline("%s grabs %s away from you.", Something, yname(otmp));
+			else
+				pline_The("bag sprouts a tongue and flicks %s %s.",
+					yname(otmp), 
+					(Is_airlevel(&u.uz) ||
+					 Is_waterlevel(&u.uz) ||
+					 levl[u.ux][u.uy].typ < IRONBARS ||
+					 levl[u.ux][u.uy].typ >= ICE) ? 
+					 "away from you":"to the floor");
+			dropx(otmp);
+		} else {
+			pline("%s licks your %s.", 
+				Blind ? Something : "The bag sprouts a tongue and",
+				body_part(HAND));
+		}
+		break;
+	default:
+		cnt = 1;
+		gotone = FALSE;
+		if (!rn2(23)) cnt += rn1(7, 1);
+		while (cnt-- > 0) {
+			if (makemon((struct permonst *)0, u.ux, u.uy, NO_MM_FLAGS))
+			gotone = TRUE;
+		}
 	}
 	if (gotone) makeknown(BAG_OF_TRICKS);
     }
+	return 1;
 }
 
 #endif /* OVLB */

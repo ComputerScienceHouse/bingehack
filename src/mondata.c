@@ -252,8 +252,9 @@ boolean
 passes_bars(mptr)
 struct permonst *mptr;
 {
-    return (boolean) (passes_walls(mptr) || amorphous(mptr) ||
+    return (boolean)(passes_walls(mptr) || amorphous(mptr) ||
 		      is_whirly(mptr) || verysmall(mptr) ||
+		     dmgtype(mptr, AD_CORR) || dmgtype(mptr, AD_RUST) ||
 		      (slithy(mptr) && !bigmonst(mptr)));
 }
 
@@ -385,8 +386,8 @@ monsndx(ptr)		/* return an index into the mons array */
 	i = (int)(ptr - &mons[0]);
 	if (i < LOW_PM || i >= NUMMONS) {
 		/* ought to switch this to use `fmt_ptr' */
-	    panic("monsndx - could not index monster (%lx)",
-		  (unsigned long)ptr);
+	    panic("monsndx - could not index monster (%d:%lx)",
+		  i, (unsigned long)ptr);
 	    return NON_PM;		/* will not get here */
 	}
 

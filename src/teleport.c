@@ -1165,7 +1165,7 @@ register struct obj *obj;
 	boolean restricted_fall;
 	int try_limit = 4000;
 
-	if (obj->otyp == CORPSE && is_rider(&mons[obj->corpsenm])) {
+	if (obj->otyp == CORPSE && is_endgamenasty(&mons[obj->corpsenm])) {
 	    if (revive_corpse(obj)) return;
 	}
 
@@ -1279,7 +1279,7 @@ boolean give_feedback;
 		You("are no longer inside %s!", mon_nam(mtmp));
 	    unstuck(mtmp);
 	    (void) rloc(mtmp, FALSE);
-	} else if (is_rider(mtmp->data) && rn2(13) &&
+	} else if (is_endgamenasty(mtmp->data) && rn2(13) &&
 		   enexto(&cc, u.ux, u.uy, mtmp->data))
 	    rloc_to(mtmp, cc.x, cc.y);
 	else

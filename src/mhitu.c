@@ -15,7 +15,7 @@ STATIC_DCL int FDECL(passiveum, (struct permonst *,struct monst *,struct attack 
 
 #ifdef OVLB
 # ifdef SEDUCE
-STATIC_DCL void FDECL(mayberem, (struct obj *, const char *));
+STATIC_DCL void FDECL(mayberem, (struct obj *, const char *, int));
 # endif
 #endif /* OVLB */
 
@@ -595,6 +595,7 @@ mattacku(mtmp)
 
 		case AT_ENGL:
 			if (!range2) {
+			    verbalize("HUNGRY!");
 			    if(foundyou) {
 				if(u.uswallow || tmp > (j = rnd(20+i))) {
 				    /* Force swallowing monster to be
@@ -606,15 +607,20 @@ mattacku(mtmp)
 				    missmu(mtmp, (tmp == j), mattk);
 				}
 			    } else if (is_animal(mtmp->data)) {
-				pline("%s gulps some air!", Monnam(mtmp));
+				    pline("%s gulps some air!", Monnam(mtmp));
 			    } else {
-				if (youseeit)
-				    pline("%s lunges forward and recoils!",
-					  Monnam(mtmp));
-				else
+				if (youseeit) {
+				    if(mtmp->data == &mons[PM_GLUTTONY])
+					You("narrowly avoid %s gaping maw!",
+					    s_suffix(Monnam(mtmp)));
+				    else
+					pline("%s lunges forward and recoils!",
+					    Monnam(mtmp));
+				} else {
 				    You_hear("a %s nearby.",
-					     is_whirly(mtmp->data) ?
-						"rushing noise" : "splat");
+					is_whirly(mtmp->data) ? "rushing noise" :
+					is_vice(mtmp->data) ? "gnashing sound" : "splat");
+				}
 			   }
 			}
 			break;
@@ -1129,7 +1135,12 @@ dopois:
 		break;
 	    case AD_DRLI:
 		hitmsg(mtmp, mattk);
+#ifdef TOUGHVLAD
+		if ((uncancelled || mdat == &mons[PM_VLAD_THE_IMPALER]) && !rn2(3) && !Drain_resistance) {
+			/* Boosted up by Vlad balance patch - CWC */
+#else
 		if (uncancelled && !rn2(3) && !Drain_resistance) {
+#endif
 		    losexp("life drainage");
 		}
 		break;
@@ -1269,13 +1280,20 @@ dopois:
 		if(!mtmp->mcan) stealgold(mtmp);
 		break;
 
-	    case AD_SITM:	/* for now these are the same */
-	    case AD_SEDU:
+	    case AD_SEDU:	/* no longer quite the same */
+		if(!rn2(5)) {
+		    stealgold(mtmp);
+		    break;
+		}
+		/* otherwise, fall through */
+	    case AD_SITM:
 		if (is_animal(mtmp->data)) {
 			hitmsg(mtmp, mattk);
 			if (mtmp->mcan) break;
 			/* Continue below */
 		} else if (dmgtype(youmonst.data, AD_SEDU)
+			|| dmgtype(youmonst.data, AD_SITM)
+			|| dmgtype(youmonst.data, AD_SGLD)
 #ifdef SEDUCE
 			|| dmgtype(youmonst.data, AD_SSEX)
 #endif
@@ -1292,7 +1310,7 @@ dopois:
 			    flags.female ? "charm" : "seduce",
 			    flags.female ? "unaffected" : "uninterested");
 		    }
-		    if(rn2(3)) {
+		    if(rn2(3) && !is_vice(mtmp->data)) {
 			if (!tele_restrict(mtmp)) (void) rloc(mtmp, FALSE);
 			return 3;
 		    }
@@ -1305,7 +1323,14 @@ dopois:
 		  case 0:
 			break;
 		  default:
-			if (!is_animal(mtmp->data) && !tele_restrict(mtmp))
+			if (is_vice(mtmp->data)) {
+			    if (canseemon(mtmp) && *buf)
+				pline("%s admires %s.",
+				    Monnam(mtmp),
+				    buf);
+			    return 1;
+			}
+			if (!is_animal(mtmp->data) && !tele_restrict(mtmp) && !is_vice(mtmp->data))
 			    (void) rloc(mtmp, FALSE);
 			if (is_animal(mtmp->data) && *buf) {
 			    if (canseemon(mtmp))
@@ -1322,7 +1347,7 @@ dopois:
 	    case AD_SSEX:
 		if(could_seduce(mtmp, &youmonst, mattk) == 1
 			&& !mtmp->mcan)
-		    if (doseduce(mtmp))
+		    if (doseduce(mtmp, mattk->damd))
 			return 3;
 		break;
 #endif
@@ -1424,9 +1449,11 @@ dopois:
 		}
 		break;
 	    case AD_CURS:
+		if(mdat == &mons[PM_ENVY]) pline("%s looks jealous of your abilities...",
+		    Monnam(mtmp));
 		hitmsg(mtmp, mattk);
 		if(!night() && mdat == &mons[PM_GREMLIN]) break;
-		if(!mtmp->mcan && !rn2(10)) {
+		if((!mtmp->mcan && !rn2(10)) || (is_endgamenasty(mdat) && !rn2(4))) {
 		    if (flags.soundok) {
 			if (Blind) You_hear("laughter.");
 			else       pline("%s chuckles.", Monnam(mtmp));
@@ -1520,6 +1547,117 @@ dopois:
 		exercise(A_CON, FALSE);
 		if (!is_fainted()) morehungry(rn1(40,40));
 		/* plus the normal damage */
+		break;
+	    case AD_DRE2:
+		if(mdat == &mons[PM_WRATH]) verbalize("I'll draw the very life from your bones!");
+		hitmsg(mtmp, mattk);
+		if(u.uen<1) {
+		    You_feel("less energised!");
+		    u.uenmax -= rn1(10,10);
+		    if(u.uenmax<0) u.uenmax = 0;
+		} else if(u.uen<=10) {
+		    You_feel("your magical energy dwindle to nothing!");
+		    u.uen = 0;
+		} else {
+		    You_feel("your magical energy dwindling rapidly!");
+		    u.uen /= 2;
+		}
+		break;
+	    case AD_DRCH:
+		if(mdat == &mons[PM_PRIDE]) verbalize("You think you're better than me?!");
+		hitmsg(mtmp, mattk);
+		adjattrib(A_CHA, -rn1(1,1), 0); /* does its own messages */
+		break;
+	    case AD_DFOO: /* drain something randomly (Str,Con,Dex,Int,Wis,Cha,MHp,MMp,XL) */
+		if(mdat == &mons[PM_PRIDE]) pline("%s determines to take you down a peg or two...", Monnam(mtmp));
+		hitmsg(mtmp, mattk);
+		switch(rn2(10)) {
+		    case 0: ptmp = A_STR; goto drfoo_stat;
+		    case 1: ptmp = A_CON; goto drfoo_stat;
+		    case 2: ptmp = A_DEX; goto drfoo_stat;
+		    case 3: ptmp = A_INT; goto drfoo_stat;
+		    case 4: ptmp = A_WIS; goto drfoo_stat;
+		    case 5: ptmp = A_CHA; goto drfoo_stat;
+		    drfoo_stat:
+			adjattrib(ptmp, -rn1(1,1), 0);
+			break;
+		    case 6: /* Max HP */
+			You_feel("less resilient!");
+			permdmg = 1;
+			break;
+		    case 7: /* Max MP */
+			You_feel("less energised!");
+			u.uenmax -= rn1(10,10);
+			if(u.uen > u.uenmax) u.uen = u.uenmax;
+			break;
+		    case 8: /* XL */
+			if(!Drain_resistance) {
+			    losexp("life drainage");
+			} else {
+			    You_feel("woozy for an instant, but shrug it off.");
+			}
+			break;
+		}
+		break;
+	    case AD_LAZY: /* laziness attack; do lots of nasty things at random */
+		if(!rn2(2)) {
+		    pline("%s tries to touch you, but can't really be bothered.",
+			Monnam(mtmp));
+		    break;
+		}
+		pline("%s reaches out with an apathetic finger...",
+		    Monnam(mtmp));
+		switch(rn2(7)) {
+		    case 0: /* destroy certain things */
+			pline("%s touches you!",
+			    Monnam(mtmp));
+			destroy_item(0, AD_LAZY);
+			break;
+		    case 1: /* sleep */
+			if(Sleep_resistance) {
+			    You("yawn.");
+			} else {
+			    if(Blind) You("are put to sleep!");
+			    else You("are put to sleep by %s!", mon_nam(mtmp));
+			    fall_asleep(-rnd(10), TRUE);
+			}
+			break;
+		    case 2: /* paralyse */
+			if(Free_action) {
+			    You("momentarily stiffen.");
+			} else {
+			    if(Blind) You("are frozen!");
+			    else You("are frozen by %s!", mon_nam(mtmp));
+			    nomovemsg = 0;
+			    nomul(-rnd(10), 0);
+			    exercise(A_DEX, FALSE);
+			}
+			break;
+		    case 3: /* slow */
+			if(HFast && !defends(AD_SLOW, uwep))  u_slow_down();
+			else You("pause momentarily.");
+			break;
+		    case 4: /* drain Dex */
+			adjattrib(A_DEX, -rn1(1,1), 0);
+			break;
+		    case 5: /* steal teleportitis */
+			if(HTeleportation & INTRINSIC) {
+			    HTeleportation &= ~INTRINSIC;
+			    You_feel("less jumpy.");
+			} else {
+			    You("don't feel in the mood for jumping around.");
+			}
+			break;
+		    case 6: /* steal sleep resistance */
+			if(HSleep_resistance & INTRINSIC) {
+			    HSleep_resistance &= ~INTRINSIC;
+			    You_feel("a bit tired.");
+			} else {
+			    You_feel("like you could use a nap.");
+			}
+			break;
+		}
+		dmg = 0;
 		break;
 	    case AD_SLIM:    
 		hitmsg(mtmp, mattk);
@@ -1655,7 +1793,11 @@ gulpmu(mtmp, mattk)	/* monster swallows you, or damage if u.uswallow */
 			dismount_steed(DISMOUNT_ENGULFED);
 		} else
 #endif
-		pline("%s engulfs you!", Monnam(mtmp));
+		if(mtmp->data == &mons[PM_GLUTTONY]) {
+		    pline("%s distends his jaw and swallows you whole!", Monnam(mtmp));
+		} else {
+		    pline("%s engulfs you!", Monnam(mtmp));
+		}
 		stop_occupation();
 		reset_occupations();	/* behave as if you had moved */
 
@@ -1687,6 +1829,7 @@ gulpmu(mtmp, mattk)	/* monster swallows you, or damage if u.uswallow */
 		else if (tim_tmp < 0) tim_tmp = -(rnd(-tim_tmp) / 2);
 		tim_tmp += -u.uac + 10;
 		u.uswldtim = (unsigned)((tim_tmp < 2) ? 2 : tim_tmp);
+		if(u.uswldtim<2) u.uswldtim=2; /* Give the poor player *some* leeway... */
 		swallowed(1);
 		for (otmp2 = invent; otmp2; otmp2 = otmp2->nobj)
 		    (void) snuff_lit(otmp2);
@@ -1898,6 +2041,41 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 	register struct attack  *mattk;
 {
 	switch(mattk->adtyp) {
+#ifdef TOUGHVLAD
+#ifdef MENTALPLYS
+			case AD_PLYM:
+				/* For Vlad The Impaler - Vlad Balance Patch CWC
+				 * This is a mental paralysis - distinct from the physical AD_PLYS
+				 *
+				 * free action and cancellation does not help here - this is intentional
+				 * only takes effect if you can see the monster, the monster can see you and
+				 * you aren't already paralysed - player has a (potentially) modified
+				 * WIS saving throw (mental) based on damd
+				 * If successful, the monster is paralysed for d(damn) turns
+				 *
+				 * This relies on the fact that PLYM attacks do *no* physical damage
+				 *
+				 * Note that AD_PLYM should never be a *physical* attack (bite, claw etc)
+				 * as it simply makes no sense - use AD_PLYS instead
+				 */
+	        if(!mtmp->mcan && canseemon(mtmp) && (multi >= 0) && mtmp->mcansee && (rnd(20) > (ACURR(A_WIS) - (int)mattk->damd))) {
+ 						You("are mesmerised by %s gaze!", s_suffix(Monnam(mtmp)));
+ 						nomovemsg = 0;	/* default: "you can move again" */
+ 						nomul(-rnd(((int)mattk->damd)+1), 0);
+						exercise(A_DEX, FALSE);
+						}
+				break;
+#else
+			case AD_PLYS: /* Default case for Vlad The Impaler if MENTALPLYS is not defined */
+	        if(!mtmp->mcan && canseemon(mtmp) && (multi >= 0) && mtmp->mcansee && (rnd(20) > (ACURR(A_WIS) - (int)mattk->damd))) {
+ 						You("are mesmerised by %s gaze!", s_suffix(Monnam(mtmp)));
+ 						nomovemsg = 0;	/* default: "you can move again" */
+ 						nomul(-rnd(4), 0);
+						exercise(A_DEX, FALSE);
+						}
+				break;
+#endif
+#endif
 	    case AD_STON:
 		if (mtmp->mcan || !mtmp->mcansee) {
 		    if (!canseemon(mtmp)) break;	/* silently */
@@ -2111,6 +2289,11 @@ struct attack *mattk;
 	boolean agrinvis, defperc;
 	xchar genagr, gendef;
 
+	if(magr != &youmonst) {
+		if(magr->data == &mons[PM_LUST]) return 1; /* Lust will do it with *anything*... */
+		if(magr->data == &mons[PM_GREED]) return 2; /* Greed always just charms you a bit and then takes your stuff. */
+	}
+
 	if (is_animal(magr->data)) return (0);
 	if(magr == &youmonst) {
 		pagr = youmonst.data;
@@ -2137,7 +2320,8 @@ struct attack *mattk;
 		return 0;
 
 	if(pagr->mlet != S_NYMPH
-		&& ((pagr != &mons[PM_INCUBUS] && pagr != &mons[PM_SUCCUBUS])
+		&& ((pagr != &mons[PM_INCUBUS] && pagr != &mons[PM_SUCCUBUS]
+		&& pagr != &mons[PM_LILITH] && pagr != &mons[PM_SAMMAEL])
 #ifdef SEDUCE
 		    || (mattk && mattk->adtyp != AD_SSEX)
 #endif
@@ -2156,11 +2340,15 @@ struct attack *mattk;
 #ifdef SEDUCE
 /* Returns 1 if monster teleported */
 int
-doseduce(mon)
+doseduce(mon, cha_penalty)
 register struct monst *mon;
+int cha_penalty;
 {
 	register struct obj *ring, *nring;
-	boolean fem = (mon->data == &mons[PM_SUCCUBUS]); /* otherwise incubus */
+	/*RLC Changed the logic here so Lilith behaves correctly */
+	boolean fem = mon->female;
+	if(mon->data == &mons[PM_LUST]) fem = 1-poly_gender();	/* Assume Lust takes body of the opposite gender to player */
+	if(mon->data == &mons[PM_GREED]) fem = poly_gender();	/* Assume Greed takes body of the same gender as player */
 	char qbuf[QBUFSZ];
 
 	if (mon->mcan || mon->mspec_used) {
@@ -2183,7 +2371,7 @@ register struct monst *mon;
 	    nring = ring->nobj;
 	    if (ring->otyp != RIN_ADORNMENT) continue;
 	    if (fem) {
-		if (rn2(20) < ACURR(A_CHA)) {
+		if (rn2(20) < ACURR(A_CHA) - cha_penalty && !is_vice(mon->data)) {
 		    Sprintf(qbuf, "\"That %s looks pretty.  May I have it?\"",
 			safe_qbuf("",sizeof("\"That  looks pretty.  May I have it?\""),
 			xname(ring), simple_typename(ring->otyp), "ring"));
@@ -2205,7 +2393,7 @@ register struct monst *mon;
 				&& uright->otyp==RIN_ADORNMENT)
 			break;
 		if (ring==uleft || ring==uright) continue;
-		if (rn2(20) < ACURR(A_CHA)) {
+		if (rn2(20) < ACURR(A_CHA) - cha_penalty && !is_vice(mon->data)) {
 		    Sprintf(qbuf,"\"That %s looks pretty.  Would you wear it for me?\"",
 			safe_qbuf("",
 			    sizeof("\"That  looks pretty.  Would you wear it for me?\""),
@@ -2254,17 +2442,31 @@ register struct monst *mon;
 	else
 		pline("%s murmurs in your ear, while helping you undress.",
 			Blind ? (fem ? "She" : "He") : Monnam(mon));
-	mayberem(uarmc, cloak_simple_name(uarmc));
-	if(!uarmc)
-		mayberem(uarm, "suit");
-	mayberem(uarmf, "boots");
-	if(!uwep || !welded(uwep))
-		mayberem(uarmg, "gloves");
-	mayberem(uarms, "shield");
-	mayberem(uarmh, "helmet");
+	
+	Strcpy(qbuf, "%s");
+	if(is_vice(mon->data)) Strcpy(qbuf, "_%s");
+	char buf[BUFSZ];
+	Sprintf(buf, qbuf, cloak_simple_name(uarmc));
+	mayberem(uarmc, buf, cha_penalty);
+	if(!uarmc) {
+		Sprintf(buf, qbuf, "suit");
+		mayberem(uarm, buf, cha_penalty);
+	}
+	Sprintf(buf, qbuf, "boots");
+	mayberem(uarmf, buf, cha_penalty);
+	if(!uwep || !welded(uwep)) {
+		Sprintf(buf, qbuf, "gloves");
+		mayberem(uarmg, buf, cha_penalty);
+	}
+	Sprintf(buf, qbuf, "shield");
+	mayberem(uarmc, buf, cha_penalty);
+	Sprintf(buf, qbuf, "helmet");
+	mayberem(uarmc, buf, cha_penalty);
 #ifdef TOURIST
-	if(!uarmc && !uarm)
-		mayberem(uarmu, "shirt");
+	if(!uarmc && !uarm) {
+		Sprintf(buf, qbuf, "shirt");
+		mayberem(uarmu, buf, cha_penalty);
+	}
 #endif
 
 	if (uarm || uarmc) {
@@ -2279,7 +2481,7 @@ register struct monst *mon;
 	/* by this point you have discovered mon's identity, blind or not... */
 	pline("Time stands still while you and %s lie in each other's arms...",
 		noit_mon_nam(mon));
-	if (rn2(35) > ACURR(A_CHA) + ACURR(A_INT)) {
+	if (rn2(35) > ACURR(A_CHA) + ACURR(A_INT) - cha_penalty || is_vice(mon->data)) {
 		/* Don't bother with mspec_used here... it didn't get tired! */
 		pline("%s seems to have enjoyed it more than you...",
 			noit_Monnam(mon));
@@ -2351,7 +2553,7 @@ register struct monst *mon;
 	}
 
 	if (mon->mtame) /* don't charge */ ;
-	else if (rn2(20) < ACURR(A_CHA)) {
+	else if (rn2(20) < ACURR(A_CHA) - (is_vice(mon->data) ? 10 : 0) - cha_penalty) {
 		pline("%s demands that you pay %s, but you refuse...",
 			noit_Monnam(mon),
 			Blind ? (fem ? "her" : "him") : mhim(mon));
@@ -2401,21 +2603,28 @@ register struct monst *mon;
 		}
 #endif
 	}
-	if (!rn2(25)) mon->mcan = 1; /* monster is worn out */
+	if (!rn2(25) && !is_vice(mon->data)) mon->mcan = 1; /* monster is worn out */
 	if (!tele_restrict(mon)) (void) rloc(mon, FALSE);
 	return 1;
 }
 
 STATIC_OVL void
-mayberem(obj, str)
+mayberem(obj, str, cha_penalty)
 register struct obj *obj;
 const char *str;
+int cha_penalty;
 {
 	char qbuf[QBUFSZ];
+	int moncha = 0;
 
 	if (!obj || !obj->owornmask) return;
 
-	if (rn2(20) < ACURR(A_CHA)) {
+	if(str && str[0]=='_') {
+		str++;
+		moncha = 10;
+	}
+
+	if (rn2(20) < ACURR(A_CHA) - cha_penalty - moncha) {
 		Sprintf(qbuf,"\"Shall I remove your %s, %s?\"",
 			str,
 			(!rn2(2) ? "lover" : !rn2(2) ? "dear" : "sweetheart"));

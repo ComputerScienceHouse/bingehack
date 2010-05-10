@@ -771,10 +771,15 @@ unsigned trflags;
 		} else
 #endif
 		{
-		    pline("%s bear trap closes on your %s!",
-			    A_Your[trap->madeby_u], body_part(FOOT));
+		    /* MRKR: beartraps wound your legs */
+		    /* from a suggestion by Sammiel in RGRN */
+		    register long side = rn2(2) ? RIGHT_SIDE : LEFT_SIDE;
+		    const char *sidestr = (side == RIGHT_SIDE) ? "right" : "left";
+		    pline("%s bear trap closes on your %s %s!",
+			    A_Your[trap->madeby_u], sidestr, body_part(FOOT));
 		    if(u.umonnum == PM_OWLBEAR || u.umonnum == PM_BUGBEAR)
 			You("howl in anger!");
+		    set_wounded_legs(side, rnd(60-ACURR(A_DEX)));
 		}
 		exercise(A_DEX, FALSE);
 		break;

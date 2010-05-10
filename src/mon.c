@@ -966,7 +966,7 @@ struct obj *otmp;
 	if (otyp == CORPSE && touch_petrifies(&mons[otmp->corpsenm]) &&
 		!(mtmp->misc_worn_check & W_ARMG) && !resists_ston(mtmp))
 	    return FALSE;
-	if (otyp == CORPSE && is_rider(&mons[otmp->corpsenm]))
+	if (otyp == CORPSE && is_endgamenasty(&mons[otmp->corpsenm]))
 	    return FALSE;
 	if (objects[otyp].oc_material == SILVER && hates_silver(mdat) &&
 		(otyp != BELL_OF_OPENING || !is_covetous(mdat)))
@@ -1217,14 +1217,46 @@ mm_aggression(magr, mdef)
 struct monst *magr,	/* monster that is currently deciding where to move */
 	     *mdef;	/* another monster which is next to it */
 {
+	struct permonst *ma,*md;
+
+	ma = magr->data;
+	md = mdef->data;
 	/* supposedly purple worms are attracted to shrieking because they
 	   like to eat shriekers, so attack the latter when feasible */
-	if (magr->data == &mons[PM_PURPLE_WORM] &&
-		mdef->data == &mons[PM_SHRIEKER])
-	    return ALLOW_M|ALLOW_TM;
-	/* Various other combinations such as dog vs cat, cat vs rat, and
-	   elf vs orc have been suggested.  For the time being we don't
-	   support those. */
+	if (ma == &mons[PM_PURPLE_WORM] &&
+		md == &mons[PM_SHRIEKER])
+			return ALLOW_M|ALLOW_TM;
+
+	/* Since the quest guardians are under siege, it makes sense to have 
+       them fight hostiles.  (But we don't want the quest leader to be in danger.) */
+	if(ma->msound==MS_GUARDIAN && mdef->mpeaceful==FALSE)
+		return ALLOW_M|ALLOW_TM;
+	/* and vice versa */
+	if(md->msound==MS_GUARDIAN && magr->mpeaceful==FALSE)
+		return ALLOW_M|ALLOW_TM;
+
+	/* elves vs. orcs */
+	if(is_elf(ma) && is_orc(md))
+		return ALLOW_M|ALLOW_TM;
+	/* and vice versa */
+	if(is_elf(md) && is_orc(ma))
+		return ALLOW_M|ALLOW_TM;
+
+	/* angels vs. demons */
+	if(ma->mlet==S_ANGEL && is_demon(md))
+		return ALLOW_M|ALLOW_TM;
+	/* and vice versa */
+	if(md->mlet==S_ANGEL && is_demon(ma))
+		return ALLOW_M|ALLOW_TM;
+
+	/* woodchucks vs. The Oracle */
+	if(ma == &mons[PM_WOODCHUCK] && md == &mons[PM_ORACLE])
+		return ALLOW_M|ALLOW_TM;
+
+	/* ravens like eyes */
+	if(ma == &mons[PM_RAVEN] && md == &mons[PM_FLOATING_EYE])
+		return ALLOW_M|ALLOW_TM;
+
 	return 0L;
 }
 
@@ -1551,7 +1583,7 @@ boolean was_swallowed;			/* digestion */
 	if (bigmonst(mdat) || mdat == &mons[PM_LIZARD]
 		   || is_golem(mdat)
 		   || is_mplayer(mdat)
-		   || is_rider(mdat))
+		   || is_endgamenasty(mdat))
 		return TRUE;
 	return (boolean) (!rn2((int)
 		(2 + ((int)(mdat->geno & G_FREQ)<2) + verysmall(mdat))));
@@ -1751,7 +1783,6 @@ xkilled(mtmp, dest)
 	boolean redisp = FALSE;
 	boolean wasinside = u.uswallow && (u.ustuck == mtmp);
 
-
 	/* KMH, conduct */
 	u.uconduct.killer++;
 
@@ -1809,7 +1840,6 @@ xkilled(mtmp, dest)
 
 	if((dest & 2) || LEVEL_SPECIFIC_NOCORPSE(mdat))
 		goto cleanup;
-
 #ifdef MAIL
 	if(mdat == &mons[PM_MAIL_DAEMON]) {
 		stackobj(mksobj_at(SCR_MAIL, x, y, FALSE, FALSE));
@@ -1821,9 +1851,13 @@ xkilled(mtmp, dest)
 	    /* might be mimic in wall or corpse in lava or on player's spot */
 	    redisp = TRUE;
 	    if(wasinside) spoteffects(TRUE);
+	    if(is_endgamenasty(mtmp->data)) {
+		(void) make_corpse(mtmp);
+		redisp = TRUE;
+	    }
 	} else if(x != u.ux || y != u.uy) {
 		/* might be here after swallowed */
-		if (!rn2(6) && !(mvitals[mndx].mvflags & G_NOCORPSE)
+		if (!rn2(6) && !is_endgamenasty(mtmp->data) && !(mvitals[mndx].mvflags & G_NOCORPSE)
 #ifdef KOPS
 					&& mdat->mlet != S_KOP
 #endif
@@ -1847,8 +1881,9 @@ xkilled(mtmp, dest)
 		 * different from whether or not the corpse is "special";
 		 * if we want both, we have to specify it explicitly.
 		 */
-		if (corpse_chance(mtmp, (struct monst *)0, FALSE))
+		if (corpse_chance(mtmp, (struct monst *)0, FALSE)) {
 			(void) make_corpse(mtmp);
+		}
 	}
 	if(redisp) newsym(x,y);
 cleanup:
@@ -1929,6 +1964,11 @@ mnexto(mtmp)	/* Make monster mtmp next to you (if possible) */
 	struct monst *mtmp;
 {
 	coord mm;
+
+  if (is_vice(mtmp->data) && Is_astralevel(&u.uz)) {
+    /* avoid letting the vices teleport to you on the astral plane */
+    return;
+  }
 
 #ifdef STEED
 	if (mtmp == u.usteed) {

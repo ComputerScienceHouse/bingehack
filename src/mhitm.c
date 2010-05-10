@@ -115,6 +115,10 @@ fightm(mtmp)		/* have monsters fight each other */
 	if(resist(mtmp, RING_CLASS, 0, 0))
 	    return(0);
 
+	/* Wrath does not fear your conflict */
+	if(mtmp->data == &mons[PM_WRATH])
+	    return(0);
+
 	if(u.ustuck == mtmp) {
 	    /* perhaps we're holding it... */
 	    if(itsstuck(mtmp))
@@ -623,13 +627,15 @@ mdamagem(magr, mdef, mattk)
 	switch(mattk->adtyp) {
 	    case AD_DGST:
 		/* eating a Rider or its corpse is fatal */
-		if (is_rider(mdef->data)) {
+		if (is_endgamenasty(mdef->data)) {
 		    if (vis)
 			pline("%s %s!", Monnam(magr),
 			      mdef->data == &mons[PM_FAMINE] ?
 				"belches feebly, shrivels up and dies" :
 			      mdef->data == &mons[PM_PESTILENCE] ?
 				"coughs spasmodically and collapses" :
+			      mdef->data == &mons[PM_GLUTTONY] ?
+				"chokes over the huge meal and dies" :
 				"vomits violently and drops dead");
 		    mondied(magr);
 		    if (magr->mhp > 0) return 0;	/* lifesaved */
@@ -886,6 +892,30 @@ mdamagem(magr, mdef, mattk)
 		    mdef->mstrategy &= ~STRAT_WAITFORU;
 		}
 		break;
+#ifdef MENTALPLYS
+			/* mental paralysis attack - CWC */
+	    case AD_PLYM:
+		if(!magr->mcan && mdef->mcanmove) {
+		    if (vis && !mindless(mdef->data) && !is_covetous(mdef->data)) {
+				/* mental paralysis does not work against mindless creatures
+				 * Also does not work against covetous monsters - inelegant hack to
+				 * disallow paralysis of certain "strong" monsters such as the Wiz
+				 * Ideally this would want a WIS saving throw but...
+				 *
+				 * If successful, the monster is paralysed for rnd(damn) turns
+				 * This relies on the fact that PLYM attacks do *no* physical damage
+				 *
+				 * Note that AD_PLYM should never be a *physical* attack (bite, claw etc)
+				 * as it simply makes no sense - use AD_PLYS instead
+				 */
+			Strcpy(buf, Monnam(mdef));
+			pline("%s is frozen by %s.", buf, mon_nam(magr));
+		    }
+		    mdef->mcanmove = 0;
+		    mdef->mfrozen = rnd(((int)mattk->damd)+1);
+		}
+		break;
+#endif
 	    case AD_SLOW:
 		if (!cancelled && mdef->mspeed != MSLOW) {
 		    unsigned int oldspeed = mdef->mspeed;
@@ -1308,6 +1338,20 @@ int mdead;
 		    }
 		} else tmp = 0;
 		goto assess_dmg;
+		case AD_MAGM:
+	    /* wrath of gods for attacking Oracle */
+	    if(resists_magm(magr)) {
+		if(canseemon(magr)) {
+		shieldeff(magr->mx, magr->my);
+		pline("A hail of magic missiles narrowly misses %s!",mon_nam(magr));
+		}
+	    } else {
+		if(canseemon(magr))
+			pline(magr->data == &mons[PM_WOODCHUCK] ? "ZOT!" : 
+			"%s is hit by magic missiles appearing from thin air!",Monnam(magr));
+		goto assess_dmg;
+	    }
+	    break;
 	    case AD_ENCH:	/* KMH -- remove enchantment (disenchanter) */
 		if (mhit && !mdef->mcan && otmp) {
 		    (void) drain_item(otmp);
@@ -1321,6 +1365,9 @@ int mdead;
 
 	/* These affect the enemy only if defender is still alive */
 	if (rn2(3)) switch(mddat->mattk[i].adtyp) {
+#ifdef MENTALPLYS
+	    case AD_PLYS: /* Gelatinous cubes, etc */
+#else
 	    case AD_PLYS: /* Floating eye */
 		if (tmp > 127) tmp = 127;
 		if (mddat == &mons[PM_FLOATING_EYE]) {
@@ -1341,14 +1388,37 @@ int mdead;
 			return (mdead|mhit);
 		    }
 		} else { /* gelatinous cube */
+#endif
 		    Strcpy(buf, Monnam(magr));
 		    if(canseemon(magr))
 			pline("%s is frozen by %s.", buf, mon_nam(mdef));
 		    magr->mcanmove = 0;
 		    magr->mfrozen = tmp;
 		    return (mdead|mhit);
+#ifndef MENTALPLYS
+		}
+#endif
+		return 1;
+
+#ifdef MENTALPLYS
+		case AD_PLYM: /* Floating eyes */
+		    if (magr->mcansee && haseyes(madat) && mdef->mcansee &&
+			(perceives(madat) || !mdef->minvis)) {
+			Sprintf(buf, "%s gaze is reflected by %%s %%s.",
+				s_suffix(mon_nam(mdef)));
+			if (mon_reflects(magr,
+					 canseemon(magr) ? buf : (char *)0))
+				return(mdead|mhit);
+			Strcpy(buf, Monnam(magr));
+			if(canseemon(magr))
+			    pline("%s is mesmerised by %s gaze!",
+				  buf, s_suffix(mon_nam(mdef)));
+			magr->mcanmove = 0;
+			magr->mfrozen = rnd(((int)mddat->mattk[i].damd)+1);
+			return (mdead|mhit);
 		}
 		return 1;
+#endif
 	    case AD_COLD:
 		if (resists_cold(magr)) {
 		    if (canseemon(magr)) {

@@ -134,12 +134,20 @@
 #define is_rider(ptr)		((ptr) == &mons[PM_DEATH] || \
 				 (ptr) == &mons[PM_FAMINE] || \
 				 (ptr) == &mons[PM_PESTILENCE])
+#define is_vice(ptr)		((ptr) == &mons[PM_GLUTTONY] || \
+				 (ptr) == &mons[PM_LUST] || \
+				 (ptr) == &mons[PM_GREED] || \
+				 (ptr) == &mons[PM_ENVY] || \
+				 (ptr) == &mons[PM_WRATH] || \
+				 (ptr) == &mons[PM_SLOTH] || \
+				 (ptr) == &mons[PM_PRIDE])
+#define is_endgamenasty(ptr)	(is_rider(ptr) || is_vice(ptr))
 #define is_placeholder(ptr)	((ptr) == &mons[PM_ORC] || \
 				 (ptr) == &mons[PM_GIANT] || \
 				 (ptr) == &mons[PM_ELF] || \
 				 (ptr) == &mons[PM_HUMAN])
 /* return TRUE if the monster tends to revive */
-#define is_reviver(ptr)		(is_rider(ptr) || (ptr)->mlet == S_TROLL)
+#define is_reviver(ptr)		(is_rider(ptr) || is_vice(ptr) || (ptr)->mlet == S_TROLL)
 
 /* this returns the light's range, or 0 if none; if we add more light emitting
    monsters, we'll likely have to add a new light range field to mons[] */

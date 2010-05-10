@@ -68,6 +68,7 @@ getlin_hook_proc hook;
 #endif /* not NEWAUTOCOMP */
 			break;
 		}
+		if(c == EOF) c = '\033';
 		if(c == '\033') {
 			*obufp = c;
 			obufp[1] = 0;
@@ -187,6 +188,11 @@ register const char *s;	/* chars allowed besides return */
 
     while((c = tty_nhgetch()) != '\n') {
 	if(iflags.cbreak) {
+		if(c == EOF){
+			ttyDisplay->dismiss_more = 1;
+			morc = '\033';
+			break;
+		}
 	    if ((s && index(s,c)) || c == x) {
 		morc = (char) c;
 		break;

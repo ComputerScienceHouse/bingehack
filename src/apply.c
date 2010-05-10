@@ -1440,6 +1440,11 @@ register struct obj *obj;
 		verbalize("Yes...  But War does not preserve its enemies...");
 		return;
 	}
+	if (is_vice(&mons[corpse->corpsenm])) {
+		(void) revive_corpse(corpse);
+		verbalize("You cannot contain that which is in the heart of every man...");
+		return;
+	}
 	if (mons[corpse->corpsenm].cnutrit == 0) {
 		pline("That's too insubstantial to tin.");
 		return;
@@ -2860,7 +2865,7 @@ doapply()
 		res = use_container(obj, 1);
 		break;
 	case BAG_OF_TRICKS:
-		bagotricks(obj);
+		res = bagotricks(obj);
 		break;
 	case CAN_OF_GREASE:
 		use_grease(obj);

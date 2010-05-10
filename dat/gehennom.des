@@ -551,6 +551,612 @@ MONSTER:'V',random,random
 MONSTER:'V',random,random
 MONSTER:'V',random,random
 #
+# The Lilith Level
+#
+MAZE:"lilith",random
+FLAGS: noteleport
+# First part
+GEOMETRY:center,center
+MAP
+.........................
+.......-----+-----.......
+.....---.........---.....
+....--...-------...--....
+...--..---.....---..--...
+..--..--..LL.LL..--..--..
+..|..--.LLL...LLL.--..|..
+.--.--.LL...P...LL.--.--.
+.|.....L...P.P...L.....|.
+.--.--.LL...P...LL.--.--.
+..|..--.LLL...LLL.--..|..
+..--..--..LL.LL..--..--..
+...--..---.....---..--...
+....--...-------...--....
+.....---.........---.....
+.......-----+-----.......
+.........................
+ENDMAP
+STAIR:levregion(01,00,79,20),(0,0,24,16),up
+BRANCH:levregion(01,00,79,20),(0,0,24,16)
+TELEPORT_REGION:levregion(01,00,79,20),(0,0,24,16)
+MAZEWALK:(00,00),west
+MAZEWALK:(00,16),west
+MAZEWALK:(24,00),east
+MAZEWALK:(24,16),east
+
+# Doors
+DOOR:locked,(12,01)
+DOOR:locked,(12,15)
+#
+STAIR:(12,08),down
+# Non diggable walls
+NON_DIGGABLE:(00,00,24,16)
+# Entire main area
+REGION:(00,00,24,16),unlit,"ordinary"
+# The head bitch in charge
+MONSTER:'&',"Lilith",(12,08)
+# Some random weapons and armor.
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:')',random,random
+OBJECT:')',random,random
+OBJECT:'*',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+# Some traps.
+TRAP:"sleep gas", random
+TRAP:"sleep gas", random
+TRAP:"sleep gas", random
+TRAP:"anti magic", random
+TRAP:"anti magic", random
+TRAP:"anti magic", random
+TRAP:"fire", random
+TRAP:"fire", random
+TRAP:"fire", random
+TRAP:"magic", random
+TRAP:"magic", random
+TRAP:"fire", (11,07)
+TRAP:"fire", (13,07)
+TRAP:"fire", (11,09)
+TRAP:"fire", (13,09)
+TRAP:"spiked pit", (12,02)
+TRAP:"spiked pit", (12,14)
+TRAP:"land mine", (12,05)
+TRAP:"land mine", (12,11)
+# Minions
+MONSTER:'&',"succubus",random
+MONSTER:'&',"succubus",random
+MONSTER:'&',"succubus",random
+# Undead and demons a gogo.
+MONSTER:'Z',"skeleton",random
+MONSTER:'Z',"skeleton",random
+MONSTER:'Z',"skeleton",random
+MONSTER:'Z',"skeleton",random
+MONSTER:'Z',"skeleton",random
+MONSTER:'Z',"ghoul",random
+MONSTER:'Z',"ghoul",random
+MONSTER:'Z',"ghoul",random
+MONSTER:'Z',"ghoul",random
+MONSTER:'Z',"ghoul",random
+MONSTER:' ',"shade",random
+MONSTER:' ',"shade",random
+MONSTER:' ',"shade",random
+MONSTER:' ',"shade",random
+MONSTER:'W',random,random
+MONSTER:'W',random,random
+MONSTER:'W',random,random
+MONSTER:'W',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'L',random,random
+MONSTER:'L',random,random
+MONSTER:'L',random,random
+MONSTER:'V',random,random
+MONSTER:'V',random,random
+MONSTER:'V',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+#
+# The Sammael Level
+#
+MAZE:"sammael",random
+FLAGS: noteleport
+# First part
+GEOMETRY:center,center
+MAP
+# Unused row at top is to align the map with the generated maze
+|                       |
+-------------------------
++.......................+
+|.----------+----------.|
+|.|...................|.|
+|.|.PPPPPPPPPPPPPPPPP.|.|
+|.|.PPPPPPPPPPPPPPPPP.|.|
+|.|.PPPPPPPPPPPPPPPPP.|.|
+|.|.PPPP.........PPPP.|.|
+|.|.PPPP....L....PPPP.|.|
+|.|........L.L........|.|
+|.|.PPPP....L....PPPP.|.|
+|.|.PPPP.........PPPP.|.|
+|.|.PPPPPPPPPPPPPPPPP.|.|
+|.|.PPPPPPPPPPPPPPPPP.|.|
+|.|.PPPPPPPPPPPPPPPPP.|.|
+|.|...................|.|
+|.----------+----------.|
++.......................+
+-------------------------
+ENDMAP
+STAIR:levregion(01,00,79,20),(0,0,24,19),up
+BRANCH:levregion(01,00,79,20),(0,0,24,19)
+TELEPORT_REGION:levregion(01,00,79,20),(0,0,24,19)
+MAZEWALK:(00,02),west
+MAZEWALK:(24,02),east
+MAZEWALK:(00,18),west
+MAZEWALK:(24,18),east
+
+# Doors
+DOOR:locked,(00,02)
+DOOR:locked,(24,02)
+DOOR:locked,(00,18)
+DOOR:locked,(24,18)
+DOOR:locked,(12,03)
+DOOR:locked,(12,17)
+#
+STAIR:(12,10),down
+# Non diggable walls
+NON_DIGGABLE:(00,00,24,19)
+# Entire main area
+REGION:(00,00,24,19),unlit,"ordinary"
+# The guy in residence
+MONSTER:'&',"Sammael",(12,10)
+# Some random weapons and armor.
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:')',random,random
+OBJECT:')',random,random
+OBJECT:'*',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+# Some traps.
+TRAP:"sleep gas", random
+TRAP:"sleep gas", random
+TRAP:"sleep gas", random
+TRAP:"anti magic", random
+TRAP:"anti magic", random
+TRAP:"anti magic", random
+TRAP:"fire", random
+TRAP:"fire", random
+TRAP:"fire", random
+TRAP:"magic", random
+TRAP:"magic", random
+TRAP:"anti magic", (11,09)
+TRAP:"anti magic", (13,09)
+TRAP:"anti magic", (11,11)
+TRAP:"anti magic", (13,11)
+TRAP:"spiked pit", (12,04)
+TRAP:"spiked pit", (12,16)
+TRAP:"land mine", (04,10)
+TRAP:"land mine", (20,10)
+# Minions
+MONSTER:'&',"incubus",random
+MONSTER:'&',"incubus",random
+MONSTER:'&',"incubus",random
+# Attendants
+MONSTER:'D',"red dragon",random
+MONSTER:'D',"red dragon",random
+MONSTER:'D',"red dragon",random
+MONSTER:'D',"green dragon",random
+MONSTER:'D',"green dragon",random
+MONSTER:'D',"green dragon",random
+MONSTER:'&',"balrog",random
+MONSTER:'&',"balrog",random
+MONSTER:'&',"balrog",random
+MONSTER:'&',"pit fiend",random
+MONSTER:'&',"pit fiend",random
+MONSTER:'&',"pit fiend",random
+MONSTER:''',"iron golem",random
+MONSTER:''',"iron golem",random
+MONSTER:''',"iron golem",random
+MONSTER:'W',random,random
+MONSTER:'W',random,random
+MONSTER:'W',random,random
+MONSTER:'W',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'L',random,random
+MONSTER:'L',random,random
+MONSTER:'L',random,random
+MONSTER:'V',random,random
+MONSTER:'V',random,random
+MONSTER:'V',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+#
+# The Cthulhu Level
+#
+MAZE:"cthulhu",' '
+FLAGS:noteleport,shortsighted
+INIT_MAP:'.','}',true,true,unlit,false
+# guarantee at least one open spot to ensure successful stair placement
+GEOMETRY:left,bottom
+MAP
+}}}}}}}}
+}}...}}}
+}}}...}}
+}}}}.}}}
+}}}}}}}}
+ENDMAP
+GEOMETRY:right,top
+MAP
+}}}}}}}}
+}}}}.}}}
+}}}...}}
+}}...}}}
+}}}}}}}}
+ENDMAP
+# lair
+GEOMETRY:center,center
+MAP
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}...}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}.....}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}.....}}}}}}}}}}}}}}}}}}}}}}.
+.}}}}}}}}}}}}}}}}}}}}}}.....}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}...}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+ENDMAP
+# Dungeon description
+REGION:(00,00,50,17),unlit,"swamp"
+MAZEWALK:(00,09),west
+MAZEWALK:(50,08),east
+STAIR:levregion(01,00,11,20),(0,0,50,17),down
+STAIR:levregion(69,00,79,20),(0,0,50,17),up
+BRANCH:levregion(01,00,11,20),(0,0,50,17)
+TELEPORT_REGION:levregion(01,00,11,20),(0,0,50,17),up
+TELEPORT_REGION:levregion(69,00,79,20),(0,0,50,17),down
+# The demon of the sea
+MONSTER:'&',"Cthulhu",(25,08)
+# And a couple demons
+MONSTER:'&',"water demon",random
+MONSTER:'&',"water demon",random
+MONSTER:'&',"water demon",random
+# Some liquids and gems
+OBJECT:'*',random,random
+OBJECT:'*',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+# And lots of water-dwelling monsters
+MONSTER:'T',"water troll", random
+MONSTER:'T',"water troll", random
+MONSTER:'T',"water troll", random
+MONSTER:'T',"water troll", random
+MONSTER:'E',"water elemental", random
+MONSTER:'E',"water elemental", random
+MONSTER:'E',"water elemental", random
+MONSTER:'E',"water elemental", random
+MONSTER:';',"jellyfish",random
+MONSTER:';',"jellyfish",random
+MONSTER:';',"jellyfish",random
+MONSTER:';',"piranha",random
+MONSTER:';',"piranha",random
+MONSTER:';',"piranha",random
+MONSTER:';',"shark",random
+MONSTER:';',"shark",random
+MONSTER:';',"shark",random
+MONSTER:';',"giant eel",random
+MONSTER:';',"giant eel",random
+MONSTER:';',"giant eel",random
+MONSTER:';',"electric eel",random
+MONSTER:';',"electric eel",random
+MONSTER:';',"electric eel",random
+MONSTER:';',"kraken",random
+MONSTER:';',"kraken",random
+MONSTER:';',"kraken",random
+# Better protect your head!
+MONSTER:'h',"mind flayer", random
+MONSTER:'h',"mind flayer", random
+MONSTER:'h',"mind flayer", random
+MONSTER:'h',"master mind flayer", random
+# Some random objects
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+# Some traps
+TRAP:"sleep gas",random
+TRAP:"sleep gas",random
+TRAP:"anti magic",random
+TRAP:"anti magic",random
+TRAP:"magic",random
+TRAP:"magic",random
+
+#
+# The Mammon Level
+#
+MAZE:"mammon", ' '
+FLAGS: noteleport
+GEOMETRY:center,center
+MAP
+----------------------------------------------------------------------------
+|       |....|                   ---........---      |....--         --....|
+|   -----....---------         ---............--     |.....--       --.....|
+| ---................| ..      |......----.....--  ..--.....--     --.....-|
+|--..................| ..      |....---  ---....|  .. --.....--   --.....--|
+|......--....---------         |....|      ---..|      --.....-- --.....-- |
+|....---|....|                 |....|        ----       --.....---.....--  |
+|....---|....|             -----....-----                --...........--   |
+|......--....-----         |............|                 --.........--    |
+|--..............---    .. |............|         ..       --.......--     |
+| ---..............---  .. -----....-----         ..     -----.....-----   |
+|   -----....--......|         |....|                    |.............|   |
+|       |....|---....|       ---....-------              |.............|   |
+|       |....|---....|      --............---            -----.....-----   |
+|--------....--......|     --...............---          -----.....-----   |
+|..................--- ..  |...--.............--   ..    |.............|   |
+|................---   ..  |...--...------.....--  ..    |.............|   |
+|--------....-----         --......--    ---....|        -----.....-----   |
+|       |....|              --....--       ---..|            |.....|       |
+----------------------------------------------------------------------------
+ENDMAP
+STAIR:(01,15),up
+STAIR:(64,18),down
+BRANCH:levregion(01,00,79,20),(0,0,0,0)
+TELEPORT_REGION:(55,00,75,19),(0,0,0,0),up
+TELEPORT_REGION:(00,00,20,19),(0,0,0,0),down
+# Non diggable walls
+NON_DIGGABLE:(00,00,20,19)
+NON_DIGGABLE:(28,00,47,19)
+NON_DIGGABLE:(54,00,75,19)
+# The king of all he surveys
+MONSTER:'&',"Mammon",(64,17)
+# Some traps.
+TRAP:"spiked pit", random
+TRAP:"fire", random
+TRAP:"sleep gas", random
+TRAP:"anti magic", random
+TRAP:"fire", random
+TRAP:"magic", random
+# Mammon's wealth
+OBJECT:'$',random,(23,03)
+OBJECT:'$',random,(24,03)
+OBJECT:'$',random,(23,04)
+OBJECT:'$',random,(24,04)
+OBJECT:'$',random,(24,09)
+OBJECT:'$',random,(25,09)
+OBJECT:'$',random,(24,10)
+OBJECT:'$',random,(25,10)
+OBJECT:'$',random,(23,15)
+OBJECT:'$',random,(24,15)
+OBJECT:'$',random,(23,16)
+OBJECT:'$',random,(24,16)
+OBJECT:'$',random,(51,03)
+OBJECT:'$',random,(52,03)
+OBJECT:'$',random,(51,04)
+OBJECT:'$',random,(52,04)
+OBJECT:'$',random,(50,09)
+OBJECT:'$',random,(51,09)
+OBJECT:'$',random,(50,10)
+OBJECT:'$',random,(51,10)
+OBJECT:'$',random,(51,15)
+OBJECT:'$',random,(52,15)
+OBJECT:'$',random,(51,16)
+OBJECT:'$',random,(52,16)
+OBJECT:'*',"agate",            (23,03)
+OBJECT:'*',"obsidian",         (24,03)
+OBJECT:'*',"jade",             (23,04)
+OBJECT:'*',"fluorite",         (24,04)
+OBJECT:'*',"jasper",           (24,09)
+OBJECT:'*',"amethyst",         (25,09)
+OBJECT:'*',"garnet",           (24,10)
+OBJECT:'*',"chrysoberyl",      (25,10)
+OBJECT:'*',"opal",             (23,15)
+OBJECT:'*',"jet",              (24,15)
+OBJECT:'*',"topaz",            (23,16)
+OBJECT:'*',"amber",            (24,16)
+OBJECT:'*',"citrine",          (51,03)
+OBJECT:'*',"aquamarine",       (52,03)
+OBJECT:'*',"turquoise",        (51,04)
+OBJECT:'*',"emerald",          (52,04)
+OBJECT:'*',"black opal",       (50,09)
+OBJECT:'*',"sapphire",         (51,09)
+OBJECT:'*',"jacinth",          (50,10)
+OBJECT:'*',"ruby",             (51,10)
+OBJECT:'*',"diamond",          (51,15)
+OBJECT:'*',"dilithium crystal",(52,15)
+OBJECT:'*',"luckstone",        (51,16)
+OBJECT:'*',"loadstone",        (52,16)
+# Some monsters.
+MONSTER:'&',random,random,hostile
+MONSTER:'&',random,random,hostile
+MONSTER:'&',random,random,hostile
+MONSTER:'&',random,random,hostile
+MONSTER:'&',random,random,hostile
+MONSTER:'&',random,random,hostile
+MONSTER:''',"gold golem",random,hostile
+MONSTER:''',"gold golem",random,hostile
+MONSTER:''',"gold golem",random,hostile
+MONSTER:''',"gold golem",random,hostile
+MONSTER:''',"gold golem",random,hostile
+MONSTER:''',"gold golem",random,hostile
+MONSTER:''',"glass golem",random,hostile
+MONSTER:''',"glass golem",random,hostile
+MONSTER:''',"glass golem",random,hostile
+MONSTER:''',"glass golem",random,hostile
+MONSTER:''',"glass golem",random,hostile
+MONSTER:''',"glass golem",random,hostile
+MONSTER:'D',"silver dragon",(63,16),hostile
+MONSTER:'D',"silver dragon",(63,18),hostile
+MONSTER:'D',"silver dragon",(65,16),hostile
+MONSTER:'D',"silver dragon",(65,18),hostile
+
+#
+# The Lolth Level
+#
+MAZE:"lolth", random
+FLAGS: noteleport
+GEOMETRY:center,center
+MAP
+|    --..---------------..--    |
+|     --.................--     |
+|    --....-----------....--    |
+|   --..--.............--..--   |
+|  --..--....-------....--..--  |
+| --..--..--.........--..--..-- |
+|--..--..--....---....--..--..--|
+--..--..--..--..-..--..--..--..--
+|..--..--..----...----..--..--..|
+..............+...+..............
+|..--..--..----...----..--..--..|
+--..--..--..--..-..--..--..--..--
+|--..--..--....---....--..--..--|
+| --..--..--.........--..--..-- |
+|  --..--....-------....--..--  |
+|   --..--.............--..--   |
+|    --....-----------....--    |
+|     --.................--     |
+|    --..---------------..--    |
+ENDMAP
+STAIR:levregion(01,00,79,20),(00,00,32,18),up
+STAIR:(16,09),down
+BRANCH:levregion(01,00,79,20),(00,00,32,18)
+TELEPORT_REGION:levregion(01,00,79,20),(00,00,00,00),up
+TELEPORT_REGION:levregion(01,00,79,20),(00,00,00,00),down
+MAZEWALK:(00,09),west
+MAZEWALK:(32,09),east
+# Non diggable walls
+NON_DIGGABLE:(00,00,32,18)
+# Doors
+DOOR:closed,(14,09)
+DOOR:closed,(18,09)
+# Entire main area
+REGION:(00,00,32,18),unlit,"ordinary"
+# She of the poisoned fangs
+MONSTER:'&',"Lolth",(16,09)
+# Some random weapons and armor.
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:')',random,random
+OBJECT:')',random,random
+OBJECT:'*',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+# Some traps.
+TRAP:"sleep gas", random
+TRAP:"sleep gas", random
+TRAP:"anti magic", random
+TRAP:"anti magic", random
+TRAP:"fire", random
+TRAP:"fire", random
+TRAP:"magic", random
+TRAP:"magic", random
+TRAP:"web", (15,08)
+TRAP:"web", (16,08)
+TRAP:"web", (17,08)
+TRAP:"web", (15,09)
+TRAP:"web", (17,09)
+TRAP:"web", (15,10)
+TRAP:"web", (16,10)
+TRAP:"web", (17,10)
+TRAP:"web", random
+TRAP:"web", random
+TRAP:"web", random
+TRAP:"web", random
+TRAP:"web", random
+TRAP:"web", random
+TRAP:"web", random
+TRAP:"web", random
+TRAP:"web", random
+TRAP:"web", random
+# Minions
+MONSTER:'s',random,random
+MONSTER:'s',random,random
+MONSTER:'s',random,random
+MONSTER:'s',random,random
+MONSTER:'s',random,random
+MONSTER:'s',random,random
+MONSTER:'s',random,random
+MONSTER:'s',random,random
+MONSTER:'s',random,random
+MONSTER:'s',random,random
+MONSTER:'a',random,random
+MONSTER:'a',random,random
+MONSTER:'a',random,random
+MONSTER:'a',random,random
+MONSTER:'a',random,random
+MONSTER:'a',random,random
+MONSTER:'a',random,random
+MONSTER:'a',random,random
+MONSTER:'a',random,random
+MONSTER:'a',random,random
+# Undead and demons a gogo.
+MONSTER:'Z',"elf zombie",random
+MONSTER:'Z',"elf zombie",random
+MONSTER:'Z',"elf zombie",random
+MONSTER:'Z',"elf zombie",random
+MONSTER:'Z',"elf zombie",random
+MONSTER:'Z',"elf zombie",random
+MONSTER:'Z',"elf zombie",random
+MONSTER:'Z',"elf zombie",random
+MONSTER:'W',random,random
+MONSTER:'W',random,random
+MONSTER:'W',random,random
+MONSTER:'W',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'L',random,random
+MONSTER:'L',random,random
+MONSTER:'L',random,random
+MONSTER:'V',random,random
+MONSTER:'V',random,random
+MONSTER:'V',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+
+#
 # The Sanctum Level
 #
 MAZE:"sanctum", ' '

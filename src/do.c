@@ -1580,7 +1580,7 @@ long timeout;
 
     /* if we succeed, the corpse is gone, otherwise, rot it away */
     if (!revive_corpse(body)) {
-	if (is_rider(&mons[body->corpsenm]))
+	if (is_endgamenasty(&mons[body->corpsenm]))
 	    You_feel("less hassled.");
 	(void) start_timer(250L - (monstermoves-body->age),
 					TIMER_OBJECT, ROT_CORPSE, arg);

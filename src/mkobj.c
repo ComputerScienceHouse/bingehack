@@ -502,7 +502,7 @@ boolean artif;
 					blessorcurse(otmp, 2);
 					break;
 		case HORN_OF_PLENTY:
-		case BAG_OF_TRICKS:	otmp->spe = rnd(20);
+		case BAG_OF_TRICKS:	otmp->spe = rnd(30);
 					break;
 		case FIGURINE:	{	int tryct2 = 0;
 					do
@@ -661,7 +661,7 @@ start_corpse_timeout(body)
 		when = ROT_AGE - corpse_age;
 	when += (long)(rnz(rot_adjust) - rot_adjust);
 
-	if (is_rider(&mons[body->corpsenm])) {
+	if (is_endgamenasty(&mons[body->corpsenm])) {
 		/*
 		 * Riders always revive.  They have a 1/3 chance per turn
 		 * of reviving after 12 turns.  Always revive by 500.
@@ -889,9 +889,9 @@ int x, y;
 #ifdef OVL1
 
 /* return TRUE if the corpse has special timing */
-#define special_corpse(num)  (((num) == PM_LIZARD)		\
-				|| ((num) == PM_LICHEN)		\
-				|| (is_rider(&mons[num]))	\
+#define special_corpse(num)  (((num) == PM_LIZARD)		 \
+				|| ((num) == PM_LICHEN)		 \
+				|| (is_endgamenasty(&mons[num])) \
 				|| (mons[num].mlet == S_TROLL))
 
 /*

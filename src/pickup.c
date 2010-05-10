@@ -28,13 +28,15 @@ STATIC_DCL long FDECL(carry_count,
 		      (struct obj *,struct obj *,long,BOOLEAN_P,int *,int *));
 STATIC_DCL int FDECL(lift_object, (struct obj *,struct obj *,long *,BOOLEAN_P));
 STATIC_DCL boolean FDECL(mbag_explodes, (struct obj *,int));
+STATIC_DCL boolean FDECL(container_explodes, (struct obj *, struct obj *));
 STATIC_PTR int FDECL(in_container,(struct obj *));
 STATIC_PTR int FDECL(ck_bag,(struct obj *));
 STATIC_PTR int FDECL(out_container,(struct obj *));
+STATIC_DCL int FDECL(menu_loot, (int, struct obj *, int));
+STATIC_DCL int FDECL(ioa_menu, (const char *,struct obj *,
+                        BOOLEAN_P, BOOLEAN_P, int, struct obj*));
 STATIC_DCL long FDECL(mbag_item_gone, (int,struct obj *));
 STATIC_DCL void FDECL(observe_quantum_cat, (struct obj *));
-STATIC_DCL int FDECL(menu_loot, (int, struct obj *, BOOLEAN_P));
-STATIC_DCL int FDECL(in_or_out_menu, (const char *,struct obj *, BOOLEAN_P, BOOLEAN_P));
 STATIC_DCL int FDECL(container_at, (int, int, BOOLEAN_P));
 STATIC_DCL boolean FDECL(able_to_loot, (int, int));
 STATIC_DCL boolean FDECL(mon_beside, (int, int));
@@ -309,6 +311,17 @@ all_but_uchain(obj)
 struct obj *obj;
 {
     return (obj != uchain);
+}
+
+#define ALLOW_APPLY(obj) (Is_container((obj)) && !((obj)->otyp==BAG_OF_TRICKS&&objects[BAG_OF_TRICKS].oc_name_known))
+/* allow applying for containers or unIDd BoTricks / query_objlist callback */
+boolean
+allow_apply(obj)
+struct obj *obj;
+{
+        return ALLOW_APPLY(obj);
+    /* return Is_container(obj)
+        &&!(obj->otyp==BAG_OF_TRICKS&&objects[BAG_OF_TRICKS].oc_name_known); */
 }
 
 /* query_objlist callback: return TRUE */
@@ -1358,7 +1371,7 @@ boolean telekinesis;	/* not picking it up directly by hand */
 			instapetrify(kbuf);
 		    return -1;
 		}
-	    } else if (is_rider(&mons[obj->corpsenm])) {
+	    } else if (is_endgamenasty(&mons[obj->corpsenm])) {
 		pline("At your %s, the corpse suddenly moves...",
 			telekinesis ? "attempted acquisition" : "touch");
 		(void) revive_corpse(obj);
@@ -1590,13 +1603,14 @@ lootcont:
 		    pline("Hmmm, it seems to be locked.");
 		    continue;
 		}
-		if (cobj->otyp == BAG_OF_TRICKS) {
+		if (cobj->otyp == BAG_OF_TRICKS && cobj->spe>0) {
 		    int tmp;
 		    You("carefully open the bag...");
-		    pline("It develops a huge set of teeth and bites you!");
+		    pline("It develops a huge set of %s you!", 
+				Hallucination ? "lips and kisses":"teeth and bites");
 		    tmp = rnd(10);
 		    if (Half_physical_damage) tmp = (tmp+1) / 2;
-		    losehp(tmp, "carnivorous bag", KILLED_BY_AN);
+		    losehp(tmp, Hallucination ? "amorous bag":"carnivorous bag", KILLED_BY_AN);
 		    makeknown(BAG_OF_TRICKS);
 		    timepassed = 1;
 		    continue;
@@ -1774,6 +1788,19 @@ boolean *prev_loot;
 }
 
 /*
+ * Returns the outermost container enclosing the one specified by arg 
+ */
+struct obj *
+outermost_container(container)
+struct obj *container;
+{
+    struct obj *tobj;
+    for(tobj=container; tobj->where==OBJ_CONTAINED;
+        tobj=tobj->ocontainer);
+    return tobj;
+}
+
+/*
  * Decide whether an object being placed into a magic bag will cause
  * it to explode.  If the object is a bag itself, check recursively.
  */
@@ -1800,6 +1827,29 @@ mbag_explodes(obj, depthin)
     return FALSE;
 }
 
+/*
+ * Decide whether an object being placed into a container will cause
+ * it to magically explode. If the object is a bag itself, check 
+ * recursively. Take into account if container is itself inside bags
+ * of holding.
+ */
+STATIC_OVL boolean
+container_explodes(cont, obj)
+    struct obj *cont;
+    struct obj *obj;
+{
+    int depth;
+    if(Is_mbag(cont)&&mbag_explodes(obj, 0))
+        return TRUE;
+    for(depth=1; cont->where==OBJ_CONTAINED; cont=cont->ocontainer, ++depth) {
+        if(Is_mbag(cont->ocontainer)
+                &&(mbag_explodes(cont, 0)||mbag_explodes(obj, depth)))
+            return TRUE;
+    }
+    return FALSE;
+}
+
+
 /* A variable set in use_container(), to be used by the callback routines   */
 /* in_container(), and out_container() from askchain() and use_container(). */
 static NEARDATA struct obj *current_container;
@@ -1810,7 +1860,8 @@ STATIC_PTR int
 in_container(obj)
 register struct obj *obj;
 {
-	boolean floor_container = !carried(current_container);
+        struct obj *outermost=outermost_container(current_container);
+        boolean floor_container = !carried(outermost);
 	boolean was_unpaid = FALSE;
 	char buf[BUFSZ];
 
@@ -1822,6 +1873,9 @@ register struct obj *obj;
 		return 0;
 	} else if (obj == current_container) {
 		pline("That would be an interesting topological exercise.");
+		return 0;
+	} else if (obj == outermost) {
+		pline("That would be a very interesting topological exercise.");
 		return 0;
 	} else if (obj->owornmask & (W_ARMOR | W_RING | W_AMUL | W_TOOL)) {
 		Norep("You cannot %s %s you are wearing.",
@@ -1917,7 +1971,7 @@ register struct obj *obj;
 			/* mark a non-reviving corpse as such */
 			if (rot_alarm) obj->norevive = 1;
 		}
-	} else if (Is_mbag(current_container) && mbag_explodes(obj, 0)) {
+	} else if (container_explodes(current_container, obj)) {
 		/* explicitly mention what item is triggering the explosion */
 		pline(
 	      "As you put %s inside, you are blasted by a magical explosion!",
@@ -1925,13 +1979,13 @@ register struct obj *obj;
 		/* did not actually insert obj yet */
 		if (was_unpaid) addtobill(obj, FALSE, FALSE, TRUE);
 		obfree(obj, (struct obj *)0);
-		delete_contents(current_container);
+		delete_contents(outermost);
 		if (!floor_container)
-			useup(current_container);
-		else if (obj_here(current_container, u.ux, u.uy))
-			useupf(current_container, obj->quan);
+			useup(outermost);
+		else if (obj_here(outermost, u.ux, u.uy))
+			useupf(outermost, obj->quan);
 		else
-			panic("in_container:  bag not found.");
+			panic("in_container: container not found.");
 
 		losehp(d(6,6),"magical explosion", KILLED_BY_AN);
 		current_container = 0;	/* baggone = TRUE; */
@@ -2118,12 +2172,13 @@ register int held;
 	struct obj *u_gold = (struct obj *)0;
 #endif
 	boolean one_by_one, allflag, quantum_cat = FALSE,
-		loot_out = FALSE, loot_in = FALSE;
+		loot_out = FALSE, loot_in = FALSE, loot_app = FALSE;
 	char select[MAXOCLASSES+1];
 	char qbuf[BUFSZ], emptymsg[BUFSZ], pbuf[QBUFSZ];
 	long loss = 0L;
-	int cnt = 0, used = 0,
+	int cnt = 0, used = 0, appcnt = 0,
 	    menu_on_request;
+        struct obj *appwhat=NULL;
 
 	emptymsg[0] = '\0';
 	if (nohands(youmonst.data)) {
@@ -2133,6 +2188,14 @@ register int held;
 		You("have no free %s.", body_part(HAND));
 		return 0;
 	}
+        if ((obj->where==OBJ_CONTAINED)&&(obj->otyp==BAG_OF_TRICKS)) {
+                struct obj *cont=obj->ocontainer;
+                You("try to open the bag...");
+                pline("It slips from your fingers and hides in %s!",
+                                the(xname(cont)));
+                makeknown(BAG_OF_TRICKS);
+                return 1;
+        }
 	if (obj->olocked) {
 	    pline("%s to be locked.", Tobjnam(obj, "seem"));
 	    if (held) You("must put it down to unlock.");
@@ -2164,6 +2227,11 @@ register int held;
 		used = 1;
 	    } else {
 		cnt++;
+                if(ALLOW_APPLY(curr)) {
+                    if(!appcnt)
+                        appwhat=curr;
+                    ++appcnt;
+                }
 	    }
 	}
 
@@ -2197,16 +2265,18 @@ register int held;
 		    menuprompt[0] = '\0';
 		    if (!cnt) Sprintf(menuprompt, "%s ", emptymsg);
 		    Strcat(menuprompt, "Do what?");
-		    t = in_or_out_menu(menuprompt, current_container, outokay, inokay);
+		    t = ioa_menu(menuprompt, current_container,
+                            outokay, inokay, appcnt, appwhat);
 		    if (t <= 0) return 0;
 		    loot_out = (t & 0x01) != 0;
 		    loot_in  = (t & 0x02) != 0;
+		    loot_app = (t & 0x04) != 0;
 		} else {	/* MENU_COMBINATION or MENU_PARTIAL */
 		    loot_out = (yn_function(qbuf, "ynq", 'n') == 'y');
 		}
 		if (loot_out) {
 		    add_valid_menu_class(0);	/* reset */
-		    used |= menu_loot(0, current_container, FALSE) > 0;
+		    used |= menu_loot(0, current_container, 0) > 0;
 		}
 	    } else {
 		/* traditional code */
@@ -2235,14 +2305,14 @@ ask_again2:
 			    used = 1;
 		    } else if (menu_on_request < 0) {
 			used |= menu_loot(menu_on_request,
-					  current_container, FALSE) > 0;
+					  current_container, 0) > 0;
 		    }
 		    /*FALLTHRU*/
 		case 'n':
 		    break;
 		case 'm':
 		    menu_on_request = -2; /* triggers ALL_CLASSES */
-		    used |= menu_loot(menu_on_request, current_container, FALSE) > 0;
+		    used |= menu_loot(menu_on_request, current_container, 0) > 0;
 		    break;
 		case 'q':
 		default:
@@ -2276,7 +2346,7 @@ ask_again2:
 		case 'm':
 		    add_valid_menu_class(0);	  /* reset */
 		    menu_on_request = -2; /* triggers ALL_CLASSES */
-		    used |= menu_loot(menu_on_request, current_container, TRUE) > 0;
+		    used |= menu_loot(menu_on_request, current_container, 1) > 0;
 		    break;
 		case 'q':
 		default:
@@ -2304,7 +2374,7 @@ ask_again2:
 #endif
 	    add_valid_menu_class(0);	  /* reset */
 	    if (flags.menu_style != MENU_TRADITIONAL) {
-		used |= menu_loot(0, current_container, TRUE) > 0;
+		used |= menu_loot(0, current_container, 1) > 0;
 	    } else {
 		/* traditional code */
 		menu_on_request = 0;
@@ -2320,7 +2390,7 @@ ask_again2:
 		    used = 1;
 		} else if (menu_on_request < 0) {
 		    used |= menu_loot(menu_on_request,
-				      current_container, TRUE) > 0;
+				      current_container, 1) > 0;
 		}
 	    }
 	}
@@ -2334,20 +2404,27 @@ ask_again2:
 	    dealloc_obj(u_gold);
 	}
 #endif
+
+        if(loot_app) {
+            if(appcnt==1)
+                used=use_container(appwhat, 1);
+            else
+                used=menu_loot(0, current_container, 2);
+        }
 	return used;
 }
 
 /* Loot a container (take things out, put things in), using a menu. */
 STATIC_OVL int
-menu_loot(retry, container, put_in)
+menu_loot(retry, container, mode)
 int retry;
 struct obj *container;
-boolean put_in;
+int mode; /* 0 - take out, 1 - put in, 2 - apply */
 {
     int n, i, n_looted = 0;
     boolean all_categories = TRUE, loot_everything = FALSE;
     char buf[BUFSZ];
-    const char *takeout = "Take out", *putin = "Put in";
+    const char *takeout = "Take out", *putin = "Put in", *apply = "Apply";
     struct obj *otmp, *otmp2;
     menu_item *pick_list;
     int mflags, res;
@@ -2355,12 +2432,12 @@ boolean put_in;
 
     if (retry) {
 	all_categories = (retry == -2);
-    } else if (flags.menu_style == MENU_FULL) {
+    } else if ((flags.menu_style == MENU_FULL) && (mode < 2)) {
 	all_categories = FALSE;
-	Sprintf(buf,"%s what type of objects?", put_in ? putin : takeout);
-	mflags = put_in ? ALL_TYPES | BUC_ALLBKNOWN | BUC_UNKNOWN :
+	Sprintf(buf,"%s what type of objects?", mode ? putin : takeout);
+	mflags = mode ? ALL_TYPES | BUC_ALLBKNOWN | BUC_UNKNOWN :
 		          ALL_TYPES | CHOOSE_ALL | BUC_ALLBKNOWN | BUC_UNKNOWN;
-	n = query_category(buf, put_in ? invent : container->cobj,
+	n = query_category(buf, mode ? invent : container->cobj,
 			   mflags, &pick_list, PICK_ANY);
 	if (!n) return 0;
 	for (i = 0; i < n; i++) {
@@ -2382,47 +2459,58 @@ boolean put_in;
 	}
     } else {
 	mflags = INVORDER_SORT;
-	if (put_in && flags.invlet_constant) mflags |= USE_INVLET;
-	Sprintf(buf,"%s what?", put_in ? putin : takeout);
-	n = query_objlist(buf, put_in ? invent : container->cobj,
+	if (mode==1 && flags.invlet_constant) mflags |= USE_INVLET;
+	Sprintf(buf,"%s what?", mode ? (mode==1?putin:apply) : takeout);
+        if(mode<2)
+            n = query_objlist(buf, mode ? invent : container->cobj,
 			  mflags, &pick_list, PICK_ANY,
 			  all_categories ? allow_all : allow_category);
+        else
+            n = query_objlist(buf, container->cobj, mflags, &pick_list,
+                          PICK_ONE, allow_apply);
 	if (n) {
-		n_looted = n;
-		for (i = 0; i < n; i++) {
-		    otmp = pick_list[i].item.a_obj;
-		    count = pick_list[i].count;
-		    if (count > 0 && count < otmp->quan) {
-			otmp = splitobj(otmp, count);
-			/* special split case also handled by askchain() */
-		    }
-		    res = put_in ? in_container(otmp) : out_container(otmp);
-		    if (res < 0) {
-			if (otmp != pick_list[i].item.a_obj) {
-			    /* split occurred, merge again */
-			    (void) merged(&pick_list[i].item.a_obj, &otmp);
-			}
-			break;
-		    }
-		}
-		free((genericptr_t)pick_list);
+            n_looted = n;
+            if(mode<2) {
+                for (i = 0; i < n; i++) {
+                    otmp = pick_list[i].item.a_obj;
+                    count = pick_list[i].count;
+                    if (count > 0 && count < otmp->quan) {
+                        otmp = splitobj(otmp, count);
+                        /* special split case also handled by askchain() */
+                    }
+                    res = mode ? in_container(otmp) : out_container(otmp);
+                    if (res < 0) {
+                        if (otmp != pick_list[i].item.a_obj) {
+                            /* split occurred, merge again */
+                            (void) merged(&pick_list[i].item.a_obj, &otmp);
+                        }
+                        break;
+                    }
+                }
+            } else {
+                otmp = pick_list[0].item.a_obj;
+                n_looted=use_container(otmp, 1);
+            }
+            free((genericptr_t)pick_list);
 	}
     }
     return n_looted;
 }
 
 STATIC_OVL int
-in_or_out_menu(prompt, obj, outokay, inokay)
+ioa_menu(prompt, obj, outokay, inokay, appcnt, appwhat)
 const char *prompt;
 struct obj *obj;
 boolean outokay, inokay;
+int appcnt;
+struct obj *appwhat;
 {
     winid win;
     anything any;
     menu_item *pick_list;
     char buf[BUFSZ];
     int n;
-    const char *menuselector = iflags.lootabc ? "abc" : "oib";
+    const char *menuselector = iflags.lootabc ? "abcd" : "oiba";
 
     any.a_void = 0;
     win = create_nhwindow(NHW_MENU);
@@ -2444,6 +2532,16 @@ boolean outokay, inokay;
 	any.a_int = 3;
 	add_menu(win, NO_GLYPH, &any, *menuselector, 0, ATR_NONE,
 			"Both of the above", MENU_UNSELECTED);
+    }
+    menuselector++;
+    if(appcnt) {
+        any.a_int = 4;
+        if(appcnt==1)
+                Sprintf(buf,"Apply %s inside", the(xname(appwhat)));
+        else
+                Sprintf(buf,"Apply %s from %s", something, the(xname(obj)));
+        add_menu(win, NO_GLYPH, &any, *menuselector, 0, ATR_NONE, buf,
+                        MENU_UNSELECTED);
     }
     end_menu(win, prompt);
     n = select_menu(win, PICK_ONE, &pick_list);

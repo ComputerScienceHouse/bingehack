@@ -134,7 +134,11 @@ struct monst *mtmp;
 	if (mtmp->isshk || mtmp->isgd || mtmp->iswiz || !mtmp->mcansee ||
 	    mtmp->mpeaceful || mtmp->data->mlet == S_HUMAN ||
 	    is_lminion(mtmp) || mtmp->data == &mons[PM_ANGEL] ||
-	    is_rider(mtmp->data) || mtmp->data == &mons[PM_MINOTAUR])
+#ifdef TOUGHVLAD
+			/* Vlad ignores Elbereth/Scare Monster/Garlic */
+			mtmp->data == &mons[PM_VLAD_THE_IMPALER] ||
+#endif
+	    is_endgamenasty(mtmp->data) || mtmp->data == &mons[PM_MINOTAUR])
 		return(FALSE);
 
 	return (boolean)(sobj_at(SCR_SCARE_MONSTER, x, y)
@@ -402,7 +406,7 @@ register struct monst *mtmp;
 	if (mdat == &mons[PM_WATCHMAN] || mdat == &mons[PM_WATCH_CAPTAIN])
 		watch_on_duty(mtmp);
 
-	else if (is_mind_flayer(mdat) && !rn2(20)) {
+	else if ((is_mind_flayer(mdat) || mdat == &mons[PM_CTHULHU]) && !rn2(20)) {
 		struct monst *m2, *nmon = (struct monst *)0;
 
 		if (canseemon(mtmp))
@@ -636,7 +640,7 @@ register int after;
 	    can_tunnel = tunnels(ptr);
 	can_open = !(nohands(ptr) || verysmall(ptr));
 	can_unlock = ((can_open && m_carrying(mtmp, SKELETON_KEY)) ||
-		      mtmp->iswiz || is_rider(ptr));
+		      mtmp->iswiz || is_endgamenasty(ptr));
 	doorbuster = is_giant(ptr);
 	if(mtmp->wormno) goto not_special;
 	/* my dog gets special treatment */
@@ -828,7 +832,7 @@ not_special:
 		    if(((likegold && otmp->oclass == COIN_CLASS) ||
 		       (likeobjs && index(practical, otmp->oclass) &&
 			(otmp->otyp != CORPSE || (ptr->mlet == S_NYMPH
-			   && !is_rider(&mons[otmp->corpsenm])))) ||
+			   && !is_endgamenasty(&mons[otmp->corpsenm]) ))) ||
 		       (likemagic && index(magical, otmp->oclass)) ||
 		       (uses_items && searches_for_item(mtmp, otmp)) ||
 		       (likerock && otmp->otyp == BOULDER) ||
@@ -890,7 +894,7 @@ not_special:
 	if (mtmp->mpeaceful && (!Conflict || resist(mtmp, RING_CLASS, 0, 0)))
 	    flag |= (ALLOW_SANCT | ALLOW_SSM);
 	else flag |= ALLOW_U;
-	if (is_minion(ptr) || is_rider(ptr)) flag |= ALLOW_SANCT;
+	if (is_minion(ptr) || is_endgamenasty(ptr)) flag |= ALLOW_SANCT;
 	/* unicorn may not be able to avoid hero on a noteleport level */
 	if (is_unicorn(ptr) && !level.flags.noteleport) flag |= NOTONL;
 	if (passes_walls(ptr)) flag |= (ALLOW_WALL | ALLOW_ROCK);
@@ -1125,7 +1129,14 @@ postmov:
 			    add_damage(mtmp->mx, mtmp->my, 0L);
 		    }
 		} else if (levl[mtmp->mx][mtmp->my].typ == IRONBARS) {
-			if (flags.verbose && canseemon(mtmp))
+		    if (dmgtype(ptr,AD_RUST) || dmgtype(ptr,AD_CORR)) {
+			if (canseemon(mtmp)) {
+			    pline("%s eats through the iron bars.", 
+				  Monnam(mtmp)); 
+			}
+			dissolve_bars(mtmp->mx, mtmp->my);
+		    }
+		    else if (flags.verbose && canseemon(mtmp))
 			    Norep("%s %s %s the iron bars.", Monnam(mtmp),
 				  /* pluralization fakes verb conjugation */
 				  makeplural(locomotion(ptr, "pass")),
@@ -1216,6 +1227,14 @@ postmov:
 
 #endif /* OVL0 */
 #ifdef OVL2
+
+void
+dissolve_bars(x, y)
+register int x, y;
+{
+    levl[x][y].typ = (Is_special(&u.uz) || *in_rooms(x,y,0)) ? ROOM : CORR; 
+    newsym(x, y);    
+}
 
 boolean
 closed_door(x, y)

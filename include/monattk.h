@@ -48,36 +48,42 @@
 #define AD_BLND		11	/* blinds (yellow light) */
 #define AD_STUN		12	/* stuns */
 #define AD_SLOW		13	/* slows */
-#define AD_PLYS		14	/* paralyses */
-#define AD_DRLI		15	/* drains life levels (Vampire) */
-#define AD_DREN		16	/* drains magic energy */
-#define AD_LEGS		17	/* damages legs (xan) */
-#define AD_STON		18	/* petrifies (Medusa, cockatrice) */
-#define AD_STCK		19	/* sticks to you (mimic) */
-#define AD_SGLD		20	/* steals gold (leppie) */
-#define AD_SITM		21	/* steals item (nymphs) */
-#define AD_SEDU		22	/* seduces & steals multiple items */
-#define AD_TLPT		23	/* teleports you (Quantum Mech.) */
-#define AD_RUST		24	/* rusts armour (Rust Monster)*/
-#define AD_CONF		25	/* confuses (Umber Hulk) */
-#define AD_DGST		26	/* digests opponent (trapper, etc.) */
-#define AD_HEAL		27	/* heals opponent's wounds (nurse) */
-#define AD_WRAP		28	/* special "stick" for eels */
-#define AD_WERE		29	/* confers lycanthropy */
-#define AD_DRDX		30	/* drains dexterity (quasit) */
-#define AD_DRCO		31	/* drains constitution */
-#define AD_DRIN		32	/* drains intelligence (mind flayer) */
-#define AD_DISE		33	/* confers diseases */
-#define AD_DCAY		34	/* decays organics (brown Pudding) */
-#define AD_SSEX		35	/* Succubus seduction (extended) */
+#define AD_PLYS		14	/* paralyses (physically) */
+#define AD_PLYM		15	/* paralyses (mentally) */
+#define AD_DRLI		16	/* drains life levels (Vampire) */
+#define AD_DREN		17	/* drains magic energy */
+#define AD_LEGS		18	/* damages legs (xan) */
+#define AD_STON		19	/* petrifies (Medusa, cockatrice) */
+#define AD_STCK		20	/* sticks to you (mimic) */
+#define AD_SGLD		21	/* steals gold (leppie) */
+#define AD_SITM		22	/* steals item (nymphs) */
+#define AD_SEDU		23	/* seduces & steals multiple items */
+#define AD_TLPT		24	/* teleports you (Quantum Mech.) */
+#define AD_RUST		25	/* rusts armour (Rust Monster)*/
+#define AD_CONF		26	/* confuses (Umber Hulk) */
+#define AD_DGST		27	/* digests opponent (trapper, etc.) */
+#define AD_HEAL		28	/* heals opponent's wounds (nurse) */
+#define AD_WRAP		29	/* special "stick" for eels */
+#define AD_WERE		30	/* confers lycanthropy */
+#define AD_DRDX		31	/* drains dexterity (quasit) */
+#define AD_DRCO		32	/* drains constitution */
+#define AD_DRIN		33	/* drains intelligence (mind flayer) */
+#define AD_DISE		34	/* confers diseases */
+#define AD_DCAY		35	/* decays organics (brown Pudding) */
+#define AD_SSEX		36	/* Succubus seduction (extended) */
 				/* If no SEDUCE then same as AD_SEDU */
-#define AD_HALU		36	/* causes hallucination */
-#define AD_DETH		37	/* for Death only */
-#define AD_PEST		38	/* for Pestilence only */
-#define AD_FAMN		39	/* for Famine only */
-#define AD_SLIM		40	/* turns you into green slime */
-#define AD_ENCH		41	/* remove enchantment (disenchanter) */
-#define AD_CORR		42	/* corrode armor (black pudding) */
+#define AD_HALU		37	/* causes hallucination */
+#define AD_DETH		38	/* for Death only */
+#define AD_PEST		39	/* for Pestilence only */
+#define AD_FAMN		40	/* for Famine only */
+#define AD_SLIM		41	/* turns you into green slime */
+#define AD_ENCH		42	/* remove enchantment (disenchanter) */
+#define AD_CORR		43	/* corrode armor (black pudding) */
+
+#define AD_DRE2		44	/* (Wrath) drains half your current energy, or all of it if less than 10 */
+#define AD_LAZY		45	/* (Sloth) laziness attack, does all sorts of nasty things */
+#define AD_DRCH		46	/* (Pride) drains charisma */
+#define AD_DFOO		47	/* (Pride) drains a random stat, or energy, or hit points, or life level */
 
 #define AD_CLRC		240	/* random clerical spell */
 #define AD_SPEL		241	/* random magic spell */

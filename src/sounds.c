@@ -721,11 +721,24 @@ register struct monst *mtmp;
 	    break;
 	case MS_SEDUCE:
 #ifdef SEDUCE
-	    if (ptr->mlet != S_NYMPH &&
-		could_seduce(mtmp, &youmonst, (struct attack *)0) == 1) {
-			(void) doseduce(mtmp);
+	    /* RLC:  Need to find the AD_SSEX entry, so we can implement
+	       Lilith's bad attitude toward pretty boys.
+	       If there's no such entry, invoke nymph-like behavior. */
+	    {
+		int i;
+
+		for (i=0; i<NATTK; i++) {
+		    if (mtmp->data->mattk[i].adtyp == AD_SSEX)
 			break;
+		}
+		if (i < NATTK &&
+		    could_seduce(mtmp, &youmonst, (struct attack *)0) == 1) {
+			    /* AD_SSEX type */
+			    (void) doseduce(mtmp, mtmp->data->mattk[i].damd);
+			    break;
+		}
 	    }
+	    /* else nymph */
 	    switch ((poly_gender() != (int) mtmp->female) ? rn2(3) : 0)
 #else
 	    switch ((poly_gender() == 0) ? rn2(3) : 0)
@@ -813,6 +826,37 @@ register struct monst *mtmp;
 		pline_msg = "is busy reading a copy of Sandman #8.";
 	    else verbl_msg = "Who do you think you are, War?";
 	    break;
+	case MS_VICE:
+	    switch(monsndx(ptr)) {
+		case PM_GLUTTONY:
+		    pline_msg = "mumbles through a mouthful of food.";
+		    break;
+		case PM_LUST:
+		    pline_msg = "breathes heavily...";
+		    break;
+		case PM_GREED:
+		    verbl_msg = "Mine! All mine!";
+		    break;
+		case PM_ENVY:
+#ifndef GOLDOBJ
+		    if(u.ugold)
+#else
+		    if(money_cnt(invent))
+#endif
+			verbl_msg = "Give me that gold!";
+		    else
+			pline_msg = "stares at you jealously.";
+		    break;
+		case PM_WRATH:
+		    pline_msg = "glares at you ferociously.";
+		    break;
+		case PM_SLOTH:
+		    pline_msg = "sighs.";
+		    break;
+		case PM_PRIDE:
+		    pline_msg = "doesn't deign to reply.";
+		    break;
+	    }
     }
 
     if (pline_msg) pline("%s %s", Monnam(mtmp), pline_msg);

@@ -8,6 +8,10 @@
 #include "epri.h"
 #include "emin.h"
 
+#ifdef PRIEST_SACRIFICE
+#include "edog.h"
+#endif
+
 /* this matches the categorizations shown by enlightenment */
 #define ALGN_SINNED	(-4)	/* worse than strayed */
 
@@ -178,6 +182,201 @@ register struct monst *priest;
 			avoid = FALSE;
 		}
 	} else if(Invis) avoid = FALSE;
+
+#ifdef PRIEST_SACRIFICE
+	if(!priest->mflee && !Conflict) {
+		struct obj *otmp = 0;
+		struct permonst *ptr;
+		struct monst *mtmp;
+		struct rm *lev = &levl[EPRI(priest)->shrpos.x][EPRI(priest)->shrpos.y];
+		aligntyp prialign = EPRI(priest)->shralign;
+		boolean has_corpse = FALSE;
+		boolean see = cansee(omx,omy);
+		boolean turning = FALSE;
+		boolean was_tame = FALSE;
+		boolean is_priest_altar = 
+			(aligntyp)Amask2align(lev->altarmask & AM_MASK) == prialign;
+
+			
+		/* put on a gift we got */
+		if(rn2(2)) m_dowear(priest,FALSE);
+		
+		for(otmp = priest->minvent; otmp; otmp = otmp->nobj) {
+			if( otmp->otyp==CORPSE) { 
+				has_corpse = TRUE;
+				break;
+			}
+		}
+
+		if (!has_corpse) /* if not in inventory, find a corpse on the floor */
+		for (otmp = level.objects[omx][omy]; otmp; otmp = otmp->nexthere) {
+			/* if the coprse is too big to carry, but already on the altar
+			 * then it can still be sacrificed.
+			 * Not being able to sacrifice c*cktrice is consistent with
+			 * player being stoned doing so without gloves
+			 */
+			turning = was_tame = FALSE;
+			if (otmp->oxlth 
+					&& otmp->oattached == OATTACHED_MONST
+					&& ((mtmp = get_mtraits(otmp, FALSE)) != (struct monst *)0)
+					&& mtmp->mtame) was_tame = TRUE;
+			ptr = &mons[otmp->corpsenm];
+			if( otmp->otyp==CORPSE && peek_at_iced_corpse_age(otmp) <= 50 
+				&& !touch_petrifies(ptr)
+				&& !your_race(ptr) && !is_human(ptr) 
+				&& (ptr->msize <= MZ_MEDIUM ||
+				(omx == EPRI(priest)->shrpos.x &&
+				 omy == EPRI(priest)->shrpos.y )) 
+				 && (!is_unicorn(ptr) || 
+				 sgn(ptr->maligntyp) != prialign &&
+				 is_priest_altar || 
+				 was_tame && is_priest_altar && prialign == u.ualign.type ) ) {
+					
+				/* is your priest and fervently aligned, ressurect your pet */
+				if (was_tame && prialign == u.ualign.type ) {
+					 if (u.ualign.record >= 9) turning = TRUE;
+					 else continue; /* don't sacrifice */
+				} else if (ptr->maligntyp == prialign && !rn2(7)) turning = TRUE;
+
+				break;
+			} else if (is_unicorn(ptr) && 
+				sgn(ptr->maligntyp) == EPRI(priest)->shralign && !was_tame ) {
+				turning = TRUE;
+				break;
+			}  
+			
+		}
+
+		/* are we on the altar? */
+		if ( omx == EPRI(priest)->shrpos.x &&
+			omy == EPRI(priest)->shrpos.y && otmp ) {
+			if (turning) { /* reviving a corpse */
+				if (see) pline("%s begins to pray to %s...",Monnam(priest), 
+					a_gname_at(omx, omy) );
+
+
+				if(mtmp = revive(otmp)) {
+					if (see) pline("%s rises from the dead!", Monnam(mtmp) );
+					if (prialign == u.ualign.type) {
+						mtmp->mpeaceful = 1;
+						if (was_tame) {
+							mtmp->mtame = 1;
+							EDOG(mtmp)->hungrytime = 0;
+							if (see) pline( "It's a miracle!" );
+							/* maybe this should count against athiest conduct? */
+						}
+					} else mtmp->mpeaceful = !rn2(10);
+					otmp = 0;
+				} else {
+					if (see) pline("%s shutters and rips to pieces!" );
+					else if (flags.soundok) You_hear("a ripping sound.");
+				}
+			} else {		/* sacrificing a corpse */
+				ptr = &mons[otmp->corpsenm];
+				if (see)
+				pline( "%s sacrifices %s in a %s!", Monnam(priest),
+				singular(otmp, doname), 
+				prialign == A_LAWFUL ? "flash of light" : 
+				"burst of flame");
+	
+				if (was_tame) { /* priest of another alignment scarificed your pet */
+					if(see) pline( "Does loyalty mean nothing to you?");
+					change_luck(-3);	
+				}
+				if (!is_priest_altar && !In_endgame(&u.uz)) {
+					if (rn2(5)) {
+					 	if (see) {
+					 	pline_The("altar glows %s.",
+					      hcolor(
+					      prialign == A_LAWFUL ? NH_WHITE :
+					      prialign ? NH_BLACK : 
+					      (const char *)"gray"));
+					      
+					      	/* if it was your altar */
+					    	if ((aligntyp)Amask2align(lev->altarmask & AM_MASK) 
+								== u.ualign.type )
+					      	You_feel("the power of %s decrease.", u_gname());
+					 	}
+		  				/* fix the shrine */
+						levl[omx][omy].altarmask &= AM_SHRINE;
+						levl[omx][omy].altarmask =
+					 		levl[omx][omy].altarmask | 
+					 		(Align2amask(prialign));
+						/* one side effect, this does mollify the priest,
+						 * so you can now #chat with him/her again 
+						 */
+					} else {
+						pline( "But the altar remains desecrated." );
+					}
+				} else {
+					/* bonuses for the priest */
+					
+					/* make the priest tougher */
+					grow_up( priest, 0 );
+					if (is_unicorn(ptr)) {
+						if (sgn(ptr->maligntyp) == u.ualign.type) {
+							/* you should have moved the corpse... */
+							pline( "Your heart sinks at the sight..." );
+							change_luck(-1);	/* unicorns deal with luck */
+							adjalign(-1);	 	/* gods didn't like it */
+							exercise(A_WIS,FALSE); /* not very wise */
+						}
+						/* priest's god is happy */
+						if(rn2(4)) {
+							if (priest->mw) {
+								boolean good = !rn2(5);
+								if ( priest->mw->spe <= 5 ) 
+									priest->mw->spe += 1 + (good ? 1 : 0 );
+								pline( "%s's %s glows %s for a %s.", 
+									Monnam(priest),
+									xname(priest->mw),
+									hcolor(NH_SILVER),
+									good ? "while" : "moment" );
+							} else {
+								if(see) pline( "%s is surrounded by a golden glow.",
+									Monnam(priest) );
+								grow_up( priest, 0 ); /* make a lot tougher */
+								grow_up( priest, 0 );
+								grow_up( priest, 0 );
+								grow_up( priest, 0 );	
+							}
+						} else {
+							if(rn2(10)) 
+								mpickobj(priest, mksobj(AMULET_OF_REFLECTION,TRUE,FALSE));
+							else
+								mpickobj(priest, mksobj(AMULET_OF_LIFE_SAVING,TRUE,FALSE));
+							if(see) pline("An amulet appears in %s's outstretched %s!",
+								mon_nam(priest),makeplural(mbodypart(priest,HAND)));
+						}
+						
+					}
+					
+				}	
+			}
+			if (otmp) {
+				if (has_corpse) m_useup(priest,otmp);
+				else useupf(otmp, 1L);
+			}
+			return 0; /* used turn */
+		} else if (has_corpse) {
+			/* go to the altar */
+			if (priest->mcansee) {
+				gx = EPRI(priest)->shrpos.x;
+				gy = EPRI(priest)->shrpos.y;
+			}
+		} else if ( otmp ) {
+			/* pick up a coprse on the ground */
+			obj_extract_self(otmp);
+			(void) mpickobj(priest, otmp);	
+			if(see) pline( "%s picks up %s.",Monnam(priest),
+				distant_name(otmp,doname));
+			return 0; /* used turn */
+		}
+
+	}
+	
+	
+#endif
 
 	return(move_special(priest,FALSE,TRUE,FALSE,avoid,omx,omy,gx,gy));
 }
@@ -593,7 +792,7 @@ xchar x, y;
 	register struct monst *priest;
 
 	if (mon) {
-	    if (is_minion(mon->data) || is_rider(mon->data)) return FALSE;
+	    if (is_minion(mon->data) || is_endgamenasty(mon->data)) return FALSE;
 	    x = mon->mx, y = mon->my;
 	}
 	if (u.ualign.record <= ALGN_SINNED)	/* sinned or worse */
@@ -684,14 +883,23 @@ angry_priest()
 	     *	opportunity to try converting it back; maybe someday...)
 	     */
 	    lev = &levl[EPRI(priest)->shrpos.x][EPRI(priest)->shrpos.y];
+	     
+#ifdef PRIEST_SACRIFICE
+		if (!IS_ALTAR(lev->typ))
+#else 
 	    if (!IS_ALTAR(lev->typ) ||
 		((aligntyp)Amask2align(lev->altarmask & AM_MASK) !=
-			EPRI(priest)->shralign)) {
+			EPRI(priest)->shralign)) 
+#endif
+		{
 		priest->ispriest = 0;		/* now a roamer */
 		priest->isminion = 1;		/* but still aligned */
 		/* this overloads the `shroom' field, which is now clobbered */
 		EPRI(priest)->renegade = 0;
+
 	    }
+	
+
 	}
 }
 

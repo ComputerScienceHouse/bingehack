@@ -79,7 +79,12 @@
 #define TRICKED		12
 #define QUIT		13
 #define ESCAPED		14
+#ifdef ASTR_ESC
+#define DEFIED	15
+#define ASCENDED	16
+#else
 #define ASCENDED	15
+#endif
 
 #include "align.h"
 #include "dungeon.h"
@@ -92,6 +97,12 @@
 #include "timeout.h"
 
 NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
+
+/* kludges for figuring out what we're doing with the Riders each game */
+NEARDATA extern int rider_replacements;		/* Used to help dodge repeat-choices */
+NEARDATA extern int rider_replacement1_pm;	/* The PM_ integers for the three Riders */
+NEARDATA extern int rider_replacement2_pm;
+NEARDATA extern int rider_replacement3_pm;
 
 /* types of calls to bhit() */
 #define ZAPPED_WAND	0

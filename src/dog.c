@@ -659,7 +659,7 @@ register struct obj *obj;
 	case FOOD_CLASS:
 	    if (obj->otyp == CORPSE &&
 		((touch_petrifies(&mons[obj->corpsenm]) && !resists_ston(mon))
-		 || is_rider(fptr)))
+		 || is_endgamenasty(fptr)))
 		    return TABU;
 
 	    /* Ghouls only eat old corpses... yum! */

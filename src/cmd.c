@@ -2,6 +2,8 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <signal.h>
+
 #include "hack.h"
 #include "func_tab.h"
 /* #define DEBUG */	/* uncomment for debugging */
@@ -1816,9 +1818,24 @@ wiz_migrate_mons()
 #define unctrl(c)	((c) <= C('z') ? (0x60 | (c)) : (c))
 #define unmeta(c)	(0x7f & (c))
 
+void rhack2();
 
 void
 rhack(cmd)
+register char *cmd;
+{
+	sigset_t set;
+	sigemptyset(&set);
+	sigaddset(&set, SIGHUP);
+	sigprocmask(SIG_UNBLOCK, &set, NULL);
+	rhack2(cmd);
+	sigemptyset(&set);
+	sigaddset(&set, SIGHUP);
+	sigprocmask(SIG_BLOCK, &set, NULL);
+}
+
+void
+rhack2(cmd)
 register char *cmd;
 {
 	boolean do_walk, do_rush, prefix_seen, bad_command,

@@ -358,7 +358,7 @@ do_rumors()
 		perror(filename);
 		exit(EXIT_FAILURE);
 	}
-	Fprintf(ofp,Dont_Edit_Data);
+	Fprintf(ofp,"%s",Dont_Edit_Data);
 
 	Sprintf(infile, DATA_IN_TEMPLATE, RUMOR_FILE);
 	Strcat(infile, ".tru");
@@ -535,7 +535,7 @@ const char *build_date;
     Strcat(subbuf, " Beta");
 #endif
 
-    Sprintf(outbuf, "%s NetHack%s Version %s - last build %s.",
+    Sprintf(outbuf, "%s NetHack%s Version %s (Hell Patch 3.2) - last build %s.",
 	    PORT_ID, subbuf, version_string(versbuf), build_date);
     return outbuf;
 }
@@ -557,7 +557,7 @@ do_date()
 		exit(EXIT_FAILURE);
 	}
 	Fprintf(ofp,"/*\tSCCS Id: @(#)date.h\t3.4\t2002/02/03 */\n\n");
-	Fprintf(ofp,Dont_Edit_Code);
+	Fprintf(ofp,"%s",Dont_Edit_Code);
 
 #ifdef KR1ED
 	(void) time(&clocktim);
@@ -636,6 +636,9 @@ static const char *build_opts[] = {
 #endif
 #ifdef AUTOPICKUP_EXCEPTIONS
 		"autopickup_exceptions",
+#endif
+#ifdef ASTR_ESC
+		"endgame escape",
 #endif
 #ifdef TEXTCOLOR
 		"color",
@@ -769,6 +772,9 @@ static const char *build_opts[] = {
 # else
 		"user sounds via pmatch",
 # endif
+#endif
+#ifdef TOUGHVLAD
+		"Vlad balance patch",
 #endif
 #ifdef PREFIXES_IN_USE
 		"variable playground",
@@ -1237,7 +1243,7 @@ do_dungeon()
 		perror(filename);
 		exit(EXIT_FAILURE);
 	}
-	Fprintf(ofp,Dont_Edit_Data);
+	Fprintf(ofp,"%s",Dont_Edit_Data);
 
 	while (fgets(in_line, sizeof in_line, ifp) != 0) {
 	    SpinCursor(3);
@@ -1359,7 +1365,7 @@ do_monstr()
 	perror(filename);
 	exit(EXIT_FAILURE);
     }
-    Fprintf(ofp,Dont_Edit_Code);
+    Fprintf(ofp,"%s",Dont_Edit_Code);
     Fprintf(ofp,"#include \"config.h\"\n");
     Fprintf(ofp,"\nconst int monstr[] = {\n");
     for (ptr = &mons[0], j = 0; ptr->mlet; ptr++) {
@@ -1400,7 +1406,7 @@ do_permonst()
 		exit(EXIT_FAILURE);
 	}
 	Fprintf(ofp,"/*\tSCCS Id: @(#)pm.h\t3.4\t2002/02/03 */\n\n");
-	Fprintf(ofp,Dont_Edit_Code);
+	Fprintf(ofp,"%s",Dont_Edit_Code);
 	Fprintf(ofp,"#ifndef PM_H\n#define PM_H\n");
 
 	if (strcmp(mons[0].mname, "playermon") != 0)
@@ -1593,11 +1599,14 @@ put_qt_hdrs()
 #ifdef DEBUG
 	Fprintf(stderr, "%ld: header info.\n", ftell(ofp));
 #endif
-	(void) fwrite((genericptr_t)&(qt_hdr.n_hdr), sizeof(int), 1, ofp);
-	(void) fwrite((genericptr_t)&(qt_hdr.id[0][0]), sizeof(char)*LEN_HDR,
-							qt_hdr.n_hdr, ofp);
-	(void) fwrite((genericptr_t)&(qt_hdr.offset[0]), sizeof(long),
-							qt_hdr.n_hdr, ofp);
+	if( fwrite((genericptr_t)&(qt_hdr.n_hdr), sizeof(int), 1, ofp) != 1 )
+		if( ferror(ofp) ) perror("fwrite");
+	if( fwrite((genericptr_t)&(qt_hdr.id[0][0]), sizeof(char)*LEN_HDR,
+				qt_hdr.n_hdr, ofp) != qt_hdr.n_hdr )
+		if( ferror(ofp) ) perror("fwrite");
+	if( fwrite((genericptr_t)&(qt_hdr.offset[0]), sizeof(long),
+				qt_hdr.n_hdr, ofp) != qt_hdr.n_hdr )
+		if( ferror(ofp) ) perror("fwrite");
 #ifdef DEBUG
 	for(i = 0; i < qt_hdr.n_hdr; i++)
 		Fprintf(stderr, "%c @ %ld, ", qt_hdr.id[i], qt_hdr.offset[i]);
@@ -1614,10 +1623,13 @@ put_qt_hdrs()
 	    Fprintf(stderr, "%ld: %c header info.\n", ftell(ofp),
 		    qt_hdr.id[i]);
 #endif
-	    (void) fwrite((genericptr_t)&(msg_hdr[i].n_msg), sizeof(int),
-							1, ofp);
-	    (void) fwrite((genericptr_t)&(msg_hdr[i].qt_msg[0]),
-			    sizeof(struct qtmsg), msg_hdr[i].n_msg, ofp);
+	    if( fwrite((genericptr_t)&(msg_hdr[i].n_msg), sizeof(int),
+							1, ofp) != 1 )
+		if( ferror(ofp) ) perror("fwrite");
+	    if( fwrite((genericptr_t)&(msg_hdr[i].qt_msg[0]),
+	    		sizeof(struct qtmsg),
+			msg_hdr[i].n_msg, ofp) != msg_hdr[i].n_msg )
+		if( ferror(ofp) ) perror("fwrite");
 #ifdef DEBUG
 	    { int j;
 	      for(j = 0; j < msg_hdr[i].n_msg; j++)
@@ -1716,7 +1728,7 @@ do_objs()
 		exit(EXIT_FAILURE);
 	}
 	Fprintf(ofp,"/*\tSCCS Id: @(#)onames.h\t3.4\t2002/02/03 */\n\n");
-	Fprintf(ofp,Dont_Edit_Code);
+	Fprintf(ofp,"%s",Dont_Edit_Code);
 	Fprintf(ofp,"#ifndef ONAMES_H\n#define ONAMES_H\n\n");
 
 	for(i = 0; !i || objects[i].oc_class != ILLOBJ_CLASS; i++) {
@@ -1871,7 +1883,7 @@ do_vision()
 	perror(filename);
 	exit(EXIT_FAILURE);
     }
-    Fprintf(ofp,Dont_Edit_Code);
+    Fprintf(ofp,"%s",Dont_Edit_Code);
     Fprintf(ofp,"#ifdef VISION_TABLES\n");
 #ifdef VISION_TABLES
     H_close_gen();
@@ -1896,7 +1908,7 @@ do_vision()
 	Unlink(filename);
 	exit(EXIT_FAILURE);
     }
-    Fprintf(ofp,Dont_Edit_Code);
+    Fprintf(ofp,"%s",Dont_Edit_Code);
     Fprintf(ofp,"#include \"config.h\"\n");
     Fprintf(ofp,"#ifdef VISION_TABLES\n");
     Fprintf(ofp,"#include \"vis_tab.h\"\n");

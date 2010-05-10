@@ -11,6 +11,71 @@ static void FDECL(getpos_help, (BOOLEAN_P,const char *));
 
 extern const char what_is_an_unknown_object[];		/* from pager.c */
 
+static const char * const bogusmons[] = {
+	"jumbo shrimp", "giant pigmy", "gnu", "killer penguin",
+	"giant cockroach", "giant slug", "maggot", "pterodactyl",
+	"tyrannosaurus rex", "basilisk", "beholder", "nightmare",
+	"efreeti", "marid", "rot grub", "bookworm", "master lichen",
+	"shadow", "hologram", "jester", "attorney", "sleazoid",
+	"killer tomato", "amazon", "robot", "battlemech",
+	"rhinovirus", "harpy", "lion-dog", "rat-ant", "Y2K bug",
+						/* misc. */
+	"grue", "Christmas-tree monster", "luck sucker", "paskald",
+	"brogmoid", "dornbeast",		/* Quendor (Zork, &c.) */
+	"Ancient Multi-Hued Dragon", "Evil Iggy",
+						/* Moria */
+	"emu", "kestrel", "xeroc", "venus flytrap",
+						/* Rogue */
+	"creeping coins",			/* Wizardry */
+	"hydra", "siren",			/* Greek legend */
+	"killer bunny",				/* Monty Python */
+	"rodent of unusual size",		/* The Princess Bride */
+	"Smokey the bear",	/* "Only you can prevent forest fires!" */
+	"Luggage",				/* Discworld */
+	"Ent",					/* Lord of the Rings */
+	"tangle tree", "nickelpede", "wiggle",	/* Xanth */
+	"white rabbit", "snark",		/* Lewis Carroll */
+	"pushmi-pullyu",			/* Dr. Doolittle */
+	"smurf",				/* The Smurfs */
+	"tribble", "Klingon", "Borg",		/* Star Trek */
+	"Ewok",					/* Star Wars */
+	"Totoro",				/* Tonari no Totoro */
+	"ohmu",					/* Nausicaa */
+	"youma",				/* Sailor Moon */
+	"nyaasu",				/* Pokemon (Meowth) */
+	"Godzilla", "King Kong",		/* monster movies */
+	"earthquake beast",			/* old L of SH */
+	"Invid",				/* Robotech */
+	"Terminator",				/* The Terminator */
+	"boomer",				/* Bubblegum Crisis */
+	"Dalek",				/* Dr. Who ("Exterminate!") */
+	"microscopic space fleet", "Ravenous Bugblatter Beast of Traal",
+						/* HGttG */
+	"teenage mutant ninja turtle",		/* TMNT */
+	"samurai rabbit",			/* Usagi Yojimbo */
+	"aardvark",				/* Cerebus */
+	"Audrey II",				/* Little Shop of Horrors */
+	"witch doctor", "one-eyed one-horned flying purple people eater",
+						/* 50's rock 'n' roll */
+	"Barney the dinosaur",			/* saccharine kiddy TV */
+	"Morgoth",				/* Angband */
+	"Vorlon",				/* Babylon 5 */
+	"questing beast",		/* King Arthur */
+	"Predator",				/* Movie */
+	"mother-in-law"				/* common pest */
+};
+
+static const char * const minorsins[] = {
+	"Farting Secretly",
+	"Naughtiness",
+	"Not Feeding The Cat",
+	"Music Piracy",
+	"Squashing Spiders",
+	"Eating The Last Slime Mold",
+	"Savescumming",
+	"Bad Advertising"
+};
+
 /* the response for '?' help request in getpos() */
 static void
 getpos_help(force, goal)
@@ -679,8 +744,13 @@ boolean called;
 	/* Put the actual monster name or type into the buffer now */
 	/* Be sure to remember whether the buffer starts with a name */
 	if (do_hallu) {
-	    Strcat(buf, rndmonnam());
-	    name_at_start = FALSE;
+	    if(is_vice(mdat)) {
+		Strcat(buf, minorsins[rn2(SIZE(minorsins))]);
+		name_at_start = TRUE;
+	    } else {
+		Strcat(buf, rndmonnam());
+		name_at_start = FALSE;
+	    }
 	} else if (mtmp->mnamelth) {
 	    char *name = NAME(mtmp);
 
@@ -884,63 +954,6 @@ char *outbuf;
     }
     return outbuf;
 }
-
-static const char * const bogusmons[] = {
-	"jumbo shrimp", "giant pigmy", "gnu", "killer penguin",
-	"giant cockroach", "giant slug", "maggot", "pterodactyl",
-	"tyrannosaurus rex", "basilisk", "beholder", "nightmare",
-	"efreeti", "marid", "rot grub", "bookworm", "master lichen",
-	"shadow", "hologram", "jester", "attorney", "sleazoid",
-	"killer tomato", "amazon", "robot", "battlemech",
-	"rhinovirus", "harpy", "lion-dog", "rat-ant", "Y2K bug",
-	"catoblepas", "phoenix", "amphisbaena",	"pink oliphaunt",
-						/* misc. */
-	"grue", "Christmas-tree monster", "luck sucker", "paskald",
-	"brogmoid", "dornbeast",		/* Quendor (Zork, &c.) */
-	"Ancient Multi-Hued Dragon", "Evil Iggy",
-						/* Moria */
-	"emu", "kestrel", "xeroc", "venus flytrap",
-						/* Rogue */
-	"creeping coins",			/* Wizardry */
-	"hydra", "siren", "pegasus",    	/* Greek legend */
-	"killer bunny", "black knight",         /* Monty Python */
-	"Trogdor the Burninator",               /* Homestar runner */
-	"rodent of unusual size",		/* The Princess Bride */
-	"Smokey the bear",	/* "Only you can prevent forest fires!" */
-	"Luggage",				/* Discworld */
-	"Ent",					/* Lord of the Rings */
-	"tangle tree", "nickelpede", "wiggle",	/* Xanth */
-	"white rabbit", "snark",		/* Lewis Carroll */
-	"pushmi-pullyu",			/* Dr. Doolittle */
-	"smurf",				/* The Smurfs */
-	"tribble", "Klingon", "Borg",		/* Star Trek */
-	"Ewok",					/* Star Wars */
-	"Totoro",				/* Tonari no Totoro */
-	"ohmu",					/* Nausicaa */
-	"youma",				/* Sailor Moon */
-	"nyaasu",				/* Pokemon (Meowth) */
-	"Godzilla", "King Kong",		/* monster movies */
-	"earthquake beast",			/* old L of SH */
-	"Invid",				/* Robotech */
-	"Terminator",				/* The Terminator */
-	"boomer",				/* Bubblegum Crisis */
-	"Dalek",				/* Dr. Who ("Exterminate!") */
-	"microscopic space fleet", "Ravenous Bugblatter Beast of Traal",
-						/* HGttG */
-	"teenage mutant ninja turtle",		/* TMNT */
-	"samurai rabbit",			/* Usagi Yojimbo */
-	"aardvark",				/* Cerebus */
-	"Audrey II",				/* Little Shop of Horrors */
-	"witch doctor", "one-eyed one-horned flying purple people eater",
-						/* 50's rock 'n' roll */
-	"Barney the dinosaur",			/* saccharine kiddy TV */
-	"Morgoth",				/* Angband */
-	"Vorlon",				/* Babylon 5 */
-	"questing beast",		/* King Arthur */
-	"Predator",				/* Movie */
-	"mother-in-law"				/* common pest */
-};
-
 
 /* Return a random monster name, for hallucination.
  * KNOWN BUG: May be a proper name (Godzilla, Barney), may not

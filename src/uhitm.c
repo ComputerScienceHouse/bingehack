@@ -1782,7 +1782,7 @@ register struct attack *mattk;
 		switch(mattk->adtyp) {
 		    case AD_DGST:
 			/* eating a Rider or its corpse is fatal */
-			if (is_rider(mdef->data)) {
+			if (is_endgamenasty(mdef->data)) {
 			 pline("Unfortunately, digesting any of it is fatal.");
 			    end_engulf();
 			    Sprintf(msgbuf, "unwisely tried to eat %s",
@@ -2271,6 +2271,7 @@ uchar aatyp;
 	    switch(ptr->mattk[i].adtyp) {
 
 	      case AD_PLYS:
+#ifndef MENTALPLYS
 		if(ptr == &mons[PM_FLOATING_EYE]) {
 		    if (!canseemon(mon)) {
 			break;
@@ -2292,7 +2293,9 @@ uchar aatyp;
 				Adjmonnam(mon,"blind"));
 			if(!rn2(500)) change_luck(-1);
 		    }
-		} else if (Free_action) {
+		} else
+#endif
+		if (Free_action) {
 		    You("momentarily stiffen.");
 		} else { /* gelatinous cube */
 		    You("are frozen by %s!", mon_nam(mon));
@@ -2301,6 +2304,29 @@ uchar aatyp;
 		    exercise(A_DEX, FALSE);
 		}
 		break;
+#ifdef MENTALPLYS
+				case AD_PLYM:
+				/* This is a mental paralysis - distinct from the physical AD_PLYS
+				 *
+				 * free action and cancellation does not help here - this is intentional
+				 * only takes effect if you can see the monster, the monster can see you and
+				 * you aren't already paralysed - player has a (potentially) modified
+				 * WIS saving throw (mental) based on damd
+				 * If successful, the monster is paralysed for d(damn) turns
+				 *
+				 * This relies on the fact that PLYM attacks do *no* physical damage
+				 *
+				 * Note that AD_PLYM should never be a *physical* attack (bite, claw etc)
+				 * as it simply makes no sense - use AD_PLYS instead
+				 */
+		if(!mon->mcan && canseemon(mon) && (multi >= 0) && mon->mcansee && (rnd(20) > (ACURR(A_WIS) - (int)ptr->mattk[i].damn))) {
+			You("are mesmerised by %s gaze!", s_suffix(mon_nam(mon)));
+			nomovemsg = 0;	/* default: "you can move again" */
+			nomul(-rnd(((int)ptr->mattk[i].damd)+1));
+			exercise(A_DEX, FALSE);
+		}
+		break;
+#endif
 	      case AD_COLD:		/* brown mold or blue jelly */
 		if(monnear(mon, u.ux, u.uy)) {
 		    if(Cold_resistance) {

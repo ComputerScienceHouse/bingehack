@@ -937,7 +937,7 @@ E void FDECL(mimic_hit_msg, (struct monst *, SHORT_P));
 #ifdef GOLDOBJ
 E void FDECL(mkmonmoney, (struct monst *, long));
 #endif
-E void FDECL(bagotricks, (struct obj *));
+E int FDECL(bagotricks, (struct obj *));
 E boolean FDECL(propagate, (int, BOOLEAN_P,BOOLEAN_P));
 
 /* ### mapglyph.c ### */
@@ -971,7 +971,7 @@ E int FDECL(gazemu, (struct monst *,struct attack *));
 E void FDECL(mdamageu, (struct monst *,int));
 E int FDECL(could_seduce, (struct monst *,struct monst *,struct attack *));
 #ifdef SEDUCE
-E int FDECL(doseduce, (struct monst *));
+E int FDECL(doseduce, (struct monst *, int));
 #endif
 
 /* ### minion.c ### */
@@ -1196,6 +1196,7 @@ E boolean FDECL(onscary, (int,int,struct monst *));
 E void FDECL(monflee, (struct monst *, int, BOOLEAN_P, BOOLEAN_P));
 E int FDECL(dochug, (struct monst *));
 E int FDECL(m_move, (struct monst *,int));
+E void FDECL(dissolve_bars, (int,int));
 E boolean FDECL(closed_door, (int,int));
 E boolean FDECL(accessible, (int,int));
 E void FDECL(set_apparxy, (struct monst *));
@@ -1585,6 +1586,9 @@ E const char *FDECL(halu_gname, (ALIGNTYP_P));
 E const char *FDECL(rnd_gname, (int));
 E const char *FDECL(align_gtitle, (ALIGNTYP_P));
 E void FDECL(altar_wrath, (int,int));
+#ifdef ASTR_ESC
+E int FDECL(invoke_amulet, (struct obj *));
+#endif
 
 
 /* ### priest.c ### */

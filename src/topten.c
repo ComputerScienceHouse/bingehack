@@ -79,7 +79,11 @@ STATIC_DCL void FDECL(nsb_unmung_line,(char*));
 NEARDATA const char * const killed_by_prefix[] = {
 	"killed by ", "choked on ", "poisoned by ", "died of ", "drowned in ",
 	"burned by ", "dissolved in ", "crushed to death by ", "petrified by ",
+#ifdef ASTR_ESC
+	"turned to slime by ", "killed by ", "", "", "", "", "", ""
+#else
 	"turned to slime by ", "killed by ", "", "", "", "", ""
+#endif
 };
 
 static winid toptenwin = WIN_ERR;
@@ -610,7 +614,15 @@ boolean so;
 		Sprintf(eos(linebuf), "-%s ", t1->plalign);
 	else
 		Strcat(linebuf, " ");
+#ifdef ASTR_ESC
+	if (!strncmp("defied", t1->death, 6)) {
+	    Sprintf(eos(linebuf), "defied the Gods then escaped the dungeon %s",
+		    !strncmp(" (", t1->death + 7, 2) ? t1->death + 7 + 2 : "");
+	    second_line = FALSE;
+	} else if (!strncmp("escaped", t1->death, 7)) {
+#else
 	if (!strncmp("escaped", t1->death, 7)) {
+#endif
 	    Sprintf(eos(linebuf), "escaped the dungeon %s[max level %d]",
 		    !strncmp(" (", t1->death + 7, 2) ? t1->death + 7 + 2 : "",
 		    t1->maxlvl);

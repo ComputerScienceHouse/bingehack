@@ -34,7 +34,7 @@ const char *msg;
     for(otmp = level.objects[x][y]; otmp; otmp = otmp2) {
 	otmp2 = otmp->nexthere;
 	if (otmp->otyp == CORPSE &&
-	    (is_rider(&mons[otmp->corpsenm]) ||
+	    (is_endgamenasty(&mons[otmp->corpsenm]) ||
 	     otmp->corpsenm == PM_WIZARD_OF_YENDOR)) {
 	    /* move any living monster already at that location */
 	    if((mtmp = m_at(x,y)) && enexto(&cc, x, y, mtmp->data))
@@ -561,6 +561,11 @@ int mode;
 	if (Passes_walls && may_passwall(x,y)) {
 	    ;	/* do nothing */
 	} else if (tmpr->typ == IRONBARS) {
+	    if ((dmgtype(youmonst.data, AD_RUST) ||
+		 dmgtype(youmonst.data, AD_CORR))) {
+		You("eat through the bars.");
+		dissolve_bars(x,y);
+	    }
 	    if (!(Passes_walls || passes_bars(youmonst.data)))
 		return FALSE;
 	} else if (tunnels(youmonst.data) && !needspick(youmonst.data)) {

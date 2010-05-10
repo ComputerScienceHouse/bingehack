@@ -158,7 +158,8 @@ register struct monst *mtmp;
 	    if (!Blind) pline("%s appears before you.", Amonnam(mtmp));
 	    newsym(mtmp->mx,mtmp->my);
 	}
-	if (youmonst.data->mlet == S_DEMON) {	/* Won't blackmail their own. */
+	if (youmonst.data->mlet == S_DEMON	/* Won't blackmail their own. */
+	&&  mtmp->data != &mons[PM_MAMMON]) {	/* Except for this greedy fellow */
 	    pline("%s says, \"Good hunting, %s.\"",
 		  Amonnam(mtmp), flags.female ? "Sister" : "Brother");
 	    if (!tele_restrict(mtmp)) (void) rloc(mtmp, FALSE);
@@ -171,6 +172,18 @@ register struct monst *mtmp;
 #endif
 	demand = (cash * (rnd(80) + 20 * Athome)) /
 	    (100 * (1 + (sgn(u.ualign.type) == sgn(mtmp->data->maligntyp))));
+	/*
+	 * RLC Ugly if clever hack to make Mammon demand more with each
+	 * encounter: his demand will be at least equal to 60% of the gold
+	 * he's carrying.  Thus Mammon can demand more gold than you have!
+	 * I really want Mammon's minimum demand to be something like 10% more
+	 * than your last bribe.  FIXME
+	 */
+	if (mtmp->data == &mons[PM_MAMMON]) {
+		long demand2 = mtmp->mgold * 3 / 5;
+		if (demand < demand2)
+			demand = demand2;
+	}
 
 	if (!demand) {		/* you have no gold */
 	    mtmp->mpeaceful = 0;
@@ -199,8 +212,41 @@ register struct monst *mtmp;
 		return 0;
 	    }
 	}
-	mongone(mtmp);
-	return(1);
+	if (mtmp->data != &mons[PM_MAMMON]) {
+		mongone(mtmp);
+		return(1);
+	} else {	/* Mammon will come back for more! */
+		/*
+		 * Here, Mammon chooses a new level to accost you.  He assumes
+		 * you're going up if you have opened the Sanctum gate;
+		 * otherwise, he assumes you're going down.
+		 */
+		xchar old_level, new_level;
+
+		/* Determine new level */
+		/* FIXME:  This could take Mammon to another dungeon in certain
+		   rare circumstances */
+		new_level = old_level = ledger_no(&u.uz);
+		if (u.uevent.invoked) {
+			/* Going up */
+			if (new_level > 1)
+				new_level--;
+			/* FIXME: Go to Earth from level 1 */
+		} else {
+			/* Going down */
+			/* Won't take Mammon down past the Sanctum, since he'll
+			   go up if you're in the Sanctum */
+			if (new_level < maxledgerno())
+				new_level++;
+			else
+				new_level--;
+		}
+
+		if (new_level != old_level)
+			migrate_to_level(mtmp, new_level, MIGR_RANDOM,
+				(coord *)0);
+		return(1);
+	}
 }
 
 long
@@ -269,7 +315,7 @@ aligntyp atyp;
 	int tryct, pm;
 
 	for (tryct = 0; tryct < 20; tryct++) {
-	    pm = rn1(PM_YEENOGHU + 1 - PM_JUIBLEX, PM_JUIBLEX);
+	    pm = rn1(PM_PAZUZU + 1 - PM_JUIBLEX, PM_JUIBLEX);
 	    if (!(mvitals[pm].mvflags & G_GONE) &&
 		    (atyp == A_NONE || sgn(mons[pm].maligntyp) == sgn(atyp)))
 		return(pm);

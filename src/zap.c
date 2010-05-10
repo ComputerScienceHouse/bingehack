@@ -468,14 +468,14 @@ coord *cc;
 	if (mtmp2) {
 		/* save_mtraits() validated mtmp2->mnum */
 		mtmp2->data = &mons[mtmp2->mnum];
-		if (mtmp2->mhpmax <= 0 && !is_rider(mtmp2->data))
+		if (mtmp2->mhpmax <= 0 && !is_endgamenasty(mtmp2->data))
 			return (struct monst *)0;
 		mtmp = makemon(mtmp2->data,
 				cc->x, cc->y, NO_MINVENT|MM_NOWAIT|MM_NOCOUNTBIRTH);
 		if (!mtmp) return mtmp;
 
 		/* heal the monster */
-		if (mtmp->mhpmax > mtmp2->mhpmax && is_rider(mtmp2->data))
+		if (mtmp->mhpmax > mtmp2->mhpmax && is_endgamenasty(mtmp2->data))
 			mtmp2->mhpmax = mtmp->mhpmax;
 		mtmp2->mhp = mtmp2->mhpmax;
 		/* Get these ones from mtmp */
@@ -804,6 +804,17 @@ register struct obj *obj;
 	}
 }
 
+boolean cancellable(obj)
+register struct obj *obj;
+{
+   return objects[obj->otyp].oc_magic
+       || (obj->spe && (obj->oclass == ARMOR_CLASS ||
+                        obj->oclass == WEAPON_CLASS || is_weptool(obj)))
+       || obj->otyp == POT_ACID 
+       || obj->otyp == POT_SICKNESS;
+
+}
+
 /* cancel obj, possibly carried by you or a monster */
 void
 cancel_item(obj)
@@ -854,6 +865,40 @@ register struct obj *obj;
 			break;
 		/* case RIN_PROTECTION:  not needed */
 	}
+
+
+        /* MRKR: Cancelled *DSM reverts to scales.  */
+        /*       Suggested by Daniel Morris in RGRN */
+
+        if (obj->otyp >= GRAY_DRAGON_SCALE_MAIL &&
+            obj->otyp <= YELLOW_DRAGON_SCALE_MAIL) {
+            /* dragon scale mail reverts to dragon scales */
+
+           boolean worn = (obj == uarm);
+
+           if (!Blind) {
+               char buf[BUFSZ];
+               pline("%s %s reverts to natural form!", 
+                      Shk_Your(buf, obj), xname(obj));
+           }
+           else if (worn) {
+               Your("armor feels looser.");
+           }
+           costly_cancel(obj);
+
+           if (worn) {
+                setworn((struct obj *)0, W_ARM);
+           }
+
+           /* assumes same order */
+             obj->otyp = GRAY_DRAGON_SCALES +
+                         obj->otyp - GRAY_DRAGON_SCALE_MAIL;
+
+           if (worn) {
+                 setworn(obj, W_ARM);
+           }
+        }
+ 
 	if (objects[obj->otyp].oc_magic
 	    || (obj->spe && (obj->oclass == ARMOR_CLASS ||
 			     obj->oclass == WEAPON_CLASS || is_weptool(obj)))
@@ -903,6 +948,7 @@ register struct obj *obj;
 #endif
 	return;
 }
+
 
 /* Remove a positive enchantment or charge from obj,
  * possibly carried by you or a monster
@@ -988,7 +1034,7 @@ int ochance, achance;	/* percent chance for ordinary objects, artifacts */
 	    obj->otyp == SPE_BOOK_OF_THE_DEAD ||
 	    obj->otyp == CANDELABRUM_OF_INVOCATION ||
 	    obj->otyp == BELL_OF_OPENING ||
-	    (obj->otyp == CORPSE && is_rider(&mons[obj->corpsenm]))) {
+	    (obj->otyp == CORPSE && is_endgamenasty(&mons[obj->corpsenm]))) {
 		return TRUE;
 	} else {
 		int chance = rn2(100);
@@ -2098,9 +2144,14 @@ boolean ordinary;
 		    damage = 0;	/* reset */
 		    break;
 		case WAN_OPENING:
-		    if (Punished) makeknown(WAN_OPENING);
+		    if (Punished || u.utraptype == TT_BEARTRAP) 
+			makeknown(WAN_OPENING);		    
 		case SPE_KNOCK:
 		    if (Punished) Your("chain quivers for a moment.");
+		    if (u.utraptype == TT_BEARTRAP) {
+			pline_The("bear trap opens.");
+			u.utrap = 0;
+		    }
 		    break;
 		case WAN_DIGGING:
 		case SPE_DIG:
@@ -2248,6 +2299,36 @@ boolean			youattack, allow_cancel_kill, self_cancel;
 		find_ac();
 	    }
 	}
+        else {  /* select one random item to cancel */
+	    struct obj *otmp;
+            int count = 0;
+ 
+            for (otmp = (youdefend ? invent : mdef->minvent); 
+                 otmp; otmp = otmp->nobj) {
+                 if (cancellable(otmp)) {
+			count++;
+		 }
+            }
+
+            if (count > 0) {
+		int o = rnd(count);
+            
+                for (otmp = (youdefend ? invent : mdef->minvent);
+                    otmp; otmp = otmp->nobj) {
+                    if (cancellable(otmp)) {
+			o--;
+                        if (o == 0) {
+				cancel_item(otmp);
+ 				break;
+                        }
+                    }
+                }
+                if (youdefend) {
+                   flags.botl = 1; /* potential AC change */
+                   find_ac();
+                }
+	    }
+        }
 
 	/* now handle special cases */
 	if (youdefend) {
@@ -2323,6 +2404,9 @@ struct obj *obj;	/* wand or spell */
 			on_level(&u.uz, &qstart_level) && !ok_to_quest()) {
 		pline_The("stairs seem to ripple momentarily.");
 		disclose = TRUE;
+	    } else if (u.utraptype == TT_BEARTRAP) {
+		pline_The("bear trap opens.");
+		u.utrap = 0;
 	    }
 	    break;
 	case WAN_STRIKING:
@@ -3358,7 +3442,7 @@ register int dx,dy;
 		    boolean mon_could_move = mon->mcanmove;
 		    int tmp = zhitm(mon, type, nd, &otmp);
 
-		    if (is_rider(mon->data) && abs(type) == ZT_BREATH(ZT_DEATH)) {
+		    if (is_endgamenasty(mon->data) && abs(type) == ZT_BREATH(ZT_DEATH)) {
 			if (canseemon(mon)) {
 			    hit(fltxt, mon, ".");
 			    pline("%s disintegrates.", Monnam(mon));
@@ -3835,7 +3919,12 @@ register int osym, dmgtyp;
 
 	for(obj = invent; obj; obj = obj2) {
 	    obj2 = obj->nobj;
-	    if(obj->oclass != osym) continue; /* test only objs of type osym */
+	    if(dmgtyp==AD_LAZY) {
+		if(!(obj->otyp==SPEED_BOOTS || obj->otyp==JUMPING_BOOTS || obj->otyp==GAUNTLETS_OF_DEXTERITY || obj->otyp==RIN_FREE_ACTION || obj->otyp==SCR_TELEPORTATION || obj->otyp==WAN_TELEPORTATION || obj->otyp==RIN_TELEPORTATION || obj->otyp==POT_SPEED))
+		    continue; /* those were all we wanted */
+	    } else {
+		if(obj->oclass != osym) continue; /* test only objs of type osym */
+	    }
 	    if(obj->oartifact) continue; /* don't destroy artifacts */
 	    if(obj->in_use && obj->quan == 1) continue; /* not available */
 	    xresist = skip = 0;
@@ -3903,6 +3992,12 @@ register int osym, dmgtyp;
 			    skip++;
 			    break;
 		    }
+		    break;
+		case AD_LAZY:
+		    /* Object-type checking is done further up. For laziness. */
+		    quan = obj->quan;
+		    dindx = 4;
+		    dmg = 0;
 		    break;
 		default:
 		    skip++;

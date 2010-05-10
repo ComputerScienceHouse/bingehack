@@ -1276,6 +1276,19 @@ register struct obj   *obj;
 	    return(0);
 	}
 
+	if(mon->data==&mons[PM_GLUTTONY] && dogfood(mon, obj) <= ACCFOOD && !obj->oartifact) {
+	    if(obj->oartifact) {
+		pline("%s grabs %s, but decides to save %s for eating later.",
+		    Monnam(mon), the(xname(obj)), (obj->quan>1L ? "them" : "it"));
+		(void) mpickobj(mon, obj);
+	    } else {
+		pline("%s snatches %s out of the air and gobbles it down!",
+		    Monnam(mon), the(xname(obj)));
+		    delobj(obj);
+		return 1;
+	    }
+	}
+
 	if (obj->oclass == WEAPON_CLASS || is_weptool(obj) ||
 		obj->oclass == GEM_CLASS) {
 	    if (is_ammo(obj)) {

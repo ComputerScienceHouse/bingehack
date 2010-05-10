@@ -31,6 +31,8 @@ struct attack {
  */
 
 #define WT_HUMAN	1450
+#define WT_SKHUMAN	725	/* for Famine; WT_HUMAN/2 */
+#define WT_FTHUMAN	2900	/* for Gluttony; WT_HUMAN*2 */
 
 #ifndef ALIGN_H
 #include "align.h"
