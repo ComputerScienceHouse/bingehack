@@ -945,7 +945,7 @@ add_id_mapping(gid, nid)
  */
 boolean
 lookup_id_mapping(gid, nidp)
-    unsigned gid, *nidp;
+    unsigned long gid, *nidp;
 {
     int i;
     struct bucket *curr;
@@ -974,7 +974,7 @@ reset_oattached_mids(ghostly)
 boolean ghostly;
 {
     struct obj *otmp;
-    unsigned oldid, nid;
+    unsigned long oldid, nid;
     for (otmp = fobj; otmp; otmp = otmp->nobj) {
 	if (ghostly && otmp->oattached == OATTACHED_MONST && otmp->oxlth) {
 	    struct monst *mtmp = (struct monst *)otmp->oextra;
