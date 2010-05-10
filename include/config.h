@@ -350,6 +350,7 @@ typedef unsigned char	uchar;
 #define EXP_ON_BOTL	/* Show experience on bottom line */
 #define ASTR_ESC /* Allow escape from Astral plane (with the Amulet) - CWC */
 /* #define SCORE_ON_BOTL */	/* added by Gary Erickson (erickson@ucivax) */
+#define ENLIGHTENMENT_DIP
 
 /*
  * Section 5:  EXPERIMENTAL STUFF

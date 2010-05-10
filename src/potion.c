@@ -1960,6 +1960,45 @@ dodip()
 	    return 1;
 	}
 
+#ifdef ENLIGHTENMENT_DIP
+        if(potion->otyp == POT_ENLIGHTENMENT && !potion->cursed) {
+            if (obj->otyp == LOADSTONE) {
+                pline("%s suddenly %s much lighter.",
+                      Yname2(obj), otense(obj, "seem"));
+                obj->otyp = FLINT;
+                obj->owt = weight(obj);
+                goto poof;
+            } else if (obj->otyp == HEAVY_IRON_BALL && 
+                obj->owt > objects[obj->otyp].oc_weight) {
+                pline("%s suddenly %s much lighter.",
+                      Yname2(obj), otense(obj, "seem"));
+                /* Iron balls go back to being their default weight. */
+                obj->owt = objects[obj->otyp].oc_weight;
+                goto poof;
+            } else if (obj->otyp == BAG_OF_HOLDING &&
+                !obj->blessed) {
+                int initweight = obj->owt;
+                
+                if(obj->cursed) {
+                    uncurse(obj);
+                } else {
+                    bless(obj);
+                }
+
+                if(obj->owt < initweight) {
+                    pline("%s suddenly %s %slighter.",
+                          Yname2(obj), otense(obj, "seem"),
+                          (initweight - obj->owt > 200) ? "much " : "");
+                    goto poof;
+                }
+                
+                /* Didn't change weight, so don't identify. */
+                useup(potion);
+                return 1;
+            }
+        }
+#endif /* ENLIGHTENMENT_DIP */
+
 	potion->in_use = FALSE;		/* didn't go poof */
 	if ((obj->otyp == UNICORN_HORN || obj->otyp == AMETHYST) &&
 	    (mixture = mixtype(obj, potion)) != 0) {
