@@ -322,6 +322,8 @@ typedef unsigned char	uchar;
  * complexity of the game but also to the size of the load module.
  */
 
+#define SIMPLE_MAIL
+
 /* dungeon features */
 #define SINKS		/* Kitchen sinks - Janet Walz */
 /* dungeon levels */

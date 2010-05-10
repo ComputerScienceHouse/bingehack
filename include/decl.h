@@ -396,6 +396,10 @@ struct autopickup_exception {
 };
 #endif /* AUTOPICKUP_EXCEPTIONS */
 
+#ifdef SIMPLE_MAIL
+E int mailckfreq;
+#endif
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
