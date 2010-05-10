@@ -362,6 +362,7 @@ typedef unsigned char	uchar;
  */
 
 #if defined(TTY_GRAPHICS) || defined(MSWIN_GRAPHICS)
+# define WIN_EDGE	/* windows aligned left&top */
 # define MENU_COLOR
 # define MENU_COLOR_REGEX
 /*# define MENU_COLOR_REGEX_POSIX */
