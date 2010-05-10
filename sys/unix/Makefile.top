@@ -39,7 +39,7 @@ DIRPERM  = 0755
 # (if there is, you'll have to do the installation by hand or modify the
 # instructions)
 GAMEDIR  = $(PREFIX)/nh343/
-VARDIR  = $(GAMEDIR)/
+VARDIR  = $(GAMEDIR)/var
 SHELLDIR = $(PREFIX)/bin
 
 # per discussion in Install.X11 and Install.Qt
