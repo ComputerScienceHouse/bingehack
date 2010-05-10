@@ -7,6 +7,7 @@
 #include "hack.h"
 #include "func_tab.h"
 /* #define DEBUG */	/* uncomment for debugging */
+#include "mail.h"
 
 /*
  * Some systems may have getchar() return EOF for various reasons, and
@@ -110,6 +111,7 @@ STATIC_PTR int NDECL(timed_occupation);
 STATIC_PTR int NDECL(doextcmd);
 STATIC_PTR int NDECL(domonability);
 STATIC_PTR int NDECL(dotravel);
+STATIC_PTR int NDECL(testmail);
 # ifdef WIZARD
 STATIC_PTR int NDECL(wiz_wish);
 STATIC_PTR int NDECL(wiz_identify);
@@ -512,6 +514,42 @@ enter_explore_mode()
 	return really_xplor;
 }
 
+STATIC_PTR int
+testmail()
+{
+	trigger_mail();
+	return 0;
+}
+
+STATIC_PTR int
+testchat()
+{
+	int buffer_length=80;
+	char curr = '?';
+	char str[buffer_length];
+	strcpy(str,plname);
+	int msg_length=strlen(plname)+2;
+	str[msg_length-2]=':';
+	str[msg_length-1]=' ';
+	str[msg_length]='\0';
+	int index = msg_length;
+	while(curr != '\n' && index < 80){
+		putstr(WIN_MESSAGE,0,str);
+		curr = readchar();
+		if(index == buffer_length-1){
+		}
+		if(curr == 0x007f || curr == '\b'){
+			if(index>msg_length){
+				str[--index]=' ';
+			}
+		}
+		else{
+			str[index++]=curr;
+			str[index]='\0';
+		}
+	}
+	pline("Message sent.");
+}
 #ifdef WIZARD
 
 /* ^W command - wish for something */
@@ -1584,6 +1622,7 @@ static const struct func_tab cmdlist[] = {
 	{SPBOOK_SYM, TRUE, dovspell},			/* Mike Stephenson */
 	{'#', TRUE, doextcmd},
 	{'_', TRUE, dotravel},
+	{'`', TRUE, testchat},
 	{0,0,0,0}
 };
 
@@ -1667,6 +1706,7 @@ struct ext_func_tab extcmdlist[] = {
 		doextversion, TRUE},
 	{"wipe", "wipe off your face", dowipe, FALSE},
 	{"?", "get this list of extended commands", doextlist, TRUE},
+	{"testmail", "DEBUG USE ONLY - Test mail command", testmail, TRUE},
 #if defined(WIZARD)
 	/*
 	 * There must be a blank entry here for every entry in the table

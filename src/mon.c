@@ -1493,7 +1493,7 @@ register struct monst *mtmp;
 	    quest_status.leader_is_dead = TRUE;
 #ifdef MAIL
 	/* if the mail daemon dies, no more mail delivery.  -3. */
-	if (tmp == PM_MAIL_DAEMON) mvitals[tmp].mvflags |= G_GENOD;
+	if (tmp == PM_PHILBRICK_THE_MAIL_DAEMON) mvitals[tmp].mvflags |= G_GENOD;
 #endif
 
 #ifdef KOPS
@@ -1841,7 +1841,7 @@ xkilled(mtmp, dest)
 	if((dest & 2) || LEVEL_SPECIFIC_NOCORPSE(mdat))
 		goto cleanup;
 #ifdef MAIL
-	if(mdat == &mons[PM_MAIL_DAEMON]) {
+	if(mdat == &mons[PM_PHILBRICK_THE_MAIL_DAEMON]) {
 		stackobj(mksobj_at(SCR_MAIL, x, y, FALSE, FALSE));
 		redisp = TRUE;
 	}

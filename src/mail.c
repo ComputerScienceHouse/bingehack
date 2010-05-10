@@ -253,7 +253,7 @@ md_stop(stopp, startp)
 
     /* If we didn't find a good spot, try enexto(). */
     if (min_distance < 0 &&
-		!enexto(stopp, u.ux, u.uy, &mons[PM_MAIL_DAEMON]))
+		!enexto(stopp, u.ux, u.uy, &mons[PM_PHILBRICK_THE_MAIL_DAEMON]))
 	return FALSE;
 
     return TRUE;
@@ -261,9 +261,9 @@ md_stop(stopp, startp)
 
 /* Let the mail daemon have a larger vocabulary. */
 static NEARDATA const char *mail_text[] = {
-    "Gangway!",
     "Look out!",
-    "Pardon me!"
+    "Pardon me!",
+    "Tom-train coming through!"
 };
 #define md_exclamations()	(mail_text[rn2(3)])
 
@@ -381,7 +381,7 @@ struct mail_info *info;
     if (!md_start(&start) || !md_stop(&stop,&start)) goto give_up;
 
     /* Make the daemon.  Have it rush towards the hero. */
-    if (!(md = makemon(&mons[PM_MAIL_DAEMON], start.x, start.y, NO_MM_FLAGS)))
+    if (!(md = makemon(&mons[PM_PHILBRICK_THE_MAIL_DAEMON], start.x, start.y, NO_MM_FLAGS)))
 	 goto give_up;
     if (!md_rush(md, stop.x, stop.y)) goto go_back;
 
@@ -462,6 +462,14 @@ struct obj *otmp;
 }
 
 # endif /* !UNIX && !VMS && !LAN_MAIL */
+
+
+void
+trigger_mail()
+{
+        static struct mail_info deliver = {MSG_MAIL,"Tom's message delivery service!",0,0};
+        newmail(&deliver);
+}
 
 # ifdef UNIX
 
