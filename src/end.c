@@ -629,7 +629,19 @@ int how;
 			wizard ||
 #endif
 			discover) && (how <= GENOCIDED)) {
-		if(yn("Die?") == 'y') goto die;
+
+
+#ifdef PARANOID
+		if (iflags.paranoid_quit) {
+		  getlin ("Die? [yes/no]?",paranoid_buf);
+		  (void) lcase (paranoid_buf);
+		  if (!(strcmp (paranoid_buf, "yes"))) goto die;
+		} else {
+#endif
+		  if(yn("Die?") == 'y') goto die;
+#ifdef PARANOID
+		}
+#endif
 		pline("OK, so you don't %s.",
 			(how == CHOKING) ? "choke" : "die");
 		if(u.uhpmax <= 0) u.uhpmax = u.ulevel * 8;	/* arbitrary */
@@ -644,8 +656,7 @@ int how;
 		 !wizard &&
 #endif
 		 !discover) {
-	  if(yn("Continue in explore mode?") == 'y') {
-	    enter_explore_mode();
+	  if(enter_explore_mode()) {
 	    if (discover) goexplore = TRUE;
 	  }
 	}

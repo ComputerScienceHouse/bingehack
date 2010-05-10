@@ -507,7 +507,7 @@ enter_explore_mode()
 			pline("Resuming normal game.");
 		}
 	}
-	return 0;
+	return really_xplor;
 }
 
 #ifdef WIZARD
