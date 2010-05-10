@@ -13,7 +13,6 @@ STATIC_DCL int FDECL(untrap_prob, (struct trap *ttmp));
 STATIC_DCL void FDECL(cnv_trap_obj, (int, int, struct trap *));
 STATIC_DCL void FDECL(move_into_trap, (struct trap *));
 STATIC_DCL int FDECL(try_disarm, (struct trap *,BOOLEAN_P));
-STATIC_DCL void FDECL(reward_untrap, (struct trap *, struct monst *));
 STATIC_DCL int FDECL(disarm_holdingtrap, (struct trap *));
 STATIC_DCL int FDECL(disarm_landmine, (struct trap *));
 STATIC_DCL int FDECL(disarm_squeaky_board, (struct trap *));
@@ -3169,7 +3168,7 @@ boolean force_failure;
 	return 2;
 }
 
-STATIC_OVL void
+void
 reward_untrap(ttmp, mtmp)
 struct trap *ttmp;
 struct monst *mtmp;
@@ -3181,7 +3180,9 @@ struct monst *mtmp;
 		    mtmp->data->mlet != S_HUMAN) {
 		mtmp->mpeaceful = 1;
 		set_malign(mtmp);	/* reset alignment */
+		if (canseemon(mtmp)) {
 		pline("%s is grateful.", Monnam(mtmp));
+	    }
 	    }
 	    /* Helping someone out of a trap is a nice thing to do,
 	     * A lawful may be rewarded, but not too often.  */

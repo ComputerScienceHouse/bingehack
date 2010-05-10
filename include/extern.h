@@ -2036,6 +2036,7 @@ E boolean NDECL(drown);
 E void FDECL(drain_en, (int));
 E int NDECL(dountrap);
 E int FDECL(untrap, (BOOLEAN_P));
+E void FDECL(reward_untrap, (struct trap *, struct monst *));
 E boolean FDECL(chest_trap, (struct obj *,int,BOOLEAN_P));
 E void FDECL(deltrap, (struct trap *));
 E boolean FDECL(delfloortrap, (struct trap *));

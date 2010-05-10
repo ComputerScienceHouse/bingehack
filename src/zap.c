@@ -235,6 +235,8 @@ struct obj *otmp;
 		break;
 	case WAN_OPENING:
 	case SPE_KNOCK:
+	    {
+       	        struct trap *trap;
 		wake = FALSE;	/* don't want immediate counterattack */
 		if (u.uswallow && mtmp == u.ustuck) {
 			if (is_animal(mtmp->data)) {
@@ -242,6 +244,18 @@ struct obj *otmp;
 				else pline("%s opens its mouth!", Monnam(mtmp));
 			}
 			expels(mtmp, mtmp->data, TRUE);
+		} else if (mtmp->mtrapped && 
+			   (trap = t_at(mtmp->mx, mtmp->my)) != 0 &&
+			   trap->ttyp == BEAR_TRAP) {
+
+		    mtmp->mtrapped = 0;
+		    if (canseemon(mtmp)) {
+			pline("%s beartrap opens releasing %s.", 
+			      (trap->madeby_u ? "Your" : "The"), 
+			      mon_nam(mtmp));
+		    }
+		    reward_untrap(trap, mtmp);
+
 #ifdef STEED
 		} else if (!!(obj = which_armor(mtmp, W_SADDLE))) {
 			mtmp->misc_worn_check &= ~obj->owornmask;
@@ -253,6 +267,7 @@ struct obj *otmp;
 			newsym(mtmp->mx, mtmp->my);
 #endif
 		}
+	    }
 		break;
 	case SPE_HEALING:
 	case SPE_EXTRA_HEALING:
