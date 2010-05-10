@@ -2500,6 +2500,29 @@ struct obj *obj;	/* wand or spell */
 	    /* zapping downward */
 	    (void) bhitpile(obj, bhito, x, y);
 
+	    if (ttmp) {
+		switch (obj->otyp) {
+		case WAN_CANCELLATION:
+		case SPE_CANCELLATION: 
+		    /* MRKR: Disarm magical traps (including portals!) */
+		    /* from an idea posted to rgrn by Haakon Studebaker */
+		    if (ttmp->ttyp == MAGIC_TRAP || 
+			ttmp->ttyp == TELEP_TRAP ||
+			ttmp->ttyp == LEVEL_TELEP || 
+			ttmp->ttyp == MAGIC_PORTAL ||
+			ttmp->ttyp == POLY_TRAP) {
+			
+			if (ttmp->tseen) {
+			    You("disarm a %s.", 
+				defsyms[trap_to_defsym(ttmp->ttyp)].explanation);
+			}
+			deltrap(ttmp);
+		    }
+		    break;
+		default:
+		    break;
+		}
+	    }
 	    /* subset of engraving effects; none sets `disclose' */
 	    if ((e = engr_at(x, y)) != 0 && e->engr_type != HEADSTONE) {
 		switch (obj->otyp) {
