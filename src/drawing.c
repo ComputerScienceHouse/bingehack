@@ -340,7 +340,8 @@ static uchar ibm_graphics[MAXPCHARS] = {
 	240,	/* S_bars:	equivalence symbol */
 	241,	/* S_tree:	plus or minus symbol */
 	0xfa,	/* S_room:	meta-z, centered dot */
-	g_FILLER(S_stone),	/* S_darkroom:	meta-z, centered dot */
+/*	g_FILLER(S_stone),	 S_darkroom:	meta-z, centered dot  */
+	0xb7,
 /*20*/	0xb0,	/* S_corr:	meta-0, light shading */
 	0xb1,	/* S_litcorr:	meta-1, medium shading */
 	g_FILLER(S_upstair),
