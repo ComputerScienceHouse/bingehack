@@ -1585,6 +1585,58 @@ static const struct func_tab cmdlist[] = {
 	{0,0,0,0}
 };
 
+#ifdef DYNKEY
+
+/* let's not get too dynamic */
+#define DYNKEY_SZ (sizeof(struct dkb_tab) * (26*4+40))
+
+struct dkb_tab *dkblist = (struct dkb_tab *) 0;
+
+static int dkblist_sz=-1;
+
+int
+map_dkb(b, c)
+char b, c;
+{
+        if(dkblist_sz<0) {
+                dkblist=(struct dkb_tab *) alloc(DYNKEY_SZ+1); /* 0-term */
+                memset(dkblist, 0, DYNKEY_SZ+1);
+                dkblist_sz=0;
+        }
+        dkblist_sz++;
+        if(sizeof(struct dkb_tab) * dkblist_sz>DYNKEY_SZ)
+                return 0;
+        dkblist[dkblist_sz-1].bound_char=b;
+        dkblist[dkblist_sz-1].cmd_char=c;
+        return 1;
+}
+
+char
+keydesc2char(desc)
+char *desc;
+{
+        char key;
+        int l=strlen(desc);
+
+        if(l)
+                key=desc[l-1];
+        switch(l) {
+                case 1:
+                        return key;
+                case 3:
+                        if(desc[1]=='-')
+                                if(desc[0]=='M')
+                                        return M(key);
+                                else if(desc[0]=='C')
+                                        return C(key);
+                        /*fall through*/
+                default:
+                        return 0;
+        }
+}
+#undef DYNKEY_SZ
+#endif /* DYNKEY */
+
 struct ext_func_tab extcmdlist[] = {
 	{"adjust", "adjust inventory letters", doorganize, TRUE},
 	{"chat", "talk to someone", dotalk, TRUE},	/* converse? */
@@ -2209,9 +2261,14 @@ const char *s;
 
 #ifdef REDO
 	if(in_doagain || *readchar_queue)
-	    dirsym = readchar();
-	else
+	    dirsym =
+#ifdef DYNKEY
+                    greadchar(TRUE);
+#else
+                    readchar();
 #endif
+	else
+#endif /* REDO */
 	    dirsym = yn_function ((s && *s != '^') ? s : "In what direction?",
 					(char *)0, '\0');
 #ifdef REDO
@@ -2457,9 +2514,20 @@ parse()
 	flags.move = 1;
 	flush_screen(1); /* Flush screen buffer. Put the cursor on the hero. */
 
-	if (!iflags.num_pad || (foo = readchar()) == 'n')
+	if (!iflags.num_pad || (foo =
+#ifdef DYNKEY
+                                greadchar(TRUE)
+#else
+                                readchar()
+#endif
+                               ) == 'n')
 	    for (;;) {
-		foo = readchar();
+		foo =
+#ifdef DYNKEY
+                        greadchar(TRUE);
+#else
+                        readchar();
+#endif
 		if (foo >= '0' && foo <= '9') {
 		    multi = 10 * multi + foo - '0';
 		    if (multi < 0 || multi >= LARGEST_INT) multi = LARGEST_INT;
@@ -2497,7 +2565,13 @@ parse()
 	in_line[1] = '\0';
 	if (foo == 'g' || foo == 'G' || foo == 'm' || foo == 'M' ||
 	    foo == 'F' || (iflags.num_pad && (foo == '5' || foo == '-'))) {
-	    foo = readchar();
+            foo =
+#ifdef DYNKEY
+                    greadchar(TRUE);
+#else
+                    readchar();
+#endif
+
 #ifdef REDO
 	    savech((char)foo);
 #endif
@@ -2531,7 +2605,12 @@ end_of_input()
 #ifdef OVL0
 
 char
+#ifdef DYNKEY
+greadchar(dynkey)
+boolean dynkey;
+#else
 readchar()
+#endif
 {
 	register int sym;
 	int x = u.ux, y = u.uy, mod = 0;
@@ -2569,6 +2648,17 @@ readchar()
 	    readchar_queue = click_to_cmd(x, y, mod);
 	    sym = *readchar_queue++;
 	}
+#ifdef DYNKEY
+        if(dkblist && dynkey) {
+                register const struct dkb_tab *dlist;
+
+                for(dlist = dkblist; dlist->bound_char; dlist++) {
+                    if((sym & 0xff) != (dlist->bound_char & 0xff)) continue;
+                    sym=dlist->cmd_char;
+                    break;
+                }
+        }
+#endif
 	return((char) sym);
 }
 

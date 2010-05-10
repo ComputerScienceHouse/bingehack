@@ -334,6 +334,7 @@ typedef unsigned char	uchar;
 #define TOURIST		/* Tourist players with cameras and Hawaiian shirts */
 #define TOUGHVLAD	/* Vlad Balance patch 0.3, by CWC, suggestions by DACOD and JAH */
 /* #define MENTALPLYS */ /* Mental paralysis attacks yielding WIS saving throw by CWC */
+#define DYNKEY
 
 /* difficulty */
 //#define ELBERETH	/* Engraving the E-word repels monsters */
