@@ -502,6 +502,35 @@ testmail()
 	return 0;
 }
 
+STATIC_PTR int
+testchat()
+{
+	int buffer_length=80;
+	char curr = '?';
+	char str[buffer_length];
+	strcpy(str,plname);
+	int msg_length=strlen(plname)+2;
+	str[msg_length-2]=':';
+	str[msg_length-1]=' ';
+	str[msg_length]='\0';
+	int index = msg_length;
+	while(curr != '\n' && index < 80){
+		putstr(WIN_MESSAGE,0,str);
+		curr = readchar();
+		if(index == buffer_length-1){
+		}
+		if(curr == 0x007f || curr == '\b'){
+			if(index>msg_length){
+				str[--index]=' ';
+			}
+		}
+		else{
+			str[index++]=curr;
+			str[index]='\0';
+		}
+	}
+	pline("Message sent.");
+}
 #ifdef WIZARD
 
 /* ^W command - wish for something */
@@ -1480,6 +1509,7 @@ static const struct func_tab cmdlist[] = {
 	{SPBOOK_SYM, TRUE, dovspell},			/* Mike Stephenson */
 	{'#', TRUE, doextcmd},
 	{'_', TRUE, dotravel},
+	{'`', TRUE, testchat},
 	{0,0,0,0}
 };
 
