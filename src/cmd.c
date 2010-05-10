@@ -1427,10 +1427,12 @@ int final;
 	if (!u.uconduct.imbibe)
 	    you_have_never("drank anything");
 	
+#ifdef ELBERETH
 	if (!u.uconduct.elbereth)
 	    you_have_never("invoked the word of protection");
 	    /* 1KB: personally, I believe it should say "used the cheat code",
 	       but somehow I don't think the patch would get accepted */
+#endif
 	
         if (u.uconduct.armour<10 && !uarm && !uarmc && !uarmh && !uarmg
                 && !uarms && !uarmf
