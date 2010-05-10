@@ -147,7 +147,7 @@ STATIC_PTR int NDECL(wiz_show_stats);
 STATIC_DCL int NDECL(wiz_port_debug);
 #  endif
 # endif
-int NDECL(enter_explore_mode);	/* deathexplore patch */
+int NDECL(enter_explore_mode_from_death);	/* deathexplore patch */
 STATIC_PTR int NDECL(doattributes);
 STATIC_PTR int NDECL(doconduct); /**/
 STATIC_PTR boolean NDECL(minimal_enlightenment);
@@ -484,17 +484,14 @@ domonability()
 }
 
 int	/* deathexplore patch */
-enter_explore_mode()
+enter_explore_mode_from_death()
 {
 #ifdef PARANOID
 	char buf[BUFSZ];
 	int really_xplor = FALSE;
 #endif
-	pline("Explore mode is for local games, not public servers.");
-	return 0;
 
 	if(!discover && !wizard) {
-		pline("Beware!  From explore mode there will be no return to normal game.");
 #ifdef PARANOID
 		if (iflags.paranoid_quit) {
 		  getlin ("Do you want to enter explore mode? [yes/no]?",buf);
@@ -513,12 +510,24 @@ enter_explore_mode()
 			You("are now in non-scoring explore mode.");
 			discover = TRUE;
 		}
-		else {
+	}
+	return really_xplor;
+}
+
+int	/* deathexplore patch */
+enter_explore_mode()
+{
+	int really_xplor = FALSE;
+
+	if(!discover && !wizard) {
+		pline("Beware!  From explore mode there will be no return to normal game.");
+		really_xplor = enter_explore_mode_from_death();
+		if (!really_xplor) {
 			clear_nhwindow(WIN_MESSAGE);
 			pline("Resuming normal game.");
 		}
 	}
-	return 0;
+	return really_xplor;
 }
 
 STATIC_PTR int
