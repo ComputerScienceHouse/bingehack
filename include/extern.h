@@ -122,6 +122,8 @@ E int NDECL(getbones);
 
 /* ### botl.c ### */
 
+E const char *NDECL(encstat);
+E const char *NDECL(hunstat);
 E int FDECL(xlev_to_rank, (int));
 E int FDECL(title_to_mon, (const char *,int *,int *));
 E void NDECL(max_rank_sz);

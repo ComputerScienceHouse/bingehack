@@ -342,6 +342,23 @@ char *buf;
 	return ret;
 }
 
+const char *
+encstat()
+{
+    int cap = near_capacity();
+    if(cap > UNENCUMBERED)
+	return enc_stat[cap];
+    else return "";
+}
+
+const char *
+hunstat()
+{
+    if (strcmp(hu_stat[u.uhs], "        "))
+	return hu_stat[u.uhs];
+    else return "";
+}
+
 STATIC_OVL void
 bot2()
 {
