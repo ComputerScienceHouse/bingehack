@@ -1038,15 +1038,20 @@ h_filter(line)
 
 static const char *special_oracle[] = {
 	"\"...it is rather disconcerting to be confronted with the",
-	"following theorem from [Baker, Gill, and Solovay, 1975].",
+	"following theorem from [Shannon and Hartley, 1949].",
 	"",
-	"Theorem 7.18  There exist recursive languages A and B such that",
-	"  (1)  P(A) == NP(A), and",
-	"  (2)  P(B) != NP(B)",
+	"Figure 1",
+	"      C = B log2(1+S/N)",
+	"  Where:",
+	"   - C is the channel capacity in bits per second",
+	"   - B is the bandwidth in hertz",
+	"   - S is the received signal power in watts",
+	"   - N is the received noise power in watts",
 	"",
-	"This provides impressive evidence that the techniques that are",
-	"currently available will not suffice for proving that P != NP or          ",
-	"that P == NP.\"  [Garey and Johnson, p. 185.]"
+	"Considering all possible multi-level & multi-phase encoding techniques,",
+	"the theoretical tightest upper bound on the information rate does not ",
+	"increase satisfactorily at all with vastly increased signal power, given",
+	"any situation with a real-world noise rate.\""
 };
 
 /*
