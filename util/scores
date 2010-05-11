@@ -1,0 +1,49 @@
+#!/bin/bash
+
+function readlog {
+	local IFS
+	version="$1"
+	points="$2"
+	deathdnum="$3"
+	deathlev="$4"
+	maxlvl="$5"
+	hp="$6"
+	maxhp="$7"
+	deaths="$8"
+	deathdate="$9"
+	shift 9
+	birthdate="$1"
+	uid="$2"
+	role="$3"
+	race="$4"
+	gender="$5"
+	alignment="$6"
+	shift 6
+	IFS=","
+	set -- $@
+	unset IFS
+	name="$1"
+	epitaph="$2"
+}
+
+function produce_line {
+	echo -n "+"
+	for (( i=0; i < 78; i++ )); do
+		echo -n "="
+	done
+	echo "+"
+}
+
+printf_str='| %11s | %-47s | %-12s |\n'
+produce_line
+printf "$printf_str" "No. Points" "Name" "Hp [max]"
+
+while read line; do
+	readlog $line
+
+	printf "$printf_str" \
+		"$points" \
+		"$name-$role-$race-$gender-$alignment $epitaph on level $deathlev" \
+		"$hp [$maxhp]"
+done < "$*"
+produce_line
