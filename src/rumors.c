@@ -147,6 +147,7 @@ int mechanism;
 			   mechanism == BY_PAPER);
 
 	if (reading) {
+		truth=-1; /* If not from potter, do not show Potter quotes. */
 	    /* deal with various things that prevent reading */
 	    if (is_fainted() && mechanism == BY_COOKIE)
 	    	return;
@@ -157,15 +158,18 @@ int mechanism;
 	    	return;
 	    }
 	}
+	else{
+		truth=1; /* We're talking to potter, we want the Potter quotes */
+	}
 	line = getrumor(truth, buf, reading ? FALSE : TRUE);
 	if (!*line)
 		line = "NetHack rumors file closed for renovation.";
 	switch (mechanism) {
 	    case BY_ORACLE:
 	 	/* Oracle delivers the rumor */
-		pline("True to her word, the Oracle %ssays: ",
-		  (!rn2(4) ? "offhandedly " : (!rn2(3) ? "casually " :
-		  (rn2(2) ? "nonchalantly " : ""))));
+		pline("True to his word, Potter %ssays: ",
+		  (!rn2(4) ? "nonchalantly " : (!rn2(3) ? "casually " :
+		  (rn2(2) ? "excitedly " : ""))));
 		verbalize("%s", line);
 		exercise(A_WIS, TRUE);
 		return;
@@ -264,8 +268,8 @@ boolean delphi;
 		tmpwin = create_nhwindow(NHW_TEXT);
 		if (delphi)
 		    putstr(tmpwin, 0, special ?
-		          "The Oracle scornfully takes all your money and says:" :
-		          "The Oracle meditates for a moment and then intones:");
+		          "Potter protests, but then takes your money and says:" :
+		          "Potter thinks for a second, and then announces in a gravelly voice:");
 		else
 		    putstr(tmpwin, 0, "The message reads:");
 		putstr(tmpwin, 0, "");
@@ -300,19 +304,19 @@ register struct monst *oracl;
 		There("is no one here to consult.");
 		return 0;
 	} else if (!oracl->mpeaceful) {
-		pline("%s is in no mood for consultations.", Monnam(oracl));
+		pline("%s is in not in the mood for conversation (believe it or not...).", l_monnam(oracl));
 		return 0;
 #ifndef GOLDOBJ
 	} else if (!u.ugold) {
 #else
 	} else if (!umoney) {
 #endif
-		You("have no money.");
+		You("have no money. There's no free lunch in wireless... and in being an oracle!");
 		return 0;
 	}
 
 	Sprintf(qbuf,
-		"\"Wilt thou settle for a minor consultation?\" (%d %s)",
+		"\"Would you mind talking for a little bit?\" (%d %s)",
 		minor_cost, currency((long)minor_cost));
 	switch (ynq(qbuf)) {
 	    default:
@@ -337,7 +341,7 @@ register struct monst *oracl;
 #endif
 		    (oracle_cnt == 1 || oracle_flg < 0)) return 0;
 		Sprintf(qbuf,
-			"\"Then dost thou desire a major one?\" (%d %s)",
+			"\"Oh! You'd like to sit and talk for a _long_ while?\" (%d %s)",
 			major_cost, currency((long)major_cost));
 		if (yn(qbuf) != 'y') return 0;
 #ifndef GOLDOBJ

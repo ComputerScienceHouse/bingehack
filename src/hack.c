@@ -1789,8 +1789,8 @@ register boolean newlev;
 			You("enter an abandoned barracks.");
 		    break;
 		case DELPHI:
-		    if(monstinroom(&mons[PM_ORACLE], roomno))
-			verbalize("%s, %s, welcome to Delphi!",
+		    if(monstinroom(&mons[PM_POTTER], roomno))
+			verbalize("%s, %s, welcome to Potter's house!",
 					Hello((struct monst *) 0), plname);
 		    break;
 		case TEMPLE:

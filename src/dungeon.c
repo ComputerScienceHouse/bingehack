@@ -626,7 +626,7 @@ struct level_map {
 	{ "juiblex",	&juiblex_level },
 	{ "knox",	&knox_level },
 	{ "medusa",	&medusa_level },
-	{ "oracle",	&oracle_level },
+	{ "potter",	&oracle_level },
 	{ "orcus",	&orcus_level },
 #ifdef REINCARNATION
 	{ "rogue",	&rogue_level },

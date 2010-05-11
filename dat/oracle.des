@@ -24,7 +24,7 @@ FOUNTAIN: (0, 1)
 FOUNTAIN: (1, 0)
 FOUNTAIN: (1, 2)
 FOUNTAIN: (2, 1)
-MONSTER: '@', "Oracle", (1,1)
+MONSTER: '@', "Potter", (1,1)
 DOOR: false , nodoor , random, random
 
 ROOM: "ordinary" , random, random, random, random
