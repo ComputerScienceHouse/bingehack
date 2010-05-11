@@ -304,7 +304,7 @@ register struct monst *oracl;
 		There("is no one here to consult.");
 		return 0;
 	} else if (!oracl->mpeaceful) {
-		pline("%s is in not in the mood for conversation (believe it or not...).", Monnam(oracl));
+		pline("%s is in not in the mood for conversation (believe it or not...).", l_monnam(oracl));
 		return 0;
 #ifndef GOLDOBJ
 	} else if (!u.ugold) {
