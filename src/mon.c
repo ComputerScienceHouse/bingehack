@@ -1250,7 +1250,7 @@ struct monst *magr,	/* monster that is currently deciding where to move */
 		return ALLOW_M|ALLOW_TM;
 
 	/* woodchucks vs. The Oracle */
-	if(ma == &mons[PM_WOODCHUCK] && md == &mons[PM_ORACLE])
+	if(ma == &mons[PM_WOODCHUCK] && md == &mons[PM_POTTER])
 		return ALLOW_M|ALLOW_TM;
 
 	/* ravens like eyes */

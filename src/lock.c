@@ -366,7 +366,7 @@ pick_lock(pick) /* pick a lock with a given object */
 			&& mtmp->m_ap_type != M_AP_OBJECT) {
 #ifdef TOURIST
 		if (picktyp == CREDIT_CARD &&
-		    (mtmp->isshk || mtmp->data == &mons[PM_ORACLE]))
+		    (mtmp->isshk || mtmp->data == &mons[PM_POTTER]))
 		    verbalize("No checks, no credit, no problem.");
 		else
 #endif
