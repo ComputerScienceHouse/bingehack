@@ -5,9 +5,25 @@
 # SHELL=E:/GEMINI2/MUPFEL.TTP
 # UUDECODE=uudecode
 
+.PHONY: spec_levs quest_levs all clean
+
 VARDAT = data rumors quest.dat oracles options
 
+SPEC_DES=bigroom.des castle.des endgame.des gehennom.des knox.des medusa.des \
+	mines.des oracle.des sokoban.des tower.des yendor.des
+QUEST_DES= Arch.des Barb.des Caveman.des Healer.des Knight.des Monk.des \
+	Priest.des Ranger.des Rogue.des Samurai.des Tourist.des Valkyrie.des \
+	Wizard.des
+
+LEV_COMP=../util/lev_comp
+
+SPEC_LEVS=$(SPEC_DES:.des=.lev)
+QUEST_LEVS=$(QUEST_DES:.des=.lev)
+
 all:	$(VARDAT) spec_levs quest_levs dungeon
+
+clean:
+	$(RM) *.lev data dungeon dungeon.pdf nhdat options oracles quest.dat rumors
 
 ../util/makedefs:
 	(cd ../util ; make makedefs)
@@ -98,22 +114,9 @@ oracles:	oracles.txt ../util/makedefs
 options:	../util/makedefs
 	../util/makedefs -v
 
-SPEC_DES=bigroom.des castle.des endgame.des gehennom.des knox.des medusa.des \
-	mines.des oracle.des sokoban.des tower.des yendor.des
-QUEST_DES= Arch.des Barb.des Caveman.des Healer.des Knight.des Monk.des \
-	Priest.des Ranger.des Rogue.des Samurai.des Tourist.des Valkyrie.des \
-	Wizard.des
-
-SPEC_LEVS=$(SPEC_DES:.des=.lev)
-QUEST_LEVS=$(QUEST_DES:.des=.lev)
-
-.PHONY: spec_levs quest_levs
-
 spec_levs: $(SPEC_LEVS)
-quest_levs: $(QUEST_LEVS)
 
-%.lev: %.des ../util/lev_comp
-	../util/lev_comp $<
+quest_levs: $(QUEST_LEVS)
 
 dungeon: dungeon.def ../util/makedefs ../util/dgn_comp
 	../util/makedefs -e
@@ -123,3 +126,7 @@ spotless:
 	-rm -f spec_levs quest_levs *.lev $(VARDAT) dungeon dungeon.pdf
 	-rm -f nhdat x11tiles beostiles pet_mark.xbm rip.xpm mapbg.xpm
 	-rm -f rip.img GEM_RSC.RSC title.img nh16.img NetHack.ad
+
+%.lev: %.des $(LEV_COMP)
+	$(LEV_COMP) $<
+	touch $@
