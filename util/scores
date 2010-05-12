@@ -1,4 +1,27 @@
 #!/bin/bash
+set -e -o pipefail
+
+function usage {
+	echo "Usage: ${0##*/} [-r] scores_file"
+}
+
+while getopts 'r' opt; do
+	case "$opt" in
+		r)
+			reverse="true"
+			shift
+			;;
+		*)
+			usage >&2
+			exit 1
+			;;
+	esac
+done
+
+if [[ $# -ne 1 ]]; then
+	usage >&2
+	exit 1
+fi
 
 function readlog {
 	local IFS
@@ -34,29 +57,69 @@ function produce_line {
 	echo "+"
 }
 
-printf_str='| %11s | %-47s | %-12s |\n'
-produce_line
-printf "$printf_str" "No. Points" "Name" "Hp [max]"
-produce_line "-"
+#last_spun="-"
+#function spinner {
+#	case "$last_spun" in
+#		-)
+#			last_spun="\\"
+#			;;
+#		\\)
+#			last_spun="|"
+#			;;
+#		\|)
+#			last_spun="/"
+#			;;
+#		/)
+#			last_spun="-"
+#			;;
+#	esac
+#	echo -n "$last_spun"
+#}
 
-function printf {
+printf_str='| %11s | %-47s | %-12s |\n'
+
+function array_printf {
 	local t
-	builtin printf -v t "$printf_str" "$@"
+	printf -v t "$printf_str" "$@"
 	text+=( "$t" )
 }
+
+if [[ -t 0 ]]; then
+	echo "-t 0 true"
+fi
+#trap "kill %1 &> /dev/null" EXIT
+#(
+#		trap "break" USR1
+#		while [[ -z "$done" ]]; do
+#			printf "\r%s" "Please wait... "
+#			spinner
+#			sleep 0.1
+#		done
+#) &
 
 declare -a text
 while read -r line; do
 	readlog $line
 
-	printf \
+	array_printf \
 		"$points" \
 		"$name-$role-$race-$gender-$alignment $epitaph on level $deathlev" \
 		"$hp [$maxhp]"
 done < "$*"
 
-for (( i=${#text[@]} - 1; i >= 0; i-- )); do
-	echo -n "${text[$i]}"
-done
+#kill -USR1 %1
+#printf "\r"
+
+produce_line
+printf "$printf_str" "No. Points" "Name" "Hp [max]"
+produce_line "-"
+
+if [[ -n "$reverse" ]]; then
+	for (( i=${#text[@]} - 1; i >= 0; i-- )); do
+		echo -n "${text[$i]}"
+	done
+else
+	echo -n "${text[@]}"
+fi
 
 produce_line

@@ -382,6 +382,10 @@ typedef unsigned char	uchar;
 
 /*#define GOLDOBJ */	/* Gold is kept on obj chains - Helge Hafting */
 #define AUTOPICKUP_EXCEPTIONS /* exceptions to autopickup */
+#define DUMP_LOG        /* Dump game end information to a file */
+#define DUMP_FN "/dgldir/userdata/%n/dumplog/%t.nh343.txt"      /* Fixed dumpfile name, if you want
+                                         * to prevent definition by users */
+#define DUMPMSGS 20     /* Number of latest messages in the dump file  */
 #define EPITAPH		/* 'write your own epitaph' patch */
 #define HALLU_GODS
 
