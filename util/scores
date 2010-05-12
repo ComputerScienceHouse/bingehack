@@ -29,7 +29,7 @@ function readlog {
 function produce_line {
 	echo -n "+"
 	for (( i=0; i < 78; i++ )); do
-		echo -n "="
+		echo -n "${1:-"="}"
 	done
 	echo "+"
 }
@@ -37,13 +37,26 @@ function produce_line {
 printf_str='| %11s | %-47s | %-12s |\n'
 produce_line
 printf "$printf_str" "No. Points" "Name" "Hp [max]"
+produce_line "-"
 
-while read line; do
+function printf {
+	local t
+	builtin printf -v t "$printf_str" "$@"
+	text+=( "$t" )
+}
+
+declare -a text
+while read -r line; do
 	readlog $line
 
-	printf "$printf_str" \
+	printf \
 		"$points" \
 		"$name-$role-$race-$gender-$alignment $epitaph on level $deathlev" \
 		"$hp [$maxhp]"
 done < "$*"
+
+for (( i=${#text[@]} - 1; i >= 0; i-- )); do
+	echo -n "${text[$i]}"
+done
+
 produce_line
