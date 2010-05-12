@@ -1430,7 +1430,6 @@ boolean want_dump;
 			    Sprintf(buf, "%d %s",
 				    nkilled, makeplural(mons[i].mname));
 		    }
-		    putstr(klwin, 0, buf);
 		    if (c == 'y') putstr(klwin, 0, buf);
 #ifdef DUMP_LOG
 		    if (want_dump)  dump("  ", buf);
