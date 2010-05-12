@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e -o pipefail
 
+export PATH="/bin:/usr/bin"
+
 function usage {
 	echo "Usage: ${0##*/} [-r] scores_file"
 }
@@ -108,18 +110,20 @@ done < "$*"
 #kill -USR1 %1
 #printf "\r"
 
-produce_line
-printf "$printf_str" "No. Points" "Name" "Hp [max]"
-produce_line "-"
+(
+	produce_line
+	printf "$printf_str" "No. Points" "Name" "Hp [max]"
+	produce_line "-"
 
-if [[ -n "$reverse" ]]; then
-	for (( i=${#text[@]} - 1; i >= 0; i-- )); do
-		echo -n "${text[$i]}"
-	done
-else
-	for (( i=0; i < ${#text[@]}; i++ )); do
-		echo -n "${text[$i]}"
-	done
-fi
+	if [[ -n "$reverse" ]]; then
+		for (( i=${#text[@]} - 1; i >= 0; i-- )); do
+			echo -n "${text[$i]}"
+		done
+	else
+		for (( i=0; i < ${#text[@]}; i++ )); do
+			echo -n "${text[$i]}"
+		done
+	fi
 
-produce_line
+	produce_line
+) | less
