@@ -41,7 +41,9 @@ function hash {
 	h="${1:0:5}"
 }
 
-declare -i lines_per_percent=$(set -- $(wc -l "$*"); echo "$1")
+logfile="$*"
+set -- $(wc -l "$*")
+declare -i lines_per_percent="$1"
 let lines_per_percent/=100
 declare -i lineno=0 cnt=0
 
@@ -74,7 +76,7 @@ while read -r line; do
 	hash "$line"
 	time_hash[$h]="$starttime"
 	echo "\"$h\" \"$line\"" >&4
-done < "$*"
+done < "$logfile"
 exec 3>&-
 exec 4>&-
 
