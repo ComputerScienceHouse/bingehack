@@ -1,6 +1,15 @@
 #!/bin/bash
 export PATH="/bin:/usr/bin"
 
+declare -a tempfiles
+trap '/bin/rm -f "${tempfiles[@]}"' EXIT
+tempfile="$(mktemp -t scores.XXXXXXX)"
+tempfiles=( "$tempfile" )
+tempfifo="$(mktemp -t scores.fifo.XXXXXXX)"
+tempfiles=( "$tempfifo" )
+rm -f "$tempfifo"
+mkfifo "$tempfifo"
+
 function usage {
 	echo "Usage: ${0##*/} scores_file"
 }
@@ -27,9 +36,22 @@ function hash {
 	echo "${1:0:5}"
 }
 
+declare -i lines_per_percent=$(( $(set -- $(wc -l "$*"); echo $1) / 100 ))
+declare -i lineno=0 cnt=0
+
+exec 3<> "$tempfifo"
+dialog --clear --title "Score Viewer" --gauge "Reading Scores Log" 0 40 0 <&3 &
+
 declare -a dialog_args
 declare -A time_hash
 while read -r line; do
+	cnt+=1
+	if [[ $cnt -eq $lines_per_percent ]]; then
+		cnt=0
+		lineno+=1
+		echo $lineno >&3
+	fi
+
 	readlog $line
 
 	line="$name-$role-$race-$gender-$align $death on level $deathlev (HP: $hp [$maxhp])"
@@ -37,9 +59,8 @@ while read -r line; do
 	time_hash[$h]="$starttime"
 	dialog_args+=( "$h" "$line" )
 done < "$*"
+exec 3>&-
 
-trap '/bin/rm -f "$tempfile"' EXIT
-tempfile="$(mktemp -t scores.XXXXXXX)"
 exec 3> "$tempfile"
 while true; do
 	dialog --clear --output-fd 3 --title "High Scores" --menu "" 0 0 0 "${dialog_args[@]}" || break
