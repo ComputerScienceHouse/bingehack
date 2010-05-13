@@ -1227,6 +1227,7 @@ char *start;
 
 const struct percent_color_option *hp_colors = NULL;
 const struct percent_color_option *pw_colors = NULL;
+const struct percent_color_option *wt_colors = NULL;
 const struct text_color_option *text_colors = NULL;
 
 struct percent_color_option *
@@ -1268,6 +1269,10 @@ char *start;
 			}
 			if (!strcmpi(start, "pw")) {
 				pw_colors = add_percent_option(percent_color_option, pw_colors);
+				return TRUE;
+			}
+			if (!strcmpi(start, "wt")) {
+				wt_colors = add_percent_option(percent_color_option, wt_colors);
 				return TRUE;
 			}
 		}

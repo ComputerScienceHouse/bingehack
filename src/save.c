@@ -54,6 +54,7 @@ extern struct menucoloring *menu_colorings;
 #if defined(STATUS_COLORS) && defined(TEXTCOLOR)
 extern const struct percent_color_option *hp_colors;
 extern const struct percent_color_option *pw_colors;
+extern const struct percent_color_option *wt_colors;
 extern const struct text_color_option *text_colors;
 #endif
 
@@ -994,6 +995,7 @@ free_status_colors()
 {
 	free_percent_color_options(hp_colors); hp_colors = NULL;
 	free_percent_color_options(pw_colors); pw_colors = NULL;
+	free_percent_color_options(wt_colors); wt_colors = NULL;
 	free_text_color_options(text_colors); text_colors = NULL;
 }
 #endif

@@ -38,6 +38,7 @@ STATIC_DCL void NDECL(bot2);
 
 extern const struct percent_color_option *hp_colors;
 extern const struct percent_color_option *pw_colors;
+extern const struct percent_color_option *wt_colors;
 extern const struct text_color_option *text_colors;
 
 struct color_option
@@ -391,6 +392,8 @@ bot2()
 #if defined(STATUS_COLORS) && defined(TEXTCOLOR)
 	struct color_option color_option;
 	int save_botlx = flags.botlx;
+	long iweight;
+	long cweight;
 #endif
 
 	hp = Upolyd ? u.mh : u.uhp;
@@ -437,8 +440,21 @@ bot2()
 	else
 		Sprintf(nb = eos(nb), " Exp:%u", u.ulevel);
 
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+	if(flags.showweight) {
+		Strcat(nb = eos(nb), " Wt:");
+		curs(WIN_STATUS, 1, 1);
+		putstr(WIN_STATUS, 0, newbot2);
+
+		iweight =  (long)(inv_weight()+weight_cap());
+		cweight = (long)(weight_cap());
+		Sprintf(nb = eos(nb), "%ld/%ld", iweight, cweight);
+		apply_color_option(percentage_color_of(iweight, cweight, wt_colors), newbot2);
+	}
+#else
 	if(flags.showweight)
 		Sprintf(nb = eos(nb), " Wt:%ld/%ld", (long)(inv_weight()+weight_cap()), (long)(weight_cap()));
+#endif
 
 	if(flags.time)
 	    Sprintf(nb = eos(nb), " T:%ld", moves);
@@ -507,6 +523,7 @@ bot2()
 #else
 		Sprintf(nb = eos(nb), " %s", enc_stat[cap]);
 #endif
+	flags.botlx = save_botlx;
 #ifdef DUMP_LOG
 }
 STATIC_OVL void
@@ -517,7 +534,6 @@ bot2()
 #endif
 	curs(WIN_STATUS, 1, 1);
 	putstr(WIN_STATUS, 0, newbot2);
-	flags.botlx = save_botlx;
 }
 
 void
