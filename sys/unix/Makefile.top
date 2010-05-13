@@ -188,19 +188,19 @@ dofiles:
 	$(MAKE) dofiles-$${target-nodlb}
 	cp src/$(GAME) $(GAMEDIR)
 	cp util/recover $(GAMEDIR)
-	-rm -f $(SHELLDIR)/$(GAME)
-	sed -e 's;/usr/games/lib/nethackdir;$(GAMEDIR);' \
-		-e 's;HACKDIR/nethack;HACKDIR/$(GAME);' \
-		< sys/unix/nethack.sh \
-		> $(SHELLDIR)/$(GAME)
+#	-rm -f $(SHELLDIR)/$(GAME)
+#	sed -e 's;/usr/games/lib/nethackdir;$(GAMEDIR);' \
+#		-e 's;HACKDIR/nethack;HACKDIR/$(GAME);' \
+#		< sys/unix/nethack.sh \
+#		> $(SHELLDIR)/$(GAME)
 # set up their permissions
 	-( cd $(GAMEDIR) ; $(CHOWN) $(GAMEUID) $(GAME) recover ; \
 			$(CHGRP) $(GAMEGRP) $(GAME) recover )
 	chmod $(GAMEPERM) $(GAMEDIR)/$(GAME)
 	chmod $(EXEPERM) $(GAMEDIR)/recover
-	-$(CHOWN) $(GAMEUID) $(SHELLDIR)/$(GAME)
-	$(CHGRP) $(GAMEGRP) $(SHELLDIR)/$(GAME)
-	chmod $(EXEPERM) $(SHELLDIR)/$(GAME)
+#	-$(CHOWN) $(GAMEUID) $(SHELLDIR)/$(GAME)
+#	$(CHGRP) $(GAMEGRP) $(SHELLDIR)/$(GAME)
+#	chmod $(EXEPERM) $(SHELLDIR)/$(GAME)
 
 dofiles-dlb: check-dlb
 	( cd dat ; cp nhdat $(DATNODLB) $(GAMEDIR) )
@@ -236,7 +236,7 @@ update: $(GAME) recover $(VARDAT) dungeon spec_levs
 install: $(GAME) recover $(VARDAT) dungeon spec_levs
 # set up the directories
 # not all mkdirs have -p; those that don't will create a -p directory
-	-mkdir -p $(SHELLDIR)
+#	-mkdir -p $(SHELLDIR)
 	-rm -rf $(GAMEDIR) $(VARDIR)
 	-mkdir -p $(GAMEDIR) $(VARDIR) $(VARDIR)/save
 	-rmdir ./-p
@@ -246,10 +246,10 @@ install: $(GAME) recover $(VARDAT) dungeon spec_levs
 # set up the game files
 	( $(MAKE) dofiles )
 # set up some additional files
-	touch $(VARDIR)/perm $(VARDIR)/record $(VARDIR)/logfile
-	-( cd $(VARDIR) ; $(CHOWN) $(GAMEUID) perm record logfile ; \
-			$(CHGRP) $(GAMEGRP) perm record logfile ; \
-			chmod $(FILEPERM) perm record logfile )
+	touch $(VARDIR)/perm $(VARDIR)/record $(VARDIR)/logfile $(VARDIR)/xlogfile
+	-( cd $(VARDIR) ; $(CHOWN) $(GAMEUID) perm record logfile xlogfile ; \
+			$(CHGRP) $(GAMEGRP) perm record logfile xlogfile ; \
+			chmod $(FILEPERM) perm record logfile xlogfile )
 # and a reminder
 	@echo You may also want to reinstall the man pages via the doc Makefile.
 

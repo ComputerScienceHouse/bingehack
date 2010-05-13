@@ -177,6 +177,9 @@ struct instance_flags {
 	uchar	bouldersym;	/* symbol for boulder display */
 	boolean travel1;	/* first travel step */
 	coord	travelcc;	/* coordinates for travel_cache */
+#ifdef SIMPLE_MAIL
+	boolean simplemail;	/* simple mail format $NAME:$MESSAGE */
+#endif
 #ifdef WIZARD
 	boolean  sanity_check;	/* run sanity checks */
 	boolean  mon_polycontrol;	/* debug: control monster polymorphs */
@@ -184,6 +187,12 @@ struct instance_flags {
 #ifdef TTY_GRAPHICS
 	char prevmsg_window;	/* type of old message window to use */
 	boolean  extmenu;	/* extended commands use menu interface */
+#endif
+#ifdef MENU_COLOR
+	boolean use_menu_color;	/* use color in menus; only if wc_color */
+#endif
+#ifdef WIN_EDGE
+	boolean  win_edge;	/* are the menus aligned left&top */
 #endif
 #ifdef MFLOPPY
 	boolean  checkspace;	/* check disk space before writing files */
@@ -220,6 +229,20 @@ struct instance_flags {
 #endif
 #ifdef DEATH_EXPLORE
 	boolean death_expl;	/* prompt for explore mode at death */
+#endif
+#ifdef SHOW_BORN
+	boolean show_born;	/* show numbers of created monsters */
+#endif
+#ifdef SORTLOOT
+	char sortloot;          /* sort items to loot alphabetically */
+#endif
+#ifdef HPMON
+        boolean hpmon;
+#endif
+#ifdef PARANOID
+	boolean  paranoid_hit;  /* Ask for 'yes' when hitting peacefuls */
+	boolean  paranoid_quit; /* Ask for 'yes' when quitting */
+	boolean  paranoid_remove; /* Always show menu for 'T' and 'R' */
 #endif
 /*
  * Window capability support.
@@ -268,6 +291,8 @@ struct instance_flags {
 	boolean wc2_fullscreen;		/* run fullscreen */
 	boolean wc2_softkeyboard;	/* use software keyboard */
 	boolean wc2_wraptext;		/* wrap text */
+	boolean wc2_darkgray;		/* try to use PC dark-gray color
+					 * to represent black object */
 
 	boolean show_buc;	/* always show BUC status */
 	boolean  cmdassist;	/* provide detailed assistance for some commands */
@@ -285,6 +310,9 @@ struct instance_flags {
 #ifdef WIN32CON
 #define MAX_ALTKEYHANDLER 25
 	char	 altkeyhandler[MAX_ALTKEYHANDLER];
+#endif
+#ifdef REALTIME_ON_BOTL
+  boolean  showrealtime; /* show actual elapsed time */
 #endif
 };
 

@@ -9,9 +9,13 @@
 #include "wintty.h" /* more() */
 #endif
 
+#if defined(WHEREIS_FILE) && defined(UNIX)
+#include <sys/types.h> /* whereis-file chmod() */
+#endif
+
 #include <ctype.h>
 
-#if !defined(MAC) && !defined(O_WRONLY) && !defined(AZTEC_C)
+#if (!defined(MAC) && !defined(O_WRONLY) && !defined(AZTEC_C)) || defined(USE_FCNTL)
 #include <fcntl.h>
 #endif
 
@@ -534,6 +538,9 @@ clearlocks()
 	/* can't access maxledgerno() before dungeons are created -dlc */
 	for (x = (n_dgns ? maxledgerno() : 0); x >= 0; x--)
 		delete_levelfile(x);	/* not all levels need be present */
+#  ifdef WHEREIS_FILE
+	/*        delete_whereis();*/
+#  endif
 #endif
 }
 
@@ -598,6 +605,85 @@ int fd;
 }
 #endif
 	
+#ifdef WHEREIS_FILE
+void
+touch_whereis()
+{
+  /* Write out our current level and branch to name.whereis
+   *
+   *      Could eventually bolt on all kinds of info, but this way
+   *      at least something which wants to can scan for the games.
+   *
+   * For now this only works on Win32 and UNIX.  I'm too lazy
+   * to sort out all the proper other-OS stuff.
+   */
+
+  FILE* fp;
+  char whereis_file[255];
+  char whereis_work[255];
+
+#ifdef WIN32
+  Sprintf(whereis_file,"%s-%s.whereis",get_username(0),plname);
+#else
+  Sprintf(whereis_file,"whereis/%s.whereis",plname);
+#endif
+  Sprintf(whereis_work,
+	  "depth=%d:dnum=%d:hp=%d:maxhp=%d:turns=%d:score=%ld:role=%s:race=%s:gender=%s:align=%s:conduct=0x%lx:amulet=%d\n",
+	  depth(&u.uz),
+	  u.uz.dnum,
+	  u.uhp,
+	  u.uhpmax,
+	  moves,
+	  botl_score(),
+	  urole.name.m,
+	  urace.adj,
+	  u.mfemale ? "Fem" : "Mal",
+	  align_str(u.ualign.type),
+	  encodeconduct(),
+	  u.uhave.amulet ? 1 : 0
+	  );
+  /*
+  Sprintf(whereis_work,"%d,%d,%d,%d,%d,0,0,%s,%s,%s,%d,%d\n",
+	  depth(&u.uz), u.uz.dnum, u.uhp, u.uhpmax, moves,
+	  urole.name.m,urace.adj,u.mfemale ? "F" : "M",u.ualign.type + 2,
+	  u.uhave.amulet ? 1 : 0);*/
+  fp = fopen_datafile(whereis_file,"w",LEVELPREFIX);
+  if (fp) {
+#ifdef UNIX
+    mode_t whereismode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
+    chmod(fqname(whereis_file, LEVELPREFIX, 2), whereismode);
+#endif
+    fwrite(whereis_work,strlen(whereis_work),1,fp);
+    fclose(fp);
+  }
+
+}
+
+
+/* Changed over to write out where the player last was when they
+ * left the game; including possibly 'dead' :) */
+void
+delete_whereis()
+{
+    /*FILE* fp;*/
+  char whereis_file[255];
+  /*char whereis_work[255];*/
+#if defined (WIN32)
+  Sprintf(whereis_file,"%s-%s.whereis",get_username(0),plname);
+#else
+  Sprintf(whereis_file,"whereis/%s.whereis",plname);
+#endif
+  (void) unlink(fqname(whereis_file, LEVELPREFIX, 2));
+  /*
+  fp = fopen_datafile(whereis_file,"w",LEVELPREFIX);
+  if (fp) {
+    fwrite(whereis_work,strlen(whereis_work),1,fp);
+    fclose(fp);
+  }
+  */
+}
+#endif /* WHEREIS_FILE */
+
 /* ----------  END LEVEL FILE HANDLING ----------- */
 
 
@@ -1243,8 +1329,11 @@ const char *filename;
 
 static int nesting = 0;
 
-#ifdef NO_FILE_LINKS	/* implies UNIX */
+#if defined(NO_FILE_LINKS) || defined(USE_FCNTL) 	/* implies UNIX */
 static int lockfd;	/* for lock_file() to pass to unlock_file() */
+#endif
+#ifdef USE_FCNTL
+struct flock sflock; /* for unlocking, same as above */
 #endif
 
 #define HUP	if (!program_state.done_hup)
@@ -1283,7 +1372,6 @@ char *lockname;
 #endif
 }
 
-
 /* lock a file */
 boolean
 lock_file(filename, whichprefix, retryct)
@@ -1303,18 +1391,51 @@ int retryct;
 	    return TRUE;
 	}
 
+#ifndef USE_FCNTL
 	lockname = make_lockname(filename, locknambuf);
-	filename = fqname(filename, whichprefix, 0);
-#ifndef NO_FILE_LINKS	/* LOCKDIR should be subsumed by LOCKPREFIX */
+# ifndef NO_FILE_LINKS	/* LOCKDIR should be subsumed by LOCKPREFIX */
 	lockname = fqname(lockname, LOCKPREFIX, 2);
+# endif
+#endif
+	filename = fqname(filename, whichprefix, 0);
+
+#ifdef USE_FCNTL
+	lockfd = open(filename,O_RDWR);
+	if (lockfd == -1) {
+		HUP raw_printf("Cannot open file %s. This is a program bug.",
+			filename);
+	}
+	sflock.l_type = F_WRLCK;
+	sflock.l_whence = SEEK_SET;
+	sflock.l_start = 0;
+	sflock.l_len = 0;
 #endif
 
 #if defined(UNIX) || defined(VMS)
-# ifdef NO_FILE_LINKS
+# ifdef USE_FCNTL
+	while (fcntl(lockfd,F_SETLK,&sflock) == -1) {
+# else 
+#  ifdef NO_FILE_LINKS
 	while ((lockfd = open(lockname, O_RDWR|O_CREAT|O_EXCL, 0666)) == -1) {
-# else
+#  else
 	while (link(filename, lockname) == -1) {
-# endif
+#  endif
+# endif 
+
+#ifdef USE_FCNTL
+		if (retryct--) {
+			HUP raw_printf(
+				"Waiting for release of fcntl lock on %s. (%d retries left).",
+				filename, retryct);
+			sleep(1);
+		} else {
+		    HUP (void) raw_print("I give up.  Sorry.");
+		    HUP raw_printf("Some other process has an unnatural grip on %s.",
+					filename);
+		    nesting--;
+		    return FALSE;
+		}
+#else
 	    register int errnosv = errno;
 
 	    switch (errnosv) {	/* George Barbanis */
@@ -1360,11 +1481,11 @@ int retryct;
 		nesting--;
 		return FALSE;
 	    }
-
+#endif /* USE_FCNTL */
 	}
 #endif  /* UNIX || VMS */
 
-#if defined(AMIGA) || defined(WIN32) || defined(MSDOS)
+#if (defined(AMIGA) || defined(WIN32) || defined(MSDOS)) && !defined(USE_FCNTL)
 # ifdef AMIGA
 #define OPENFAILURE(fd) (!fd)
     lockptr = 0;
@@ -1418,25 +1539,33 @@ const char *filename;
 	const char *lockname;
 
 	if (nesting == 1) {
+#ifdef USE_FCNTL
+		sflock.l_type = F_UNLCK;
+		if (fcntl(lockfd,F_SETLK,&sflock) == -1) {
+			HUP raw_printf("Can't remove fcntl lock on %s.", filename);
+			(void) close(lockfd);
+		}
+# else
 		lockname = make_lockname(filename, locknambuf);
-#ifndef NO_FILE_LINKS	/* LOCKDIR should be subsumed by LOCKPREFIX */
+# ifndef NO_FILE_LINKS	/* LOCKDIR should be subsumed by LOCKPREFIX */
 		lockname = fqname(lockname, LOCKPREFIX, 2);
-#endif
-
-#if defined(UNIX) || defined(VMS)
-		if (unlink(lockname) < 0)
-			HUP raw_printf("Can't unlink %s.", lockname);
-# ifdef NO_FILE_LINKS
-		(void) close(lockfd);
 # endif
 
-#endif  /* UNIX || VMS */
+# if defined(UNIX) || defined(VMS)
+		if (unlink(lockname) < 0)
+			HUP raw_printf("Can't unlink %s.", lockname);
+#  ifdef NO_FILE_LINKS
+		(void) close(lockfd);
+#  endif
 
-#if defined(AMIGA) || defined(WIN32) || defined(MSDOS)
+# endif  /* UNIX || VMS */
+
+# if defined(AMIGA) || defined(WIN32) || defined(MSDOS)
 		if (lockptr) Close(lockptr);
 		DeleteFile(lockname);
 		lockptr = 0;
-#endif /* AMIGA || WIN32 || MSDOS */
+# endif /* AMIGA || WIN32 || MSDOS */
+#endif /* USE_FCNTL */
 	}
 
 	nesting--;
@@ -1800,6 +1929,10 @@ char		*tmp_levels;
 	} else if (match_varname(buf, "BOULDER", 3)) {
 	    (void) get_uchars(fp, buf, bufp, &iflags.bouldersym, TRUE,
 			      1, "BOULDER");
+	} else if (match_varname(buf, "MENUCOLOR", 9)) {
+#ifdef MENU_COLOR
+	    (void) add_menu_coloring(bufp);
+#endif
 	} else if (match_varname(buf, "GRAPHICS", 4)) {
 	    len = get_uchars(fp, buf, bufp, translate, FALSE,
 			     MAXPCHARS, "GRAPHICS");
@@ -2266,8 +2399,8 @@ const char *reason;	/* explanation */
 		program_state.in_paniclog = 1;
 		lfile = fopen_datafile(PANICLOG, "a", TROUBLEPREFIX);
 		if (lfile) {
-		    (void) fprintf(lfile, "%s %08ld: %s %s\n",
-				   version_string(buf), yyyymmdd((time_t)0L),
+		    (void) fprintf(lfile, "%ld %s: %s %s\n",
+				   u.ubirthday, (plname ? plname : "(none)"),
 				   type, reason);
 		    (void) fclose(lfile);
 		}

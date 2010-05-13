@@ -460,6 +460,14 @@ static struct tm *NDECL(getlt);
 void
 setrandom()
 {
+  
+  FILE *fptr = NULL;
+  int rnd[2];
+
+  fptr = fopen("/dev/urandom","r");
+  if (fptr) fread((void *)rnd, sizeof(int),1,fptr);
+  fclose(fptr);
+  
 	/* the types are different enough here that sweeping the different
 	 * routine names into one via #defines is even more confusing
 	 */
@@ -473,7 +481,7 @@ setrandom()
 #   endif
 		srandom((int) time((long *)0));
 #  else
-		srandom((int) time((time_t *)0));
+	srandom((int) (time((time_t *)0)) + rnd[0]);
 #  endif
 # else
 #  ifdef UNIX	/* system srand48() */

@@ -1293,6 +1293,10 @@ boolean at_stairs, falling, portal;
 #endif
 		You_hear("groans and moans everywhere.");
 	    } else pline("It is hot here.  You smell smoke...");
+
+#ifdef RECORD_ACHIEVE
+            achieve.enter_gehennom = 1;
+#endif
 	}
 
 	if (familiar) {
@@ -1366,6 +1370,10 @@ boolean at_stairs, falling, portal;
 	/* assume this will always return TRUE when changing level */
 	(void) in_out_region(u.ux, u.uy);
 	(void) pickup(1);
+
+#ifdef WHEREIS_FILE
+        touch_whereis();
+#endif
 }
 
 STATIC_OVL void

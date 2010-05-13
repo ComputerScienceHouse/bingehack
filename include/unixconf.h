@@ -32,7 +32,7 @@
 
 
 /* define any of the following that are appropriate */
-#define SVR4		/* use in addition to SYSV for System V Release 4 */
+/*#define SVR4*/		/* use in addition to SYSV for System V Release 4 */
 			/* including Solaris 2+ */
 #define NETWORK		/* if running on a networked system */
 			/* e.g. Suns sharing a playground through NFS */
@@ -193,7 +193,7 @@
 # endif
 #endif
 
-#define MAILCKFREQ	50
+/* #define MAILCKFREQ	50 */
 #endif	/* MAIL */
 
 
@@ -209,6 +209,12 @@
 
 #define FCMASK	0660	/* file creation mask */
 
+/* fcntl(2) is a POSIX-portable call for manipulating file descriptors.
+ * Comment out the USE_FCNTL if for some reason you have a strange
+ * os/filesystem combination for which fcntl(2) does not work. */
+#ifdef POSIX_TYPES
+# define USE_FCNTL
+#endif
 
 /*
  * The remainder of the file should not need to be changed.
@@ -270,7 +276,7 @@
 #endif
 #define tgetch getchar
 
-#define SHELL		/* do not delete the '!' command */
+/*#define SHELL*/		/* do not delete the '!' command */
 
 #include "system.h"
 

@@ -834,10 +834,18 @@ register struct obj *obj, *merge;
 		}
 	}
 
-	/* fix for C343-218, C343-275 and C343-276 */
 	if (obj == uwep) uwepgone();
-	if (obj == uswapwep) uswapwepgone();
-	if (obj == uquiver) uqwepgone();
+	else if (obj == uswapwep) uswapwepgone();
+	else if (obj == uquiver) uqwepgone();
+	else if (obj == uarm) setnotworn(obj);
+	else if (obj == uarmc) setnotworn(obj);
+	else if (obj == uarmh) setnotworn(obj);
+	else if (obj == uarms) setnotworn(obj);
+	else if (obj == uarmg) setnotworn(obj);
+#ifdef TOURIST
+	else if (obj == uarmu) setnotworn(obj);
+#endif
+	else if (obj == uarmf) setnotworn(obj);
 
 	dealloc_obj(obj);
 }

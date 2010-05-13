@@ -176,10 +176,10 @@
 
 #ifdef UNIX
 /* path and file name extension for compression program */
-//#define COMPRESS "/usr/bin/compress"	/* Lempel-Ziv compression */
-//#define COMPRESS_EXTENSION ".Z"		/* compress's extension */
+/* #define COMPRESS "/usr/bin/compress" */	/* Lempel-Ziv compression */
+/* #define COMPRESS_EXTENSION ".Z" */		/* compress's extension */
 /* An example of one alternative you might want to use: */
-#define COMPRESS "/bin/gzip"		/* FSF gzip compression */
+#define COMPRESS "/bin/gzip"	/* FSF gzip compression */
 #define COMPRESS_EXTENSION ".gz"		/* normal gzip extension */
 #endif
 
@@ -211,7 +211,7 @@
  * otherwise it will be the current directory.
  */
 # ifndef HACKDIR
-#  define HACKDIR "/usr/games/lib/nethackdir"
+#  define HACKDIR "/nh343"
 # endif
 
 /*
@@ -350,7 +350,7 @@ typedef unsigned char	uchar;
 
 #define EXP_ON_BOTL	/* Show experience on bottom line */
 #define ASTR_ESC /* Allow escape from Astral plane (with the Amulet) - CWC */
-/* #define SCORE_ON_BOTL */	/* added by Gary Erickson (erickson@ucivax) */
+#define SCORE_ON_BOTL	/* added by Gary Erickson (erickson@ucivax) */
 #define ENLIGHTENMENT_DIP
 #define PET_FOLLOW /* Pets adjacent to pets follow you */
 
@@ -361,12 +361,67 @@ typedef unsigned char	uchar;
  * Enable any of these at your own risk -- there are almost certainly
  * bugs left here.
  */
+#if defined(TTY_GRAPHICS) || defined(MSWIN_GRAPHICS)
+# define MENU_COLOR
+# define MENU_COLOR_REGEX
+# define MENU_COLOR_REGEX_POSIX
+/* if MENU_COLOR_REGEX is defined, use regular expressions (regex.h,
+ * GNU specific functions by default, POSIX functions with
+ * MENU_COLOR_REGEX_POSIX).
+ * otherwise use pmatch() to match menu color lines.
+ * pmatch() provides basic globbing: '*' and '?' wildcards.
+ */
+#endif
+
+#ifdef TTY_GRAPHICS
+# define WIN_EDGE	/* windows aligned left&top */
+#endif
 
 #define USER_DUNGEONCOLOR
 /*#define GOLDOBJ */	/* Gold is kept on obj chains - Helge Hafting */
 #define AUTOPICKUP_EXCEPTIONS /* exceptions to autopickup */
 #define EPITAPH		/* 'write your own epitaph' patch */
 #define HALLU_GODS
+
+#define DUMP_LOG        /* Dump game end information to a file */
+#define DUMP_FN "/dgldir/userdata/%n/dumplog/%t.nh343.txt"      /* Fixed dumpfile name, if you want
+                                   * to prevent definition by users */
+#define DUMPMSGS 20     /* Number of latest messages in the dump file  */
+
+#define SHOW_BORN    /* extinct & showborn -patch */
+#define SHOW_EXTINCT
+
+#define SORTLOOT /* sortloot -patch */
+
+#define HPMON /* hpmon -patch */
+
+#define SIMPLE_MAIL /* dgamelaunch simple mail */
+
+#define PARANOID /* paranoid quit &c */
+
+
+#define XLOGFILE "xlogfile"  /* even larger logfile */
+/* #define REALTIME_ON_BOTL */  /* Show elapsed time on bottom line.  Note:
+                                 * this breaks savefile compatibility. */
+/* The options in this section require the extended logfile support */
+#ifdef XLOGFILE
+#define RECORD_CONDUCT  /* Record conducts kept in logfile */
+#define RECORD_TURNS    /* Record turns elapsed in logfile */
+#define RECORD_ACHIEVE  /* Record certain notable achievements in the
+                         * logfile.  Note: this breaks savefile compatibility
+                         * due to the addition of the u_achieve struct. */
+#define RECORD_REALTIME /* Record the amount of actual playing time (in
+                         * seconds) in the record file.  Note: this breaks
+                         * savefile compatibility. */
+#define RECORD_START_END_TIME /* Record to-the-second starting and ending
+                               * times; stored as 32-bit values obtained
+                               * from time(2) (seconds since the Epoch.) */
+#define RECORD_GENDER0   /* Record initial gender in logfile */
+#define RECORD_ALIGN0   /* Record initial alignment in logfile */
+#endif
+
+/* from Sporkhack */
+#define WHEREIS_FILE /* Write out player's current location to player.whereis */
 
 /* End of Section 5 */
 

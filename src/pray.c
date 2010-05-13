@@ -1287,6 +1287,10 @@ dosacrifice()
 		done(ESCAPED);
 	    } else { /* super big win */
 		adjalign(10);
+#ifdef RECORD_ACHIEVE
+                achieve.ascended = 1;
+#endif
+
                 pline("%s sings, and you are bathed in radiance...",
                     Hallucination?"The fat lady":"An invisible choir");
 		godvoice(altaralign, "Congratulations, mortal!");
