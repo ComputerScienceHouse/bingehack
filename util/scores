@@ -3,7 +3,7 @@ set -e
 export PATH="/bin:/usr/bin"
 
 declare -a tempfiles
-trap 'rm -f "${tempfiles[@]}"' EXIT
+#trap 'rm -f "${tempfiles[@]}"' EXIT
 
 function tmpfile {
 	local arg
@@ -16,8 +16,20 @@ function tmpfile {
 }
 
 function usage {
-	echo "Usage: ${0##*/} scores_file"
+	echo "Usage: ${0##*/} [-r] scores_file"
 }
+
+while getopts 'r' opt; do
+	case "$opt" in
+		r)
+			reverse="true"
+			shift
+			;;
+		*)
+			usage >&2
+			exit 1
+	esac
+done
 
 if [[ $# -ne 1 ]]; then
 	usage >&2
@@ -89,6 +101,12 @@ while read -r line; do
 done < "$logfile"
 exec 3>&-
 exec 4>&-
+
+if [[ -n "$reverse" ]]; then
+	tmpfile scores.args.rev
+	tac "$argsfile" > "$f"
+	argsfile="$f"
+fi
 
 tmpfile scores
 tempfile="$f"
