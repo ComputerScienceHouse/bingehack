@@ -59,6 +59,7 @@ while read -r line; do
 	time_hash[$h]="$starttime"
 	dialog_args+=( "$h" "$line" )
 done < "$*"
+kill %1
 exec 3>&-
 
 exec 3> "$tempfile"
