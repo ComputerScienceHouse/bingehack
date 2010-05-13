@@ -393,8 +393,6 @@ typedef unsigned char	uchar;
 
 #define SORTLOOT /* sortloot -patch */
 
-#define HPMON /* hpmon -patch */
-
 #define SIMPLE_MAIL /* dgamelaunch simple mail */
 
 #define PARANOID /* paranoid quit &c */

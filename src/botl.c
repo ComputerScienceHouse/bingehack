@@ -3,11 +3,6 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
-#if defined(HPMON) && defined(TEXTCOLOR)
-# ifndef WINTTY_H
-#  include "wintty.h"
-# endif
-#endif
 
 #ifdef OVL0
 extern const char *hu_stat[];	/* defined in eat.c */
@@ -292,9 +287,6 @@ bot2()
 #endif
 	register char *nb;
 	int hp, hpmax;
-#ifdef HPMON
-	int hpcolor, hpattr;
-#endif
 	int cap = near_capacity();
 
 	hp = Upolyd ? u.mh : u.uhp;
@@ -303,15 +295,6 @@ bot2()
 	if(hp < 0) hp = 0;
 	(void) describe_level(newbot2);
 	Sprintf(nb = eos(newbot2),
-#ifdef HPMON
-		"%c:%-2ld HP:", oc_syms[COIN_CLASS],
-#ifndef GOLDOBJ
-		u.ugold
-#else
-		money_cnt(invent)
-#endif
-		);
-#else /* HPMON */
 		"%c:%-2ld HP:%d(%d) Pw:%d(%d) AC:%-2d", oc_syms[COIN_CLASS],
 #ifndef GOLDOBJ
 		u.ugold,
@@ -319,39 +302,6 @@ bot2()
 		money_cnt(invent),
 #endif
 		hp, hpmax, u.uen, u.uenmax, u.uac);
-#endif /* HPMON */
-#ifdef HPMON
-	curs(WIN_STATUS, 1, 1);
-	putstr(WIN_STATUS, 0, newbot2);
-
-	Sprintf(nb = eos(newbot2), "%d(%d)", hp, hpmax);
-#ifdef TEXTCOLOR
-	if (iflags.use_color && iflags.hpmon) {
-	  curs(WIN_STATUS, 1, 1);
-	  hpattr = ATR_NONE;
-	  if(hp == hpmax){
-	    hpcolor = NO_COLOR;
-	  } else if(hp > (hpmax*2/3)) {
-	    hpcolor = CLR_GREEN;
-	  } else if(hp <= (hpmax/3)) {
-	    hpcolor = CLR_RED;
-	    if(hp<=(hpmax/10)) 
-	      hpattr = ATR_BLINK;
-	  } else {
-	    hpcolor = CLR_YELLOW;
-	  }
-	  if (hpcolor != NO_COLOR)
-	    term_start_color(hpcolor);
-	  if(hpattr!=ATR_NONE)term_start_attr(hpattr);
-	  putstr(WIN_STATUS, hpattr, newbot2);
-	  if(hpattr!=ATR_NONE)term_end_attr(hpattr);
-	  if (hpcolor != NO_COLOR)
-	    term_end_color();
-	}
-#endif /* TEXTCOLOR */
-	Sprintf(nb = eos(newbot2), " Pw:%d(%d) AC:%-2d",
-		u.uen, u.uenmax, u.uac);
-#endif /* HPMON */
 
 	if (Upolyd)
 		Sprintf(nb = eos(nb), " HD:%d", mons[u.umonnum].mlevel);

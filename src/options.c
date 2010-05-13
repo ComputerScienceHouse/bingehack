@@ -103,9 +103,6 @@ static struct Bool_Opt
 	{"fullscreen", &iflags.wc2_fullscreen, FALSE, SET_IN_FILE},
 	{"help", &flags.help, TRUE, SET_IN_GAME},
 	{"hilite_pet",    &iflags.wc_hilite_pet, FALSE, SET_IN_GAME},	/*WC*/
-#ifdef HPMON
-	{"hp_monitor", &iflags.hpmon, TRUE, SET_IN_GAME},
-#endif
 #ifdef ASCIIGRAPH
 	{"IBMgraphics", &iflags.IBMgraphics, FALSE, SET_IN_GAME},
 #else

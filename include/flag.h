@@ -236,9 +236,6 @@ struct instance_flags {
 #ifdef SORTLOOT
 	char sortloot;          /* sort items to loot alphabetically */
 #endif
-#ifdef HPMON
-        boolean hpmon;
-#endif
 #ifdef PARANOID
 	boolean  paranoid_hit;  /* Ask for 'yes' when hitting peacefuls */
 	boolean  paranoid_quit; /* Ask for 'yes' when quitting */
