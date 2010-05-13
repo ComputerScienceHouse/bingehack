@@ -58,9 +58,7 @@ char *argv[];
 	register char *dir;
 #endif
 	boolean exact_username;
-#ifdef SIMPLE_MAIL
-	char* e_simple = NULL;
-#endif
+
 #if defined(__APPLE__)
 	/* special hack to change working directory to a resource fork when
 	   running from finder --sam */
@@ -88,12 +86,6 @@ char *argv[];
 		free(mac_tmp);
 	    }
 	}
-#endif
-
-#ifdef SIMPLE_MAIL
-	/* figure this out early */
-	e_simple = nh_getenv("SIMPLEMAIL");
-	iflags.simplemail = (e_simple ? 1 : 0);
 #endif
 
 	hname = argv[0];

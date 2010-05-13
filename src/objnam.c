@@ -4,7 +4,6 @@
 
 #include "hack.h"
 
-/* may be obsolete with dump_ID patch */
 /* "an uncursed greased partly eaten guardian naga hatchling [corpse]" */
 #define PREFIX	80	/* (56) */
 #define SCHAR_LIM 127
@@ -16,9 +15,6 @@ static boolean FDECL(wishymatch, (const char *,const char *,BOOLEAN_P));
 #endif
 static char *NDECL(nextobuf);
 static void FDECL(add_erosion_words, (struct obj *, char *));
-#ifdef SORTLOOT
-char * FDECL(xname2, (struct obj *, boolean));
-#endif
 
 struct Jitem {
 	int item;
@@ -89,18 +85,6 @@ nextobuf()
 
 	bufidx = (bufidx + 1) % NUMOBUF;
 	return bufs[bufidx];
-}
-
-boolean dump_ID_flag = FALSE;
-/* used by possessions identifier */
-void dump_ID_on()
-{
-  dump_ID_flag = TRUE;
-}
-/* currently unused, but here anyway */
-void dump_ID_off()
-{
-  dump_ID_flag = FALSE;
 }
 
 char *
@@ -249,15 +233,6 @@ boolean juice;	/* whether or not to append " juice" to the name */
 char *
 xname(obj)
 register struct obj *obj;
-#ifdef SORTLOOT
-{
-	return xname2(obj, FALSE);
-}
-char *
-xname2(obj, ignore_oquan)
-register struct obj *obj;
-boolean ignore_oquan;
-#endif
 {
 	register char *buf;
 	register int typ = obj->otyp;
@@ -494,9 +469,6 @@ boolean ignore_oquan;
 	default:
 		Sprintf(buf,"glorkum %d %d %d", obj->oclass, typ, obj->spe);
 	}
-#ifdef SORTLOOT
-	if (!ignore_oquan)
-#endif
 	if (obj->quan != 1L) Strcpy(buf, makeplural(buf));
 
 	if (obj->onamelth && obj->dknown) {
@@ -573,20 +545,12 @@ char *prefix;
 		Strcat(prefix, is_corrodeable(obj) ? "corroded " :
 			"rotted ");
 	}
-	if (obj->oerodeproof) {
-	  if(dump_ID_flag && !obj->rknown)
-		  Strcat(prefix,
-		         iscrys ? "[fixed] " :
-		         is_rustprone(obj) ? "[rustproof] " :
-		         is_corrodeable(obj) ? "[corrodeproof] " :	/* "stainless"? */
-		         is_flammable(obj) ? "[fireproof] " : "");
-		else if(obj->rknown)
-		  Strcat(prefix,
-		         iscrys ? "fixed " :
-		         is_rustprone(obj) ? "rustproof " :
-		         is_corrodeable(obj) ? "corrodeproof " :	/* "stainless"? */
-		         is_flammable(obj) ? "fireproof " : "");
-	}
+	if (obj->rknown && obj->oerodeproof)
+		Strcat(prefix,
+		       iscrys ? "fixed " :
+		       is_rustprone(obj) ? "rustproof " :
+		       is_corrodeable(obj) ? "corrodeproof " :	/* "stainless"? */
+		       is_flammable(obj) ? "fireproof " : "");
 }
 
 char *
@@ -599,115 +563,9 @@ register struct obj *obj;
 	/* when we have to add something at the start of prefix instead of the
 	 * end (Strcat is used on the end)
 	 */
+	register char *bp = xname(obj);
 	int container_where = 0;
 	boolean ininventory = FALSE;
-	register char *bp, *tmp;
-	
-	boolean do_ID = dump_ID_flag && !objects[obj->otyp].oc_name_known;
-	boolean do_known = dump_ID_flag && !obj->known;
-	boolean do_dknown = dump_ID_flag && !obj->dknown;
-	boolean do_bknown = dump_ID_flag && !obj->bknown;
-	boolean do_rknown = dump_ID_flag && !obj->rknown;
-	
-	bp = xname(obj);
-	
-	if(!dump_ID_flag); /* early exit */
-	else if(exist_artifact(obj->otyp, (tmp = ONAME(obj)))) {
-	  if(do_dknown || do_known) {
-	    if(!strncmp(tmp, "The ", 4) || !strncmp(tmp, "the ", 4))
-	      Sprintf(eos(bp), " [%s]", tmp);
-	    else
-	      Sprintf(eos(bp), " [the %s]", tmp);
-	  }
-	  else
-	  /* if the object is already known as an artifact, don't bother identifying 
-	     the object type */
-	    ;
-	}
-	else if(obj->otyp == EGG && obj->corpsenm >= LOW_PM &&
-	      !(obj->known || mvitals[obj->corpsenm].mvflags & MV_KNOWS_EGG))
-	    Sprintf(eos(bp), " [%s]", mons[obj->corpsenm].mname);
-	else if(do_ID || do_dknown) {
-	  /* append the actual ID, but try to remove duplicate information */
-	  char *cp = nextobuf();
-	  if(obj->otyp == POT_WATER && (obj->blessed || obj->cursed))
-	    Sprintf(cp, "%sholy water", obj->blessed?"":"un");
-	  else
-	    Strcpy(cp, OBJ_NAME(objects[obj->otyp]));
-	  
-	  /* post-process */
-	  
-	  if(!strcmp(bp, cp))
-	    *cp = '\0';
-	  else if(Role_if(PM_SAMURAI) && (tmp = (char*)Japanese_item_name(obj->otyp)))
-	      Strcpy(cp, tmp);
-	  
-	  else if(strstr(cp, "Bell of Opening") || strstr(cp, "Book of the Dead") ||
-	          strstr(cp, "Candelabrum of Invocation"))
-	    cp = the(cp);
-	  
-	  else switch(obj->oclass) {
-	    case COIN_CLASS:
-	      *cp = '\0';
-	      break;
-	    case AMULET_CLASS:
-	      if(strstr(cp, "amulet of ")) cp += sizeof("amulet of");
-	      else if(strstr(cp, "amulet ")) cp += sizeof("amulet"); /* versus poison */
-	      else if((tmp = strstr(cp, " of the Amulet of Yendor"))) *tmp = '\0'; /* cheap plastic imitation */
-	      else if(!strcmp(cp, "Amulet of Yendor")) *cp = '\0'; /* is it's own description */
-	      break;
-	    case WEAPON_CLASS:
-	           if((tmp = strstr(cp, " dagger"))) *tmp = '\0';
-	      else if((tmp = strstr(cp, " bow"))) *tmp = '\0';
-	      else if((tmp = strstr(cp, " arrow"))) *tmp = '\0';
-	      else if((tmp = strstr(cp, " short sword"))) *tmp = '\0';
-	      else if((tmp = strstr(cp, " broadsword"))) *tmp = '\0';
-	      else if((tmp = strstr(cp, " spear"))) *tmp = '\0';
-	      break;
-	    case ARMOR_CLASS:
-	           if(!strcmp(cp, "dwarvish cloak")) Strcpy(cp, "dwarvish");
-	      /* only remove "cloak" if unIDed is already "opera cloak" */
-	      else if(strstr(bp, "cloak")) {
-	             if((tmp = strstr(cp, " cloak"))) *tmp = '\0'; /* elven */
-	        else if(strstr(cp, "cloak of ")) cp += sizeof("cloak of"); /* other */
-	      }
-	      else if(!strcmp(cp, "leather gloves")) Strcpy(cp, "leather");
-	      else if((tmp = strstr(cp, " gloves"))) *tmp = '\0'; /* leather */
-	      else if((tmp = strstr(cp, " boots"))) *tmp = '\0';
-	      else if((tmp = strstr(cp, " shoes"))) *tmp = '\0'; /* iron */
-	      else if(strstr(cp, "helm of ")) cp += sizeof("helm of");
-	      else if(strstr(cp, "shield of ")) cp += sizeof("shield of"); /* reflection */
-	      else if((tmp = strstr(cp, " shield"))) *tmp = '\0';
-	      else if((tmp = strstr(cp, "ring mail"))) *tmp = '\0'; /* orcish */
-	      else if((tmp = strstr(cp, "chain mail"))) *tmp = '\0'; /* orcish */
-	      break;
-	    case TOOL_CLASS:
-	           if((tmp = strstr(cp, " candle"))) *tmp = '\0';
-	      else if((tmp = strstr(cp, " whistle"))) *tmp = '\0';
-	      else if((tmp = strstr(cp, " lamp"))) *tmp = '\0';
-	      else if((tmp = strstr(cp, " flute"))) *tmp = '\0';
-	      else if((tmp = strstr(cp, " horn"))) *tmp = '\0';
-	      else if(strstr(cp, "horn of ")) cp += sizeof("horn of"); /* plenty */
-	      else if((tmp = strstr(cp, " harp"))) *tmp = '\0';
-	      else if(!strcmp(cp, "leather drum")) Strcpy(cp, "leather");
-	      else if(!strcmp(cp, "drum of earthquake")) Strcpy(cp, "earthquake");
-	      break;
-	    default:
-	           if(strstr(cp, "worthless piece of ")) Strcpy(cp, "worthless glass");
-	      else if((tmp = strstr(cp, " venom"))) *tmp = '\0';
-	  }
-	  
-	  if(strlen(cp))
-	      Sprintf(eos(bp), " [%s]", cp);
-	}
-	else if(obj->otyp == POT_WATER &&
-	        (obj->blessed || obj->cursed) && do_bknown) {
-	  char *tmp = strstr(bp, "water");
-	  char *buf = strcpy(nextobuf(), tmp);
-	  Sprintf(tmp, "[%sholy] %s", obj->blessed?"":"un", buf);
-	}
-	else if(obj->otyp == TIN && do_known && obj->spe > 0)
-	  Strcat(bp, " [spinach]");
 
 	/* When using xname, we want "poisoned arrow", and when using
 	 * doname, we want "poisoned +0 arrow".  This kludge is about the only
@@ -733,17 +591,17 @@ register struct obj *obj;
 	if (obj->oinvis) Strcat(prefix,"invisible ");
 #endif
 
-	if ((obj->bknown || do_bknown) &&
+	if (obj->bknown &&
 	    obj->oclass != COIN_CLASS &&
 	    (obj->otyp != POT_WATER || !objects[POT_WATER].oc_name_known
 		|| (!obj->cursed && !obj->blessed))) {
 	    /* allow 'blessed clear potion' if we don't know it's holy water;
 	     * always allow "uncursed potion of water"
 	     */
-	    if ((obj->bknown || do_bknown) && (obj->cursed || obj->blessed) &&
-	        !(dump_ID_flag && obj->otyp == POT_WATER))
-	      sprintf(eos(prefix), "%s%s%s ", do_bknown?"[":"",
-	        obj->cursed?"cursed":"blessed", do_bknown?"]":"");
+	    if (obj->cursed)
+		Strcat(prefix, "cursed ");
+	    else if (obj->blessed)
+		Strcat(prefix, "blessed ");
 	    else if (iflags.show_buc || (!obj->known || !objects[obj->otyp].oc_charged ||
 		      (obj->oclass == ARMOR_CLASS ||
 		       obj->oclass == RING_CLASS))
@@ -778,9 +636,10 @@ register struct obj *obj;
 			Strcat(prefix, "poisoned ");
 plus:
 		add_erosion_words(obj, prefix);
-		if(obj->known || do_known)
-			Sprintf(eos(prefix), "%s%s%s ",
-			  do_known?"[":"", sitoa(obj->spe), do_known?"]":"");
+		if(obj->known) {
+			Strcat(prefix, sitoa(obj->spe));
+			Strcat(prefix, " ");
+		}
 		break;
 	case ARMOR_CLASS:
 		if(obj->owornmask & W_ARMOR)
@@ -829,9 +688,8 @@ plus:
 	case WAND_CLASS:
 		add_erosion_words(obj, prefix);
 charges:
-		if(obj->known || do_known)
-		    Sprintf(eos(bp), " %s%d:%d%s", do_known?"[":"(",
-		      (int)obj->recharged, obj->spe, do_known?"]":")");
+		if(obj->known)
+		    Sprintf(eos(bp), " (%d:%d)", (int)obj->recharged, obj->spe);
 		break;
 	case POTION_CLASS:
 		if (obj->otyp == POT_OIL && obj->lamplit)
@@ -846,9 +704,10 @@ ring:
 		    Strcat(bp, body_part(HAND));
 		    Strcat(bp, ")");
 		}
-		if((obj->known || do_known) && objects[obj->otyp].oc_charged)
-			Sprintf(eos(prefix), "%s%s%s ",
-			  do_known?"[":"", sitoa(obj->spe), do_known?"]":"");
+		if(obj->known && objects[obj->otyp].oc_charged) {
+			Strcat(prefix, sitoa(obj->spe));
+			Strcat(prefix, " ");
+		}
 		break;
 	case FOOD_CLASS:
 		if (obj->oeaten)
@@ -941,14 +800,7 @@ ring:
 	  if ((obj->otyp != CHEST) && (obj->otyp != LARGE_BOX) &&
 	      (obj->otyp != ICE_BOX) && (!Hallucination && flags.invweight))
 			Sprintf (eos(bp), " {%d}", obj->owt);
-	/* merge bracketed attribs
-	   eg. [rustproof] [+1] -> [rustproof +1]
-	   don't do this for bp because the only possible case is
-	   IDed-name next to charges, which we want to keep separate */
-	while((tmp = strstr(prefix, "] ["))) {
-	  *tmp = ' ';
-	  Strcpy(tmp + 1, tmp + 3); /* is this portable? */
-	}
+
 	bp = strprepend(bp, prefix);
 	return(bp);
 }
@@ -1017,16 +869,6 @@ struct obj *obj;
 	    return corpse_xname(obj, FALSE);
 	return xname(obj);
 }
-#ifdef SORTLOOT
-char *
-cxname2(obj)
-struct obj *obj;
-{
-	if (obj->otyp == CORPSE)
-	    return corpse_xname(obj, TRUE);
-	return xname2(obj, TRUE);
-}
-#endif /* SORTLOOT */
 
 /* treat an object as fully ID'd when it might be used as reason for death */
 char *

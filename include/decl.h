@@ -195,9 +195,6 @@ E const char *delayed_killer;
 E long done_money;
 #endif
 E char killer_buf[BUFSZ];
-#ifdef DUMP_LOG
-E char dump_fn[];		/* dumpfile name (dump patch) */
-#endif
 E const char *configfile;
 E NEARDATA char plname[PL_NSIZ];
 E NEARDATA char dogname[];
@@ -398,10 +395,6 @@ struct autopickup_exception {
 	struct autopickup_exception *next;
 };
 #endif /* AUTOPICKUP_EXCEPTIONS */
-
-#ifdef SIMPLE_MAIL
-E int mailckfreq;
-#endif
 
 #include <sys/socket.h>
 #include <netinet/in.h>

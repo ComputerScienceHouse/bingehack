@@ -322,8 +322,6 @@ typedef unsigned char	uchar;
  * complexity of the game but also to the size of the load module.
  */
 
-#define SIMPLE_MAIL
-
 /* dungeon features */
 #define SINKS		/* Kitchen sinks - Janet Walz */
 /* dungeon levels */
@@ -364,28 +362,9 @@ typedef unsigned char	uchar;
  * bugs left here.
  */
 
-#if defined(TTY_GRAPHICS) || defined(MSWIN_GRAPHICS)
-# define WIN_EDGE	/* windows aligned left&top */
-# define MENU_COLOR
-# define MENU_COLOR_REGEX
-/*# define MENU_COLOR_REGEX_POSIX */
-/* if MENU_COLOR_REGEX is defined, use regular expressions (regex.h,
- * GNU specific functions by default, POSIX functions with
- * MENU_COLOR_REGEX_POSIX).
- * otherwise use pmatch() to match menu color lines.
- * pmatch() provides basic globbing: '*' and '?' wildcards.
- */
-#endif
-#define STATUS_COLORS
-
 #define USER_DUNGEONCOLOR
-
 /*#define GOLDOBJ */	/* Gold is kept on obj chains - Helge Hafting */
 #define AUTOPICKUP_EXCEPTIONS /* exceptions to autopickup */
-#define DUMP_LOG        /* Dump game end information to a file */
-#define DUMP_FN "/dgldir/userdata/%n/dumplog/%t.nh343.txt"      /* Fixed dumpfile name, if you want
-                                         * to prevent definition by users */
-#define DUMPMSGS 20     /* Number of latest messages in the dump file  */
 #define EPITAPH		/* 'write your own epitaph' patch */
 #define HALLU_GODS
 

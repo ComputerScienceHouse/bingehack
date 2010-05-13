@@ -210,15 +210,6 @@ NEARDATA struct monst *migrating_mons = (struct monst *)0;
 
 NEARDATA struct mvitals mvitals[NUMMONS];
 
-/* originally from end.c */
-#ifdef DUMP_LOG
-#ifdef DUMP_FN
-char dump_fn[] = DUMP_FN;
-#else
-char dump_fn[PL_PSIZ] = DUMMY;
-#endif
-#endif /* DUMP_LOG */
-
 NEARDATA struct c_color_names c_color_names = {
 	"black", "amber", "golden",
 	"light blue", "red", "green",
@@ -244,10 +235,6 @@ const char *c_obj_colors[] = {
 	"bright cyan",		/* CLR_BRIGHT_CYAN */
 	"white",		/* CLR_WHITE */
 };
-
-#ifdef MENU_COLOR
-struct menucoloring *menu_colorings = 0;
-#endif
 
 struct c_common_strings c_common_strings = {
 	"Nothing happens.",		"That's enough tries!",

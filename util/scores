@@ -60,28 +60,12 @@ function produce_line {
 	echo "+"
 }
 
-#last_spun="-"
-#function spinner {
-#	case "$last_spun" in
-#		-)
-#			last_spun="\\"
-#			;;
-#		\\)
-#			last_spun="|"
-#			;;
-#		\|)
-#			last_spun="/"
-#			;;
-#		/)
-#			last_spun="-"
-#			;;
-#	esac
-#	echo -n "$last_spun"
-#}
-
 printf_str='| %11s | %-47s | %-12s |\n'
+produce_line
+printf "$printf_str" "No. Points" "Name" "Hp [max]"
+produce_line "-"
 
-function array_printf {
+function printf {
 	local t
 	printf -v t "$printf_str| %11s | %47s | %-12s |\n" "$@"
 	text+=( "$t" )

@@ -9,10 +9,6 @@
  */
 #include "hack.h"
 
-#ifdef DUMP_LOG
-STATIC_DCL int FDECL(enhance_skill, (boolean));
-#endif
-
 /* Categories whose names don't come from OBJ_NAME(objects[type])
  */
 #define PN_BARE_HANDED			(-1)	/* includes martial arts */
@@ -855,23 +851,6 @@ const static struct skill_range {
  */
 int
 enhance_weapon_skill()
-#ifdef DUMP_LOG
-{
-	return enhance_skill(FALSE);
-}
-
-void dump_weapon_skill()
-{
-	enhance_skill(TRUE);
-}
-
-int enhance_skill(boolean want_dump)
-/* This is the original enhance_weapon_skill() function slightly modified
- * to write the skills to the dump file. I added the wrapper functions just
- * because it looked like the easiest way to add a parameter to the
- * function call. - Jukka Lahtinen, August 2001
- */
-#endif
 {
     int pass, i, n, len, longest,
 	to_advance, eventually_advance, maxxed_cnt;
@@ -881,15 +860,8 @@ int enhance_skill(boolean want_dump)
     anything any;
     winid win;
     boolean speedy = FALSE;
-#ifdef DUMP_LOG
-    char buf2[BUFSZ];
-    boolean logged;
-#endif
 
 #ifdef WIZARD
-#ifdef DUMP_LOG
-	if (!want_dump)
-#endif
 	if (wizard && yn("Advance skills without practice?") == 'y')
 	    speedy = TRUE;
 #endif
@@ -906,11 +878,6 @@ int enhance_skill(boolean want_dump)
 		else if (peaked_skill(i)) maxxed_cnt++;
 	    }
 
-#ifdef DUMP_LOG
-	    if (want_dump)
-		dump("","Your skills at the end");
-	    else {
-#endif
 	    win = create_nhwindow(NHW_MENU);
 	    start_menu(win);
 
@@ -938,9 +905,6 @@ int enhance_skill(boolean want_dump)
 		add_menu(win, NO_GLYPH, &any, 0, 0, ATR_NONE,
 			     "", MENU_UNSELECTED);
 	    }
-#ifdef DUMP_LOG
-	    } /* want_dump or not */
-#endif
 
 	    /* List the skills, making ones that could be advanced
 	       selectable.  List the miscellaneous skills first.
@@ -952,26 +916,8 @@ int enhance_skill(boolean want_dump)
 		/* Print headings for skill types */
 		any.a_void = 0;
 		if (i == skill_ranges[pass].first)
-#ifdef DUMP_LOG
-		if (want_dump) {
-		    dump("  ",(char *)skill_ranges[pass].name);
-		    logged=FALSE;
-		} else
-#endif
 		    add_menu(win, NO_GLYPH, &any, 0, 0, iflags.menu_headings,
 			     skill_ranges[pass].name, MENU_UNSELECTED);
-#ifdef DUMP_LOG
-		if (want_dump) {
-		    if (P_SKILL(i) > P_UNSKILLED) {
-		 	Sprintf(buf2,"%-*s [%s]",
-			    longest, P_NAME(i),skill_level_name(i, buf));
-			dump("    ",buf2);
-			logged=TRUE;
-		    } else if (i == skill_ranges[pass].last && !logged) {
-			dump("    ","(none)");
-		    }
-               } else {
-#endif
 
 		if (P_RESTRICTED(i)) continue;
 		/*
@@ -1016,9 +962,6 @@ int enhance_skill(boolean want_dump)
 		any.a_int = can_advance(i, speedy) ? i+1 : 0;
 		add_menu(win, NO_GLYPH, &any, 0, 0, ATR_NONE,
 			 buf, MENU_UNSELECTED);
-#ifdef DUMP_LOG
-		} /* !want_dump */
-#endif
 	    }
 
 	    Strcpy(buf, (to_advance > 0) ? "Pick a skill to advance:" :
@@ -1027,12 +970,6 @@ int enhance_skill(boolean want_dump)
 	    if (wizard && !speedy)
 		Sprintf(eos(buf), "  (%d slot%s available)",
 			u.weapon_slots, plur(u.weapon_slots));
-#endif
-#ifdef DUMP_LOG
-	    if (want_dump) {
-		dump("","");
-		n=0;
-	    } else {
 #endif
 	    end_menu(win, buf);
 	    n = select_menu(win, to_advance ? PICK_ONE : PICK_NONE, &selected);
@@ -1050,9 +987,6 @@ int enhance_skill(boolean want_dump)
 		    }
 		}
 	    }
-#ifdef DUMP_LOG
-	    }
-#endif
 	} while (speedy && n > 0);
 	return 0;
 }

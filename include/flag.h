@@ -177,9 +177,6 @@ struct instance_flags {
 	uchar	bouldersym;	/* symbol for boulder display */
 	boolean travel1;	/* first travel step */
 	coord	travelcc;	/* coordinates for travel_cache */
-#ifdef SIMPLE_MAIL
-	boolean simplemail;	/* simple mail format $NAME:$MESSAGE */
-#endif
 #ifdef WIZARD
 	boolean  sanity_check;	/* run sanity checks */
 	boolean  mon_polycontrol;	/* debug: control monster polymorphs */
@@ -187,15 +184,6 @@ struct instance_flags {
 #ifdef TTY_GRAPHICS
 	char prevmsg_window;	/* type of old message window to use */
 	boolean  extmenu;	/* extended commands use menu interface */
-#endif
-#ifdef MENU_COLOR
-	boolean use_menu_color;	/* use color in menus; only if wc_color */
-#endif
-#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
-	boolean use_status_colors; /* use color in status line; only if wc_color */
-#endif
-#ifdef WIN_EDGE
-	boolean  win_edge;	/* are the menus aligned left&top */
 #endif
 #ifdef MFLOPPY
 	boolean  checkspace;	/* check disk space before writing files */
@@ -232,14 +220,6 @@ struct instance_flags {
 #endif
 #ifdef DEATH_EXPLORE
 	boolean death_expl;	/* prompt for explore mode at death */
-#endif
-#ifdef PARANOID
-	boolean  paranoid_hit;  /* Ask for 'yes' when hitting peacefuls */
-	boolean  paranoid_quit; /* Ask for 'yes' when quitting */
-	boolean  paranoid_remove; /* Always show menu for 'T' and 'R' */
-#endif
-#ifdef SORTLOOT
-	char sortloot;          /* sort items to loot alphabetically */
 #endif
 /*
  * Window capability support.

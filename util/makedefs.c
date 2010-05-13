@@ -682,13 +682,6 @@ static const char *build_opts[] = {
 #ifdef MAIL
 		"mail daemon",
 #endif
-#ifdef MENU_COLOR
-# ifdef MENU_COLOR_REGEX
-		"menu colors via regular expressions",
-# else
-		"menu colors via pmatch",
-# endif
-#endif
 #ifdef GNUDOS
 		"MSDOS protected mode",
 #endif
@@ -784,9 +777,6 @@ static const char *build_opts[] = {
 #endif
 #ifdef WALLIFIED_MAZE
 		"walled mazes",
-#endif
-#ifdef WIN_EDGE
-		"win_edge",
 #endif
 #ifdef ZEROCOMP
 		"zero-compressed save files",
