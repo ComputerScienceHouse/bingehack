@@ -401,7 +401,7 @@ typedef unsigned char	uchar;
 
 
 #define XLOGFILE "xlogfile"  /* even larger logfile */
-/* #define REALTIME_ON_BOTL */  /* Show elapsed time on bottom line.  Note:
+#define REALTIME_ON_BOTL     /* Show elapsed time on bottom line.  Note:
                                  * this breaks savefile compatibility. */
 /* The options in this section require the extended logfile support */
 #ifdef XLOGFILE
