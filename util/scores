@@ -3,7 +3,7 @@ set -e
 export PATH="/bin:/usr/bin"
 
 declare -a tempfiles
-#trap 'rm -f "${tempfiles[@]}"' EXIT
+trap 'rm -f "${tempfiles[@]}"' EXIT
 
 function tmpfile {
 	local arg
