@@ -39,9 +39,12 @@ function hash {
 declare -i lines_per_percent=$(( $(set -- $(wc -l "$*"); echo $1) / 100 ))
 declare -i lineno=0 cnt=0
 
-exec 3<> "$tempfifo"
-dialog --clear --title "Score Viewer" --gauge "Reading Scores Log" 0 40 0 <&3 &
+(
+	exec 3< "$tempfifo"
+	dialog --clear --title "Score Viewer" --gauge "Reading Scores Log" 0 40 0 <&3
+) &
 
+exec 3> "$tempfifo"
 declare -a dialog_args
 declare -A time_hash
 while read -r line; do
@@ -59,7 +62,6 @@ while read -r line; do
 	time_hash[$h]="$starttime"
 	dialog_args+=( "$h" "$line" )
 done < "$*"
-kill %1
 exec 3>&-
 
 exec 3> "$tempfile"
