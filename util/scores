@@ -2,21 +2,8 @@
 export PATH="/bin:/usr/bin"
 
 function usage {
-	echo "Usage: ${0##*/} [-r] scores_file"
+	echo "Usage: ${0##*/} scores_file"
 }
-
-while getopts 'r' opt; do
-	case "$opt" in
-		r)
-			reverse="true"
-			shift
-			;;
-		*)
-			usage >&2
-			exit 1
-			;;
-	esac
-done
 
 if [[ $# -ne 1 ]]; then
 	usage >&2
@@ -59,7 +46,6 @@ while true; do
 	read -d '' < "$tempfile"
 	echo -n > "$tempfile"
 	dumplog="$HOME/nh/${time_hash[$REPLY]}.nh343.txt"
-	#dumplog="~/nh/${time_hash[$REPLY]}.nh343.txt"
 	if [[ -f "$dumplog" ]]; then
 		less "$dumplog"
 	else
