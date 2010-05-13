@@ -63,7 +63,7 @@ mkfifo "$tempfifo"
 
 tmpfile scores.args
 argsfile="$f"
-declare -A time_hash
+declare -A time_hash name_hash
 exec 3> "$tempfifo"
 exec 4> "$argsfile"
 while read -r line; do
@@ -83,6 +83,7 @@ while read -r line; do
 		hash "$line"
 	fi
 	time_hash[$h]="$starttime"
+	name_hash[$h]="$name"
 	echo "\"$h\" \"$line\"" >&4
 	unset starttime
 done < "$logfile"
@@ -95,7 +96,7 @@ exec 3> "$tempfile"
 while true; do
 	dialog --output-fd 3 --title "High Scores" --menu "" 0 0 0 --file "$argsfile" || break
 	chosen_hash="$(cat "$tempfile")"
-	dumplog="$HOME/nh/${time_hash[$chosen_hash]}.nh343.txt"
+	dumplog="/dgldir/userdata/${name_hash[$chosen_hash]}/dumplog/${time_hash[$chosen_hash]}.nh343.txt"
 	if [[ -f "$dumplog" ]]; then
 		less "$dumplog"
 	else
