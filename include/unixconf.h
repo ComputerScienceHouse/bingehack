@@ -32,12 +32,12 @@
 
 
 /* define any of the following that are appropriate */
-#define SVR4		/* use in addition to SYSV for System V Release 4 */
+/*#define SVR4*/		/* use in addition to SYSV for System V Release 4 */
 			/* including Solaris 2+ */
 #define NETWORK		/* if running on a networked system */
 			/* e.g. Suns sharing a playground through NFS */
 /* #define SUNOS4 */	/* SunOS 4.x */
-/* #define LINUX */	/* Another Unix clone */
+#define LINUX	/* Another Unix clone */
 /* #define CYGWIN32 */	/* Unix on Win32 -- use with case sensitive defines */
 /* #define GENIX */	/* Yet Another Unix Clone */
 /* #define HISX */	/* Bull Unix for XPS Machines */
@@ -102,7 +102,7 @@
  * If you want the static parts of your playground on a read-only file
  * system, define VAR_PLAYGROUND to be where the variable parts are kept.
  */
-/* #define VAR_PLAYGROUND "/var/lib/games/nethack" */
+#define VAR_PLAYGROUND "/nh343/var"
 
 
 /*
@@ -132,7 +132,7 @@
  * "extra output" method is used, but not all systems provide access to
  * a fine-grained timer.
  */
-/* #define TIMED_DELAY */	/* usleep() */
+#define TIMED_DELAY	/* usleep() */
 #endif
 
 /*
@@ -193,7 +193,7 @@
 # endif
 #endif
 
-#define MAILCKFREQ	50
+/* #define MAILCKFREQ	50 */
 #endif	/* MAIL */
 
 
@@ -209,6 +209,12 @@
 
 #define FCMASK	0660	/* file creation mask */
 
+/* fcntl(2) is a POSIX-portable call for manipulating file descriptors.
+ * Comment out the USE_FCNTL if for some reason you have a strange
+ * os/filesystem combination for which fcntl(2) does not work. */
+#ifdef POSIX_TYPES
+# define USE_FCNTL
+#endif
 
 /*
  * The remainder of the file should not need to be changed.
@@ -270,7 +276,7 @@
 #endif
 #define tgetch getchar
 
-#define SHELL		/* do not delete the '!' command */
+/*#define SHELL*/		/* do not delete the '!' command */
 
 #include "system.h"
 

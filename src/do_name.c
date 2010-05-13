@@ -275,9 +275,13 @@ do_mname()
 	/* strip leading and trailing spaces; unnames monster if all spaces */
 	(void)mungspaces(buf);
 
-	if (mtmp->data->geno & G_UNIQ)
+	if (mtmp->data->geno & G_UNIQ) {
+	  if (mtmp->data == &mons[PM_HIGH_PRIEST] && Is_astralevel(&u.uz)) {
+	    pline_The("high priest%s doesn't like being called names!", mtmp->female ? "ess" : "");
+	  } else {
 	    pline("%s doesn't like being called names!", Monnam(mtmp));
-	else
+	  }
+	} else
 	    (void) christen_monst(mtmp, buf);
 	return(0);
 }
@@ -936,7 +940,59 @@ static const char * const bogusmons[] = {
 	"Vorlon",				/* Babylon 5 */
 	"questing beast",		/* King Arthur */
 	"Predator",				/* Movie */
-	"mother-in-law"				/* common pest */
+	"mother-in-law",			/* common pest */
+        "one-winged dewinged stab-bat",  /* KoL */
+        "praying mantis",
+        "arch-pedant",
+        "beluga whale",
+        "bluebird of happiness",
+        "bouncing eye", "floating nose",
+        "buffer overflow", "dangling pointer", "walking disk drive",
+        "cacodemon", "scrag",
+        "cardboard golem", "duct tape golem",
+        "chess pawn",
+        "chicken",
+        "chocolate pudding",
+        "coelacanth",
+        "corpulent porpoise",
+        "Crow T. Robot",
+        "diagonally moving grid bug",
+        "dropbear",
+        "Dudley",
+        "El Pollo Diablo",
+        "evil overlord",
+        "existential angst",
+        "figment of your imagination", "flash of insight",
+        "flying pig",
+        "gazebo",
+        "gonzo journalist",
+        "gray goo", "magnetic monopole",
+        "heisenbug",
+        "lag monster",
+        "loan shark",
+        "Lord British",
+        "newsgroup troll",
+        "ninja pirate zombie robot",
+        "octarine dragon",
+        "particle man",
+        "possessed waffle iron",
+        "poultrygeist",
+        "raging nerd",
+        "roomba",
+        "sea cucumber",
+        "spelling bee",
+        "Strong Bad",
+        "stuffed raccoon puppet",
+        "tapeworm",
+        "liger",
+        "velociraptor",
+        "vermicious knid",
+        "viking",
+        "voluptuous ampersand",
+        "wee green blobbie",
+        "wereplatypus",
+        "zergling",
+	"hag of bolding"
 };
 
 

@@ -2274,6 +2274,13 @@
             Name  your  starting dog (ex. ``dogname:Fang'').  Cannot be set
             with the `O' command.
 
+          dumpfile
+            The name of a file where the disclosure information is
+            written when the game ends. You may use the macro %n that
+            will be replaced with the name of your player character.
+            The game must have write permissions to the directory where
+            the file is written. Normally /tmp may be used for unixes.
+
           dungeon
             Set the graphics symbols for displaying  the  dungeon  (default
             `` |--------||.-|++##.##<><>_|\\#{}.}..## #}'').   The  dungeon
@@ -2607,6 +2614,18 @@
             Any  omitted  types  are filled in at the end from the previous
             order.
 
+          paranoid_hit
+            If true, asks you to type the word ``yes'' when hitting any
+            peaceful monster, not just the letter ``y''.
+
+          paranoid_quit
+            If true, asks you  to type the word ``yes'' when quitting or
+            entering Explore mode, not just the letter ``y''.
+
+          paranoid_remove
+            If true, always show menu with the R and T commands even when
+	    there is only one item to remove or take off.
+
           perm_invent
             If true, always display your current  inventory  in  a  window.
             This  only makes sense for windowing system interfaces that im-
@@ -2693,6 +2712,11 @@
             Only the first letter of each category (`t', `a',  or  `o')  is
             necessary.
 
+          showborn
+               When the game ends, show the number of each monster created
+               in the "Vanquished creatures" list, if it differs from the
+               number of those monsters killed.
+
           showexp
             Show your accumulated experience points on bottom line (default
             off).
@@ -2722,6 +2746,18 @@
 
           silent
             Suppress terminal beeps (default on).
+
+          sortloot
+            Controls the behavior of the sortloot patch that sorts
+            pickup lists for inventory and #loot commands and some
+            others.
+            The possible values are:
+
+                 full - always sort the lists
+                 loot - only sort the lists that don't use inventory
+                        letters, like with the #loot and pickup commands
+                 none - show lists the traditional way without sorting
+            The default is 'none', the way an unpatched game works.
 
           sortpack
             Sort the pack contents by type when displaying  inventory  (de-
@@ -2807,6 +2843,10 @@
             Select which windowing  system  to  use,  such  as  ``tty''  or
             ``X11''  (default  depends on version).  Cannot be set with the
             `O' command.
+
+          win_edge
+            Align menus and text windows in tty left instead of right.
+            (default off)
 
           9.5.  Window Port Customization options
 

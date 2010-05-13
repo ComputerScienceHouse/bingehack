@@ -61,6 +61,19 @@ news       print any news from game administrator on startup      [TRUE]
 Boolean option if MFLOPPY was set at compile time:
 checkspace check free disk space before writing files to disk     [TRUE]
 
+Boolean option if SHOW_BORN was set at compile time:
+showborn   show numbers of created monsters after the number
+           vanquished                                             [FALSE]
+
+Boolean option if PARANOID was set at compile time:
+paranoid_hit   ask for explicit 'yes' when hitting peacefuls      [FALSE]
+
+Boolean option if PARANOID was set at compile time:
+paranoid_quit  ask for explicit 'yes' when quitting               [FALSE]
+
+Boolean option if PARANOID was set at compile time:
+paranoid_remove always show menu with the T and R commands        [FALSE]
+
 Boolean option if EXP_ON_BOTL was set at compile time:
 showexp    display your accumulated experience points             [FALSE]
 
@@ -82,6 +95,9 @@ preload_tiles  control whether tiles get pre-loaded into RAM at the
                start of the game.  Doing so enhances performance
                of the tile graphics, but uses more memory.        [TRUE]
 
+Boolean option if WIN_EDGE was set at compile time (tty interface only):
+win_edge       align menus and text windows left instead of right [FALSE]
+
 Any Boolean option can be negated by prefixing it with a '!' or 'no'.
 
 
@@ -92,6 +108,9 @@ Compound options which can be set during the game are:
 boulder       override the default boulder symbol with another default: [`]
 disclose      the types of information you want offered at the end of the
               game  [ni na nv ng nc]
+dumpfile      the name of the file where to dump the disclosure information
+              when the game ends (only if the patch has been compiled in)
+              [none]
 fruit         the name of a fruit you enjoy eating  [slime mold]
               (basically a whimsy which NetHack uses from time to time).
 menustyle     user interface for selection of multiple objects:
@@ -120,6 +139,11 @@ runmode       controls how often the map window is updated when performing
 scores        the parts of the score list you wish to see when the game ends
               You choose a combination of top scores, scores around the top
               scores, and all of your own scores.  [!own/3 top/2 around]
+sortloot      controls the sortloot patch [none]:
+              full -- All pickup lists of items are sorted by item description
+              loot -- When inventory letters are shown, has no effect.
+                      Otherwise sorts by description
+              none -- Works the traditional way, like without the patch
 suppress_alert disable various version-specific warnings about changes
               in game play or the user interface, such as notification given
               for the 'Q' command that quitting is now done via #quit

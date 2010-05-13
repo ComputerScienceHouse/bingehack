@@ -25,6 +25,9 @@ E void NDECL(stop_occupation);
 E void NDECL(display_gamewindows);
 E void NDECL(newgame);
 E void FDECL(welcome, (BOOLEAN_P));
+#if defined(RECORD_REALTIME) || defined(REALTIME_ON_BOTL)
+E time_t NDECL(get_realtime);
+#endif
 
 /* ### apply.c ### */
 
@@ -131,6 +134,10 @@ E long NDECL(botl_score);
 E int FDECL(describe_level, (char *));
 E const char *FDECL(rank_of, (int,SHORT_P,BOOLEAN_P));
 E void NDECL(bot);
+#ifdef DUMP_LOG
+E void FDECL(bot1str, (char *));
+E void FDECL(bot2str, (char *));
+#endif
 
 /* ### cmd.c ### */
 
@@ -166,6 +173,10 @@ E int NDECL(doextlist);
 E int NDECL(extcmd_via_menu);
 E void FDECL(enlightenment, (int));
 E void FDECL(show_conduct, (int));
+#ifdef DUMP_LOG
+E void FDECL(dump_enlightenment, (int));
+E void FDECL(dump_conduct, (int));
+#endif
 E int FDECL(xytod, (SCHAR_P,SCHAR_P));
 E void FDECL(dtoxy, (coord *,int));
 E int FDECL(movecmd, (CHAR_P));
@@ -281,6 +292,9 @@ E void NDECL(clear_glyph_buffer);
 E void FDECL(row_refresh, (int,int,int));
 E void NDECL(cls);
 E void FDECL(flush_screen, (int));
+#ifdef DUMP_LOG
+E void NDECL(dump_screen);
+#endif
 E int FDECL(back_to_glyph, (XCHAR_P,XCHAR_P));
 E int FDECL(zapdir_to_glyph, (int,int,int));
 E int FDECL(glyph_at, (XCHAR_P,XCHAR_P));
@@ -553,6 +567,10 @@ E void VDECL(panic, (const char *,...)) PRINTF_F(1,2);
 #if !defined(MAKEDEFS_C) && !defined(LEV_LEX_C)
 E void FDECL(done, (int));
 E void FDECL(container_contents, (struct obj *,BOOLEAN_P,BOOLEAN_P));
+#ifdef DUMP_LOG
+E void FDECL(dump, (char *, char *));
+E void FDECL(do_containerconts, (struct obj *,BOOLEAN_P,BOOLEAN_P,BOOLEAN_P,BOOLEAN_P));
+#endif
 E void FDECL(terminate, (int));
 E int NDECL(num_genocides);
 
@@ -659,6 +677,10 @@ E boolean NDECL(recover_savefile);
 #endif
 #ifdef HOLD_LOCKFILE_OPEN
 E void NDECL(really_close);
+#endif
+#ifdef WHEREIS_FILE
+E void NDECL(touch_whereis);
+E void NDECL(delete_whereis);
 #endif
 
 /* ### fountain.c ### */
@@ -790,6 +812,9 @@ E void FDECL(prinv, (const char *,struct obj *,long));
 E char *FDECL(xprname, (struct obj *,const char *,CHAR_P,BOOLEAN_P,long,long));
 E int NDECL(ddoinv);
 E char FDECL(display_inventory, (const char *,BOOLEAN_P));
+#ifdef DUMP_LOG
+E char FDECL(dump_inventory, (const char *,BOOLEAN_P,BOOLEAN_P));
+#endif
 E int FDECL(display_binventory, (int,int,BOOLEAN_P));
 E struct obj *FDECL(display_cinventory,(struct obj *));
 E struct obj *FDECL(display_minventory,(struct monst *,int,char *));
@@ -1360,6 +1385,9 @@ E char *FDECL(doname, (struct obj *));
 E boolean FDECL(not_fully_identified, (struct obj *));
 E char *FDECL(corpse_xname, (struct obj *,BOOLEAN_P));
 E char *FDECL(cxname, (struct obj *));
+#ifdef SORTLOOT
+E char *FDECL(cxname2, (struct obj *));
+#endif
 E char *FDECL(killer_xname, (struct obj *));
 E const char *FDECL(singular, (struct obj *,char *(*)(OBJ_P)));
 E char *FDECL(an, (const char *));
@@ -1405,6 +1433,9 @@ E void FDECL(set_option_mod_status, (const char *,int));
 E int FDECL(add_autopickup_exception, (const char *));
 E void NDECL(free_autopickup_exceptions);
 #endif /* AUTOPICKUP_EXCEPTIONS */
+#ifdef MENU_COLOR
+E boolean FDECL(add_menu_coloring, (char *));
+#endif /* MENU_COLOR */
 
 /* ### pager.c ### */
 
@@ -1985,6 +2016,9 @@ E void NDECL(timer_sanity_check);
 
 /* ### topten.c ### */
 
+#ifdef RECORD_CONDUCT
+E long FDECL(encodeconduct, (void));
+#endif
 E void FDECL(topten, (int));
 E void FDECL(prscore, (int,char **));
 E struct obj *FDECL(tt_oname, (struct obj *));
@@ -2237,6 +2271,9 @@ E int FDECL(mon_wield_item, (struct monst *));
 E int NDECL(abon);
 E int NDECL(dbon);
 E int NDECL(enhance_weapon_skill);
+#ifdef DUMP_LOG
+E void NDECL(dump_weapon_skill);
+#endif
 E void FDECL(unrestrict_weapon_skill, (int));
 E void FDECL(use_skill, (int,int));
 E void FDECL(add_weapon_skill, (int));
