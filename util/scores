@@ -38,7 +38,7 @@ function readlog {
 
 function hash {
 	set -- $(sha1sum <<< "$*")
-	h="${1:0:10}"
+	h="${1:0:17}"
 }
 
 logfile="$*"
