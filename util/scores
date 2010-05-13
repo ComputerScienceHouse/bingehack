@@ -1,14 +1,18 @@
 #!/bin/bash
+set -e
 export PATH="/bin:/usr/bin"
 
 declare -a tempfiles
-trap '/bin/rm -f "${tempfiles[@]}"' EXIT
+trap 'rm -f "${tempfiles[@]}"' EXIT
 
-function tempfile {
-	local f
-	f="$(mktemp -t "$*.XXXXXXX")"
+function tmpfile {
+	local arg
+	if [[ "$1" == "-u" ]]; then
+		arg="$1"
+		shift
+	fi
+	f="$(mktemp $arg -t "$*.XXXXXXX")"
 	tempfiles+=( "$f" )
-	echo "$f"
 }
 
 function usage {
@@ -37,11 +41,12 @@ function hash {
 	h="${1:0:5}"
 }
 
-declare -i lines_per_percent=$(( $(set -- $(wc -l "$*"); echo $1) / 100 ))
+declare -i lines_per_percent=$(set -- $(wc -l "$*"); echo "$1")
+let lines_per_percent/=100
 declare -i lineno=0 cnt=0
 
-tempfifo="$(tempfile scores.fifo)"
-rm -f "$tempfifo"
+tmpfile -u scores.fifo
+tempfifo="$f"
 mkfifo "$tempfifo"
 
 (
@@ -50,10 +55,11 @@ mkfifo "$tempfifo"
 	exec 3>&-
 ) &
 
-argsfile="$(tempfile scores.args)"
+tmpfile scores.args
+argsfile="$f"
+declare -A time_hash
 exec 3> "$tempfifo"
 exec 4> "$argsfile"
-declare -A time_hash
 while read -r line; do
 	cnt+=1
 	if [[ $cnt -eq $lines_per_percent ]]; then
@@ -72,13 +78,13 @@ done < "$*"
 exec 3>&-
 exec 4>&-
 
-tempfile="$(tempfile scores)"
+tmpfile scores
+tempfile="$f"
 exec 3> "$tempfile"
 while true; do
 	dialog --output-fd 3 --title "High Scores" --menu "" 0 0 0 --file "$argsfile" || break
-	read -d '' < "$tempfile"
-	echo -n > "$tempfile"
-	dumplog="$HOME/nh/${time_hash[$REPLY]}.nh343.txt"
+	chosen_hash="$(cat "$tempfile")"
+	dumplog="$HOME/nh/${time_hash[$chosen_hash]}.nh343.txt"
 	if [[ -f "$dumplog" ]]; then
 		less "$dumplog"
 	else
