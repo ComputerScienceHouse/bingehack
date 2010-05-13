@@ -1,0 +1,49 @@
+#!/bin/bash
+function readlog {
+	local IFS
+	version="$1"
+	points="$2"
+	deathdnum="$3"
+	deathlev="$4"
+	maxlvl="$5"
+	hp="$6"
+	maxhp="$7"
+	deaths="$8"
+	deathdate="$9"
+	shift 9
+	birthdate="$1"
+	uid="$2"
+	role="$3"
+	race="$4"
+	gender="$5"
+	alignment="$6"
+	shift 6
+	IFS=","
+	set -- $@
+	unset IFS
+	name="$1"
+	shift 1
+	epitaph="$@"
+}
+
+while read -r; do
+	readlog $REPLY
+	
+	echo -n "version=$version:"
+	echo -n "points=$points:"
+	echo -n "deathdnum=$deathdnum:"
+	echo -n "deathlev=$deathlev:"
+	echo -n "maxlvl=$maxlvl:"
+	echo -n "hp=$hp:"
+	echo -n "maxhp=$maxhp:"
+	echo -n "deaths=$deaths:"
+	echo -n "deathdate=$deathdate:"
+	echo -n "birthdate=$birthdate:"
+	echo -n "uid=$uid:"
+	echo -n "role=$role:"
+	echo -n "race=$race:"
+	echo -n "gender=$gender:"
+	echo -n "align=$alignment:"
+	echo -n "name=$name:"
+	echo "death=$epitaph"
+done < "$@"

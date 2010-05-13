@@ -1,6 +1,4 @@
 #!/bin/bash
-set -e -o pipefail
-
 export PATH="/bin:/usr/bin"
 
 function usage {
@@ -26,88 +24,46 @@ if [[ $# -ne 1 ]]; then
 fi
 
 function readlog {
-	local IFS
-	version="$1"
-	points="$2"
-	deathdnum="$3"
-	deathlev="$4"
-	maxlvl="$5"
-	hp="$6"
-	maxhp="$7"
-	deaths="$8"
-	deathdate="$9"
-	shift 9
-	birthdate="$1"
-	uid="$2"
-	role="$3"
-	race="$4"
-	gender="$5"
-	alignment="$6"
-	shift 6
-	IFS=","
-	set -- $@
+	local IFS=":" v="$*"
+	set -- $v
 	unset IFS
-	name="$1"
-	shift 1
-	epitaph="$@"
-}
-
-function produce_line {
-	echo -n "+"
-	for (( i=0; i < 78; i++ )); do
-		echo -n "${1:-"="}"
+	for i; do
+		IFS="="
+		set -- $i
+		unset IFS
+		eval "$1=\"$2\""
 	done
-	echo "+"
 }
 
-printf_str='| %11s | %-47s | %-12s |\n'
-produce_line
-printf "$printf_str" "No. Points" "Name" "Hp [max]"
-produce_line "-"
-
-function printf {
-	local t
-	printf -v t "$printf_str| %11s | %47s | %-12s |\n" "$@"
-	text+=( "$t" )
+function hash {
+	set -- $(sha1sum <<< "$*")
+	echo "${1:0:5}"
 }
 
-#trap "kill %1 &> /dev/null" EXIT
-#(
-#		trap "break" USR1
-#		while [[ -z "$done" ]]; do
-#			printf "\r%s" "Please wait... "
-#			spinner
-#			sleep 0.1
-#		done
-#) &
-
-declare -a text
+declare -a dialog_args
+declare -A time_hash
 while read -r line; do
 	readlog $line
 
-	array_printf "$points" \
-		"$name-$role-$race-$gender-$alignment on level $deathlev" \
-		"$hp [$maxhp]" "" \
-		"$epitaph" ""
+	line="$name-$role-$race-$gender-$align $death on level $deathlev (HP: $hp [$maxhp])"
+	h="$(hash "$line")"
+	time_hash[$h]="$starttime"
+	dialog_args+=( "$h" "$line" )
 done < "$*"
 
-#kill -USR1 %1
-#printf "\r"
-
-(
-	produce_line
-	printf "$printf_str" "No. Points" "Name" "Hp [max]"
-	produce_line "-"
-
-	if [[ -n "$reverse" ]]; then
-		for (( i=${#text[@]} - 1; i >= 0; i-- )); do
-			echo -n "${text[$i]}"
-		done
+trap '/bin/rm -f "$tempfile"' EXIT
+tempfile="$(mktemp -t scores.XXXXXXX)"
+exec 3> "$tempfile"
+while true; do
+	dialog --clear --output-fd 3 --title "High Scores" --menu "" 0 0 0 "${dialog_args[@]}" || break
+	read -d '' < "$tempfile"
+	echo -n > "$tempfile"
+	dumplog="$HOME/nh/${time_hash[$REPLY]}.nh343.txt"
+	#dumplog="~/nh/${time_hash[$REPLY]}.nh343.txt"
+	if [[ -f "$dumplog" ]]; then
+		less "$dumplog"
 	else
-		for (( i=0; i < ${#text[@]}; i++ )); do
-			echo -n "${text[$i]}"
-		done
+		dialog --title "Error" --msgbox "No dumplog found" 5 20
 	fi
-
-	produce_line
-) | less
+done
+exec 3>&-
