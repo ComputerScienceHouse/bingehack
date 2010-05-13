@@ -38,13 +38,17 @@ function readlog {
 
 function hash {
 	set -- $(sha1sum <<< "$*")
-	h="${1:0:5}"
+	h="${1:0:10}"
 }
 
 logfile="$*"
 set -- $(wc -l "$*")
 declare -i lines_per_percent="$1"
-let lines_per_percent/=100
+
+if [[ $lines_per_percent -gt 100 ]]; then
+	let lines_per_percent/=100
+fi
+
 declare -i lineno=0 cnt=0
 
 tmpfile -u scores.fifo
@@ -73,9 +77,14 @@ while read -r line; do
 	readlog $line
 
 	line="$name-$role-$race-$gender-$align $death on level $deathlev (HP: $hp [$maxhp])"
-	hash "$line"
+	if [[ -n "$starttime" ]]; then
+		h="$(date -d @$starttime '+%D %T')"
+	else
+		hash "$line"
+	fi
 	time_hash[$h]="$starttime"
 	echo "\"$h\" \"$line\"" >&4
+	unset starttime
 done < "$logfile"
 exec 3>&-
 exec 4>&-
