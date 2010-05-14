@@ -101,15 +101,9 @@ const char *newbot2;
 {
 	if (!iflags.use_status_colors) return;
 	curs(WIN_STATUS, 1, 1);
-	char s[2];
-	int i;
-	s[1] = NULL;
-	for( i = 0; i < strlen(newbot2); i++ ) {
-		start_color_option(color_option);
-		s[0] = newbot2[i];
-		putstr(WIN_STATUS, 0, s);
-		end_color_option(color_option);
-	}
+	start_color_option(color_option);
+	putstr(WIN_STATUS, 0, newbot2);
+	end_color_option(color_option);
 }
 
 void
