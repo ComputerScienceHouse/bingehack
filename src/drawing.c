@@ -702,10 +702,14 @@ int gr_set_flag;
 	    iflags.IBMgraphics = TRUE;
 	    iflags.DECgraphics = FALSE;
 	    assign_graphics(ibm_graphics, SIZE(ibm_graphics), MAXPCHARS, 0);
+#ifdef USER_DUNGEONCOLOR
+            assign_colors((uchar *)0, 0, MAXPCHARS, 0);
+#endif
+
 #ifdef PC9800
 	    if (ibmgraphics_mode_callback) (*ibmgraphics_mode_callback)();
 #endif
-	    break;
+	break;
 #endif /* ASCIIGRAPH */
 #ifdef TERMLIB
 	case DEC_GRAPHICS:
