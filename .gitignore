@@ -4,3 +4,4 @@
 *.lev
 Makefile
 config.mk
+tags
