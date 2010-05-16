@@ -6,6 +6,8 @@
 #ifndef UNIXCONF_H
 #define UNIXCONF_H
 
+#include "config_local.h"
+
 /*
  * Some include files are in a different place under SYSV
  *	BSD		   SYSV
@@ -102,7 +104,6 @@
  * If you want the static parts of your playground on a read-only file
  * system, define VAR_PLAYGROUND to be where the variable parts are kept.
  */
-#define VAR_PLAYGROUND "/nh343/var"
 
 
 /*

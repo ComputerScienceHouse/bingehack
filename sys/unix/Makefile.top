@@ -13,14 +13,16 @@
 # execute things like 'data' and 'rumors')
 # MAKE = make
 
+include config.mk
+
 # make NetHack
-PREFIX	 = /var/chroot/nethack
+PREFIX	 ?= /var/chroot/nethack
 #PREFIX	 = /
 GAME     = nethack
 # GAME     = nethack.prg
-GAMEUID  = nethack
+GAMEUID  ?= nethack
 #GAMEGRP  = bin
-GAMEGRP  = nethack
+GAMEGRP  ?= nethack
 
 # Permissions - some places use setgid instead of setuid, for instance
 # See also the option "SECURE" in include/config.h

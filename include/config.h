@@ -35,12 +35,8 @@
 			/* Hint: if you're not developing code, don't define
 			   ULTRIX_PROTO. */
 
+#include "config_local.h"
 #include "config1.h"	/* should auto-detect MSDOS, MAC, AMIGA, and WIN32 */
-
-#define DEATH_EXPLORE
-#define PARANOID
-
-#define HACKDIR "/nh343"
 
 /* Windowing systems...
  * Define all of those you want supported in your binary.
@@ -150,10 +146,10 @@
 
 #ifndef WIZARD		/* allow for compile-time or Makefile changes */
 # ifndef KR1ED
-#  define WIZARD  "root" /* the person allowed to use the -D option */
+#  define WIZARD  "wizard" /* the person allowed to use the -D option */
 # else
 #  define WIZARD
-#  define WIZARD_NAME "root"
+#  define WIZARD_NAME "wizard"
 # endif
 #endif
 
@@ -335,6 +331,8 @@ typedef unsigned char	uchar;
 #define TOUGHVLAD	/* Vlad Balance patch 0.3, by CWC, suggestions by DACOD and JAH */
 /* #define MENTALPLYS */ /* Mental paralysis attacks yielding WIS saving throw by CWC */
 #define DYNKEY
+#define DEATH_EXPLORE
+#define PARANOID
 
 /* difficulty */
 //#define ELBERETH	/* Engraving the E-word repels monsters */
@@ -386,8 +384,8 @@ typedef unsigned char	uchar;
 #define HALLU_GODS
 
 #define DUMP_LOG        /* Dump game end information to a file */
-#define DUMP_FN "/dgldir/userdata/%n/dumplog/%t.nh343.txt"      /* Fixed dumpfile name, if you want
-                                   * to prevent definition by users */
+//#define DUMP_FN "/dgldir/userdata/%n/dumplog/%t.nh343.txt"      /* Fixed dumpfile name, if you want
+//                                   * to prevent definition by users */
 #define DUMPMSGS 20     /* Number of latest messages in the dump file  */
 
 #define SHOW_BORN    /* extinct & showborn -patch */

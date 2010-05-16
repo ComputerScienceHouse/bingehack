@@ -1,3 +1,6 @@
+*~
+\.*\.swp
 *.o
 *.lev
 Makefile
+config.mk
