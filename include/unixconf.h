@@ -113,6 +113,9 @@
  * (This might be preferable for security reasons.)
  * #define DEF_PAGER	".../mydir/mypager"
  */
+#ifndef DEF_PAGER
+#define DEF_PAGER "/usr/bin/less"
+#endif
 
 
 
