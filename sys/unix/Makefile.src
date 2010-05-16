@@ -1,6 +1,8 @@
 #	NetHack Makefile.
 #	SCCS Id: @(#)Makefile.src	3.4	2002/03/02
 
+include ../config.mk
+
 # newer makes predefine $(MAKE) to 'make' and do smarter processing of
 # recursive make calls if $(MAKE) is used
 # these makes allow $(MAKE) to be overridden by the environment if someone
@@ -124,7 +126,7 @@ CC = gcc
 
 # flags for Linux
 #   compile normally
-CFLAGS = -O2 -fomit-frame-pointer -I../include
+#CFLAGS += -O2 -fomit-frame-pointer -I../include
 # LFLAGS = -L/usr/X11R6/lib
 #   OR compile backwards compatible a.out format
 # CFLAGS = -O2 -b i486-linuxaout -fomit-frame-pointer -I../include
@@ -149,10 +151,11 @@ CFLAGS = -O2 -fomit-frame-pointer -I../include
 GNOMEINC=-I/usr/lib/glib/include -I/usr/lib/gnome-libs/include -I../win/gnome
 
 # flags for debugging:
-# CFLAGS = -g -I../include
+#CFLAGS += -ggdb -I../include
 
-# CFLAGS = -O -I../include
-LFLAGS = 
+# CFLAGS += -O -I../include
+#LFLAGS += 
+CFLAGS += -I../include
 
 # The Qt and Be window systems are written in C++, while the rest of
 # NetHack is standard C.  If using Qt, uncomment the LINK line here to get
