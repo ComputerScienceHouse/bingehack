@@ -220,6 +220,8 @@ WINBEOBJ =
 WINSRC = $(WINTTYSRC)
 WINOBJ = $(WINTTYOBJ)
 
+SQLITELIB = -lsqlite3
+
 # on some systems the termcap library is in -ltermcap or -lcurses
 # on 386 Xenix, the -ltermlib tputs() seems not to work; use -lcurses instead
 # Sysatt uses shared library in lieu of this option
@@ -395,12 +397,12 @@ $(GAME):	$(SYSTEM)
 
 Sysunix:	$(HOBJ) Makefile
 	@echo "Loading ..."
-	$(LINK) $(LFLAGS) -o $(GAME) $(HOBJ) $(WINLIB) $(LIBS)
+	$(LINK) $(LFLAGS) -o $(GAME) $(HOBJ) $(WINLIB) $(SQLITELIB) $(LIBS)
 	@touch Sysunix
 
 Sys3B2:	$(HOBJ) Makefile
 	@echo "Loading ..."
-	@$(LINK) $(LFLAGS) -o $(GAME) $(HOBJ) $(WINLIB) -lmalloc
+	@$(LINK) $(LFLAGS) -o $(GAME) $(HOBJ) $(WINLIB) $(SQLITELIB) -lmalloc
 	@touch Sys3B2
 
 Sysatt:	$(HOBJ) Makefile
@@ -410,17 +412,17 @@ Sysatt:	$(HOBJ) Makefile
 
 Systos:	$(HOBJ) Makefile
 	@echo "Loading ..."
-	@$(LINK) $(LFLAGS) -o $(GAME) $(HOBJ) $(WINLIB)
+	@$(LINK) $(LFLAGS) -o $(GAME) $(HOBJ) $(WINLIB) $(SQLITELIB)
 	@touch Systos
 
 SysV-AT:	DUMB.Setup $(HOBJ) Makefile
 	@echo "Loading ..."
-	@$(LINK) $(LFLAGS) -o $(GAME) $(HOBJ) $(WINLIB)
+	@$(LINK) $(LFLAGS) -o $(GAME) $(HOBJ) $(WINLIB) $(SQLITELIB)
 	@touch SysV-AT
 
 SysBe: $(HOBJ) Makefile
 	@echo "Loading ..."
-	@$(LINK) $(LFLAGS) -o $(GAME) $(HOBJ) $(WINLIB) $(LIBS)
+	@$(LINK) $(LFLAGS) -o $(GAME) $(HOBJ) $(WINLIB) $(SQLITELIB) $(LIBS)
 	@xres -o $(GAME) ../win/BeOS/nethack.rsrc
 	@mimeset -f $(GAME)
 	@touch SysBe

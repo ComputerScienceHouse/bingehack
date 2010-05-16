@@ -359,6 +359,9 @@ typedef unsigned char	uchar;
  * Enable any of these at your own risk -- there are almost certainly
  * bugs left here.
  */
+#define SQLITE3
+#define SQLITE_LOGFILE "var/logfile.db"
+
 #if defined(TTY_GRAPHICS) || defined(MSWIN_GRAPHICS)
 # define MENU_COLOR
 # define MENU_COLOR_REGEX
