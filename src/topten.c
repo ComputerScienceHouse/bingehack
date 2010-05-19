@@ -9,9 +9,6 @@
 #else
 #include "patchlevel.h"
 #endif
-#ifdef SQLITE3
-#include <sqlite3.h>
-#endif
 
 #ifdef VMS
  /* We don't want to rewrite the whole file, because that entails	 */
@@ -205,47 +202,6 @@ struct toptenentry *tt;
 		if (tt->deathdate < 19000000L) tt->deathdate += 19000000L;
 	}
 }
-
-#ifdef SQLITE3
-STATIC_OVL void
-sqlite_writeentry(tt)
-struct toptenentry *tt;
-{
-	sqlite3 *db;
-	int err;
-	if( (err = sqlite3_open(SQLITE_LOGFILE, &db)) != SQLITE_OK ) {
-		pline("sqlite: %s", sqlite3_errmsg(db));
-		if( err != SQLITE_NOMEM )
-			sqlite3_close(db);
-		return;
-	}
-	char *query = sqlite3_mprintf("INSERT INTO scores ( starttime,"
-		" name, death, ver_major, ver_minor, patchlevel, points,"
-		" deathdnum, deathlev, maxlvl, hp, maxhp, deaths, deathdate,"
-		" birthdate, uid, role, race, gender, align, realtime,"
-		" endtime ) "
-		"values ( %ld, '%s', '%s', %d, %d, %d, %ld, %d,"
-		" %d, %d, %d, %d, %d, %ld, %ld, %d, '%s',"
-		" '%s', '%s', '%s', %ld, %ld );",
-		(long)u.ubirthday, tt->name, tt->death,
-		tt->ver_major, tt->ver_minor, tt->patchlevel,
-		tt->points, tt->deathdnum, tt->deathlev,
-		tt->maxlvl, tt->hp, tt->maxhp, tt->deaths,
-		tt->deathdate, tt->birthdate, tt->uid, tt->plrole,
-		tt->plrace, tt->plgend, tt->plalign,
-		(long)realtime_data.realtime,
-		(long)deathtime);
-	char *errmsg = NULL;
-	err = sqlite3_exec(db, query, NULL, NULL, &errmsg);
-	sqlite3_free(query);
-	if( err != SQLITE_OK ) {
-		sqlite3_close(db);
-		pline("sqlite: %s", errmsg);
-		return;
-	}
-	sqlite3_close(db);
-}
-#endif
 
 STATIC_OVL void
 writeentry(rfile,tt)
@@ -563,10 +519,6 @@ int how;
 	    unlock_file(LOGFILE);
 	}
 #endif /* LOGFILE */
-
-#ifdef SQLITE3
-	sqlite_writeentry(t0);
-#endif
 
 #ifdef XLOGFILE
          if(lock_file(XLOGFILE, SCOREPREFIX, 10)) {
