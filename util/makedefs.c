@@ -347,7 +347,7 @@ void
 do_rumors()
 {
 	char	infile[60];
-	long	true_rumor_size;
+	long	true_rumor_size, false_rumor_size;
 
 	filename[0]='\0';
 #ifdef FILE_PREFIX
@@ -399,7 +399,30 @@ do_rumors()
 		exit(EXIT_FAILURE);
 	}
 
+	/* Because of Potter, we need to put the number of bytes of false rumors
+	 * in the rumors file */
+	(void) fseek(ifp, 0L, SEEK_END);
+	false_rumor_size = ftell(ifp);
+
+	fprintf(ofp, "%06lx\n", false_rumor_size);
+	(void) fseek(ifp, 0L, SEEK_SET);
+
 	/* copy false rumors */
+	while (fgets(in_line, sizeof in_line, ifp) != 0)
+		(void) fputs(xcrypt(in_line), ofp);
+
+	Fclose(ifp);
+
+	Sprintf(infile, DATA_IN_TEMPLATE, RUMOR_FILE);
+	Strcat(infile, ".pot");
+	if (!(ifp = fopen(infile, RDTMODE))) {
+		perror(infile);
+		Fclose(ofp);
+		Unlink(filename);
+		exit(EXIT_FAILURE);
+	}
+
+	/* copy potter rumors */
 	while (fgets(in_line, sizeof in_line, ifp) != 0)
 		(void) fputs(xcrypt(in_line), ofp);
 

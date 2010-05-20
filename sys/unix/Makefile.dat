@@ -101,7 +101,7 @@ GEM_RSC.RSC:
 data:	data.base ../util/makedefs
 	../util/makedefs -d
 
-rumors:	rumors.tru rumors.fal ../util/makedefs
+rumors:	rumors.tru rumors.fal rumors.pot ../util/makedefs
 	../util/makedefs -r
 
 quest.dat:	quest.txt ../util/makedefs
