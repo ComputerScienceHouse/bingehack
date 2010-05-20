@@ -32,7 +32,8 @@ STATIC_DCL void FDECL(init_rumors, (dlb *));
 STATIC_DCL void FDECL(init_oracles, (dlb *));
 
 static long true_rumor_start,  true_rumor_size,  true_rumor_end,
-	    false_rumor_start, false_rumor_size, false_rumor_end;
+	    false_rumor_start, false_rumor_size, false_rumor_end,
+		potter_rumor_start, potter_rumor_size, potter_rumor_end;
 static int oracle_flg = 0;  /* -1=>don't use, 0=>need init, 1=>init done */
 static unsigned oracle_cnt = 0;
 static long *oracle_loc = 0;
@@ -50,10 +51,19 @@ dlb *fp;
 	    (void) dlb_fseek(fp, 0L, SEEK_CUR);
 	    true_rumor_start  = dlb_ftell(fp);
 	    true_rumor_end    = true_rumor_start + true_rumor_size;
-	    (void) dlb_fseek(fp, 0L, SEEK_END);
+	    (void) dlb_fseek(fp, true_rumor_size, SEEK_CUR);
+
+		(void) dlb_fgets(line, sizeof line, fp);
+		sscanf(line, "%6lx\n", &false_rumor_size);
+		(void) dlb_fseek(fp, 0L, SEEK_CUR);
+		false_rumor_start = dlb_ftell(fp);
+	    (void) dlb_fseek(fp, false_rumor_size, SEEK_CUR);
 	    false_rumor_end   = dlb_ftell(fp);
-	    false_rumor_start = true_rumor_end;	/* ok, so it's redundant... */
-	    false_rumor_size  = false_rumor_end - false_rumor_start;
+
+		potter_rumor_start = false_rumor_end;
+		(void) dlb_fseek(fp, 0L, SEEK_END);
+		potter_rumor_end = dlb_ftell(fp);
+		potter_rumor_size = potter_rumor_end - potter_rumor_start;
 	} else
 	    true_rumor_size = -1L;	/* init failed */
 }
@@ -65,7 +75,8 @@ dlb *fp;
  */
 char *
 getrumor(truth, rumor_buf, exclude_cookie)
-int truth; /* 1=true, -1=false, 0=either */
+int truth; /* 1=true, -1=false, 0=either 3=potter */
+/* potter is truier than true */
 char *rumor_buf;
 boolean exclude_cookie; 
 {
@@ -94,11 +105,15 @@ boolean exclude_cookie;
 		    }
 		}
 		/*
-		 *	input:      1    0   -1
-		 *	 rn2 \ +1  2=T  1=T  0=F
-		 *	 adj./ +0  1=T  0=F -1=F
+		 *	input:      3    1    0   -1
+		 *	 rn2 \ +1  4=P  2=T  1=T  0=F
+		 *	 adj./ +0  3=P  1=T  0=F -1=F
 		 */
 		switch (adjtruth = truth + rn2(2)) {
+		  case  4: /*(might let a bogus input arg sneak thru)*/
+		  case  3:  beginning = potter_rumor_start;
+		  		tidbit = Rand() % potter_rumor_size;
+			break;
 		  case  2:	/*(might let a bogus input arg sneak thru)*/
 		  case  1:  beginning = true_rumor_start;
 			    tidbit = Rand() % true_rumor_size;
@@ -114,8 +129,12 @@ boolean exclude_cookie;
 		(void) dlb_fseek(rumors, beginning + tidbit, SEEK_SET);
 		(void) dlb_fgets(line, sizeof line, rumors);
 		if (!dlb_fgets(line, sizeof line, rumors) ||
-		    (adjtruth > 0 && dlb_ftell(rumors) > true_rumor_end)) {
+		    ((adjtruth == 2 || adjtruth == 1) && dlb_ftell(rumors) > true_rumor_end)) {
 			/* reached end of rumors -- go back to beginning */
+			(void) dlb_fseek(rumors, beginning, SEEK_SET);
+			(void) dlb_fgets(line, sizeof line, rumors);
+		} else if (!dlb_fgets(line, sizeof line, rumors) ||
+			(adjtruth < 1 && dlb_ftell(rumors) > false_rumor_end)) {
 			(void) dlb_fseek(rumors, beginning, SEEK_SET);
 			(void) dlb_fgets(line, sizeof line, rumors);
 		}
@@ -136,7 +155,7 @@ boolean exclude_cookie;
 
 void
 outrumor(truth, mechanism)
-int truth; /* 1=true, -1=false, 0=either */
+int truth; /* 3=potter, 1=true, -1=false, 0=either */
 int mechanism;
 {
 	static const char fortune_msg[] =
@@ -147,7 +166,7 @@ int mechanism;
 			   mechanism == BY_PAPER);
 
 	if (reading) {
-		truth=-1; /* If not from potter, do not show Potter quotes. */
+		/*truth=-1; /* If not from potter, do not show Potter quotes. */
 	    /* deal with various things that prevent reading */
 	    if (is_fainted() && mechanism == BY_COOKIE)
 	    	return;
@@ -159,7 +178,7 @@ int mechanism;
 	    }
 	}
 	else{
-		truth=1; /* We're talking to potter, we want the Potter quotes */
+		truth=3; /* We're talking to potter, we want the Potter quotes */
 	}
 	line = getrumor(truth, buf, reading ? FALSE : TRUE);
 	if (!*line)
