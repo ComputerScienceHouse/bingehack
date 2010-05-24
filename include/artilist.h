@@ -231,6 +231,11 @@ A("The Eye of the Aethiopica",	AMULET_OF_ESP,
 	NO_ATTK,	NO_DFNS,	CARY(AD_MAGM),
 	CREATE_PORTAL,	A_NEUTRAL, PM_WIZARD, NON_PM, 4000L ),
 
+A("The Ring of Power",	RIN_INVISIBILITY,
+	(SPFX_RESTR|SPFX_INTEL|SPFX_SPEAK), (SPFX_INVIS), 0,
+	NO_ATTK,	NO_DFNS,	NO_CARY,
+	0,		A_CHAOTIC, NON_PM, NON_PM, 150L ),
+
 /*
  *  terminator; otyp must be zero
  */
