@@ -32,6 +32,7 @@ struct u_have {
 	Bitfield(book,1);	/* carrying Book	*/
 	Bitfield(menorah,1);	/* carrying Candelabrum */
 	Bitfield(questart,1);	/* carrying the Quest Artifact */
+	Bitfield(ring_of_power,1); /* carrying the Ring of Power */
 	Bitfield(unused,3);
 };
 
