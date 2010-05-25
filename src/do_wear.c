@@ -712,6 +712,12 @@ register struct obj *obj;
 	case RIN_POLYMORPH_CONTROL:
 	case RIN_FREE_ACTION:                
 	case RIN_SLOW_DIGESTION:
+		if (obj->oartifact != ART_RING_OF_POWER &&
+		        !oldprop && !HInvis && !BInvis && !Blind) {
+		    newsym(u.ux,u.uy);
+		    self_invis_message();
+		}
+		break;
 	case RIN_SUSTAIN_ABILITY:
 	case MEAT_RING:
 		break;
@@ -818,6 +824,13 @@ boolean gone;
 	case RIN_POLYMORPH_CONTROL:
 	case RIN_FREE_ACTION:                
 	case RIN_SLOW_DIGESTION:
+		if (obj->oartifact != ART_RING_OF_POWER &&
+		      !Invis && !BInvis && !Blind) {
+		    newsym(u.ux,u.uy);
+		    Your("body seems to unfade%s.",
+			 See_invisible ? " completely" : "..");
+		}
+		break;
 	case RIN_SUSTAIN_ABILITY:
 	case MEAT_RING:
 		break;

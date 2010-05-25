@@ -306,8 +306,8 @@ register struct monst *mtmp;
 		      }
 		    if (!rn2(10)) (void)mongets(mtmp, ELVEN_MITHRIL_COAT);
 		    if (!rn2(10)) (void)mongets(mtmp, DWARVISH_CLOAK);
-		    if (!rn2(60) && !exist_artifact(RIN_INVISIBILITY, artiname(ART_RING_OF_POWER))) {
-		        otmp = mksobj(RIN_INVISIBILITY, FALSE, FALSE);
+		    if (!rn2(60) && !exist_artifact(RIN_SLOW_DIGESTION, artiname(ART_RING_OF_POWER))) {
+		        otmp = mksobj(RIN_SLOW_DIGESTION, FALSE, FALSE);
 			otmp->quan = 1L;
 			otmp = oname(otmp, artiname(ART_RING_OF_POWER));
 			(void) mpickobj(mtmp, otmp);

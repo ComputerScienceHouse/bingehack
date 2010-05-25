@@ -277,12 +277,17 @@ register struct obj *obj;
 			xname(obj));
 		goto giveback;
 	    case RIN_SLOW_DIGESTION:
-		pline_The("ring is regurgitated!");
+		if (obj->oartifact == ART_RING_OF_POWER) {
+		    You_hear("unintelligable whispers.");
+		    break;
+		} else {
+		    pline_The("ring is regurgitated!");
 giveback:
-		obj->in_use = FALSE;
-		dropx(obj);
-		trycall(obj);
-		return;
+		    obj->in_use = FALSE;
+		    dropx(obj);
+		    trycall(obj);
+		    return;
+		}
 	    case RIN_LEVITATION:
 		pline_The("sink quivers upward for a moment.");
 		break;
