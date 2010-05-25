@@ -2175,7 +2175,8 @@ boolean from_user;
 	   strncmpi(bp, "leather arm", 11) &&
 	   strncmpi(bp, "tooled horn", 11) &&
 	   strncmpi(bp, "food ration", 11) &&
-	   strncmpi(bp, "meat ring", 9)
+	   strncmpi(bp, "meat ring", 9) &&
+	   strncmpi(bp, "ring of power", 13)
 	)
 	for (i = 0; i < (int)(sizeof wrpsym); i++) {
 		register int j = strlen(wrp[i]);
