@@ -348,10 +348,13 @@ moveloop()
 		    exerchk();
 		    invault();
 		    if (u.uhave.amulet) amulet();
-		    if (u.uhave.ring_of_power && !rn2(300)) {
-		    	for (i = 0; i < (rn2(5) ? 1 : rnd(8) + 1); i++)
-			    if (propagate(monsndx(&mons[PM_NAZGUL]), FALSE, FALSE))
-			        makemon(&mons[PM_NAZGUL], u.ux, u.uy, NO_MM_FLAGS);
+		    if (u.uhave.ring_of_power) {
+		    	if (!rn2(300))
+		    	    for (i = 0; i < (rn2(5) ? 1 : rnd(8) + 1); i++)
+			        if (propagate(monsndx(&mons[PM_NAZGUL]), FALSE, FALSE))
+			            makemon(&mons[PM_NAZGUL], u.ux, u.uy, NO_MM_FLAGS);
+			if (!rn2(100))
+		    	    You_hear("unintelligable whispering.");
 		    }
 		    if (!rn2(40+(int)(ACURR(A_DEX)*3)))
 			u_wipe_engr(rnd(3));
