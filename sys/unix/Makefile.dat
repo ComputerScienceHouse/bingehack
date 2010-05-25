@@ -10,7 +10,7 @@
 VARDAT = data rumors quest.dat oracles options
 
 SPEC_DES=bigroom.des castle.des endgame.des gehennom.des knox.des medusa.des \
-	mines.des oracle.des sokoban.des tower.des yendor.des
+	mines.des Potter.des sokoban.des tower.des yendor.des
 QUEST_DES= Arch.des Barb.des Caveman.des Healer.des Knight.des Monk.des \
 	Priest.des Ranger.des Rogue.des Samurai.des Tourist.des Valkyrie.des \
 	Wizard.des
