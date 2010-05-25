@@ -2443,6 +2443,7 @@ struct obj *box;	/* null for floor trap */
 {
 	boolean see_it = !Blind;
 	int num, alt;
+	struct obj *obj, *obj2;
 
 /* Bug: for box case, the equivalent of burn_floor_paper() ought
  * to be done upon its contents.
@@ -2493,6 +2494,18 @@ struct obj *box;	/* null for floor trap */
 	    You("smell paper burning.");
 	if (is_ice(u.ux, u.uy))
 	    melt_ice(u.ux, u.uy);
+	for(obj = invent; obj; obj = obj2) {
+	    obj2 = obj->nobj;
+	    if (obj->oartifact == ART_RING_OF_POWER) {
+	    	pline("A fiery inscription appears on the ring of power.");
+		if (Role_if(PM_WIZARD) || youmonst.data->mflags2 & M2_DEMON || youmonst.data->mlet == S_IMP) {
+		    pline("It reads: One Ring to rule them all, One Ring to find them, One Ring to bring them all, and in the darkness bind them.");
+		} else {
+		    pline("It reads: Ash nazg durbatuluk, ash nazg gimbatul, ash nazg thrakatuluk, agh burzum-ishi krimpatul.");
+		}
+	    	break;
+	    }
+	}
 }
 
 STATIC_OVL void
