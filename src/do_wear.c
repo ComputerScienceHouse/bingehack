@@ -1566,8 +1566,8 @@ doputon()
 		setworn(otmp, mask);
 		Ring_on(otmp);
 		if (otmp->oartifact == ART_RING_OF_POWER) {
-		    if (u.uhave.ring_of_power) impossible("already wearing ring of power?");
-		    u.uhave.ring_of_power = 1;
+		    if (u.uhave.ring_of_power_worn) impossible("already wearing ring of power?");
+		    u.uhave.ring_of_power_worn = 1;
 		}
 	} else if (otmp->oclass == AMULET_CLASS) {
 		if(uamul) {
@@ -1957,8 +1957,8 @@ do_takeoff()
 	  if (!cursed(ublindf)) Blindf_off(ublindf);
 	} else impossible("do_takeoff: taking off %lx", taking_off);
 	if ((taking_off == RIGHT_RING || taking_off == LEFT_RING) && otmp->oartifact == ART_RING_OF_POWER) {
-		if (!u.uhave.ring_of_power) impossible("not wearing ring of power?");
-		u.uhave.ring_of_power = 0;
+		if (!u.uhave.ring_of_power_worn) impossible("not wearing ring of power?");
+		u.uhave.ring_of_power_worn = 0;
 	}
 
 	return(otmp);

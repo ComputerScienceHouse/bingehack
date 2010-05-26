@@ -298,6 +298,9 @@ struct obj *obj;
 #ifdef RECORD_ACHIEVE
                 achieve.get_book = 1;
 #endif
+	} else if (obj->oartifact == ART_RING_OF_POWER) {
+		if (u.uhave.ring_of_power) impossible("already have the ring of power?");
+		u.uhave.ring_of_power = 1;
 	} else if (obj->oartifact) {
 		if (is_quest_artifact(obj)) {
 		    if (u.uhave.questart)
@@ -558,6 +561,9 @@ struct obj *obj;
 	} else if (obj->otyp == SPE_BOOK_OF_THE_DEAD) {
 		if (!u.uhave.book) impossible("don't have the book?");
 		u.uhave.book = 0;
+	} else if (obj->oartifact == ART_RING_OF_POWER) {
+		if (!u.uhave.ring_of_power) impossible("don't have the ring of power?");
+		u.uhave.ring_of_power = 0;
 	} else if (obj->oartifact) {
 		if (is_quest_artifact(obj)) {
 		    if (!u.uhave.questart)

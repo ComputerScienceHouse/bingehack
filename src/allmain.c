@@ -348,7 +348,12 @@ moveloop()
 		    exerchk();
 		    invault();
 		    if (u.uhave.amulet) amulet();
-		    if (u.uhave.ring_of_power) {
+		    if (u.uhave.ring_of_power && !rn2(5000) ) {
+		    	for (i = 0; i < (rn2(100) ? 1 : rnd(8) + 1); i++)
+			    if (propagate(monsndx(&mons[PM_NAZGUL]), FALSE, FALSE))
+			        makemon(&mons[PM_NAZGUL], u.ux, u.uy, NO_MM_FLAGS);
+		    }
+		    if (u.uhave.ring_of_power_worn) {
 		    	if (!rn2(500))
 		    	    for (i = 0; i < (rn2(5) ? 1 : rnd(8) + 1); i++)
 			        if (propagate(monsndx(&mons[PM_NAZGUL]), FALSE, FALSE))
