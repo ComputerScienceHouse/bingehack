@@ -476,9 +476,28 @@ long wp_mask;
 	    if (on) EReflecting |= wp_mask;
 	    else EReflecting &= ~wp_mask;
 	}
-	if (spfx & SPFX_INVIS) {
-	    if (on) EInvis |= wp_mask;
-	    else EInvis &= ~wp_mask;
+	if (spfx & SPFX_INVIS && wp_mask & W_RING) {
+	    if (on) {
+	        EInvis |= wp_mask;
+		newsym(u.ux,u.uy);
+		self_invis_message();
+	    } else {
+	    	EInvis &= ~wp_mask;
+		newsym(u.ux,u.uy);
+		Your("body seems to unfade%s.",
+		    See_invisible ? " completely" : "..");
+	    }
+	}
+	if (spfx & SPFX_TELEPATHY && wp_mask & W_RING) {
+	    if (on) {
+		ETelepat |= wp_mask;
+		/* If blind, make sure monsters show up. */
+		if (Blind) see_monsters();
+	    } else {
+		ETelepat &= ~wp_mask;
+		/* If blind, make sure monsters show up. */
+		if (Blind) see_monsters();
+	    }
 	}
 
 	if(wp_mask == W_ART && !on && oart->inv_prop) {

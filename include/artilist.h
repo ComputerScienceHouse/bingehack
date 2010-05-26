@@ -232,7 +232,7 @@ A("The Eye of the Aethiopica",	AMULET_OF_ESP,
 	CREATE_PORTAL,	A_NEUTRAL, PM_WIZARD, NON_PM, 4000L ),
 
 A("The Ring of Power",	RIN_SLOW_DIGESTION,
-	(SPFX_RESTR), (SPFX_INVIS), 0, // Can actually speak, but it's dealt with elsewhere.
+	(SPFX_RESTR|SPFX_INVIS|SPFX_TELEPATHY), 0,0, // Can actually speak, but it's dealt with elsewhere.
 	NO_ATTK,	NO_DFNS,	NO_CARY,
 	0,		A_NONE, NON_PM, NON_PM, 5000L ),
 
