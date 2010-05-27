@@ -1936,11 +1936,11 @@ char		*tmp_levels;
 	} else if (match_varname(buf, "GRAPHICS", 4)) {
 	    len = get_uchars(fp, buf, bufp, translate, FALSE,
 			     MAXPCHARS, "GRAPHICS");
+	    assign_graphics(translate, len, MAXPCHARS, 0);
 #if defined(STATUS_COLORS) && defined(TEXTCOLOR)
 	} else if (match_varname(buf, "STATUSCOLOR", 11)) {
 	    (void) parse_status_color_options(bufp);
 #endif
-	    assign_graphics(translate, len, MAXPCHARS, 0);
 	} else if (match_varname(buf, "DUNGEON", 4)) {
 	    len = get_uchars(fp, buf, bufp, translate, FALSE,
 			     MAXDCHARS, "DUNGEON");
