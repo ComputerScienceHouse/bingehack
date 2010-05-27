@@ -668,10 +668,12 @@ int glth, maxlen, offset;
 {
     register int i;
 
+#ifdef TEXTCOLOR
     for (i = 0; i < maxlen; i++)
 	showsymcolors[i+offset] =
 	    (((i < glth) && (graph_colors[i] < CLR_MAX)) ?
 	     graph_colors[i] : defsyms[i+offset].color);
+#endif
 }
 #endif
 

@@ -659,11 +659,15 @@ initoptions()
 	/* result in the player's preferred fruit [better than "\033"].	*/
 	obj_descr[SLIME_MOLD].oc_name = "fruit";
 
+#ifdef TEXTCOLOR
         if (flags.lit_corridor && iflags.use_color) {
             showsyms[S_darkroom]=showsyms[S_room];
         } else {
             showsyms[S_darkroom]=showsyms[S_stone];
         }
+#else
+        showsyms[S_darkroom]=showsyms[S_stone];
+#endif
 	return;
 }
 
@@ -2643,7 +2647,9 @@ goodfruit:
 			     */
 			    vision_recalc(2);		/* shut down vision */
 			    vision_full_recalc = 1;	/* delayed recalc */
+#ifdef TEXTCOLOR
 			    if (iflags.use_color) need_redraw = TRUE;  /* darkroom refresh */
+#endif
 			}
 			else if ((boolopt[i].addr) == &iflags.use_inverse ||
 					(boolopt[i].addr) == &iflags.showrace ||
@@ -2954,11 +2960,15 @@ doset()
 
 	destroy_nhwindow(tmpwin);
 	if (need_redraw) {
+#ifdef TEXTCOLOR
 	    if (flags.lit_corridor && iflags.use_color) {
 		showsyms[S_darkroom]=showsyms[S_room];
 	    } else {
 		showsyms[S_darkroom]=showsyms[S_stone];
 	    }
+#else
+	    showsyms[S_darkroom]=showsyms[S_stone];
+#endif
 	    (void) doredraw();
 	}
 	return 0;

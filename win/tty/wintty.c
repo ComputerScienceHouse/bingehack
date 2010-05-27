@@ -1265,7 +1265,9 @@ struct WinDesc *cw;
 		   if (iflags.use_menu_color &&
 		       (menucolr = get_menu_coloring(curr->str, &color,&attr))) {
 		       term_start_attr(attr);
+#ifdef TEXTCOLOR
 		       if (color != NO_COLOR) term_start_color(color);
+#endif
 		   } else
 #endif
 		    term_start_attr(curr->attr);
@@ -1287,7 +1289,9 @@ struct WinDesc *cw;
 			    (void) putchar(*cp);
 #ifdef MENU_COLOR
 		   if (iflags.use_menu_color && menucolr) {
+#ifdef TEXTCOLOR
 		       if (color != NO_COLOR) term_end_color();
+#endif
 		       term_end_attr(attr);
 		   } else
 #endif

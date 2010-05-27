@@ -75,8 +75,10 @@ start_color_option(color_option)
 struct color_option color_option;
 {
 	int i;
+#ifdef TEXTCOLOR
 	if (color_option.color != NO_COLOR)
 		term_start_color(color_option.color);
+#endif
 	for (i = 0; (1 << i) <= color_option.attr_bits; ++i)
 		if (i != ATR_NONE && color_option.attr_bits & (1 << i))
 			term_start_attr(i);
@@ -87,8 +89,10 @@ end_color_option(color_option)
 struct color_option color_option;
 {
 	int i;
+#ifdef TEXTCOLOR
 	if (color_option.color != NO_COLOR)
 		term_end_color(color_option.color);
+#endif
 	for (i = 0; (1 << i) <= color_option.attr_bits; ++i)
 		if (i != ATR_NONE && color_option.attr_bits & (1 << i))
 			term_end_attr(i);
@@ -523,7 +527,9 @@ bot2()
 #else
 		Sprintf(nb = eos(nb), " %s", enc_stat[cap]);
 #endif
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
 	flags.botlx = save_botlx;
+#endif
 #ifdef DUMP_LOG
 }
 STATIC_OVL void
