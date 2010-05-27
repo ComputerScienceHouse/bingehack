@@ -540,31 +540,31 @@ testmail()
 STATIC_PTR int
 testchat()
 {
-	int buffer_length=80;
-	char curr = '?';
-	char str[buffer_length];
-	strcpy(str,plname);
-	int msg_length=strlen(plname)+2;
-	str[msg_length-2]=':';
-	str[msg_length-1]=' ';
-	str[msg_length]='\0';
-	int index = msg_length;
-	while(curr != '\n' && index < 80){
-		putstr(WIN_MESSAGE,0,str);
-		curr = readchar();
-		if(index == buffer_length-1){
+	#define chat_ip_address "225.0.0.38"
+	#define chat_port 54321
+
+	int chat_socket = -1;
+	struct sockaddr_in chat_addr;
+	char str[BUFSZ];
+	getlin("Send chat:", str);
+	if(str[0] == '\033'){ /* user is mashing escape key, abort chat. */
+		pline("Fine, chat aborted. They probably didn't want to talk to you anyway.");
+	}
+	else{
+		if( (chat_socket = socket(PF_INET, SOCK_DGRAM, 0)) < 0 ) { /* error: can't create socket */
+			pline("You try and call out, but your voice catches in your throat.");
 		}
-		if(curr == 0x007f || curr == '\b'){
-			if(index>msg_length){
-				str[--index]=' ';
-			}
+		memset(&chat_addr, 0, sizeof(chat_addr));
+		chat_addr.sin_family = AF_INET;
+    		chat_addr.sin_port = htons(chat_port);
+		chat_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+		if(sendto(chat_socket, str, strlen(str), 0, &chat_addr, sizeof(chat_addr)) < 0){ /* error: couldn't transmit */
+			pline("You call out, but you have a nagging feeling nobody can hear you...");
 		}
-		else{
-			str[index++]=curr;
-			str[index]='\0';
+		else{	
+			pline("Message sent.");
 		}
 	}
-	pline("Message sent.");
 }
 #ifdef WIZARD
 
