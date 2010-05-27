@@ -130,7 +130,7 @@ main( int argc, char *argv[] )
   struct u_stat_t u_stat;
   struct sockaddr_in addr, from;
   socklen_t fromlen;
-  struct ip_mreq mreq;
+  struct ip_mreqn mreq;
   struct hostent *hent;
   u_int yes = 1;
   bool first_time = true;
@@ -164,7 +164,7 @@ main( int argc, char *argv[] )
 
   memset(&addr, 0, sizeof(addr));
   addr.sin_family = AF_INET;
-  addr.sin_addr.s_addr = htonl(INADDR_ANY);
+  addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
   addr.sin_port = htons(12345);
 
   if( bind(s, (struct sockaddr *) &addr, sizeof(addr)) != 0 ) {
@@ -173,10 +173,11 @@ main( int argc, char *argv[] )
   }
 
   mreq.imr_multiaddr.s_addr = inet_addr("225.0.0.37");
-  mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+  mreq.imr_address.s_addr = htonl(INADDR_LOOPBACK);
+  mreq.imr_ifindex = 0;
 
   if( setsockopt(s, IPPROTO_IP, IP_ADD_MEMBERSHIP,
-                 &mreq, sizeof(struct ip_mreq)) != 0 ) {
+                 &mreq, sizeof(mreq)) != 0 ) {
     perror("setsockopt");
     exit(EXIT_FAILURE);
   }
