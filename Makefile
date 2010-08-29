@@ -1,11 +1,16 @@
 CC = gcc
 YACC ?= yacc
 LEX ?= flex
+INSTALL ?= install
+MV ?= mv
+TOUCH ?= touch
 
 #PREFIX ?= /usr/local
 PREFIX ?= $(PWD)/install
+GAMEDIR ?= $(PREFIX)/nethack
 
-# TODO: Revisit date.h
+-include config.mk
+
 SUBDIRS = include util sys/share sys/unix win/tty src dat
 
 TOPDIR := $(PWD)
@@ -22,18 +27,12 @@ CLEAN_TARGETS = $(SUBDIRS:=/clean)
 DEPCLEAN_TARGETS = $(SUBDIRS:=/depclean)
 ALL_TARGETS = $(SUBDIRS:=/all)
 
-.PHONY: all clean depclean
+.PHONY: all clean depclean install
 .DEFAULT_GOAL: all
 
 all: $(ALL_TARGETS)
 clean: $(CLEAN_TARGETS)
 depclean: clean $(DEPCLEAN_TARGETS)
-
-install:
-	$(INSTALL) -d $(PREFIX) $(PREFIX)/bin $(PREFIX)/var/save
-	$(INSTALL) 
-	mkdir -p $(PREFIX) $(PREFIX)/bin $(PREFIX)/var/save
-
 
 # Define default hooks so a subdir doesn't need to define them.
 $(CLEAN_TARGETS):
@@ -61,6 +60,19 @@ endef
 $(foreach subdir, $(SUBDIRS), $(eval $(call subdirRule, $(subdir))))
 # Reset CURDIR back to what it should be.
 CURDIR := $(TOPDIR)
+
+update: all
+	$(MV) $(GAMEDIR)/nethack $(GAMEDIR)/nethack.old
+	$(MV) $(GAMEDIR)/quest.dat $(GAMEDIR)/quest.dat.old
+	$(MAKE) install
+	$(TOUCH) -c $(GAMEDIR)/var/{bones*,?lock*,wizard*,save/*}
+
+install: all
+	$(INSTALL) -d $(GAMEDIR) $(GAMEDIR)/var/save
+	$(INSTALL) -m 0644 $(DAT_INSTALL_OBJECTS) $(GAMEDIR)
+	$(INSTALL) -m 2755 $(SRCDIR)/nethack $(GAMEDIR)
+	$(INSTALL) -T $(RECOVER) $(GAMEDIR)/recover
+	$(TOUCH) $(GAMEDIR)/var/{perm,record,logfile,xlogfile}
 
 %.exe:
 	$(CC) $(LDFLAGS) -o $@ $(EXE_OBJECTS)
