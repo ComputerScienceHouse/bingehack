@@ -5,8 +5,7 @@ INSTALL ?= install
 MV ?= mv
 TOUCH ?= touch
 
-#PREFIX ?= /usr/local
-PREFIX ?= $(PWD)/install
+PREFIX ?= /usr/local
 GAMEDIR ?= $(PREFIX)/nethack
 
 -include config.mk
@@ -19,9 +18,6 @@ SRCDIR := $(TOPDIR)/src
 
 CPPFLAGS += -I$(INCDIR)
 CFLAGS += -fPIC -Wall
-
-#CFLAGS += -O3 -march=native -pipe
-#LDFLAGS += -Wl,-O1,--as-needed
 
 CLEAN_TARGETS = $(SUBDIRS:=/clean)
 DEPCLEAN_TARGETS = $(SUBDIRS:=/depclean)
