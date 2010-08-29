@@ -1,20 +1,20 @@
-To compile nethack, you must create the following files
+To compile nethack, you must create a include/config_local.h file
 
-config.mk: Local overrides for make variables.
 include/config_local.h: Local overrides for config.h and unixconfig.h directives.
+
+You can also create a config.mk to store your make defaults.
+config.mk: Local overrides for make variables.
 
 Example files follow:
 
 config.mk:
 PREFIX = $(PWD)/install
-GAMEUID = myuser
-GAMEGRP = myuser
 
-config_local.h
+config_local.h:
 #ifndef CONFIG_LOCAL
 #define CONFIG_LOCAL
 
-#define HACKDIR "./nh343"
+#define HACKDIR "/my/home/dir/nh343"
 #define WIZARD "myuser"
 #define VAR_PLAYGROUND HACKDIR "/var"
 #define DUMP_FN HACKDIR "%t.nh343.txt"
