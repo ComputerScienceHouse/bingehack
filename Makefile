@@ -4,13 +4,16 @@ LEX ?= flex
 INSTALL ?= install
 MV ?= mv
 TOUCH ?= touch
+CSCOPE ?= cscope
 
 PREFIX ?= /usr/local
 GAMEDIR ?= $(PREFIX)/nethack
 
 -include config.mk
 
-SUBDIRS = include util sys/share sys/unix win/tty src dat
+SUBDIRS := include util sys/share sys/unix win/tty src dat
+
+CSCOPE_FILES := cscope.out cscope.po.out cscope.in.out
 
 TOPDIR := $(PWD)
 INCDIR := $(TOPDIR)/include
@@ -23,12 +26,22 @@ CLEAN_TARGETS = $(SUBDIRS:=/clean)
 DEPCLEAN_TARGETS = $(SUBDIRS:=/depclean)
 ALL_TARGETS = $(SUBDIRS:=/all)
 
-.PHONY: all clean depclean install update
+.PHONY: all clean depclean install update cscope pristine cscope-clean
 .DEFAULT_GOAL: all
 
 all: $(ALL_TARGETS)
 clean: $(CLEAN_TARGETS)
 depclean: clean $(DEPCLEAN_TARGETS)
+pristine: depclean cscope-clean
+
+cscope-clean:
+	$(RM) $(CSCOPE_FILES)
+
+cscope: $(CSCOPE_FILES)
+
+# The pattern here is a hack to make a multi target rule.
+cscope.po.% cscope.in.% cscope.%:
+	$(CSCOPE) -R -b -q
 
 # Define default hooks so a subdir doesn't need to define them.
 $(CLEAN_TARGETS):
