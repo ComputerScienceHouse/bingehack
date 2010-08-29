@@ -13,11 +13,9 @@ INCDIR := $(TOPDIR)/include
 SRCDIR := $(TOPDIR)/src
 
 CPPFLAGS += -I$(INCDIR)
-#CFLAGS += -fPIC -Wall
-CFLAGS += -fPIC -pipe
+CFLAGS += -fPIC -Wall
 
 #CFLAGS += -O3 -march=native -pipe
-
 #LDFLAGS += -Wl,-O1,--as-needed
 
 CLEAN_TARGETS = $(SUBDIRS:=/clean)

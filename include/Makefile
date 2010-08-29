@@ -13,6 +13,3 @@ $(CURDIR)/pm.h: $(MAKEDEFS)
 
 $(CURDIR)/vis_tab.h: $(MAKEDEFS)
 	$(MAKEDEFS) -z
-
-$(CURDIR)/date.h: $(MAKEDEFS)
-	$(MAKEDEFS) -v
