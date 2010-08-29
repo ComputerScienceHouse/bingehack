@@ -8,7 +8,6 @@ sys/unix/clean:
 sys/unix/depclean:
 	$(RM) $(SYS_UNIX_DEPS)
 
-$(SYS_UNIX_OBJECTS): $(SYS_UNIX_SOURCES)
 $(SYS_UNIX_DEPS): $(INCLUDE_GENERATED_HEADERS)
 
 -include $(SYS_UNIX_DEPS)
