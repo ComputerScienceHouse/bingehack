@@ -27,7 +27,7 @@ CLEAN_TARGETS = $(SUBDIRS:=/clean)
 DEPCLEAN_TARGETS = $(SUBDIRS:=/depclean)
 ALL_TARGETS = $(SUBDIRS:=/all)
 
-.PHONY: all clean depclean install
+.PHONY: all clean depclean install update
 .DEFAULT_GOAL: all
 
 all: $(ALL_TARGETS)
