@@ -1,7 +1,7 @@
-data
-dungeon
+*.lev
 dungeon.pdf
-nhdat
+dungeon
+data
 options
 oracles
 quest.dat

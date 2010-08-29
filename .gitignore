@@ -1,7 +1,4 @@
-*~
-\.*\.swp
 *.o
-*.lev
-Makefile
-config.mk
-tags
+*.d
+*~
+.*.swp

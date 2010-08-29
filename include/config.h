@@ -184,13 +184,6 @@
 #endif
 
 /*
- *	Data librarian.  Defining DLB places most of the support files into
- *	a tar-like file, thus making a neater installation.  See *conf.h
- *	for detailed configuration.
- */
-//#define DLB		/* not supported on all platforms */
-
-/*
  *	Defining INSURANCE slows down level changes, but allows games that
  *	died due to program or system crashes to be resumed from the point
  *	of the last level change, after running a utility program.
