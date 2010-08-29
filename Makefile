@@ -74,7 +74,7 @@ install: all
 	$(CC) $(LDFLAGS) -o $@ $(EXE_OBJECTS)
 
 %.d: %.c
-	$(CC) -M $(CPPFLAGS) -MQ $(@:.d=.o) -o $*.d $<
+	$(CC) -MM $(CPPFLAGS) -MQ $(@:.d=.o) -MQ $@ -o $*.d $<
 
 %.o: %.c
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) -o $@ $<

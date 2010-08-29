@@ -10,7 +10,8 @@ src/depclean:
 
 $(CLEAN_DEPS) $(NAMING_DEPS): $(INCLUDE_GENERATED_HEADERS)
 
-$(CURDIR)/vis_tab.c: $(MAKEDEFS)
+# TODO: This is wrong. It is not a multi-output target.
+$(CURDIR)/vis_tab.c $(INCDIR)/vis_tab.h: $(MAKEDEFS)
 	$(MAKEDEFS) -z
 
 $(CURDIR)/monstr.c: $(MAKEDEFS)

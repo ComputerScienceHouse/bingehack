@@ -15,6 +15,7 @@ $(DAT_ORACLES_OBJECTS): $(DAT_ORACLES_SOURCES) $(MAKEDEFS)
 	$(MAKEDEFS) -h
 
 # TODO: date.h should be rebuilt if _any_ source or header files change
+# TODO: This is wrong. It is not a multi-output target.
 $(DAT_OPTIONS_OBJECTS) $(INCDIR)/date.h: $(MAKEDEFS)
 	$(MAKEDEFS) -v
 
@@ -30,7 +31,7 @@ $(DAT_DUNGEON_GENERATED): $(DAT_DUNGEON_SOURCES) $(MAKEDEFS)
 $(DAT_DUNGEON_OBJECTS): %: %.pdf $(DGN_COMP)
 	$(DGN_COMP) $<
 
-# This uses an ugly hack. I hate it, and it should die.
+# This uses touch which is an ugly hack. I hate it, and it should die.
 $(DAT_SPEC_OBJECTS) $(DAT_QUEST_LEVEL_OBJECTS): %.lev: %.des $(LEV_COMP)
 	$(LEV_COMP) $<
 	$(TOUCH) $@

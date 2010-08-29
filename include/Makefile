@@ -10,6 +10,3 @@ $(CURDIR)/onames.h: $(MAKEDEFS)
 
 $(CURDIR)/pm.h: $(MAKEDEFS)
 	$(MAKEDEFS) -p
-
-$(CURDIR)/vis_tab.h: $(MAKEDEFS)
-	$(MAKEDEFS) -z
