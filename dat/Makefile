@@ -1,12 +1,12 @@
 .PHONY: dat/all dat/clean dat/distclean
 
-dat/all: $(DAT_DATA_OBJECTS) $(DAT_ORACLES_OBJECTS) $(DAT_OPTIONS_OBJECTS) $(DAT_QUEST_OBJECTS) $(DAT_RUMORS_OBJECTS) $(DAT_DUNGEON_OBJECTS) $(DAT_SPEC_OBJECTS) $(DAT_QUEST_LEVEL_OBJECTS)
+dat/all: $(DAT_DATA_OBJECTS) $(DAT_ORACLES_OBJECTS) $(DAT_QUEST_OBJECTS) $(DAT_RUMORS_OBJECTS) $(DAT_DUNGEON_OBJECTS) $(DAT_SPEC_OBJECTS) $(DAT_QUEST_LEVEL_OBJECTS)
 
 dat/clean:
 	$(RM) $(DAT_DATA_OBJECTS) $(DAT_ORACLES_OBJECTS) $(DAT_QUEST_OBJECTS) $(DAT_RUMORS_OBJECTS) $(DAT_DUNGEON_OBJECTS) $(DAT_SPEC_OBJECTS) $(DAT_QUEST_LEVEL_OBJECTS) $(DAT_DUNGEON_GENERATED) $(CURDIR)/*.lev
 
-dat/distclean:
-	$(RM) $(DAT_OPTIONS_OBJECTS)
+dat/depclean:
+	$(RM) $(CURDIR)/options.txt
 
 $(DAT_DATA_OBJECTS): $(DAT_DATA_SOURCES) $(MAKEDEFS)
 	$(MAKEDEFS) -d
@@ -15,8 +15,8 @@ $(DAT_ORACLES_OBJECTS): $(DAT_ORACLES_SOURCES) $(MAKEDEFS)
 	$(MAKEDEFS) -h
 
 # TODO: date.h should be rebuilt if _any_ source or header files change
-# TODO: This is wrong. It is not a multi-output target.
-$(DAT_OPTIONS_OBJECTS) $(INCDIR)/date.h: $(MAKEDEFS)
+# This is an ugly hack so I can add a proper multi-output target.
+$(CURDIR)/options.% $(INCDIR)/date.%: $(MAKEDEFS)
 	$(MAKEDEFS) -v
 
 $(DAT_QUEST_OBJECTS): $(DAT_QUEST_SOURCES) $(MAKEDEFS)

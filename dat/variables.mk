@@ -4,8 +4,6 @@ DAT_DATA_OBJECTS := $(DAT_DATA_SOURCES:.base=)
 DAT_ORACLES_SOURCES := $(CURDIR)/oracles.txt
 DAT_ORACLES_OBJECTS := $(DAT_ORACLES_SOURCES:.txt=)
 
-DAT_OPTIONS_OBJECTS := $(CURDIR)/options
-
 DAT_QUEST_SOURCES := $(CURDIR)/quest.txt
 DAT_QUEST_OBJECTS := $(DAT_QUEST_SOURCES:.txt=.dat)
 
@@ -27,4 +25,4 @@ DAT_QUEST_LEVEL_OBJECTS := $(DAT_QUEST_LEVEL_SOURCES:.des=.lev)
 
 DAT_INSTALL_OBJECTS := help hh cmdhelp history opthelp wizhelp asmodeus.lev baalz.lev bigrm-?.lev castle-?.lev cthulhu.lev fakewiz?.lev juiblex.lev knox.lev lilith.lev lolth.lev mammon.lev medusa-?.lev minend-?.lev minefill.lev minetn-?.lev Potter.lev orcus.lev sammael.lev sanctum.lev soko?-?.lev tower?.lev valley.lev wizard?.lev astral.lev air.lev earth.lev fire.lev water.lev ???-goal.lev ???-fil?.lev ???-loca.lev ???-strt.lev license
 DAT_INSTALL_OBJECTS := $(DAT_INSTALL_OBJECTS:%=$(CURDIR)/%)
-DAT_INSTALL_OBJECTS += $(DAT_DATA_OBJECTS) $(DAT_ORACLES_OBJECTS) $(DAT_OPTIONS_OBJECTS) $(DAT_QUEST_OBJECTS) $(DAT_RUMORS_OBJECTS) $(DAT_DUNGEON_OBJECTS)
+DAT_INSTALL_OBJECTS += $(DAT_DATA_OBJECTS) $(DAT_ORACLES_OBJECTS) $(DAT_QUEST_OBJECTS) $(DAT_RUMORS_OBJECTS) $(DAT_DUNGEON_OBJECTS) $(CURDIR)/options.txt
