@@ -1795,10 +1795,10 @@ long* out_cnt;
 	struct obj **oarray;
 	int i, j;
 #endif
-	char ilet, ret;
+	char ilet, ret = 0;
 	char *invlet = flags.inv_order;
 	int n, classcount;
-	winid win;				/* windows being used */
+	winid win = 0;				/* windows being used */
 	static winid local_win = WIN_ERR;	/* window for partial menus */
 	anything any;
 	menu_item *selected;

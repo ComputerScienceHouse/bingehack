@@ -879,7 +879,7 @@ int enhance_skill(boolean want_dump)
     const char *prefix;
     menu_item *selected;
     anything any;
-    winid win;
+    winid win = 0;
     boolean speedy = FALSE;
 #ifdef DUMP_LOG
     char buf2[BUFSZ];
