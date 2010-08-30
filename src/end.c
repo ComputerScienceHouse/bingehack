@@ -709,7 +709,6 @@ int how;
 	boolean bones_ok, have_windows = iflags.window_inited;
 	struct obj *corpse = (struct obj *)0;
 	long umoney;
-	int i;
 
 	if (how == TRICKED) {
 	    if (killer) {
@@ -942,11 +941,11 @@ die:
 #if defined(DUMP_LOG) && defined(DUMPMSGS)
 		if (lastmsg >= 0) {
 		  dump ("", "Latest messages");
-		  for (i = lastmsg + 1; i < DUMPMSGS; i++) {
+		  for (int i = lastmsg + 1; i < DUMPMSGS; i++) {
 		    if (msgs[i] && strcmp(msgs[i], "") )
 		      dump ("  ", msgs[i]);
 		  } 
-		  for (i = 0; i <= lastmsg; i++) {
+		  for (int i = 0; i <= lastmsg; i++) {
 		    if (msgs[i] && strcmp(msgs[i], "") )
 		      dump ("  ", msgs[i]);
 		  } 
