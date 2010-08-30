@@ -394,8 +394,6 @@ bot2()
 	int hp, hpmax;
 	int cap = near_capacity();
 #if defined(STATUS_COLORS) && defined(TEXTCOLOR)
-	struct color_option color_option;
-	int save_botlx = flags.botlx;
 	long iweight;
 	long cweight;
 #endif
@@ -526,9 +524,6 @@ bot2()
 		add_colored_text(enc_stat[cap], newbot2);
 #else
 		Sprintf(nb = eos(nb), " %s", enc_stat[cap]);
-#endif
-#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
-	flags.botlx = save_botlx;
 #endif
 #ifdef DUMP_LOG
 }
