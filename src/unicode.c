@@ -74,7 +74,7 @@ wchar_t uni_equiv(int ch)
 char sym_glyph(char ch)
 {
 #ifdef UNICODE
-	if(iflags.eight_bit_tty || iflags.IBMgraphics)
+	if(iflags.wc_eight_bit_input || iflags.IBMgraphics)
 		return uni_equiv(ch);
 	else
 		return ch;

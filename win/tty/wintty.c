@@ -22,6 +22,7 @@
 
 #if defined(UNICODE)
 #include <wchar.h>
+#include <locale.h>
 #include "unicode.h"
 #endif
 
@@ -2661,6 +2662,9 @@ tty_nh_poskey(x, y, mod)
 void
 win_tty_init()
 {
+# ifdef UNICODE
+	setlocale(LC_ALL, "");
+# endif
 # if defined(WIN32CON)
     nttty_open();
 # endif

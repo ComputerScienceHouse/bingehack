@@ -11,7 +11,7 @@ GAMEDIR ?= $(PREFIX)/nethack
 
 -include config.mk
 
-SUBDIRS := include util sys/share sys/unix win/tty src dat
+SUBDIRS := include util sys/share sys/unix win/tty win/curses src dat
 
 CSCOPE_FILES := cscope.out cscope.po.out cscope.in.out
 
