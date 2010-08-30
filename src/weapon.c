@@ -951,75 +951,76 @@ int enhance_skill(boolean want_dump)
 		 i <= skill_ranges[pass].last; i++) {
 		/* Print headings for skill types */
 		any.a_void = 0;
-		if (i == skill_ranges[pass].first)
+		if (i == skill_ranges[pass].first) {
 #ifdef DUMP_LOG
-		if (want_dump) {
-		    dump("  ",(char *)skill_ranges[pass].name);
-		    logged=FALSE;
-		} else
+			if (want_dump) {
+				dump("  ",(char *)skill_ranges[pass].name);
+				logged=FALSE;
+			} else
 #endif
-		    add_menu(win, NO_GLYPH, &any, 0, 0, iflags.menu_headings,
-			     skill_ranges[pass].name, MENU_UNSELECTED);
+				add_menu(win, NO_GLYPH, &any, 0, 0, iflags.menu_headings,
+					skill_ranges[pass].name, MENU_UNSELECTED);
 #ifdef DUMP_LOG
-		if (want_dump) {
-		    if (P_SKILL(i) > P_UNSKILLED) {
-		 	Sprintf(buf2,"%-*s [%s]",
-			    longest, P_NAME(i),skill_level_name(i, buf));
-			dump("    ",buf2);
-			logged=TRUE;
-		    } else if (i == skill_ranges[pass].last && !logged) {
-			dump("    ","(none)");
-		    }
-               } else {
+			if (want_dump) {
+				if (P_SKILL(i) > P_UNSKILLED) {
+					Sprintf(buf2,"%-*s [%s]",
+					longest, P_NAME(i),skill_level_name(i, buf));
+					dump("    ",buf2);
+					logged=TRUE;
+				} else if (i == skill_ranges[pass].last && !logged) {
+					dump("    ","(none)");
+				}
+			} else {
 #endif
 
-		if (P_RESTRICTED(i)) continue;
-		/*
-		 * Sigh, this assumes a monospaced font unless
-		 * iflags.menu_tab_sep is set in which case it puts
-		 * tabs between columns.
-		 * The 12 is the longest skill level name.
-		 * The "    " is room for a selection letter and dash, "a - ".
-		 */
-		if (can_advance(i, speedy))
-		    prefix = "";	/* will be preceded by menu choice */
-		else if (could_advance(i))
-		    prefix = "  * ";
-		else if (peaked_skill(i))
-		    prefix = "  # ";
-		else
-		    prefix = (to_advance + eventually_advance +
-				maxxed_cnt > 0) ? "    " : "";
-		(void) skill_level_name(i, sklnambuf);
+			if (P_RESTRICTED(i)) continue;
+			/*
+			 * Sigh, this assumes a monospaced font unless
+			 * iflags.menu_tab_sep is set in which case it puts
+			 * tabs between columns.
+			 * The 12 is the longest skill level name.
+			 * The "    " is room for a selection letter and dash, "a - ".
+			 */
+			if (can_advance(i, speedy))
+				prefix = "";	/* will be preceded by menu choice */
+			else if (could_advance(i))
+				prefix = "  * ";
+			else if (peaked_skill(i))
+				prefix = "  # ";
+			else
+				prefix = (to_advance + eventually_advance +
+					maxxed_cnt > 0) ? "    " : "";
+			(void) skill_level_name(i, sklnambuf);
 #ifdef WIZARD
-		if (wizard) {
-		    if (!iflags.menu_tab_sep)
-			Sprintf(buf, " %s%-*s %-12s %5d(%4d)",
-			    prefix, longest, P_NAME(i), sklnambuf,
-			    P_ADVANCE(i),
-			    practice_needed_to_advance(P_SKILL(i)));
-		    else
-			Sprintf(buf, " %s%s\t%s\t%5d(%4d)",
-			    prefix, P_NAME(i), sklnambuf,
-			    P_ADVANCE(i),
-			    practice_needed_to_advance(P_SKILL(i)));
-		 } else
+			if (wizard) {
+				if (!iflags.menu_tab_sep)
+				Sprintf(buf, " %s%-*s %-12s %5d(%4d)",
+					prefix, longest, P_NAME(i), sklnambuf,
+					P_ADVANCE(i),
+					practice_needed_to_advance(P_SKILL(i)));
+				else
+				Sprintf(buf, " %s%s\t%s\t%5d(%4d)",
+					prefix, P_NAME(i), sklnambuf,
+					P_ADVANCE(i),
+					practice_needed_to_advance(P_SKILL(i)));
+			 } else
 #endif
-		{
-		    if (!iflags.menu_tab_sep)
-			Sprintf(buf, " %s %-*s [%s]",
-			    prefix, longest, P_NAME(i), sklnambuf);
-		    else
-			Sprintf(buf, " %s%s\t[%s]",
-			    prefix, P_NAME(i), sklnambuf);
-		}
-		any.a_int = can_advance(i, speedy) ? i+1 : 0;
-		add_menu(win, NO_GLYPH, &any, 0, 0, ATR_NONE,
-			 buf, MENU_UNSELECTED);
+			{
+				if (!iflags.menu_tab_sep)
+					Sprintf(buf, " %s %-*s [%s]",
+						prefix, longest, P_NAME(i), sklnambuf);
+				else
+					Sprintf(buf, " %s%s\t[%s]",
+						prefix, P_NAME(i), sklnambuf);
+			}
+			any.a_int = can_advance(i, speedy) ? i+1 : 0;
+			add_menu(win, NO_GLYPH, &any, 0, 0, ATR_NONE,
+				 buf, MENU_UNSELECTED);
 #ifdef DUMP_LOG
-		} /* !want_dump */
+			} /* !want_dump */
 #endif
-	    }
+		}
+		}
 
 	    Strcpy(buf, (to_advance > 0) ? "Pick a skill to advance:" :
 					   "Current skills:");

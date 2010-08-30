@@ -1,3 +1,6 @@
+%option nounput
+%option noinput
+
 %{
 /*	SCCS Id: @(#)lev_lex.c	3.4	2002/03/27	*/
 /*	Copyright (c) 1989 by Jean-Christophe Collet */

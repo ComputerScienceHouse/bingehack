@@ -3036,7 +3036,6 @@ doapply()
 			break;
 		}
 		pline("Sorry, I don't know how to use that.");
-	xit:
 		nomul(0, 0);
 		return 0;
 	}

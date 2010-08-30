@@ -558,13 +558,14 @@ testchat()
 		chat_addr.sin_family = AF_INET;
     		chat_addr.sin_port = htons(chat_port);
 		chat_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-		if(sendto(chat_socket, str, strlen(str), 0, &chat_addr, sizeof(chat_addr)) < 0){ /* error: couldn't transmit */
+		if(sendto(chat_socket, str, strlen(str), 0, (const struct sockaddr *) &chat_addr, sizeof(chat_addr)) < 0){ /* error: couldn't transmit */
 			pline("You call out, but you have a nagging feeling nobody can hear you...");
 		}
 		else{	
 			pline("Message sent.");
 		}
 	}
+	return 0;
 }
 #ifdef WIZARD
 
@@ -1215,14 +1216,6 @@ int final;
 	int ltmp;
 	char buf[BUFSZ];
 	char buf2[BUFSZ];
-	const char *enc_stat[] = { /* copied from botl.c */
-	     "",
-	     "burdened",
-	     "stressed",
-	     "strained",
-	     "overtaxed",
-	     "overloaded"
-	};
 	char *youwere = "  You were ";
 	char *youhave = "  You have ";
 	char *youhad  = "  You had ";
@@ -2080,11 +2073,13 @@ char *desc;
                 case 1:
                         return key;
                 case 3:
-                        if(desc[1]=='-')
-                                if(desc[0]=='M')
-                                        return M(key);
-                                else if(desc[0]=='C')
-                                        return C(key);
+                        if(desc[1]=='-') {
+                                if(desc[0]=='M') {
+                                    return M(key);
+								} else if(desc[0]=='C') {
+                                	return C(key);
+								}
+						}
                         /*fall through*/
                 default:
                         return 0;

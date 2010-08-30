@@ -8,6 +8,10 @@
  * h+ 930227
  */
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 #include "hack.h"
 #include "dlb.h"
 #ifdef SHORT_FILENAMES
@@ -16,8 +20,9 @@
 #include "patchlevel.h"
 #endif
 
-# if defined(UNICODE)
+#if defined(UNICODE)
 #include <wchar.h>
+#include "unicode.h"
 #endif
 
 #ifdef TTY_GRAPHICS

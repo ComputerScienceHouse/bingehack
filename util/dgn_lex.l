@@ -1,3 +1,6 @@
+%option nounput
+%option noinput
+
 %{
 /*	SCCS Id: @(#)dgn_lex.c	3.4	2002/03/27	*/
 /*	Copyright (c) 1989 by Jean-Christophe Collet */
@@ -20,41 +23,8 @@ int NDECL(yylook);
 int NDECL(yyinput);
 int NDECL(yywrap);
 int NDECL(yylex);
-	/* Traditional lexes let yyunput() and yyoutput() default to int;
-	 * newer ones may declare them as void since they don't return
-	 * values.  For even more fun, the lex supplied as part of the
-	 * newer unbundled compiler for SunOS 4.x adds the void declarations
-	 * (under __STDC__ or _cplusplus ifdefs -- otherwise they remain
-	 * int) while the bundled lex and the one with the older unbundled
-	 * compiler do not.  To detect this, we need help from outside --
-	 * sys/unix/Makefile.utl.
-	 *
-	 * Digital UNIX is difficult and still has int in spite of all
-	 * other signs.
-	 */
-# if defined(NeXT) || defined(SVR4) || defined(_AIX32)
-#  define VOIDYYPUT
-# endif
-# if !defined(VOIDYYPUT) && defined(POSIX_TYPES)
-#  if !defined(BOS) && !defined(HISX) && !defined(_M_UNIX) && !defined(VMS)
-#   define VOIDYYPUT
-#  endif
-# endif
-# if !defined(VOIDYYPUT) && defined(WEIRD_LEX)
-#  if defined(SUNOS4) && defined(__STDC__) && (WEIRD_LEX > 1)
-#   define VOIDYYPUT
-#  endif
-# endif
-# if defined(VOIDYYPUT) && defined(__osf__)
-#  undef VOIDYYPUT
-# endif
-# ifdef VOIDYYPUT
 void FDECL(yyunput, (int));
 void FDECL(yyoutput, (int));
-# else
-int FDECL(yyunput, (int));
-int FDECL(yyoutput, (int));
-# endif
 #endif	/* !FLEX_SCANNER && !FLEXHACK_SCANNER */
 
 #ifdef FLEX_SCANNER

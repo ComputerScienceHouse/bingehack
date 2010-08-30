@@ -5,6 +5,8 @@
 #ifndef COLOR_H
 #define COLOR_H
 
+#include "global.h"
+
 #ifdef MENU_COLOR
 # ifdef MENU_COLOR_REGEX
 #  include <regex.h>
@@ -84,10 +86,12 @@ struct percent_color_option {
 };
 
 struct text_color_option {
-	const char *text;
+	char *text;
 	struct color_option color_option;
 	const struct text_color_option *next;
 };
+
+boolean parse_status_color_options(char *start);
 #endif
 
 #endif /* COLOR_H */
