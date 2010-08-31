@@ -5,8 +5,6 @@
 #ifndef UNICODE_H
 #define UNICODE_H
 
-#include <wchar.h>
-
 int putwidechar(int c);
 
 wchar_t uni_equiv(int ch);

@@ -1,3 +1,5 @@
+#include <wchar.h>
+
 #include "hack.h"
 #include "unicode.h"
 #include "wintty.h"
