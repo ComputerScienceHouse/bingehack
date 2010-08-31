@@ -37,10 +37,7 @@ pristine: depclean cscope-clean
 cscope-clean:
 	$(RM) $(CSCOPE_FILES)
 
-cscope: $(CSCOPE_FILES)
-
-# The pattern here is a hack to make a multi target rule.
-cscope.po.% cscope.in.% cscope.%:
+cscope:
 	$(CSCOPE) -R -b -q
 
 # Define default hooks so a subdir doesn't need to define them.
