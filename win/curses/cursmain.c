@@ -12,7 +12,7 @@ struct window_procs curses_procs = {
     WC_ALIGN_MESSAGE|WC_ALIGN_STATUS|WC_COLOR|WC_HILITE_PET|
     WC_POPUP_DIALOG|WC_SPLASH_SCREEN,
     WC2_TERM_COLS|WC2_TERM_ROWS|WC2_WINDOWBORDERS|WC2_PETATTR|
-     WC2_GUICOLOR,
+     WC2_GUICOLOR|WC2_DARKGRAY,
     curses_init_nhwindows,
     curses_player_selection,
     curses_askname,

@@ -1,7 +1,12 @@
-#include "curses.h"
+#include <wchar.h>
+#define _XOPEN_SOURCE_EXTENDED
+#include <ncursesw/curses.h>
+
+//#include "curses.h"
 #include "hack.h"
 #include "wincurs.h"
 #include "curswins.h"
+#include "unicode.h"
 
 /* Window handling for curses interface */
 
@@ -554,7 +559,6 @@ static boolean is_main_window(winid wid)
     }
 }
 
-
 /* Unconditionally write a single character to a window at the given
 coordinates without a refresh.  Currently only used for the map. */
 
@@ -562,9 +566,21 @@ static void write_char(WINDOW *win, int x, int y, nethack_char nch)
 {
     curses_toggle_color_attr(win, nch.color, nch.attr, ON);
 #ifdef PDCURSES
-    mvwaddrawch(win, y, x, nch.ch);
+    mvwaddrawch(win, y, x, ch);
+#else
+#ifdef UNICODE
+	if(iflags.wc_eight_bit_input || iflags.IBMgraphics) {
+		wchar_t wch = uni_equiv(nch.ch);
+		cchar_t cchar;
+//		setcchar(&cchar, &wch, nch.attr, nch.color, NULL);
+		setcchar(&cchar, &wch, WA_NORMAL, 0, NULL);
+		mvwadd_wch(win, y, x, &cchar);
+	} else {
+		mvwaddch(win, y, x, nch.ch);
+	}
 #else
     mvwaddch(win, y, x, nch.ch);
+#endif
 #endif
     curses_toggle_color_attr(win, nch.color, nch.attr, OFF);
 }

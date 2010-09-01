@@ -100,7 +100,7 @@ void curses_toggle_color_attr(WINDOW *win, int color, int attr, int onoff)
     if (color == 0) /* make black fg visible */
     {
 #ifdef USE_DARKGRAY
-        if (can_change_color() && (COLORS > 16))
+        if (iflags.wc2_darkgray && can_change_color() && (COLORS > 16))
         {
             color = CURSES_DARK_GRAY - 1;
         }
