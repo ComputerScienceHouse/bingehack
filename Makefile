@@ -20,7 +20,7 @@ INCDIR := $(TOPDIR)/include
 SRCDIR := $(TOPDIR)/src
 
 CPPFLAGS += -I$(INCDIR) -D_POSIX_C_SOURCE
-CFLAGS += -fPIC -Werror -Wall -std=c99
+CFLAGS += -fPIC -Werror -Wall -Wno-format-security -std=c99
 
 CLEAN_TARGETS = $(SUBDIRS:=/clean)
 DEPCLEAN_TARGETS = $(SUBDIRS:=/depclean)
