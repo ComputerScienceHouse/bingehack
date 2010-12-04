@@ -470,26 +470,6 @@ E  char *sprintf();
 # undef SPRINTF_PROTO
 #endif
 
-#ifndef __SASC_60
-#ifdef NEED_VARARGS
-# if defined(USE_STDARG) || defined(USE_VARARGS)
-#  if !defined(SVR4) && !defined(apollo)
-#   if !(defined(ULTRIX_PROTO) && defined(__GNUC__))
-#    if !(defined(SUNOS4) && defined(__STDC__)) /* Solaris unbundled cc (acc) */
-E int FDECL(vsprintf, (char *, const char *, va_list));
-E int FDECL(vfprintf, (FILE *, const char *, va_list));
-E int FDECL(vprintf, (const char *, va_list));
-#    endif
-#   endif
-#  endif
-# else
-#  define vprintf	printf
-#  define vfprintf	fprintf
-#  define vsprintf	sprintf
-# endif
-#endif /* NEED_VARARGS */
-#endif
-
 
 #ifdef MICRO
 E int FDECL(tgetent, (const char *,const char *));

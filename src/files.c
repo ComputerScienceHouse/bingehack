@@ -2,6 +2,9 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #include "hack.h"
 #include "dlb.h"
 #include "color.h"
