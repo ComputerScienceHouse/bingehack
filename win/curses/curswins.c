@@ -1,5 +1,7 @@
 #include <wchar.h>
+#ifndef _XOPEN_SOURCE_EXTENDED
 #define _XOPEN_SOURCE_EXTENDED
+#endif
 #include <ncursesw/curses.h>
 
 //#include "curses.h"
