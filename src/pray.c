@@ -1805,7 +1805,9 @@ const char * const hallu_gods[] = {
 	"Dion Nicolaas",
 	"marvin",
 	"Dudley",
-	"the RNG"
+	"the RNG",
+
+	"Maud"
 
 };
 #endif
