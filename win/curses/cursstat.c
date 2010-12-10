@@ -62,6 +62,8 @@ static nhstat prevpow;
 static nhstat prevmpow;
 static nhstat prevac;
 static nhstat prevexp;
+static nhstat prevwt;
+static nhstat prevmwt;
 static nhstat prevtime;
 #ifdef SCORE_ON_BOTL
 static nhstat prevscore;
@@ -963,6 +965,65 @@ void curses_update_stats(boolean redraw)
     {
         sx = sx_start;
         sy++;
+    }
+
+    /* Weight */
+    if (prevwt.display != flags.showweight)   /* Setting has changed */
+    {
+        prevwt.display = flags.showweight;
+    }
+    if (prevwt.display)
+    {
+		long mwt = weight_cap();
+	    long iwt = inv_weight() + mwt;
+	    sprintf(buf, "%ld", iwt);
+		free(prevwt.txt);
+		prevwt.txt = curses_copy_of(buf);
+
+		if (prevwt.label != NULL)
+		{
+			mvwaddstr(win, sy, sx, prevwt.label);
+			sx += strlen(prevwt.label);
+		}
+
+		color_stat(prevwt, ON);
+		mvwaddstr(win, sy, sx, prevwt.txt);
+		color_stat(prevwt, OFF);
+
+		sx += strlen(prevwt.txt);
+    }
+    
+    /* Max Weight */
+    if (prevmwt.display != flags.showweight)   /* Setting has changed */
+    {
+        prevmwt.display = flags.showweight;
+    }
+    if (prevmwt.display)
+    {
+		long mwt = weight_cap();
+	    sprintf(buf, "%ld", mwt);
+		free(prevmwt.txt);
+		prevmwt.txt = curses_copy_of(buf);
+
+		if (prevmwt.label != NULL)
+		{
+			mvwaddstr(win, sy, sx, prevmwt.label);
+			sx += strlen(prevmwt.label);
+		}
+
+		color_stat(prevmwt, ON);
+		mvwaddstr(win, sy, sx, prevmwt.txt);
+		color_stat(prevmwt, OFF);
+
+        if (horiz)
+        {
+            sx += strlen(prevmwt.txt) + 1;
+        }
+        else
+        {
+            sx = sx_start;
+            sy++;
+        }
     }
 
     /* Time */
@@ -1945,6 +2006,28 @@ static void init_stats()
     prevexp.id = "xp";
     set_stat_color(&prevexp);
 #endif
+    
+	/* Weight */
+	long mwt = weight_cap();
+	long iwt = inv_weight() + weight_cap();
+	prevwt.value = iwt;
+	sprintf(buf, "%ld", iwt);
+	prevwt.txt = curses_copy_of(buf);
+	prevwt.display = flags.showweight;
+	prevwt.highlight_turns = 0;
+	prevwt.label = NULL;
+	prevwt.id = "wt";
+	set_stat_color(&prevwt);
+	
+	/* Max Weight */
+	prevmwt.value = mwt;
+	sprintf(buf, "%ld", mwt);
+	prevmwt.txt = curses_copy_of(buf);
+	prevmwt.display = flags.showweight;
+	prevmwt.highlight_turns = 0;
+    prevmwt.label = curses_copy_of("/");
+	prevmwt.id = "mwt";
+	set_stat_color(&prevmwt);
 
     /* Level */
     prevlevel.label = NULL;
@@ -2254,6 +2337,28 @@ static void set_labels(int label_width)
                 }
             }
             
+            /* Weight */
+			if (prevwt.label)
+			{
+				free(prevwt.label);
+				prevwt.label = NULL;
+			}
+			if (flags.showweight)
+			{
+				prevwt.label = curses_copy_of("Wt:");
+			}
+
+			/* Max Weight */
+			if (prevmwt.label)
+			{
+				free(prevmwt.label);
+				prevmwt.label = NULL;
+			}
+			if (flags.showweight)
+			{
+				prevmwt.label = curses_copy_of("/");
+			}
+            
             /* Time */
             if (prevtime.label)
             {
@@ -2388,6 +2493,28 @@ static void set_labels(int label_width)
                 }
             }
             
+            /* Weight */
+			if (prevwt.label)
+			{
+				free(prevwt.label);
+				prevwt.label = NULL;
+			}
+			if (flags.showweight)
+			{
+				prevwt.label = curses_copy_of("Wt:");
+			}
+			
+            /* Max Weight */
+			if (prevmwt.label)
+			{
+				free(prevmwt.label);
+				prevmwt.label = NULL;
+			}
+			if (flags.showweight)
+			{
+				prevmwt.label = curses_copy_of("/");
+			}
+            
             /* Time */
             if (prevtime.label)
             {
@@ -2499,6 +2626,28 @@ static void set_labels(int label_width)
             }
             prevexp.label = curses_copy_of("Experience:    ");
 #endif            
+
+            /* Weight */
+			if (prevwt.label)
+			{
+				free(prevwt.label);
+				prevwt.label = NULL;
+			}
+			if (flags.showweight)
+			{
+				prevwt.label = curses_copy_of("Weight:        ");
+			}
+			
+            /* Max Weight */
+			if (prevmwt.label)
+			{
+				free(prevmwt.label);
+				prevmwt.label = NULL;
+			}
+			if (flags.showweight)
+			{
+				prevmwt.label = curses_copy_of("/");
+			}
 
             /* Level */            
             if (prevlevel.label)
