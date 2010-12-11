@@ -1230,7 +1230,7 @@ static const char *csh_epitaphs[] = {
 	"Here lies Tom Philbrick - A last name that only RIT could love",
 	"Here lies Tomp - On his grave, do not stomp.",
 	"Here lies Tomp - He knows perl, and your variables he will chomp()."
-}
+};
 
 /* Epitaphs for random headstones */
 static const char *epitaphs[] = {
