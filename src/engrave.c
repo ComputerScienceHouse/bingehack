@@ -1224,6 +1224,13 @@ struct engr *ep;
 	ep->engr_y = ty;
 }
 
+/* CSH custom epitaphs */
+static const char *csh_epitaphs[] = {
+	"Here lies Tom Philbrick - Expert-level Conga Line Dancer",
+	"Here lies Tom Philbrick - A last name that only RIT could love",
+	"Here lies Tomp - On his grave, do not stomp.",
+	"Here lies Tomp - He knows perl, and your variables he will chomp()."
+}
 
 /* Epitaphs for random headstones */
 static const char *epitaphs[] = {
@@ -1635,7 +1642,14 @@ const char *str;
 	levl[x][y].typ = GRAVE;
 
 	/* Engrave the headstone */
-	if (!str) str = epitaphs[rn2(SIZE(epitaphs))];
+	if (!str){
+		if(rn2(6)){ /* 1/6 chance of choosing a CSH headstone. */
+			str = csh_epitaphs[rn2(SIZE(csh_epitaphs))];
+		}
+		else{
+			str = epitaphs[rn2(SIZE(epitaphs))];
+		}
+	}
 	del_engr_at(x, y);
 	make_engr_at(x, y, str, 0L, HEADSTONE);
 	return;
