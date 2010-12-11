@@ -373,10 +373,10 @@ void curses_create_main_windows()
         map_width = term_cols - (message_width + (border_space * 2));
         status_x = 0;
         status_y = map_y + (map_height + border_space);
-        status_width = map_width;
+        status_width = map_width + message_width + border_space;
         message_x = map_x + (map_width + border_space);
         message_y = 0;
-        message_height = (term_rows - border_space);
+        message_height = map_height;
     }
     else if ((status_orientation == ALIGN_BOTTOM) &&
      (message_orientation == ALIGN_BOTTOM))
