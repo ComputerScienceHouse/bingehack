@@ -27,6 +27,7 @@ typedef struct nhs
 extern const struct text_color_option *text_colors;
 extern const struct percent_color_option *hp_colors;
 extern const struct percent_color_option *pw_colors;
+extern const struct percent_color_option *wt_colors;
 
 extern struct color_option text_color_of(const char *text,
  const struct text_color_option *color_options);
@@ -2759,6 +2760,13 @@ static void color_stat(nhstat stat, int onoff)
     {
         stat_color = percentage_color_of(u.uen, u.uenmax, pw_colors);
     }
+    
+	if (strcmp(stat.id, "wt") == 0)
+	{
+		long mwt = weight_cap();
+	    long iwt = inv_weight() + mwt;
+		stat_color = percentage_color_of(iwt, mwt, wt_colors);
+	}
         
     if (strcmp(stat.id, "hunger") == 0)
     {
