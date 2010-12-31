@@ -25,7 +25,7 @@ CPPFLAGS += -I$(INCDIR) -D_GNU_SOURCE
 CFLAGS += -fPIC -Werror -Wall -Wno-format-security -std=c99
 
 CPPFLAGS += $(shell $(NCURSESW_CONFIG) --cflags)
-LDFLAGS += $(shell $(NCURSESW_CONFIG) --libs)
+LIBRARIES += $(shell $(NCURSESW_CONFIG) --libs)
 
 CLEAN_TARGETS = $(SUBDIRS:=/clean)
 DEPCLEAN_TARGETS = $(SUBDIRS:=/depclean)
