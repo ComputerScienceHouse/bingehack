@@ -1,4 +1,4 @@
-CC = gcc
+CC := gcc
 YACC := bison
 LEX := flex
 INSTALL ?= install
