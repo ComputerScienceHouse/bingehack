@@ -2,6 +2,8 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdint.h>
+
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -2382,8 +2384,8 @@ const char *reason;	/* explanation */
 		program_state.in_paniclog = 1;
 		lfile = fopen_datafile(PANICLOG, "a", TROUBLEPREFIX);
 		if (lfile) {
-		    (void) fprintf(lfile, "%ld %s: %s %s\n",
-				   u.ubirthday, (plname != NULL ? plname : "(none)"),
+		    (void) fprintf(lfile, "%jd %s: %s %s\n",
+				   (intmax_t) u.ubirthday, (plname != NULL ? plname : "(none)"),
 				   type, reason);
 		    (void) fclose(lfile);
 		}

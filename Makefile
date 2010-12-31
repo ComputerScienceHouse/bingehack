@@ -1,10 +1,12 @@
 CC = gcc
-YACC ?= yacc
-LEX ?= flex
+YACC := bison
+LEX := flex
 INSTALL ?= install
 MV ?= mv
 TOUCH ?= touch
 CSCOPE ?= cscope
+
+NCURSESW_CONFIG ?= ncursesw5-config
 
 PREFIX ?= /usr/local
 GAMEDIR ?= $(PREFIX)/nethack
@@ -21,6 +23,9 @@ SRCDIR := $(TOPDIR)/src
 
 CPPFLAGS += -I$(INCDIR) -D_GNU_SOURCE
 CFLAGS += -fPIC -Werror -Wall -Wno-format-security -std=c99
+
+CPPFLAGS += $(shell $(NCURSESW_CONFIG) --cflags)
+LDFLAGS += $(shell $(NCURSESW_CONFIG) --libs)
 
 CLEAN_TARGETS = $(SUBDIRS:=/clean)
 DEPCLEAN_TARGETS = $(SUBDIRS:=/depclean)

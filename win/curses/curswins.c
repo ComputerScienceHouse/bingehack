@@ -2,7 +2,7 @@
 #ifndef _XOPEN_SOURCE_EXTENDED
 #define _XOPEN_SOURCE_EXTENDED
 #endif
-#include <ncursesw/curses.h>
+#include <ncurses.h>
 
 //#include "curses.h"
 #include "hack.h"

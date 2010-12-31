@@ -1,4 +1,4 @@
-#include "curses.h"
+#include <ncurses.h>
 #include "hack.h"
 #include "patchlevel.h"
 #include "color.h"

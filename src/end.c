@@ -4,6 +4,8 @@
 
 #define NEED_VARARGS	/* comment line for pre-compiled headers */
 
+#include <stdint.h>
+
 #include "hack.h"
 #include "eshk.h"
 #ifndef NO_SIGNAL
@@ -133,7 +135,7 @@ dump_init ()
       if (ispercent) {
 	switch (*f) {
 	case 't':
-	  snprintf (p, end + 1 - p, "%ld", u.ubirthday);
+	  snprintf (p, end + 1 - p, "%jd", (intmax_t) u.ubirthday);
 	  while (*p != '\0')
 	    p++;
 	  break;

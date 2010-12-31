@@ -20,3 +20,13 @@ config_local.h:
 #define DUMP_FN HACKDIR "%t.nh343.txt"
 
 #endif
+
+--
+
+Compilation requires at least the following:
+
+GNU flex
+GNU bison
+GNU coreutils
+GNU make
+ncurses (with wide character support)
