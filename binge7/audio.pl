@@ -6,7 +6,6 @@ my $tts = "festival --pipe";
 my $board = "./rx";
 my %players = ();
 
-my %race_adjectivizer = (elf => "elvish", barbarian => "barbarian");
 open(my $BOARD, "$board |") or die "Couldn't open board executable.\n";
 
 while (<$BOARD>){
@@ -32,7 +31,7 @@ else{
 	my %player_stats = %{player_hasher(@player_import)};
 	$players{ $name } = \%player_stats;
 	my $long_class = class_expander($class);
-	play_text("$name the $race $long_class has entered $msg!\n");
+	play_text("$name the $long_class has entered $msg!\n");
 }
 
 
@@ -43,22 +42,16 @@ sub say_if_important{
 	my %new_player_stats = %{$ptr};
 	my $name = $new_player_stats{ 'name' };
 	my %old_player_stats = %{$players{ $name }};
-	my $old_race = $old_player_stats{'race'};
-	my $new_race = $new_player_stats{'race'};
 	my $old_gender = $old_player_stats{'gender'};
 	my $new_gender = $new_player_stats{'gender'};
 
-	unless( $old_race eq $new_race ){
-		my $a_or_an = starts_with_vowel($new_race)? "an": "a";
-		play_text("$name the $old_race has changed into $a_or_an $new_race.\n");
-	}
 	unless($old_gender eq $new_gender ){
 		play_text("$name decided to bat for the other team. ${gender_pronoun($old_gender)} is now a ${gender_pronoun($new_gender)}.\n");
 	}
 	unless($old_player_stats{ 'num_prayers' } eq $new_player_stats{ 'num_prayers' } ){
 		play_text("$name got down on ${gender_possessive($new_gender)} knees and prayed to ${gender_possessive($new_gender)} god.\n");
 	}
-	unless($old_player_stats{ 'num_wish' } eq $new_player_stats{ 'num_wish' }){
+	unless($old_player_stats{ 'num_wishes' } eq $new_player_stats{ 'num_wishes' }){
 		play_text("$name pretends that airplanes in the night sky are like shooting stars. ${gender_pronoun($new_gender)} made a wish!\n");
 	}
 }
@@ -131,6 +124,8 @@ sub class_expander{
 	}
 	return "UNKNOWN CLASS";
 }
+
+
 sub starts_with_vowel{
 	my $str = shift;
 	if($str =~ m/^{aeiou}/){
@@ -166,5 +161,3 @@ sub play_text{
 	print "Saying: $text";
 	`echo "$text" | festival --tts`;
 }
-
-
