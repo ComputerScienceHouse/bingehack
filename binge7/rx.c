@@ -231,7 +231,8 @@ main( int argc, char *argv[] )
       struct u_stat_t *stats = &player->stats;
 	// (MAGIC_NUMBER++)++
       snprintf(sline, 400,
-         "%c/%c/%c/%3.3s %3d %3d %2d %3d %3d %2d %2d %5ld %2d %s\n",
+         "%s,%c,%c,%c,%s,%d,%d,%d,%d,%d,%d,%d,%ld,%d,%s\n",
+	 stats->plname,
          stats->race, stats->gender, alignments[stats->align + 1],
          stats->class, stats->hp, stats->hpmax, stats->ulevel,
          stats->ac, stats->prayers, stats->wishes, stats->deaths,
