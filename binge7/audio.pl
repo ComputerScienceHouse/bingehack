@@ -2,16 +2,18 @@
 use strict;
 use warnings;
 
-my $tts = "festival -tts";
+my $tts = "festival --pipe";
 my $board = "./rx";
 my %players = ();
 
 my %race_adjectivizer = (elf => "elvish", barbarian => "barbarian");
 open(my $BOARD, "$board |") or die "Couldn't open board executable.\n";
 
-foreach my $line (<$BOARD>){
+while (<$BOARD>){
 #chomp $line;
-print $line;
+my $line = $_;
+print "Got: $line";
+print "\n";
 
 my @player_import = split(",", $line);
 my ($name, $race, $gender, $alignment, $class, $hp, $hpmax, $ulevel, $ac, $num_prayers, $num_wishes, $num_deaths, $num_moves, $dlevel, $msg) = @player_import;
@@ -27,9 +29,10 @@ if(exists($players{ $name } )){
 	$players{ $name } = player_hasher(@player_import);
 }
 else{
-	my %player_stats = player_hasher(@player_import);
+	my %player_stats = %{player_hasher(@player_import)};
 	$players{ $name } = \%player_stats;
-	play_text("$name the $race_adjectivizer{$race} $class has entered $msg!\n");
+	my $long_class = class_expander($class);
+	play_text("$name the $race $long_class has entered $msg!\n");
 }
 
 
@@ -73,8 +76,61 @@ sub gender_possessive{
 	return gender_pronoun(shift)? "his" : "her";
 }
 
-
-
+sub class_expander{
+	my $class = shift;
+	$class =~ tr/[A-Z]/[a-z]/;
+	my $gender = shift;
+	if($class eq "arc"){
+		return "archeologist";
+	}
+	if($class eq "bar"){
+		return "barbarian";
+	}
+	if($class eq "cav"){
+		if($gender eq "m"){
+			return "caveman";
+		}
+		if($gender eq "f"){
+			return "cavewoman";
+		}
+	}
+	if($class eq "hea"){
+		return "healer";
+	}
+	if($class eq "kni"){
+		return "knight";
+	}
+	if($class eq "mon"){
+		return "monk";
+	}
+	if($class eq "pri"){
+		if($gender eq "m"){
+			return "priest";
+		}
+		if($gender eq "f"){
+			return "priestess";
+		}
+	}
+	if($class eq "ran"){
+		return "ranger";
+	}
+	if($class eq "rog"){
+		return "rogue";
+	}
+	if($class eq "sam"){
+		return "samurai";
+	}
+	if($class eq "tou"){
+		return "tourist";
+	}
+	if($class eq "val"){
+		return "valkyrie";
+	}
+	if($class eq "wiz"){
+		return "wizard";
+	}
+	return "UNKNOWN CLASS";
+}
 sub starts_with_vowel{
 	my $str = shift;
 	if($str =~ m/^{aeiou}/){
@@ -107,9 +163,8 @@ sub player_hasher{
 
 sub play_text{
 	my $text = shift;
-	open(my $TTS, '>', "| $tts") or die $!;
-	print TTS $text;
-	close(TTS);
+	print "Saying: $text";
+	`echo "$text" | festival --tts`;
 }
 
 

@@ -13,4 +13,4 @@ bd: bd.o list.o
 	$(CC) bd.o list.o -o bd
 
 clean:
-	rm -fr board.o list.o board bd.o bd
+	rm -fr board.o list.o board bd.o bd rx rx.o
