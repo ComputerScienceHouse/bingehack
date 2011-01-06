@@ -7,6 +7,14 @@ functionality _does not_ allow multiple players within the same dungeon. Lastly,
 bingehack includes a great deal of patches from the NetHack Patch Database, too
 many to mention here. See the earliest commits by Russell Harmon for details.
 
+# Features
+Currently, the feature set of bingehack (when compared to nethack) is too large
+and in flux to list here and be valid for any reasonable amount of time. See the
+commit logs for a detailed list of changes.
+
+When we decide to create a real release of bingehack, a full feature list will
+be written.
+
 # Platforms
 Bingehack has dropped support for classic and non UNIX platforms. Currently,
 the only platforms supported, in order of those most tested, are:
@@ -28,4 +36,4 @@ gcc is set to is gnu99. Bingehack will no longer compile under c89 mode. In
 general, if you are writing code for bingehack, you are encouraged to
 modernize any code you work on.
 
-<!-- vim: set tw=80 -->
+<!-- vim: set tw=80: -->

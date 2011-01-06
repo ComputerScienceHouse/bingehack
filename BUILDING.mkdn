@@ -48,4 +48,4 @@ Compilation requires at least the following:
 # Building
 Once this has all been satisfied, simply type `make`.
 
-<!-- vim: set tw=80 -->
+<!-- vim: set tw=80: -->
