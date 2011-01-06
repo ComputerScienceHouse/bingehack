@@ -11,8 +11,7 @@ open(my $BOARD, "$board |") or die "Couldn't open board executable.\n";
 while (<$BOARD>){
 #chomp $line;
 my $line = $_;
-print "Got: $line";
-print "\n";
+print "Got: $line\n";
 
 my @player_import = split(",", $line);
 my ($name, $race, $gender, $alignment, $class, $hp, $hpmax, $ulevel, $ac, $num_prayers, $num_wishes, $num_deaths, $num_moves, $dlevel, $msg) = @player_import;
@@ -44,15 +43,48 @@ sub say_if_important{
 	my %old_player_stats = %{$players{ $name }};
 	my $old_gender = $old_player_stats{'gender'};
 	my $new_gender = $new_player_stats{'gender'};
+	my $long_old_gender = gender_possessive($old_gender);
+	my $long_new_gender = gender_possessive($new_gender);
+	my $old_msg = $old_player_stats{'msg'};
+	my $new_msg = $new_player_stats{'msg'};
+	my $new_long_class = class_expander($new_player_stats{'class'});
 
 	unless($old_gender eq $new_gender ){
-		play_text("$name decided to bat for the other team. ${gender_pronoun($old_gender)} is now a ${gender_pronoun($new_gender)}.\n");
+		play_text("$name decided to bat for the other team. $long_old_gender is now a $long_new_gender.");
 	}
 	unless($old_player_stats{ 'num_prayers' } eq $new_player_stats{ 'num_prayers' } ){
-		play_text("$name got down on ${gender_possessive($new_gender)} knees and prayed to ${gender_possessive($new_gender)} god.\n");
+		play_text("$name got down on $long_old_gender knees and prayed to $long_new_gender god.");
 	}
 	unless($old_player_stats{ 'num_wishes' } eq $new_player_stats{ 'num_wishes' }){
-		play_text("$name pretends that airplanes in the night sky are like shooting stars. ${gender_pronoun($new_gender)} made a wish!\n");
+		play_text("$name pretends that airplanes in the night sky are like shooting stars. $long_new_gender made a wish!");
+	}
+	unless($old_player_stats{ 'num_deaths' } le $new_player_stats{ 'num_deaths'}){
+		play_text("$name has died.");
+	}
+	unless($old_player_stats{ 'ulevel' } eq $new_player_stats{ 'ulevel' }){
+		if($old_player_stats{ 'ulevel' } gt $new_player_stats{ 'ulevel' }){
+			play_text("Poor $name. $long_new_gender just lost a level!");
+		}
+                elsif($new_player_stats{'ulevel'} > 5){ #First 5 are basically just audio spam and not worthy of mention.
+                        play_text("Congratulations! $name just hit level $new_player_stats{'ulevel'}.");
+                }
+	}
+	unless($old_msg eq $new_msg){
+		if($new_msg =~ m/quit/){
+			play_text("$name the $new_long_class rage-quit.");
+		}
+		elsif($new_msg =~ m/escaped/){
+			play_text("$name the $new_long_class escaped the dungeon!");
+		}
+		elsif($new_msg =~ m/Sokoban/){
+			play_text("$name the $new_long_class has entered $new_msg");
+		}
+		elsif($new_msg =~ m/^killed/){
+			play_text("$name the $new_long_class was $new_msg\n");
+		}
+		else{
+			play_text("$name the $new_long_class has entered the $new_msg");
+		}
 	}
 }
 
@@ -73,13 +105,13 @@ sub class_expander{
 	my $class = shift;
 	$class =~ tr/[A-Z]/[a-z]/;
 	my $gender = shift;
-	if($class eq "arc"){
+	if($class =~ m/^arc/){
 		return "archeologist";
 	}
-	if($class eq "bar"){
+	if($class =~ m/^bar/){
 		return "barbarian";
 	}
-	if($class eq "cav"){
+	if($class =~ m/^cav/){
 		if($gender eq "m"){
 			return "caveman";
 		}
@@ -87,16 +119,16 @@ sub class_expander{
 			return "cavewoman";
 		}
 	}
-	if($class eq "hea"){
+	if($class =~ m/^hea/){
 		return "healer";
 	}
-	if($class eq "kni"){
+	if($class =~ m/^kni/){
 		return "knight";
 	}
-	if($class eq "mon"){
+	if($class =~ m/^mon/){
 		return "monk";
 	}
-	if($class eq "pri"){
+	if($class =~ m/^pri/){
 		if($gender eq "m"){
 			return "priest";
 		}
@@ -104,22 +136,22 @@ sub class_expander{
 			return "priestess";
 		}
 	}
-	if($class eq "ran"){
+	if($class =~ m/^ran/){
 		return "ranger";
 	}
-	if($class eq "rog"){
+	if($class =~ m/^rog/){
 		return "rogue";
 	}
-	if($class eq "sam"){
+	if($class =~ m/^sam/){
 		return "samurai";
 	}
-	if($class eq "tou"){
+	if($class =~ m/^tou/){
 		return "tourist";
 	}
-	if($class eq "val"){
+	if($class =~ m/^val/){
 		return "valkyrie";
 	}
-	if($class eq "wiz"){
+	if($class =~ m/^wiz/){
 		return "wizard";
 	}
 	return "UNKNOWN CLASS";
@@ -158,6 +190,6 @@ sub player_hasher{
 
 sub play_text{
 	my $text = shift;
-	print "Saying: $text";
+	print "Saying: $text\n";
 	`echo "$text" | festival --tts`;
 }
