@@ -28,4 +28,4 @@ gcc is set to is gnu99. Bingehack will no longer compile under c89 mode. In
 general, if you are writing code for bingehack, you are encouraged to
 modernize any code you work on.
 
-vim: tw=80
+<!-- vim: tw=80 -->
