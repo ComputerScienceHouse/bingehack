@@ -10,14 +10,22 @@ Example files follow:
 config.mk:
 PREFIX = $(PWD)/install
 
+# BSD and OSX only
+INSTALL := ginstall
+NCURSESW_CONFIG := ncursesw5-config
+
 config_local.h:
 #ifndef CONFIG_LOCAL
 #define CONFIG_LOCAL
 
-#define HACKDIR "/my/home/dir/nh343"
+#define HACKDIR "/prefix/dir/from/config.mk/nethack"
 #define WIZARD "myuser"
 #define VAR_PLAYGROUND HACKDIR "/var"
 #define DUMP_FN HACKDIR "%t.nh343.txt"
+
+// BSD and OSX only
+#define MENU_COLOR_REGEX_POSIX
+#define COMPRESS "/usr/bin/gzip"
 
 #endif
 
