@@ -8,6 +8,7 @@
 
 #include "tcap.h"
 #include "wintty.h"
+#include "unicode.h"
 #include <ctype.h>
 
 #ifndef C	/* this matches src/cmd.c */

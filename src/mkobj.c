@@ -1333,7 +1333,8 @@ obj_extract_self(obj)
 
 
 /* Extract the given object from the chain, following nobj chain. */
-void
+/* returns false if no object could be found */
+boolean
 extract_nobj(obj, head_ptr)
     struct obj *obj, **head_ptr;
 {
@@ -1349,8 +1350,9 @@ extract_nobj(obj, head_ptr)
 	    break;
 	}
     }
-    if (!curr) panic("extract_nobj: object lost");
+    if (!curr) return (FALSE);
     obj->where = OBJ_FREE;
+    return TRUE;
 }
 
 

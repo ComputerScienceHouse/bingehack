@@ -57,7 +57,7 @@ static	const char	SCCS_Id[] = "@(#)makedefs.c\t3.4\t2002/02/03";
 #define MONST_FILE	"pm.h"
 #define ONAME_FILE	"onames.h"
 #ifndef OPTIONS_FILE
-#define OPTIONS_FILE	"options"
+#define OPTIONS_FILE	"options.txt"
 #endif
 #define ORACLE_FILE	"oracles"
 #define DATA_FILE	"data"
@@ -70,41 +70,11 @@ static	const char	SCCS_Id[] = "@(#)makedefs.c\t3.4\t2002/02/03";
 #define VIS_TAB_H	"vis_tab.h"
 #define VIS_TAB_C	"vis_tab.c"
 	/* locations for those files */
-#ifdef AMIGA
-# define FILE_PREFIX
-# define INCLUDE_TEMPLATE	"NH:include/t.%s"
-# define SOURCE_TEMPLATE	"NH:src/%s"
-# define DGN_TEMPLATE		"NH:dat/%s"  /* where dungeon.pdf file goes */
-# define DATA_TEMPLATE		"NH:slib/%s"
-# define DATA_IN_TEMPLATE	"NH:dat/%s"
-#else /* not AMIGA */
-# if defined(MAC) && !defined(__MACH__)
-    /* MacOS 9 or earlier */
-#   define INCLUDE_TEMPLATE	":include:%s"
-#   define SOURCE_TEMPLATE	":src:%s"
-#   define DGN_TEMPLATE		":dat:%s"  /* where dungeon.pdf file goes */
-#  if __SC__ || __MRC__
-#   define DATA_TEMPLATE	":Dungeon:%s"
-#  else
-#   define DATA_TEMPLATE	":lib:%s"
-#  endif /* __SC__ || __MRC__ */
-#   define DATA_IN_TEMPLATE	":dat:%s"
-# else /* neither AMIGA nor MAC */
-#  ifdef OS2
-#   define INCLUDE_TEMPLATE	"..\\include\\%s"
-#   define SOURCE_TEMPLATE	"..\\src\\%s"
-#   define DGN_TEMPLATE		"..\\dat\\%s"  /* where dungeon.pdf file goes */
-#   define DATA_TEMPLATE	"..\\dat\\%s"
-#   define DATA_IN_TEMPLATE	"..\\dat\\%s"
-#  else /* not AMIGA, MAC, or OS2 */
-#   define INCLUDE_TEMPLATE	"../include/%s"
-#   define SOURCE_TEMPLATE	"../src/%s"
-#   define DGN_TEMPLATE		"../dat/%s"  /* where dungeon.pdf file goes */
-#   define DATA_TEMPLATE	"../dat/%s"
-#   define DATA_IN_TEMPLATE	"../dat/%s"
-#  endif /* else !OS2 */
-# endif /* else !MAC */
-#endif	/* else !AMIGA */
+#define INCLUDE_TEMPLATE	"include/%s"
+#define SOURCE_TEMPLATE	"src/%s"
+#define DGN_TEMPLATE		"dat/%s"  /* where dungeon.pdf file goes */
+#define DATA_TEMPLATE	"dat/%s"
+#define DATA_IN_TEMPLATE	"dat/%s"
 
 static const char
     *Dont_Edit_Code =
@@ -848,6 +818,9 @@ static const char *build_opts[] = {
 static const char *window_opts[] = {
 #ifdef TTY_GRAPHICS
 		"traditional tty-based graphics",
+#endif
+#ifdef CURSES_GRAPHICS
+        "curses",
 #endif
 #ifdef X11_GRAPHICS
 		"X11",

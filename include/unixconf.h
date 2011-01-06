@@ -357,5 +357,7 @@
 #endif /* LINUX */
 #endif	/* GNOME_GRAPHICS */
 
+#define GCC_WARN
+
 #endif /* UNIXCONF_H */
 #endif /* UNIX */

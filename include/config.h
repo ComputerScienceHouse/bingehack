@@ -43,6 +43,7 @@
  * Some combinations make no sense.  See the installation document.
  */
 #define TTY_GRAPHICS	/* good old tty based graphics */
+#define CURSES_GRAPHICS     /* Proper curses interface */
 /* #define X11_GRAPHICS */	/* X11 interface */
 /* #define QT_GRAPHICS */	/* Qt interface */
 /* #define GNOME_GRAPHICS */	/* Gnome interface */
@@ -116,8 +117,20 @@
 # define HACKDIR "\\nethack"
 #endif
 
+#ifdef TTY_GRAPHICS
+# ifndef DEFAULT_WINDOW_SYS
+#  define DEFAULT_WINDOW_SYS "tty"
+# endif
+#endif
+
+#ifdef CURSES_GRAPHICS
+# ifndef DEFAULT_WINDOW_SYS
+#  define DEFAULT_WINDOW_SYS "curses"
+# endif
+#endif
+
 #ifndef DEFAULT_WINDOW_SYS
-# define DEFAULT_WINDOW_SYS "tty"
+#error no graphics mode selected
 #endif
 
 #ifdef X11_GRAPHICS
@@ -175,20 +188,15 @@
 /* #define COMPRESS "/usr/bin/compress" */	/* Lempel-Ziv compression */
 /* #define COMPRESS_EXTENSION ".Z" */		/* compress's extension */
 /* An example of one alternative you might want to use: */
+#ifndef COMPRESS
 #define COMPRESS "/bin/gzip"	/* FSF gzip compression */
+#endif
 #define COMPRESS_EXTENSION ".gz"		/* normal gzip extension */
 #endif
 
 #ifndef COMPRESS
 # define INTERNAL_COMP	/* control use of NetHack's compression routines */
 #endif
-
-/*
- *	Data librarian.  Defining DLB places most of the support files into
- *	a tar-like file, thus making a neater installation.  See *conf.h
- *	for detailed configuration.
- */
-//#define DLB		/* not supported on all platforms */
 
 /*
  *	Defining INSURANCE slows down level changes, but allows games that

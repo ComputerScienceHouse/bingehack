@@ -667,16 +667,6 @@ init_dungeons()		/* initialize the "dungeon" structs */
 #ifdef DLBRSRC /* using a resource from the executable */
 	    Strcat(tbuf, "\" resource!");
 #else /* using a file or DLB file */
-# if defined(DLB)
-	    Strcat(tbuf, "\" from ");
-#  ifdef PREFIXES_IN_USE
-	    Strcat(tbuf, "\n\"");
-	    if (fqn_prefix[DATAPREFIX]) Strcat(tbuf, fqn_prefix[DATAPREFIX]);
-#  else
-	    Strcat(tbuf, "\"");
-#  endif
-	    Strcat(tbuf, DLBFILE);
-# endif
 	    Strcat(tbuf, "\" file!");
 #endif
 #ifdef WIN32

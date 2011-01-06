@@ -111,7 +111,9 @@ STATIC_PTR int NDECL(timed_occupation);
 STATIC_PTR int NDECL(doextcmd);
 STATIC_PTR int NDECL(domonability);
 STATIC_PTR int NDECL(dotravel);
+#ifdef MAIL
 STATIC_PTR int NDECL(testmail);
+#endif
 # ifdef WIZARD
 STATIC_PTR int NDECL(wiz_wish);
 STATIC_PTR int NDECL(wiz_identify);
@@ -330,7 +332,7 @@ doextlist()	/* here after #? - now list all full-word commands */
 	return 0;
 }
 
-#ifdef TTY_GRAPHICS
+#if defined(TTY_GRAPHICS) || defined(CURSES_GRAPHICS)
 #define MAX_EXT_CMD 40		/* Change if we ever have > 40 ext cmds */
 /*
  * This is currently used only by the tty port and is
@@ -530,12 +532,14 @@ enter_explore_mode()
 	return really_xplor;
 }
 
+#ifdef MAIL
 STATIC_PTR int
 testmail()
 {
 	trigger_mail();
 	return 0;
 }
+#endif
 
 STATIC_PTR int
 testchat()
@@ -558,13 +562,14 @@ testchat()
 		chat_addr.sin_family = AF_INET;
     		chat_addr.sin_port = htons(chat_port);
 		chat_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-		if(sendto(chat_socket, str, strlen(str), 0, &chat_addr, sizeof(chat_addr)) < 0){ /* error: couldn't transmit */
+		if(sendto(chat_socket, str, strlen(str), 0, (const struct sockaddr *) &chat_addr, sizeof(chat_addr)) < 0){ /* error: couldn't transmit */
 			pline("You call out, but you have a nagging feeling nobody can hear you...");
 		}
 		else{	
 			pline("Message sent.");
 		}
 	}
+	return 0;
 }
 #ifdef WIZARD
 
@@ -1215,14 +1220,6 @@ int final;
 	int ltmp;
 	char buf[BUFSZ];
 	char buf2[BUFSZ];
-	const char *enc_stat[] = { /* copied from botl.c */
-	     "",
-	     "burdened",
-	     "stressed",
-	     "strained",
-	     "overtaxed",
-	     "overloaded"
-	};
 	char *youwere = "  You were ";
 	char *youhave = "  You have ";
 	char *youhad  = "  You had ";
@@ -2080,11 +2077,13 @@ char *desc;
                 case 1:
                         return key;
                 case 3:
-                        if(desc[1]=='-')
-                                if(desc[0]=='M')
-                                        return M(key);
-                                else if(desc[0]=='C')
-                                        return C(key);
+                        if(desc[1]=='-') {
+                                if(desc[0]=='M') {
+                                    return M(key);
+								} else if(desc[0]=='C') {
+                                	return C(key);
+								}
+						}
                         /*fall through*/
                 default:
                         return 0;
@@ -2121,7 +2120,9 @@ struct ext_func_tab extcmdlist[] = {
 		doextversion, TRUE},
 	{"wipe", "wipe off your face", dowipe, FALSE},
 	{"?", "get this list of extended commands", doextlist, TRUE},
+#ifdef MAIL
 	{"testmail", "DEBUG USE ONLY - Test mail command", testmail, TRUE},
+#endif
 #if defined(WIZARD)
 	/*
 	 * There must be a blank entry here for every entry in the table

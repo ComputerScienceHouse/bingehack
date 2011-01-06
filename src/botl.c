@@ -2,7 +2,10 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdint.h>
+
 #include "hack.h"
+#include "wintty.h"
 
 #ifdef OVL0
 extern const char *hu_stat[];	/* defined in eat.c */
@@ -91,7 +94,7 @@ struct color_option color_option;
 	int i;
 #ifdef TEXTCOLOR
 	if (color_option.color != NO_COLOR)
-		term_end_color(color_option.color);
+		term_end_color();
 #endif
 	for (i = 0; (1 << i) <= color_option.attr_bits; ++i)
 		if (i != ATR_NONE && color_option.attr_bits & (1 << i))
@@ -394,8 +397,6 @@ bot2()
 	int hp, hpmax;
 	int cap = near_capacity();
 #if defined(STATUS_COLORS) && defined(TEXTCOLOR)
-	struct color_option color_option;
-	int save_botlx = flags.botlx;
 	long iweight;
 	long cweight;
 #endif
@@ -466,8 +467,8 @@ bot2()
 #ifdef REALTIME_ON_BOTL
   if(iflags.showrealtime) {
     time_t currenttime = get_realtime();
-    Sprintf(nb = eos(nb), " %d:%2.2d", currenttime / 3600, 
-                                       (currenttime % 3600) / 60);
+    Sprintf(nb = eos(nb), " %jd:%2.2jd", (intmax_t) currenttime / 3600, 
+                                       ((intmax_t) currenttime % 3600) / 60);
   }
 #endif
 
@@ -526,9 +527,6 @@ bot2()
 		add_colored_text(enc_stat[cap], newbot2);
 #else
 		Sprintf(nb = eos(nb), " %s", enc_stat[cap]);
-#endif
-#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
-	flags.botlx = save_botlx;
 #endif
 #ifdef DUMP_LOG
 }

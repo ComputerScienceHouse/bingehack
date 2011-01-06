@@ -166,7 +166,7 @@ int mechanism;
 			   mechanism == BY_PAPER);
 
 	if (reading) {
-		/*truth=-1; /* If not from potter, do not show Potter quotes. */
+		/*truth=-1; If not from potter, do not show Potter quotes. */
 	    /* deal with various things that prevent reading */
 	    if (is_fainted() && mechanism == BY_COOKIE)
 	    	return;

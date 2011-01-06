@@ -1,0 +1,5 @@
+SYS_UNIX_SOURCES := unixmain.c unixunix.c unixres.c
+SYS_UNIX_SOURCES := $(SYS_UNIX_SOURCES:%=$(CURDIR)/%)
+
+SYS_UNIX_OBJECTS := $(SYS_UNIX_SOURCES:.c=.o)
+SYS_UNIX_DEPS := $(SYS_UNIX_SOURCES:.c=.d)

@@ -497,7 +497,7 @@ useupall(obj)
 struct obj *obj;
 {
 	setnotworn(obj);
-	freeinv(obj);
+	if( !freeinv(obj) ) return;
 	obfree(obj, (struct obj *)0);	/* deletes contents also */
 }
 
@@ -509,7 +509,7 @@ register struct obj *obj;
 	/*	   (containers) don't merge.			    */
 	if (obj->quan > 1L) {
 		obj->in_use = FALSE;	/* no longer in use */
-		obj->quan--;
+		if( obj->quan != 0 ) obj->quan--;
 		obj->owt = weight(obj);
 		update_inventory();
 	} else {
@@ -584,13 +584,15 @@ struct obj *obj;
 }
 
 /* remove an object from the hero's inventory */
-void
+/* returns false if the object doesn't exist in the hero's inventory */
+boolean
 freeinv(obj)
 register struct obj *obj;
 {
-	extract_nobj(obj, &invent);
+	if( !extract_nobj(obj, &invent) ) return FALSE;
 	freeinv_core(obj);
 	update_inventory();
+	return TRUE;
 }
 
 void
@@ -1795,10 +1797,10 @@ long* out_cnt;
 	struct obj **oarray;
 	int i, j;
 #endif
-	char ilet, ret;
+	char ilet, ret = 0;
 	char *invlet = flags.inv_order;
 	int n, classcount;
-	winid win;				/* windows being used */
+	winid win = 0;				/* windows being used */
 	static winid local_win = WIN_ERR;	/* window for partial menus */
 	anything any;
 	menu_item *selected;

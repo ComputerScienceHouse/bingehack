@@ -79,7 +79,7 @@ typedef long	off_t;
 # if !defined(__SC__) && !defined(LINUX)
 E  long NDECL(random);
 # endif
-# if (!defined(SUNOS4) && !defined(bsdi) && !defined(__FreeBSD__)) || defined(RANDOM)
+# if (!defined(SUNOS4) && !defined(bsdi) && !defined(__NetBSD__) && !defined(__FreeBSD__) && !defined(__DragonFly__) && !defined(__APPLE__)) || defined(RANDOM)
 E void FDECL(srandom, (unsigned int));
 # else
 #  if !defined(bsdi) && !defined(__FreeBSD__)
@@ -468,26 +468,6 @@ E  char *sprintf();
 #endif
 #ifdef SPRINTF_PROTO
 # undef SPRINTF_PROTO
-#endif
-
-#ifndef __SASC_60
-#ifdef NEED_VARARGS
-# if defined(USE_STDARG) || defined(USE_VARARGS)
-#  if !defined(SVR4) && !defined(apollo)
-#   if !(defined(ULTRIX_PROTO) && defined(__GNUC__))
-#    if !(defined(SUNOS4) && defined(__STDC__)) /* Solaris unbundled cc (acc) */
-E int FDECL(vsprintf, (char *, const char *, va_list));
-E int FDECL(vfprintf, (FILE *, const char *, va_list));
-E int FDECL(vprintf, (const char *, va_list));
-#    endif
-#   endif
-#  endif
-# else
-#  define vprintf	printf
-#  define vfprintf	fprintf
-#  define vsprintf	sprintf
-# endif
-#endif /* NEED_VARARGS */
 #endif
 
 
