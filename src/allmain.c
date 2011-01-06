@@ -4,6 +4,8 @@
 
 /* various code that was replicated in *main.c */
 
+#include <strings.h>
+
 #include "hack.h"
 
 #ifndef NO_SIGNAL
@@ -360,7 +362,7 @@ moveloop()
 		    invault();
 		    if (u.uhave.amulet) amulet();
 		    if (u.uhave.ring_of_power && !rn2(5000) ) {
-		    	for (i = 0; i < (rn2(100) ? 1 : rnd(8) + 1); i++)
+		    	for (i = 0; i < (rn2(10) ? 1 : rnd(8) + 1); i++)
 			    if (propagate(monsndx(&mons[PM_NAZGUL]), FALSE, FALSE))
 			        makemon(&mons[PM_NAZGUL], u.ux, u.uy, NO_MM_FLAGS);
 		    }

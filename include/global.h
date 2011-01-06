@@ -25,7 +25,7 @@
 #define HISTORY       "history" /* file giving nethack's history */
 #define LICENSE       "license" /* file with license information */
 #define OPTIONFILE    "opthelp" /* file explaining runtime options */
-#define OPTIONS_USED  "options" /* compile-time options, for #version */
+#define OPTIONS_USED  "options.txt" /* compile-time options, for #version */
 
 #define LEV_EXT ".lev"		/* extension for special level files */
 

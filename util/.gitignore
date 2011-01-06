@@ -1,9 +1,5 @@
-dgn_comp
+*.exe
 dgn_lex.c
 dgn_yacc.c
-dlb
-lev_comp
 lev_lex.c
 lev_yacc.c
-makedefs
-recover

@@ -1,0 +1,12 @@
+#!/usr/bin/expect -f
+#exp_internal 1
+spawn -noecho /usr/bin/telnet nethack.csh.rit.edu
+expect "## Computer Science House - Nethack"
+send -- "w"
+while {1} {
+	expect "## Computer Science House"
+	send -- "*"
+	expect ".*"
+	interact -timeout 5 return
+	send -- "q"
+}

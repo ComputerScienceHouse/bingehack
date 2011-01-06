@@ -17,4 +17,6 @@ struct mail_info {
 	const char *response_cmd;	/* command to eventually execute */
 };
 
+void trigger_mail();
+
 #endif /* MAIL_H */

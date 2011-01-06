@@ -479,13 +479,12 @@ long wp_mask;
 	if (spfx & SPFX_INVIS && wp_mask & W_RING) {
 	    if (on) {
 	        EInvis |= wp_mask;
-		newsym(u.ux,u.uy);
-		self_invis_message();
+			newsym(u.ux,u.uy);
+			if (!restoring) self_invis_message();
 	    } else {
 	    	EInvis &= ~wp_mask;
-		newsym(u.ux,u.uy);
-		Your("body seems to unfade%s.",
-		    See_invisible ? " completely" : "..");
+			newsym(u.ux,u.uy);
+			if (!restoring) Your("body seems to unfade%s.", See_invisible ? " completely" : "..");
 	    }
 	}
 	if (spfx & SPFX_TELEPATHY && wp_mask & W_RING) {

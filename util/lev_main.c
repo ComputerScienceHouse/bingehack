@@ -16,28 +16,10 @@
 #include "tcap.h"
 #endif
 
-#ifdef MAC
-# if defined(__SC__) || defined(__MRC__)
-#  define MPWTOOL
-#  define PREFIX ":dungeon:"	/* place output files here */
-#  include <CursorCtl.h>
-# else
-#  if !defined(__MACH__)
-#   define PREFIX ":lib:"	/* place output files here */
-#  endif
-# endif
-#endif
-
-#ifdef WIN_CE
-#define PREFIX "\\nethack\\dat\\"
-#endif
+#define PREFIX "./dat/"
 
 #ifndef MPWTOOL
 # define SpinCursor(x)
-#endif
-
-#if defined(AMIGA) && defined(DLB)
-# define PREFIX "NH:slib/"
 #endif
 
 #ifndef O_WRONLY

@@ -4,6 +4,10 @@
 
 #include "hack.h"
 
+#ifdef DYNKEY
+#include "func_tab.h"
+#endif
+
 #ifdef OVLB
 
 STATIC_DCL void FDECL(do_oname, (struct obj *));
@@ -186,9 +190,6 @@ const char *goal;
     lock_mouse_cursor(TRUE);
 #endif
     for (;;) {
-#ifdef DYNKEY
-#include "func_tab.h"
-#endif
 	c = nh_poskey(&tx, &ty, &sidx);
 #ifdef DYNKEY
         if(dkblist) {

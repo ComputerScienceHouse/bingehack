@@ -2,6 +2,8 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <strings.h>
+
 #include "hack.h"
 #include "dlb.h"
 #ifdef SHORT_FILENAMES
@@ -288,8 +290,8 @@ struct toptenentry *tt;
                 SEP "hp=%d"
                 SEP "maxhp=%d"
                 SEP "deaths=%d"
-                SEP "deathdate=%d"
-                SEP "birthdate=%d"
+                SEP "deathdate=%ld"
+                SEP "birthdate=%ld"
                 SEP "uid=%d",
                 tt->ver_major, tt->ver_minor, tt->patchlevel,
                 tt->points, tt->deathdnum, tt->deathlev,

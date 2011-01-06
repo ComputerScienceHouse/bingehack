@@ -692,6 +692,7 @@ register struct obj *obj;
        left and right rings of the same type */
     if ((oldprop & W_RING) != W_RING) oldprop &= ~W_RING;
 
+	if (obj->oartifact == ART_RING_OF_POWER && !obj->cursed) curse(obj);
     switch(obj->otyp){
     	case RIN_CONFLICT:
     		u.uconduct.conflict++;
@@ -1187,9 +1188,13 @@ register struct obj *otmp;
 {
 	/* Curses, like chickens, come home to roost. */
 	if((otmp == uwep) ? welded(otmp) : (int)otmp->cursed) {
-		You("can't.  %s cursed.",
-			(is_boots(otmp) || is_gloves(otmp) || otmp->quan > 1L)
-			? "They are" : "It is");
+		if (otmp->oartifact == ART_RING_OF_POWER) {
+			pline("You are compelled not to remove the precious.");
+		} else {
+			You("can't.  %s cursed.",
+				(is_boots(otmp) || is_gloves(otmp) || otmp->quan > 1L)
+				? "They are" : "It is");
+		}
 		otmp->bknown = TRUE;
 		return(1);
 	}

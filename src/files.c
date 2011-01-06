@@ -2,8 +2,14 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdint.h>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #include "hack.h"
 #include "dlb.h"
+#include "color.h"
 
 #ifdef TTY_GRAPHICS
 #include "wintty.h" /* more() */
@@ -154,7 +160,9 @@ STATIC_DCL char *NDECL(set_bonestemp_name);
 STATIC_DCL void FDECL(redirect, (const char *,const char *,FILE *,BOOLEAN_P));
 STATIC_DCL void FDECL(docompress_file, (const char *,BOOLEAN_P));
 #endif
+#ifndef USE_FCNTL
 STATIC_DCL char *FDECL(make_lockname, (const char *,char *));
+#endif
 STATIC_DCL FILE *FDECL(fopen_config_file, (const char *));
 STATIC_DCL int FDECL(get_uchars, (FILE *,char *,char *,uchar *,BOOLEAN_P,int,const char *));
 int FDECL(parse_config_line, (FILE *,char *,char *,char *));
@@ -628,7 +636,7 @@ touch_whereis()
   Sprintf(whereis_file,"whereis/%s.whereis",plname);
 #endif
   Sprintf(whereis_work,
-	  "depth=%d:dnum=%d:hp=%d:maxhp=%d:turns=%d:score=%ld:role=%s:race=%s:gender=%s:align=%s:conduct=0x%lx:amulet=%d\n",
+	  "depth=%d:dnum=%d:hp=%d:maxhp=%d:turns=%ld:score=%ld:role=%s:race=%s:gender=%s:align=%s:conduct=0x%lx:amulet=%d\n",
 	  depth(&u.uz),
 	  u.uz.dnum,
 	  u.uhp,
@@ -1338,39 +1346,23 @@ struct flock sflock; /* for unlocking, same as above */
 
 #define HUP	if (!program_state.done_hup)
 
+#ifndef USE_FCNTL
 STATIC_OVL char *
 make_lockname(filename, lockname)
 const char *filename;
 char *lockname;
 {
-#if (defined(macintosh) && (defined(__SC__) || defined(__MRC__))) || defined(__MWERKS__)
-# pragma unused(filename,lockname)
-	return (char*)0;
-#else
-# if defined(UNIX) || defined(VMS) || defined(AMIGA) || defined(WIN32) || defined(MSDOS)
-#  ifdef NO_FILE_LINKS
+#ifdef NO_FILE_LINKS
 	Strcpy(lockname, LOCKDIR);
 	Strcat(lockname, "/");
 	Strcat(lockname, filename);
-#  else
+#else
 	Strcpy(lockname, filename);
-#  endif
-#  ifdef VMS
-      {
-	char *semi_colon = rindex(lockname, ';');
-	if (semi_colon) *semi_colon = '\0';
-      }
-	Strcat(lockname, ".lock;1");
-#  else
-	Strcat(lockname, "_lock");
-#  endif
-	return lockname;
-# else
-	lockname[0] = '\0';
-	return (char*)0;
-# endif  /* UNIX || VMS || AMIGA || WIN32 || MSDOS */
 #endif
+	Strcat(lockname, "_lock");
+	return lockname;
 }
+#endif /* USE_FCNTL */
 
 /* lock a file */
 boolean
@@ -1379,12 +1371,6 @@ const char *filename;
 int whichprefix;
 int retryct;
 {
-#if (defined(macintosh) && (defined(__SC__) || defined(__MRC__))) || defined(__MWERKS__)
-# pragma unused(filename, retryct)
-#endif
-	char locknambuf[BUFSZ];
-	const char *lockname;
-
 	nesting++;
 	if (nesting > 1) {
 	    impossible("TRIED TO NEST LOCKS");
@@ -1392,7 +1378,8 @@ int retryct;
 	}
 
 #ifndef USE_FCNTL
-	lockname = make_lockname(filename, locknambuf);
+	char locknambuf[BUFSZ];
+	const char *lockname = make_lockname(filename, locknambuf);
 # ifndef NO_FILE_LINKS	/* LOCKDIR should be subsumed by LOCKPREFIX */
 	lockname = fqname(lockname, LOCKPREFIX, 2);
 # endif
@@ -1531,13 +1518,7 @@ int retryct;
 void
 unlock_file(filename)
 const char *filename;
-#if defined(macintosh) && (defined(__SC__) || defined(__MRC__))
-# pragma unused(filename)
-#endif
 {
-	char locknambuf[BUFSZ];
-	const char *lockname;
-
 	if (nesting == 1) {
 #ifdef USE_FCNTL
 		sflock.l_type = F_UNLCK;
@@ -1546,7 +1527,8 @@ const char *filename;
 			(void) close(lockfd);
 		}
 # else
-		lockname = make_lockname(filename, locknambuf);
+		char locknambuf[BUFSZ];
+		const char *lockname = make_lockname(filename, locknambuf);
 # ifndef NO_FILE_LINKS	/* LOCKDIR should be subsumed by LOCKPREFIX */
 		lockname = fqname(lockname, LOCKPREFIX, 2);
 # endif
@@ -2397,14 +2379,13 @@ const char *reason;	/* explanation */
 {
 #ifdef PANICLOG
 	FILE *lfile;
-	char buf[BUFSZ];
 
 	if (!program_state.in_paniclog) {
 		program_state.in_paniclog = 1;
 		lfile = fopen_datafile(PANICLOG, "a", TROUBLEPREFIX);
 		if (lfile) {
-		    (void) fprintf(lfile, "%ld %s: %s %s\n",
-				   u.ubirthday, (plname ? plname : "(none)"),
+		    (void) fprintf(lfile, "%jd %s: %s %s\n",
+				   (intmax_t) u.ubirthday, (plname != NULL ? plname : "(none)"),
 				   type, reason);
 		    (void) fclose(lfile);
 		}

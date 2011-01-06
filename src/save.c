@@ -973,7 +973,7 @@ register int fd, mode;
 
 void
 free_percent_color_options(list_head)
-const struct percent_color_option *list_head;
+struct percent_color_option *list_head;
 {
 	if (list_head == NULL) return;
 	free_percent_color_options(list_head->next);
@@ -982,7 +982,7 @@ const struct percent_color_option *list_head;
 
 void
 free_text_color_options(list_head)
-const struct text_color_option *list_head;
+struct text_color_option *list_head;
 {
 	if (list_head == NULL) return;
 	free_text_color_options(list_head->next);

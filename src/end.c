@@ -4,6 +4,8 @@
 
 #define NEED_VARARGS	/* comment line for pre-compiled headers */
 
+#include <stdint.h>
+
 #include "hack.h"
 #include "eshk.h"
 #ifndef NO_SIGNAL
@@ -133,7 +135,7 @@ dump_init ()
       if (ispercent) {
 	switch (*f) {
 	case 't':
-	  snprintf (p, end + 1 - p, "%ld", u.ubirthday);
+	  snprintf (p, end + 1 - p, "%jd", (intmax_t) u.ubirthday);
 	  while (*p != '\0')
 	    p++;
 	  break;
@@ -709,7 +711,6 @@ int how;
 	boolean bones_ok, have_windows = iflags.window_inited;
 	struct obj *corpse = (struct obj *)0;
 	long umoney;
-	int i;
 
 	if (how == TRICKED) {
 	    if (killer) {
@@ -942,11 +943,11 @@ die:
 #if defined(DUMP_LOG) && defined(DUMPMSGS)
 		if (lastmsg >= 0) {
 		  dump ("", "Latest messages");
-		  for (i = lastmsg + 1; i < DUMPMSGS; i++) {
+		  for (int i = lastmsg + 1; i < DUMPMSGS; i++) {
 		    if (msgs[i] && strcmp(msgs[i], "") )
 		      dump ("  ", msgs[i]);
 		  } 
-		  for (i = 0; i <= lastmsg; i++) {
+		  for (int i = 0; i <= lastmsg; i++) {
 		    if (msgs[i] && strcmp(msgs[i], "") )
 		      dump ("  ", msgs[i]);
 		  } 
@@ -1276,7 +1277,7 @@ boolean identified, all_containers, want_dump, want_disp;
 		if (box->otyp == BAG_OF_TRICKS && box->spe) {
 		    continue;	/* bag of tricks with charges can't contain anything */
 		} else if (box->cobj) {
-		    winid tmpwin;
+		    winid tmpwin = 0;
 #ifdef DUMP_LOG
 		    if (want_disp)
 #endif
@@ -1417,7 +1418,7 @@ boolean want_dump;
     int ntypes = 0, max_lev = 0, nkilled;
     long total_killed = 0L;
     char c;
-    winid klwin;
+    winid klwin = 0;
     char buf[BUFSZ];
 
     /* get totals first */

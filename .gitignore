@@ -1,7 +1,6 @@
-*~
-\.*\.swp
 *.o
-*.lev
-Makefile
+*.d
+*~
+.*.swp
 config.mk
-tags
+cscope.*
