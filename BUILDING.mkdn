@@ -1,11 +1,11 @@
 # Introduction
-To compile bingehack, you must create a include/config_local.h file
+To compile bingehack, you must create a `include/config_local.h` file
 
 # Required Files
 ## include/config_local.h
-Local overrides for config.h and unixconfig.h directives.
+Local overrides for `include/config.h` and `include/unixconfig.h` directives.
 
-You can also create a config.mk to store your make defaults.
+You can also create a `config.mk` to store your make defaults.
 
 ### Example
 <pre>
@@ -48,4 +48,4 @@ Compilation requires at least the following:
 # Building
 Once this has all been satisfied, simply type `make`.
 
-<!-- vim: set tw=80: -->
+<!-- vim: set tw=80 fo=tcroqn2 ft=mkd: -->

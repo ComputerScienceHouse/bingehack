@@ -1,11 +1,13 @@
 # Introduction
-Bingehack is a fork of "classic" nethack 3.4.3. It tries to stick closely to
-nethack's gameplay, while fixing and "modernizing" nethack. It also introduces
-several features geared towards shared nethack servers (nethack.alt.org,
-nethack.csh.rit.edu), and towards hosting nethack "binges". This "multiplayer"
-functionality _does not_ allow multiple players within the same dungeon. Lastly,
-bingehack includes a great deal of patches from the NetHack Patch Database, too
-many to mention here. See the earliest commits by Russell Harmon for details.
+Bingehack is a fork of [BingeSoft](http://nethack.atarininja.org/) which itself
+is a fork of vanilla nethack 3.4.3. Bingehack tries to stick closely to nethack's
+gameplay, while fixing and "modernizing" nethack. It also introduces several
+features geared towards shared nethack servers (nethack.alt.org,
+nethack.csh.rit.edu), and towards hosting nethack tournaments. This "multiplayer"
+functionality _does not_ allow multiple players within the same dungeon.
+Additionally, bingehack includes a great deal of patches from the NetHack Patch
+Database, too many to mention here. See the earliest commits by Russell Harmon
+for details.
 
 # Features
 Currently, the feature set of bingehack (when compared to nethack) is too large
@@ -17,8 +19,8 @@ be written.
 
 # Inside Jokes
 Bingehack is made for [CSH](http://csh.rit.edu/), by CSH'ers. As such, it is
-full of inside jokes. If you don't understand why we made a change, it is
-probably for one such joke.
+full of inside jokes. Keep that in mind if you don't understand why we made a
+change.
 
 # Platforms
 Bingehack has dropped support for classic and non UNIX platforms. Currently,
@@ -41,4 +43,4 @@ gcc is set to is gnu99. Bingehack will no longer compile under c89 mode. In
 general, if you are writing code for bingehack, you are encouraged to
 modernize any code you work on.
 
-<!-- vim: set tw=80: -->
+<!-- vim: set tw=80 fo=tcroqn2 ft=mkd: -->
