@@ -1,0 +1,51 @@
+# Introduction
+To compile bingehack, you must create a include/config_local.h file
+
+# Required Files
+## include/config_local.h
+Local overrides for config.h and unixconfig.h directives.
+
+You can also create a config.mk to store your make defaults.
+
+### Example
+<pre>
+#ifndef CONFIG_LOCAL
+#define CONFIG_LOCAL
+
+#define HACKDIR "/prefix/dir/from/config.mk/nethack"
+#define WIZARD "myuser"
+#define VAR_PLAYGROUND HACKDIR "/var"
+#define DUMP_FN HACKDIR "%t.nh343.txt"
+
+// BSD and OSX only
+#define MENU_COLOR_REGEX_POSIX
+#define COMPRESS "/usr/bin/gzip"
+
+#endif
+</pre>
+
+## config.mk
+Local overrides for make variables.
+
+### Example
+<pre>
+PREFIX = $(PWD)/install
+
+# BSD and OSX only
+INSTALL := ginstall
+NCURSESW_CONFIG := ncursesw5-config
+</pre>
+
+# Dependencies
+Compilation requires at least the following:
+
+- GNU flex
+- GNU bison
+- GNU coreutils
+- GNU make
+- NCurses (with wide character support)
+
+# Building
+Once this has all been satisfied, simply type `make`.
+
+<!-- vim: set tw=80 -->
