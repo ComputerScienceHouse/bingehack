@@ -130,7 +130,6 @@ main( int argc, char *argv[] )
   struct u_stat_t u_stat;
   struct sockaddr_in addr, from;
   socklen_t fromlen;
-  struct ip_mreqn mreq;
   struct hostent *hent;
   u_int yes = 1;
   bool first_time = true;
@@ -172,9 +171,14 @@ main( int argc, char *argv[] )
     exit(EXIT_FAILURE);
   }
 
-  mreq.imr_multiaddr.s_addr = inet_addr("225.0.0.37");
-  mreq.imr_address.s_addr = htonl(INADDR_LOOPBACK);
-  mreq.imr_ifindex = 0;
+  struct ip_mreq mreq = {
+    .imr_multiaddr = {
+      .s_addr = inet_addr("225.0.0.37")
+    },
+    .imr_interface = {
+      .s_addr = htonl(INADDR_LOOPBACK)
+    }
+  };
 
   if( setsockopt(s, IPPROTO_IP, IP_ADD_MEMBERSHIP,
                  &mreq, sizeof(mreq)) != 0 ) {

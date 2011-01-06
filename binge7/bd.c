@@ -67,7 +67,7 @@ main( int argc, char *argv[] )
   struct sockaddr_in addr;
   struct sockaddr_in mcast_addr;
   struct sockaddr_in recv_addr;
-  struct ip_mreqn mreq;
+  struct ip_mreq mreq;
   u_int yes = 1;
 
   /* mcast receive */
@@ -100,8 +100,7 @@ main( int argc, char *argv[] )
   }
 
   mreq.imr_multiaddr.s_addr = inet_addr("225.0.0.37");
-  mreq.imr_address.s_addr = htonl(INADDR_LOOPBACK);
-  mreq.imr_ifindex = 0;
+  mreq.imr_interface.s_addr = htonl(INADDR_LOOPBACK);
 
   if( setsockopt(s, IPPROTO_IP, IP_ADD_MEMBERSHIP,
                  &mreq, sizeof(struct ip_mreq)) != 0 ) {

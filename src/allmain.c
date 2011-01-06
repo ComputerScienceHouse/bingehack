@@ -48,10 +48,14 @@ moveloop()
       mcast_addr.sin_port = htons(12345);
     }
 
-    const struct ip_mreqn localhost_addr = {
-    	{ inet_addr("225.0.0.37") },
-	{ htonl(INADDR_LOOPBACK) },
-	0
+    
+    const struct ip_mreq localhost_addr = {
+        .imr_multiaddr = {
+          .s_addr = inet_addr("225.0.0.37")
+        },
+        .imr_interface = {
+          .s_addr = htonl(INADDR_LOOPBACK)
+        }
     };
     if( setsockopt(mcast_socket, IPPROTO_IP, IP_MULTICAST_IF, &localhost_addr, sizeof(localhost_addr)) == -1 )
       pline("setsockopt: %s", strerror(errno));
