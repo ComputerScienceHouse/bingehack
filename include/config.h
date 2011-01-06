@@ -188,7 +188,9 @@
 /* #define COMPRESS "/usr/bin/compress" */	/* Lempel-Ziv compression */
 /* #define COMPRESS_EXTENSION ".Z" */		/* compress's extension */
 /* An example of one alternative you might want to use: */
+#ifndef COMPRESS
 #define COMPRESS "/bin/gzip"	/* FSF gzip compression */
+#endif
 #define COMPRESS_EXTENSION ".gz"		/* normal gzip extension */
 #endif
 
