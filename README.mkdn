@@ -15,6 +15,11 @@ commit logs for a detailed list of changes.
 When we decide to create a real release of bingehack, a full feature list will
 be written.
 
+# Inside Jokes
+Bingehack is made for [CSH](http://csh.rit.edu/), by CSH'ers. As such, it is
+full of inside jokes. If you don't understand why we made a change, it is
+probably for one such joke.
+
 # Platforms
 Bingehack has dropped support for classic and non UNIX platforms. Currently,
 the only platforms supported, in order of those most tested, are:
