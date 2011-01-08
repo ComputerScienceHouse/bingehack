@@ -1,5 +1,5 @@
 # Introduction
-To compile bingehack, you must create a `include/config_local.h` file
+To compile BingeHack, you must create a `include/config_local.h` file
 
 # Required Files
 ## include/config_local.h
