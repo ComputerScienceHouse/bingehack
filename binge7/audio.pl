@@ -16,10 +16,6 @@ print "Got: $line\n";
 my @player_import = split(",", $line);
 my ($name, $race, $gender, $alignment, $class, $hp, $hpmax, $ulevel, $ac, $num_prayers, $num_wishes, $num_deaths, $num_moves, $dlevel, $msg) = @player_import;
 
-#Fixing a bug :-)
-if($name eq "port34"){
-	$name = "port__";
-}
 
 if(exists($players{ $name } )){
 	# check to see if something important changed
@@ -29,7 +25,7 @@ if(exists($players{ $name } )){
 else{
 	my %player_stats = %{player_hasher(@player_import)};
 	$players{ $name } = \%player_stats;
-	my $long_class = class_expander($class);
+	my $long_class = class_expander($class,$gender);
 	play_text("$name the $long_class has entered $msg!\n");
 }
 
@@ -45,9 +41,11 @@ sub say_if_important{
 	my $new_gender = $new_player_stats{'gender'};
 	my $long_old_gender = gender_possessive($old_gender);
 	my $long_new_gender = gender_possessive($new_gender);
+	my $old_gender_pronoun = gender_pronoun($old_gender);
+	my $new_gender_pronoun = gender_pronoun($new_gender);
 	my $old_msg = $old_player_stats{'msg'};
 	my $new_msg = $new_player_stats{'msg'};
-	my $new_long_class = class_expander($new_player_stats{'class'});
+	my $new_long_class = class_expander($new_player_stats{'class'},$new_player_stats{'gender'});
 
 	unless($old_gender eq $new_gender ){
 		play_text("$name decided to bat for the other team. $long_old_gender is now a $long_new_gender.");
@@ -66,7 +64,7 @@ sub say_if_important{
 			play_text("Poor $name. $long_new_gender just lost a level!");
 		}
                 elsif($new_player_stats{'ulevel'} > 5){ #First 5 are basically just audio spam and not worthy of mention.
-                        play_text("Congratulations! $name just hit level $new_player_stats{'ulevel'}.");
+                        play_text("Congratulations to $name $new_gender_pronoun just hit level $new_player_stats{'ulevel'}.");
                 }
 	}
 	unless($old_msg eq $new_msg){
