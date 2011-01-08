@@ -1716,13 +1716,12 @@ light_region(tmpregion)
 
 /* initialization common to all special levels */
 STATIC_OVL void
-load_common_data(fd, typ)
-dlb *fd;
-int typ;
+load_common_data(dlb* fd, int typ)
 {
 	uchar	n;
 	long	lev_flags;
 	int	i;
+	char* 	filename;
 
       {
 	aligntyp atmp;
@@ -1753,6 +1752,16 @@ int typ;
 	    level.flags.shortsighted = 1;
 	if (lev_flags & ARBOREAL)
 	    level.flags.arboreal = 1;
+
+	fread((genericptr_t)&n, sizeof(n), 1, fd);
+	n += 1;
+	filename = malloc(n);
+	memset(filename, 0, n);
+	Fread((genericptr_t)filename, n, 1, fd);
+
+	if (!strncmp("Potter", filename, 7)) {
+		level.locations[0][0].typ = DELPHI;
+	}
 
 	/* Read message */
 	Fread((genericptr_t) &n, 1, sizeof(n), fd);
