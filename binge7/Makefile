@@ -2,10 +2,12 @@ CFLAGS=-Wall
 
 all: build
 
-build: board
+build: board bd rx
 
+rx: rx.o list.o
+	$(CC) rx.o list.o -o rx
 board: board.o list.o
 	$(CC) board.o list.o -o board -lncurses
 
 clean:
-	rm -fr board.o list.o board
+	rm -fr board.o list.o board bd.o bd rx rx.o
