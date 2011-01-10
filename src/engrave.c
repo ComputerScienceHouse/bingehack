@@ -1226,10 +1226,23 @@ struct engr *ep;
 
 /* CSH custom epitaphs */
 static const char *csh_epitaphs[] = {
+	// Be careful not to exceed 80 characters.
 	"Here lies Tom Philbrick - Expert-level Conga Line Dancer",
-	"Here lies Tom Philbrick - A last name that only RIT could love",
 	"Here lies Tomp - On his grave, do not stomp.",
-	"Here lies Tomp - He knows perl, and your variables he will chomp()."
+	"Here lies Tomp - He knows perl, and your variables he will chomp().",
+	"Here lies a man who ate many a plate; it worked wonders for his heart rate.",
+	"Here lies Heroine, died of neglect, and nary a drink did she ever collect.",
+	"Here lies Big Drink, dead but not gone. We'd throw it out, if not for Sean.",
+	"Here lies Big Infosys, of days long past. Little Infosys did it outlast.",
+	"Here lies Multitouch, a project misled. It had many problems besides infrared.",
+	"Here lies the ARG Committee. 1985 - 1997."
+/* TODO: Uncomment this code in a year or so when it's not nearly as fresh 
+ * 	and painful, and is instead just a thoughtful reminder.	
+ * 		--Clockfort, 2010-01-10
+	,"Here lies Lisa Tufo Nault - Beloved house member",
+	"Here lies Ryan Phillips - Mark's Best Customer",
+	"Here lies Ryan Phillips - Plate Connoisseur"
+*/
 };
 
 /* Epitaphs for random headstones */
@@ -1643,7 +1656,7 @@ const char *str;
 
 	/* Engrave the headstone */
 	if (!str){
-		if(rn2(6)){ /* 1/6 chance of choosing a CSH headstone. */
+		if(rn2(5)){ /* 1/5 chance of choosing a CSH headstone. */
 			str = csh_epitaphs[rn2(SIZE(csh_epitaphs))];
 		}
 		else{
