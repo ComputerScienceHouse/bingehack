@@ -1,38 +1,42 @@
-#	SCCS Id: @(#)oracle.des	3.4	1995/10/07
-# NetHack may be freely redistributed.  See license for details.
+# SCCS Id: @(#)oracle.des 3.4 1995/10/07
+# NetHack may be freely redistributed   See license for details 
 #
 # Oracle level
 #
 
-MAZE:"delphi",' '
-FLAGS:noteleport,arboreal
+MAZE:"Potter",'.'
+FLAGS:arboreal,noteleport
 GEOMETRY:center,center
 MAP
----------------------------------------------------------------------------
-|                           T         T        TTTT    TTTTTTTTTTTTTTTTT  |
-|                          T      T     T          TTTTTTTTTTTTTTTTTT     |
-|      PPPPPPPPPPP                             TTTTTTTTTTTTTTT            |
-|    PPPPPPPPPPPPPPP         T         T            TTTTTTTTTTTTTT        |
-|    PPPPPPPPPPPPPPP           T            T   T            T            |
-|      PPPPPPPPPPP         T                  T       T  T                |
-|                                      T                       T          |
-|                      --------------                                     |
-|          T           |            |             T                       |
-|                T     +            |    T               T                |
-|     T                |            |                                     |
-| T           T        |            +          T       T      T           |
-|         T            |            |                                     |
-|   T     T            |            |      TTTTT    TTTTTTTT              |
-|                      --------------     TTTTTTTT TTTTTTTTTTT            |
-|      T        T             T         TTTTTTTTTTTTTTTTTTTTTTT           |
-|            T            T         T     TTTTTTTTTTTTTTTTT               |
----------------------------------------------------------------------------
+TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+.........................T......T.....T..........TTTTTTTTTTTTTTTTTT.........
+.....}}}}}}}}}}}.............................TTTTTTTTTTTTTTT................
+...}}}}}}}}}}}}}}}.........T.........T............TTTTTTTTTTTTTT............
+...}}}}}}}}}}}}}}}...........T............T...T............T................
+.....}}}}}}}}}}}.........T..................T.......T..T....................
+.....................................T.......................T..............
+.....................--------------.........................................
+.........T...........|............|.............T...........................
+...............T.....+............|....T...............T....................
+....T................|............+.........................................
+T...........T........|............|..........T.......T......T...............
+........T............|............|........................................T
+..T.....T............|............|......TTTTT....TTTTTTTT..................
+.....................--------------.....TTTTTTTT.TTTTTTTTTTT................
+.....T........T.............T.........TTTTTTTTTTTTTTTTTTTTTTT...............
+...........T............T.........T.....TTTTTTTTTTTTTTTTT...................
+........................................TTTTTTTTTTTTTTTTT...................
+...............T..................................................T.........
+............................................................................
+TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 ENDMAP
-# Doors
-DOOR:closed,(36,12)
-DOOR:locked,(23,10)
-# Stair
-STAIR:random, up
-STAIR:random, down
-# Potter
-MONSTER:'@', "Potter", random
+#Doors
+DOOR:closed,(34,10)
+DOOR:locked,(21,09)
+#Stair
+STAIR:(75,10),up
+STAIR:(22,12),down
+#Potter
+MONSTER:'@',"Potter",(22,11)
+# LIGHT IT UP
+REGION: (0,0,75,20),lit,"delphi"

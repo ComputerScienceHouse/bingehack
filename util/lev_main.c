@@ -222,7 +222,6 @@ char **argv;
 				":dat:knox.des",
 				":dat:medusa.des",
 				":dat:mines.des",
-				":dat:Potter.des",
 				":dat:sokoban.des",
 				":dat:tower.des",
 				":dat:yendor.des"
