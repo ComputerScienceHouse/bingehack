@@ -5,9 +5,7 @@
 #
 
 MAZE:"delphi",' '
-
 FLAGS:noteleport,arboreal
-MESSAGE:"Sup faggot"
 GEOMETRY:center,center
 MAP
 ---------------------------------------------------------------------------
@@ -30,8 +28,11 @@ MAP
 |            T            T         T     TTTTTTTTTTTTTTTTT               |
 ---------------------------------------------------------------------------
 ENDMAP
+# Doors
 DOOR:closed,(36,12)
 DOOR:locked,(23,10)
-MONSTER:'@', "Potter", random
+# Stair
 STAIR:random, up
 STAIR:random, down
+# Potter
+MONSTER:'@', "Potter", random
