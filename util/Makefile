@@ -39,8 +39,8 @@ $(LEV_LEX_OBJECTS): $(INCDIR)/lev_comp.h
 $(DGN_LEX_DEPS) $(LEV_LEX_DEPS) $(LEV_COMP_DEPS) $(DGN_YACC_DEPS) $(LEV_YACC_DEPS): $(INCLUDE_GENERATED_HEADERS)
 
 $(DGN_LEX_GENERATED_SOURCES) $(LEV_LEX_GENERATED_SOURCES): %.c: %.l
-	$(LEX) $(LEXFLAGS) --outfile=$@ $<
+	$(LEX) $(LEXFLAGS) -o $@ $<
 
 $(CURDIR)/%_yacc.c $(INCDIR)/%_comp.h: CURDIR := $(CURDIR)
 $(CURDIR)/%_yacc.c $(INCDIR)/%_comp.h: $(CURDIR)/%_yacc.y
-	$(YACC) $(YACCFLAGS) --output-file=$(CURDIR)/$*_yacc.c --defines=$(INCDIR)/$*_comp.h -d $<
+	$(YACC) $(YACCFLAGS) -o $(CURDIR)/$*_yacc.c --defines=$(INCDIR)/$*_comp.h -d $<

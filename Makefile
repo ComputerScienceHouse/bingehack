@@ -7,6 +7,7 @@ TOUCH ?= touch
 CSCOPE ?= cscope
 
 NCURSESW_CONFIG ?= ncursesw5-config
+NCURSES_CONFIG ?= ncurses5-config
 
 PREFIX ?= /usr/local
 GAMEDIR ?= $(PREFIX)/nethack
@@ -24,8 +25,8 @@ SRCDIR := $(TOPDIR)/src
 CPPFLAGS += -I$(INCDIR) -D_GNU_SOURCE
 CFLAGS += -fPIC -Werror -Wall -Wno-format-security -std=gnu99
 
-CPPFLAGS += $(shell $(NCURSESW_CONFIG) --cflags)
-LIBRARIES += $(shell $(NCURSESW_CONFIG) --libs)
+CPPFLAGS += $(shell $(NCURSES_CONFIG) --cflags) $(shell $(NCURSESW_CONFIG) --cflags)
+LIBRARIES += $(shell $(NCURSES_CONFIG) --libs) $(shell $(NCURSESW_CONFIG) --libs)
 
 CLEAN_TARGETS = $(SUBDIRS:=/clean)
 DEPCLEAN_TARGETS = $(SUBDIRS:=/depclean)
