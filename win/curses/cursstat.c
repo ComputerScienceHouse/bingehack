@@ -93,7 +93,7 @@ void curses_update_stats(boolean redraw)
 {
     char buf[BUFSZ];
     int count, enc, orient, sx_start, hp, hpmax, labels, swidth,
-     sheight, sx_end, sy_end;
+     sheight;
     WINDOW *win = curses_get_nhwin(STATUS_WIN);
     static int prev_labels = -1;
     static boolean first = TRUE;
@@ -112,8 +112,6 @@ void curses_update_stats(boolean redraw)
         sheight--;
     }
     
-    sx_end = swidth - 1;
-    sy_end = sheight - 1;    
     sx_start = sx;
         
     if (first)
