@@ -23,7 +23,7 @@ INCDIR := $(TOPDIR)/include
 SRCDIR := $(TOPDIR)/src
 
 CPPFLAGS += -I$(INCDIR) -D_GNU_SOURCE
-CFLAGS += -fPIC -Werror -Wall -Wno-format-security -std=gnu99
+CFLAGS += -fPIC -Werror -Wall -Wno-format -Wnonnull -std=gnu99
 
 CPPFLAGS += $(shell $(NCURSES_CONFIG) --cflags) $(shell $(NCURSESW_CONFIG) --cflags)
 LIBRARIES += $(shell $(NCURSES_CONFIG) --libs) $(shell $(NCURSESW_CONFIG) --libs)
