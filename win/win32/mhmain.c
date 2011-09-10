@@ -798,7 +798,7 @@ LRESULT onWMCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 			break;
 		
 		case IDM_HELP_LICENSE:
-			display_file(LICENSE, TRUE);  
+			display_file(LICENSEFILE, TRUE);  
 			break;
 
 		case IDM_HELP_PORTHELP:
