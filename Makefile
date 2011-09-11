@@ -8,6 +8,7 @@ CSCOPE ?= cscope
 
 NCURSESW_CONFIG ?= ncursesw5-config
 NCURSES_CONFIG ?= ncurses5-config
+MYSQL_CONFIG ?= mysql_config
 
 PREFIX ?= /usr/local
 GAMEDIR ?= $(PREFIX)/nethack
@@ -25,8 +26,8 @@ SRCDIR := $(TOPDIR)/src
 CPPFLAGS += -I$(INCDIR) -D_GNU_SOURCE
 CFLAGS += -fPIC -Werror -Wall -Wno-format -Wnonnull -std=gnu99
 
-CPPFLAGS += $(shell $(NCURSES_CONFIG) --cflags) $(shell $(NCURSESW_CONFIG) --cflags)
-LIBRARIES += $(shell $(NCURSES_CONFIG) --libs) $(shell $(NCURSESW_CONFIG) --libs) -lmysqlclient
+CPPFLAGS += $(shell $(NCURSES_CONFIG) --cflags) $(shell $(NCURSESW_CONFIG) --cflags) $(shell $(MYSQL_CONFIG) --cflags)
+LIBRARIES += $(shell $(NCURSES_CONFIG) --libs) $(shell $(NCURSESW_CONFIG) --libs) $(shell $(MYSQL_CONFIG) --libs)
 
 CLEAN_TARGETS = $(SUBDIRS:=/clean)
 DEPCLEAN_TARGETS = $(SUBDIRS:=/depclean)
