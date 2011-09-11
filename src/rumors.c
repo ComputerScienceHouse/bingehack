@@ -5,6 +5,7 @@
 #include "hack.h"
 #include "lev.h"
 #include "dlb.h"
+#include "achieve.h"
 
 /*	[note: this comment is fairly old, but still accurate for 3.1]
  * Rumors have been entirely rewritten to speed up the access.  This is
@@ -179,6 +180,7 @@ int mechanism;
 	}
 	else{
 		truth=3; /* We're talking to potter, we want the Potter quotes */
+		add_achievement_progress(AID_POTTER, ONE_TIME_ACHIEVEMENT);
 	}
 	line = getrumor(truth, buf, reading ? FALSE : TRUE);
 	if (!*line)

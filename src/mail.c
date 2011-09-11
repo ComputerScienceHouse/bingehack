@@ -8,6 +8,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include "mail.h"
+#include "achieve.h"
 
 /*
  * Notify user when new mail has arrived.  Idea by Merlyn Leroy.
@@ -387,6 +388,8 @@ struct mail_info *info;
 
     message_seen = TRUE;
     verbalize("%s, %s!  %s.", Hello(md), plname, info->display_txt);
+
+    add_achievement_progress(AID_MAIL, ONE_TIME_ACHIEVEMENT);
 
     if (info->message_typ) {
 	struct obj *obj = mksobj(SCR_MAIL, FALSE, FALSE);
