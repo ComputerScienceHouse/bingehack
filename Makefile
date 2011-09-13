@@ -85,9 +85,10 @@ update: all
 	$(TOUCH) -c $(GAMEDIR)/var/{bones*,?lock*,wizard*,save/*}
 
 install: all
-	$(INSTALL) -d $(GAMEDIR) $(GAMEDIR)/var/save
+	$(INSTALL) -d $(GAMEDIR) $(GAMEDIR)/var/save $(GAMEDIR)/inc
 	$(INSTALL) -m 0644 $(DAT_INSTALL_OBJECTS) $(GAMEDIR)
 	$(INSTALL) -m 2755 $(SRCDIR)/nethack $(GAMEDIR)
+	$(INSTALL) -m 0644 $(INCLUDE_INSTALLED_HEADERS) $(GAMEDIR)/inc
 ifneq ($(UNAME), OpenBSD)
 	$(INSTALL) -T $(RECOVER) $(GAMEDIR)/recover
 else
