@@ -88,7 +88,11 @@ install: all
 	$(INSTALL) -d $(GAMEDIR) $(GAMEDIR)/var/save
 	$(INSTALL) -m 0644 $(DAT_INSTALL_OBJECTS) $(GAMEDIR)
 	$(INSTALL) -m 2755 $(SRCDIR)/nethack $(GAMEDIR)
+ifneq ($(UNAME), OpenBSD)
 	$(INSTALL) -T $(RECOVER) $(GAMEDIR)/recover
+else
+	$(INSTALL) $(RECOVER) $(GAMEDIR)/recover
+endif
 	$(TOUCH) $(GAMEDIR)/var/{perm,record,logfile,xlogfile}
 
 %.exe:
