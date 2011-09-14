@@ -5,6 +5,7 @@
 #include "hack.h"
 #include "lev.h"
 #include <ctype.h>
+#include "achieve.h"
 
 STATIC_VAR NEARDATA struct engr *head_engr;
 
@@ -397,6 +398,9 @@ register xchar e_type;
 		u.uconduct.elbereth++;
 	}
 #endif
+	if(!strcmp(s, "Elbereth")){
+		add_achievement_progress(AID_ELBERETH, ONE_TIME_ACHIEVEMENT);
+	}
 	ep->engr_time = e_time;
 	ep->engr_type = e_type > 0 ? e_type : rnd(N_ENGRAVE-1);
 	ep->engr_lth = strlen(s) + 1;
