@@ -17,7 +17,6 @@ __attribute__((destructor)) static void configfile_destroy() {
 	config_destroy(config);
 }
 
-
 void configfile_init() {
 	config_init(config);
 	if( config_read_file(config, CONFIGFILE_LOCATION) == CONFIG_FALSE ) {
