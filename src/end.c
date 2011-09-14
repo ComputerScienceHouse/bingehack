@@ -371,11 +371,9 @@ register struct monst *mtmp;
 #define NOTIFY_NETHACK_BUGS
 #endif
 
-/*VARARGS1*/
-void
-panic VA_DECL(const char *, str)
-	VA_START(str);
-	VA_INIT(str, char *);
+void panic( const char *str, ... ) {
+	va_list ap;
+	va_start(ap, str);
 
 	if (program_state.panicking++)
 	    NH_abort();	/* avoid loops - this should never happen*/
@@ -419,7 +417,7 @@ panic VA_DECL(const char *, str)
 #endif
 	{
 	    char buf[BUFSZ];
-	    Vsprintf(buf,str,VA_ARGS);
+	    vsprintf(buf, str, ap);
 	    raw_print(buf);
 	    paniclog("panic", buf);
 	}
@@ -430,7 +428,7 @@ panic VA_DECL(const char *, str)
 	if (wizard)
 	    NH_abort();	/* generate core dump */
 #endif
-	VA_END();
+	va_end(ap);
 	done(PANICKED);
 }
 
