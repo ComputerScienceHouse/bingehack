@@ -13,3 +13,5 @@ config_t *_get_config();
 void configfile_init();
 
 #endif
+
+// vim:set noexpandtab textwidth=120

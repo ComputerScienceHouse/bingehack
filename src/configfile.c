@@ -24,3 +24,5 @@ void configfile_init() {
 		impossible("%s:%d %s", config_error_file(config), config_error_line(config), config_error_text(config));
 	}
 }
+
+// vim:set noexpandtab textwidth=120
