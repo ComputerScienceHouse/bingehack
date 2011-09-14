@@ -1,4 +1,5 @@
 CC := gcc
+#CC := clang
 DEPGEN := gcc
 YACC := bison
 LEX := flex
@@ -31,7 +32,7 @@ CFLAGS := $(CFLAGS) -fPIC -Werror -Wall -Wno-format -Wnonnull -std=gnu99
 UNAME := $(shell uname -s)
 ifneq ($(UNAME), OpenBSD)
 CPPFLAGS := $(CPPFLAGS) $(shell $(NCURSES_CONFIG) --cflags) $(shell $(NCURSESW_CONFIG) --cflags) $(shell $(MYSQL_CONFIG) --cflags) $(shell $(PKG_CONFIG) --cflags libconfig)
-LIBRARIES := $(LIBRARIES) $(shell $(NCURSES_CONFIG) --libs) $(shell $(NCURSESW_CONFIG) --libs) $(shell $(PKG_CONFIG) --libs libconfig)
+LIBRARIES := $(LIBRARIES) $(shell $(NCURSES_CONFIG) --libs) $(shell $(NCURSESW_CONFIG) --libs) $(shell $(PKG_CONFIG) --libs libconfig) -ldl
 else
 LIBRARIES := $(LIBARAIES) -L/usr/lib -lncurses -lncursesw
 endif
