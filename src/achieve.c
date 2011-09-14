@@ -189,27 +189,28 @@ int get_achievement_max_progress(int achievement_id){
 	MYSQL_ROW row;
 	char* query;
 	char* str_max_progress;
-	int max_progress;
+	int max_progress=0;
 
 	asprintf(&query, "SELECT `achievements`.`progress_max` FROM `achievements` WHERE id = %i ;", achievement_id);
 	if(mysql.real_query(&mysql.db, query, (unsigned int) strlen(query)) != 0){
-		panic("Real_query failed in get_achievement_max_progress: %s", mysql.error(&mysql.db));
+		pline("Real_query failed in get_achievement_max_progress: %s", mysql.error(&mysql.db));
+		disable_achievements();
 	}
 	free(query);
-	res = mysql.use_result(&mysql.db);
-	row = mysql.fetch_row(res);
-	if( mysql.fetch_lengths(res) == 0) {	//ACHIEVEMENT DOES NOT EXIST
-		panic("Error in get_achievement_max_progress(%i): Requested achievement does not exist.");
-	}
+	if(!achievement_system_disabled){
+		res = mysql.use_result(&mysql.db);
+		row = mysql.fetch_row(res);
+		if( mysql.fetch_lengths(res) == 0) {	//ACHIEVEMENT DOES NOT EXIST
+			panic("Error in get_achievement_max_progress(%i): Requested achievement does not exist.");
+		}
+		asprintf(&str_max_progress, "%s", row[0]);
+		max_progress = atoi(str_max_progress);
 
-	asprintf(&str_max_progress, "%s", row[0]);
-	max_progress = atoi(str_max_progress);
-
-	free(str_max_progress);
-
-	while( mysql.fetch_row(res) != NULL){} //keep fapping
-	mysql.free_result(res);
+		free(str_max_progress);
 	
+		while( mysql.fetch_row(res) != NULL){} //keep fapping
+		mysql.free_result(res);
+	}
 	return max_progress;
 }
 
@@ -220,7 +221,7 @@ int push_achievement_progress(int achievement_id, int updated_progress_count){
 	if(get_achievement_progress(achievement_id) == 0){//no previous progress on achievement, INSERT time
 		asprintf(&query, "INSERT INTO `achievement_progress`(`user_id`, `achievement_id`, `progress`) VALUES ((select user_id from `users_in_apps` where app_id=1 and app_username='%s'), %i, %i);", plname, achievement_id, updated_progress_count);
 		if(mysql.real_query(&mysql.db, query, (unsigned int) strlen(query)) != 0){
-		       pline("Real_query failed in push_achievement_progress: %s", mysql.error(&mysql.db));
+		       	pline("Real_query failed in push_achievement_progress: %s", mysql.error(&mysql.db));
 			disable_achievements();
 		}
 		free(query);
