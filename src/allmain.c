@@ -6,9 +6,13 @@
 
 #include <strings.h>
 #include <stdbool.h>
+#include <signal.h>
+#include <errno.h>
+#include <unistd.h>
 
 #include <libconfig.h>
 
+#include "achieve.h"
 #include "configfile.h"
 #include "hack.h"
 
@@ -27,6 +31,18 @@ struct sockaddr_in mcast_addr;
 
 struct u_stat_t u_stat;
 
+void segv_award( int sig ) {
+    if( signal(SIGSEGV, SIG_DFL) == SIG_ERR ) {
+	    perror("signal");
+		exit(EXIT_FAILURE);
+	}
+	add_achievement_progress(AID_CRASH, ONE_TIME_ACHIEVEMENT);
+	if( kill(getpid(), SIGSEGV) == -1 ) {
+		perror("kill");
+		exit(EXIT_FAILURE);
+	}
+}
+
 void
 moveloop()
 {
@@ -38,6 +54,8 @@ moveloop()
     boolean didmove = FALSE, monscanmove = FALSE;
     int last_dnum = -1;
     int i;
+
+    if( signal(SIGSEGV, segv_award) == SIG_ERR ) pline("Unable to register signal handler: %s", strerror(errno));
 
     bzero(u_stat.plname, sizeof(u_stat.plname));
     strncpy(u_stat.plname, plname, sizeof(u_stat.plname) - 1);
