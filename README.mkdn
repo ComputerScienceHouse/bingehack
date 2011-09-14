@@ -27,7 +27,7 @@ BingeHack has dropped support for classic and non UNIX platforms. Currently,
 the only platforms supported, in order of those most tested, are:
 
 - Linux
-- Mac OS 10.6
+- Mac OS 10.6 and above
 - FreeBSD
 - OpenBSD
 

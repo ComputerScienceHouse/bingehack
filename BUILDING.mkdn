@@ -31,7 +31,7 @@ Local overrides for make variables.
 <pre>
 PREFIX = $(PWD)/install
 
-# BSD and OSX only
+# FreeBSD and OSX only
 INSTALL := ginstall
 NCURSESW_CONFIG := ncursesw5-config
 </pre>
