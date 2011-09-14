@@ -24,6 +24,7 @@ struct {
 	unsigned long (*fetch_lengths) (MYSQL_RES *result);
 	const char *(*error) (MYSQL *mysql);
 	int (*ping) (MYSQL *mysql);
+	int (*options) (MYSQL *mysql, enum mysql_option option, const void *arg);
 } mysql = {
 	.handle = NULL
 };
@@ -62,13 +63,16 @@ static bool config_get_string( const char *path, const char **str ) {
 #endif
 
 void achievement_system_startup(){
+	
+	//read database configuration from file
 	const char *db_user, *db_pass, *db_db, *db_server;
-
 	if( !config_get_string("achievements.mysql.username", &db_user)   ) return;
 	if( !config_get_string("achievements.mysql.password", &db_pass)   ) return;
 	if( !config_get_string("achievements.mysql.database", &db_db)	  ) return;
 	if( !config_get_string("achievements.mysql.server",   &db_server) ) return; 
 
+
+	//Dynamically load MYSQL library	
 	if( mysql.handle != NULL ) return;
 	if( (mysql.handle = dlopen(libname("libmysqlclient"), RTLD_LAZY)) == NULL ) {
 		pline("Achievement system unavailabe: %s\n", nh_dlerror());
@@ -83,8 +87,16 @@ void achievement_system_startup(){
 	mysql.fetch_row = mysql_function("mysql_fetch_row");
 	mysql.error = mysql_function("mysql_error");
 	mysql.ping = mysql_function("mysql_ping");
+	mysql.options = mysql_function("mysql_options");
 	mysql.init(&mysql.db);
-	mysql.real_connect(&mysql.db, db_server, db_user, db_pass, db_db, 0, NULL, 0);
+	
+	//Respond in 4 seconds or assume db server is unreachable
+	int timeout_seconds = 4;
+	mysql.options(&mysql.db, MYSQL_OPT_CONNECT_TIMEOUT, &timeout_seconds);
+
+	if(mysql.real_connect(&mysql.db, db_server, db_user, db_pass, db_db, 0, NULL, 0) == NULL){
+		pline("Couldn't connect to db server for achievements. Specific error: %s", mysql.error(&mysql.db));
+	}
 	started = 1;
 }
 
