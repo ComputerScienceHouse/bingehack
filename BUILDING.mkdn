@@ -50,6 +50,7 @@ Compilation requires at least the following:
 - GNU bison
 - GNU coreutils
 - GNU make
+- libconfig
 - NCurses (with wide character support)
 
 # Building
