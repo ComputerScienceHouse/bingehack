@@ -4,6 +4,7 @@
 
 #include "hack.h"
 #include "vault.h"
+#include "achieve.h"
 
 STATIC_DCL struct monst *NDECL(findgd);
 
@@ -281,6 +282,7 @@ fnd:
 	    if (!mvitals[PM_CROESUS].died) {
 		verbalize("Oh, yes, of course.  Sorry to have disturbed you.");
 		mongone(guard);
+		add_achievement_progress(AID_VAULT, ONE_TIME_ACHIEVEMENT);
 	    } else {
 		setmangry(guard);
 		verbalize("Back from the dead, are you?  I'll remedy that!");

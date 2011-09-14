@@ -5,6 +5,7 @@ const static int GAME_ID = 1;
 
 const static int AID_POTTER = 1;
 const static int AID_MAIL = 2;
+const static int AID_VAULT = 7;
 const static int AID_ELBERETH = 9;
 const static int AID_CRASH = 19;
 
