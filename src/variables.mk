@@ -14,7 +14,7 @@ NAMING_OBJECTS := $(NAMING_SOURCES:.c=.o)
 NAMING_DEPS := $(NAMING_SOURCES:.c=.d)
 
 CLEAN_SOURCES := achieve.c allmain.c alloc.c apply.c artifact.c attrib.c ball.c \
-	bones.c botl.c cmd.c dbridge.c detect.c dig.c display.c \
+	bones.c botl.c configfile.c cmd.c dbridge.c detect.c dig.c display.c \
 	do.c do_name.c do_wear.c dog.c dogmove.c dokick.c dothrow.c \
 	dungeon.c eat.c end.c engrave.c exper.c explode.c \
 	extralev.c files.c fountain.c hack.c hacklib.c invent.c light.c \

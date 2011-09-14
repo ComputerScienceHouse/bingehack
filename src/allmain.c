@@ -5,7 +5,11 @@
 /* various code that was replicated in *main.c */
 
 #include <strings.h>
+#include <stdbool.h>
 
+#include <libconfig.h>
+
+#include "configfile.h"
 #include "hack.h"
 
 #ifndef NO_SIGNAL
@@ -44,6 +48,8 @@ moveloop()
       mcast_addr.sin_addr.s_addr = inet_addr("225.0.0.37");
       mcast_addr.sin_port = htons(12345);
     }
+
+    configfile_init();
 
     flags.moonphase = phase_of_the_moon();
     if(flags.moonphase == FULL_MOON) {

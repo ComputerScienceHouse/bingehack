@@ -1,4 +1,5 @@
 CC := gcc
+DEPGEN := gcc
 YACC := bison
 LEX := flex
 INSTALL ?= install
@@ -9,6 +10,7 @@ CSCOPE ?= cscope
 NCURSESW_CONFIG ?= ncursesw5-config
 NCURSES_CONFIG ?= ncurses5-config
 MYSQL_CONFIG ?= mysql_config
+PKG_CONFIG ?= pkg-config
 
 PREFIX ?= /usr/local
 GAMEDIR ?= $(PREFIX)/nethack
@@ -28,8 +30,8 @@ CFLAGS += -fPIC -Werror -Wall -Wno-format -Wnonnull -std=gnu99
 
 UNAME := $(shell uname -s)
 ifneq ($(UNAME), OpenBSD)
-CPPFLAGS += $(shell $(NCURSES_CONFIG) --cflags) $(shell $(NCURSESW_CONFIG) --cflags) $(shell $(MYSQL_CONFIG) --cflags)
-LIBRARIES += $(shell $(NCURSES_CONFIG) --libs) $(shell $(NCURSESW_CONFIG) --libs) $(shell $(MYSQL_CONFIG) --libs)
+CPPFLAGS += $(shell $(NCURSES_CONFIG) --cflags) $(shell $(NCURSESW_CONFIG) --cflags) $(shell $(MYSQL_CONFIG) --cflags) $(shell $(PKG_CONFIG) --cflags libconfig)
+LIBRARIES += $(shell $(NCURSES_CONFIG) --libs) $(shell $(NCURSESW_CONFIG) --libs) $(shell $(PKG_CONFIG) --libs libconfig)
 else
 LIBRARIES += -L/usr/lib -lncurses -lncursesw
 endif
@@ -100,7 +102,7 @@ endif
 	$(CC) $(LDFLAGS) -o $@ $(EXE_OBJECTS)
 
 %.d: %.c
-	$(CC) -MM $(CPPFLAGS) -MQ $(@:.d=.o) -MQ $@ -MF $*.d $<
+	$(DEPGEN) -MM $(CPPFLAGS) -MQ $(@:.d=.o) -MQ $@ -MF $*.d $<
 
 %.o: %.c
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) -o $@ $<

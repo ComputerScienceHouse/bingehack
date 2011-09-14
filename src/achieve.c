@@ -1,8 +1,11 @@
-#include <dlfcn.h>
+#include <stdlib.h>
 #include <stdbool.h>
+#include <dlfcn.h>
 
 #include <mysql.h>
+#include <libconfig.h>
 
+#include "configfile.h"
 #include "achieve.h"
 #include "hack.h"
 
@@ -37,6 +40,14 @@ static void *mysql_function( const char *name ) {
 	return ret;
 }
 
+static bool config_get_string( const char *path, const char **str ) {
+	if( config_lookup_string(config, path, str) == CONFIG_FALSE ) {
+		pline("Config setting %s not found or wrong type\n", path);
+		return false;
+	}
+	return true;
+}
+
 #if defined(__APPLE__) && defined(__MACH__)
 #define libname(s) (s ".dylib")
 #else
@@ -44,6 +55,10 @@ static void *mysql_function( const char *name ) {
 #endif
 
 void achievement_system_startup(){
+	(void) config_get_string;
+	//if( !config_get_string("mysql.username", &user) ) return;
+	//if( !config_get_string("mysql.password", &pass) ) return;
+
 	if( mysql.handle != NULL ) return;
 	if( (mysql.handle = dlopen(libname("libmysqlclient"), RTLD_LAZY)) == NULL ) {
 		pline("Achievement system unavailabe: %s\n", nh_dlerror());
