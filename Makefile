@@ -21,6 +21,7 @@ CSCOPE_FILES := cscope.out cscope.po.out cscope.in.out
 TOPDIR := $(PWD)
 INCDIR := $(TOPDIR)/include
 SRCDIR := $(TOPDIR)/src
+UTILDIR := $(TOPDIR)/util
 
 CPPFLAGS += -I$(INCDIR) -D_GNU_SOURCE
 CFLAGS += -fPIC -Werror -Wall -Wno-format -Wnonnull -std=gnu99
@@ -88,7 +89,8 @@ install: all
 	$(INSTALL) -d $(GAMEDIR) $(GAMEDIR)/var/save $(GAMEDIR)/inc
 	$(INSTALL) -m 0644 $(DAT_INSTALL_OBJECTS) $(GAMEDIR)
 	$(INSTALL) -m 2755 $(SRCDIR)/nethack $(GAMEDIR)
-	$(INSTALL) -m 0644 $(INCLUDE_INSTALLED_HEADERS) $(GAMEDIR)/inc
+	$(INSTALL) -m 0755 $(UTILDIR)/struct2json.pl $(GAMEDIR)
+	$(INSTALL) -m 0644 $(INCDIR)/*.h $(GAMEDIR)/inc
 ifneq ($(UNAME), OpenBSD)
 	$(INSTALL) -T $(RECOVER) $(GAMEDIR)/recover
 else
