@@ -23,7 +23,7 @@ struct {
 
 static char *nh_dlerror() {
 	char *err = dlerror();
-	return err == NULL ? "dlopen failed and no error message" : err;
+	return err == NULL ? "dylib routine failed and no error message" : err;
 }
 
 static void dl_impossible() {
