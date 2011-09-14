@@ -37,20 +37,16 @@ static char *nh_dlerror() {
 	return err == NULL ? "dylib routine failed and no error message" : err;
 }
 
-static void dl_impossible() {
-	impossible("%s\n", nh_dlerror());
-}
-
 static void *mysql_function( const char *name ) {
-	if( mysql.handle == NULL ) impossible("Achievement system has not been initialized\n");
+	if( mysql.handle == NULL ) panic("Achievement system has not been initialized");
 	void *ret;
-	if( (ret = dlsym(mysql.handle, name)) == NULL ) dl_impossible();
+	if( (ret = dlsym(mysql.handle, name)) == NULL ) panic("%s", nh_dlerror());
 	return ret;
 }
 
 static bool config_get_string( const char *path, const char **str ) {
 	if( config_lookup_string(config, path, str) == CONFIG_FALSE ) {
-		pline("Config setting %s not found or wrong type\n", path);
+		pline("Config setting %s not found or wrong type", path);
 		return false;
 	}
 	return true;
@@ -75,7 +71,7 @@ void achievement_system_startup(){
 	//Dynamically load MYSQL library	
 	if( mysql.handle != NULL ) return;
 	if( (mysql.handle = dlopen(libname("libmysqlclient"), RTLD_LAZY)) == NULL ) {
-		pline("Achievement system unavailabe: %s\n", nh_dlerror());
+		pline("Achievement system unavailabe: %s", nh_dlerror());
 		return;
 	}
 	mysql.init = mysql_function("mysql_init");
@@ -105,7 +101,7 @@ void achievement_system_startup(){
 void achievement_system_shutdown() {
 	if( mysql.handle != NULL ) {
 		if( dlclose(mysql.handle) != 0 ) {
-			dl_impossible();
+			impossible("%s", nh_dlerror());
 		} else {
 			mysql.handle = NULL;
 		}
@@ -114,7 +110,7 @@ void achievement_system_shutdown() {
 
 //ret 1 on sucess, 0 on failure
 int add_achievement_progress(int achievement_id, int add_progress_count){
-	if(ACHIEVEMENT_DEBUG){pline("DEBUG: add_achievement_progress(%i, %i)\n", achievement_id, add_progress_count);}
+	if(ACHIEVEMENT_DEBUG){pline("DEBUG: add_achievement_progress(%i, %i)", achievement_id, add_progress_count);}
 	
 	if(!started){achievement_system_startup();}
 	if( mysql.handle == NULL ) return 0;
@@ -126,12 +122,12 @@ int add_achievement_progress(int achievement_id, int add_progress_count){
 		if(pre_achievement_progress + add_progress_count >= max_achievement_progress){ //Achievement fully achieved!
 			if(push_achievement_progress(achievement_id, max_achievement_progress)){ //floor the value to max_progress
 				char * achievement_name = get_achievement_name(achievement_id);
-				pline("Congratulations! You've earned the achievement: %s\n", achievement_name);
+				pline("Congratulations! You've earned the achievement: %s", achievement_name);
 				free(achievement_name);
 				return ACHIEVEMENT_PUSH_SUCCESS;
 			}
 			else{
-				pline("Er, oops. You got an achievement, but it can't be recorded.\n");
+				pline("Er, oops. You got an achievement, but it can't be recorded.");
 				return ACHIEVEMENT_PUSH_FAILURE;
 			}
 		}
@@ -173,7 +169,7 @@ int get_achievement_progress(int achievement_id){
 		free(str_progress);
 	}
 	
-	if(ACHIEVEMENT_DEBUG){pline("DEBUG: get_achievement_progress(%i)=%i\n", achievement_id, achievement_progress);}
+	if(ACHIEVEMENT_DEBUG){pline("DEBUG: get_achievement_progress(%i)=%i", achievement_id, achievement_progress);}
 	
 	while( mysql.fetch_row(res) != NULL){} //keep fapping
 	mysql.free_result(res);

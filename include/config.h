@@ -429,8 +429,8 @@ typedef unsigned char	uchar;
 /* from Sporkhack */
 #define WHEREIS_FILE /* Write out player's current location to player.whereis */
 
-#ifndef CONFIGFILE_LOCATION
-#define CONFIGFILE_LOCATION HACKDIR "/nethack.conf"
+#ifndef CONFIGFILE_LOCATIONS
+#define CONFIGFILE_LOCATIONS { "/etc/nethack.conf", HACKDIR "/nethack.conf", "$NETHACKCONF" }
 #endif
 
 /* End of Section 5 */
