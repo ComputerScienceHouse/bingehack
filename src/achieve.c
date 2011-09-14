@@ -29,8 +29,9 @@ struct {
 	.handle = NULL
 };
 
-int ACHIEVEMENT_DEBUG = 0; 
+const int ACHIEVEMENT_DEBUG = 0; 
 int started = 0; 
+int achievement_system_disabled = 0;
 
 static char *nh_dlerror() {
 	char *err = dlerror();
@@ -86,12 +87,14 @@ void achievement_system_startup(){
 	mysql.options = mysql_function("mysql_options");
 	mysql.init(&mysql.db);
 	
-	//Respond in 4 seconds or assume db server is unreachable
-	int timeout_seconds = 4;
+	//Respond in 3 seconds or assume db server is unreachable
+	int timeout_seconds = 3;
 	mysql.options(&mysql.db, MYSQL_OPT_CONNECT_TIMEOUT, &timeout_seconds);
 
 	if(mysql.real_connect(&mysql.db, db_server, db_user, db_pass, db_db, 0, NULL, 0) == NULL){
 		pline("Couldn't connect to db server for achievements. Specific error: %s", mysql.error(&mysql.db));
+		disable_achievements();
+		started = 0;
 	}
 	started = 1;
 }
@@ -110,10 +113,11 @@ void achievement_system_shutdown() {
 
 //ret 1 on sucess, 0 on failure
 int add_achievement_progress(int achievement_id, int add_progress_count){
+	if(achievement_system_disabled){ return ACHIEVEMENT_PUSH_FAILURE; }
 	if(ACHIEVEMENT_DEBUG){pline("DEBUG: add_achievement_progress(%i, %i)", achievement_id, add_progress_count);}
 	
 	if(!started){achievement_system_startup();}
-	if( mysql.handle == NULL ) return 0;
+	if( mysql.handle == NULL ) return ACHIEVEMENT_PUSH_FAILURE;
 	int pre_achievement_progress = get_achievement_progress(achievement_id);
 	int max_achievement_progress = get_achievement_max_progress(achievement_id);
 	if(ACHIEVEMENT_DEBUG){pline("DEBUG: get_achievement_max_progress(%i)=%i", achievement_id, max_achievement_progress);}
@@ -140,7 +144,7 @@ int add_achievement_progress(int achievement_id, int add_progress_count){
 			}
 		}
 	}
-	return 1;
+	return ACHIEVEMENT_PUSH_SUCCESS;
 }
 
 int get_achievement_progress(int achievement_id){
@@ -152,27 +156,31 @@ int get_achievement_progress(int achievement_id){
 
 	asprintf(&query, "SELECT `achievement_progress`.`progress` FROM `achievement_progress` JOIN `users_in_apps` ON `users_in_apps`.`user_id` = `achievement_progress`.`user_id` where app_username = '%s' and app_id = %i and achievement_id = %i;", plname, GAME_ID, achievement_id);
 	if(mysql.real_query(&mysql.db, query, (unsigned int) strlen(query)) != 0){
-		panic("Error in get_achievement_progress(%i) (Error: %s)", achievement_id, mysql.error(&mysql.db));
+		pline("Error in get_achievement_progress(%i) (Error: %s)", achievement_id, mysql.error(&mysql.db));
+		disable_achievements();
 	}
 	free(query);
-	res = mysql.use_result(&mysql.db);
+	if(!achievement_system_disabled){res = mysql.use_result(&mysql.db);}
 	if(res == NULL){
-		panic("Error in get_achievement_progress(%i) (Error: %s)", achievement_id, mysql.error(&mysql.db));
-	}
-	row = mysql.fetch_row(res);
-	if( mysql.fetch_lengths(res) == 0) {	//NO ACHIEVEMENT PROGRESS
-		achievement_progress = 0;
+		pline("Error in get_achievement_progress(%i) (Error: %s)", achievement_id, mysql.error(&mysql.db));
+		disable_achievements();
 	}
 	else{
-		asprintf(&str_progress, "%s", row[0]);
-		achievement_progress = atoi(str_progress);
-		free(str_progress);
+		row = mysql.fetch_row(res);
+		if( mysql.fetch_lengths(res) == 0) {	//NO ACHIEVEMENT PROGRESS
+			achievement_progress = 0;
+		}
+		else{
+			asprintf(&str_progress, "%s", row[0]);
+			achievement_progress = atoi(str_progress);
+			free(str_progress);
+		}
+	
+		if(ACHIEVEMENT_DEBUG){pline("DEBUG: get_achievement_progress(%i)=%i", achievement_id, achievement_progress);}
+		
+		while( mysql.fetch_row(res) != NULL){} //keep fapping
+		mysql.free_result(res);
 	}
-	
-	if(ACHIEVEMENT_DEBUG){pline("DEBUG: get_achievement_progress(%i)=%i", achievement_id, achievement_progress);}
-	
-	while( mysql.fetch_row(res) != NULL){} //keep fapping
-	mysql.free_result(res);
 	return achievement_progress;
 }
 
@@ -211,10 +219,11 @@ int push_achievement_progress(int achievement_id, int updated_progress_count){
 	
 	if(get_achievement_progress(achievement_id) == 0){//no previous progress on achievement, INSERT time
 		asprintf(&query, "INSERT INTO `achievement_progress`(`user_id`, `achievement_id`, `progress`) VALUES ((select user_id from `users_in_apps` where app_id=1 and app_username='%s'), %i, %i);", plname, achievement_id, updated_progress_count);
-	        if(mysql.real_query(&mysql.db, query, (unsigned int) strlen(query)) != 0){
- 	               panic("Real_query failed in push_achievement_progress: %s", mysql.error(&mysql.db));
-        	}
-	        free(query);
+		if(mysql.real_query(&mysql.db, query, (unsigned int) strlen(query)) != 0){
+		       pline("Real_query failed in push_achievement_progress: %s", mysql.error(&mysql.db));
+			disable_achievements();
+		}
+		free(query);
 		return 1;
 	}
 	else{	//TODO: Implement Multi-part achievements (aka UPDATE)
@@ -249,4 +258,9 @@ char * get_achievement_name(int achievement_id){
 	mysql.free_result(res);
 
 	return str_name;
+}
+
+void disable_achievements(){
+	pline("Disabling the achievements system for the duration of this session.");
+	achievement_system_disabled=1;
 }
