@@ -36,6 +36,13 @@ INSTALL := ginstall
 NCURSESW_CONFIG := ncursesw5-config
 </pre>
 
+## nethack.conf
+Nethack system configuration.
+
+Examples can be found in `doc/nethack.conf`
+
+Must be installed to `HACKDIR/nethack.conf`
+
 # Dependencies
 Compilation requires at least the following:
 
