@@ -25,20 +25,20 @@ TOPDIR := $(PWD)
 INCDIR := $(TOPDIR)/include
 SRCDIR := $(TOPDIR)/src
 
-CPPFLAGS += -I$(INCDIR) -D_GNU_SOURCE
-CFLAGS += -fPIC -Werror -Wall -Wno-format -Wnonnull -std=gnu99
+CPPFLAGS := $(CPPFLAGS) -I$(INCDIR) -D_GNU_SOURCE
+CFLAGS := $(CFLAGS) -fPIC -Werror -Wall -Wno-format -Wnonnull -std=gnu99
 
 UNAME := $(shell uname -s)
 ifneq ($(UNAME), OpenBSD)
-CPPFLAGS += $(shell $(NCURSES_CONFIG) --cflags) $(shell $(NCURSESW_CONFIG) --cflags) $(shell $(MYSQL_CONFIG) --cflags) $(shell $(PKG_CONFIG) --cflags libconfig)
-LIBRARIES += $(shell $(NCURSES_CONFIG) --libs) $(shell $(NCURSESW_CONFIG) --libs) $(shell $(PKG_CONFIG) --libs libconfig)
+CPPFLAGS := $(CPPFLAGS) $(shell $(NCURSES_CONFIG) --cflags) $(shell $(NCURSESW_CONFIG) --cflags) $(shell $(MYSQL_CONFIG) --cflags) $(shell $(PKG_CONFIG) --cflags libconfig)
+LIBRARIES := $(LIBRARIES) $(shell $(NCURSES_CONFIG) --libs) $(shell $(NCURSESW_CONFIG) --libs) $(shell $(PKG_CONFIG) --libs libconfig)
 else
-LIBRARIES += -L/usr/lib -lncurses -lncursesw
+LIBRARIES := $(LIBARAIES) -L/usr/lib -lncurses -lncursesw
 endif
 
-CLEAN_TARGETS = $(SUBDIRS:=/clean)
-DEPCLEAN_TARGETS = $(SUBDIRS:=/depclean)
-ALL_TARGETS = $(SUBDIRS:=/all)
+CLEAN_TARGETS := $(SUBDIRS:=/clean)
+DEPCLEAN_TARGETS := $(SUBDIRS:=/depclean)
+ALL_TARGETS := $(SUBDIRS:=/all)
 
 .PHONY: all clean depclean install update cscope pristine cscope-clean
 .DEFAULT_GOAL: all
