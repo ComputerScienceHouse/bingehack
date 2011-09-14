@@ -25,8 +25,13 @@ SRCDIR := $(TOPDIR)/src
 CPPFLAGS += -I$(INCDIR) -D_GNU_SOURCE
 CFLAGS += -fPIC -Werror -Wall -Wno-format -Wnonnull -std=gnu99
 
+UNAME := $(shell uname -s)
+ifneq ($(UNAME), OpenBSD)
 CPPFLAGS += $(shell $(NCURSES_CONFIG) --cflags) $(shell $(NCURSESW_CONFIG) --cflags)
 LIBRARIES += $(shell $(NCURSES_CONFIG) --libs) $(shell $(NCURSESW_CONFIG) --libs)
+else
+LIBRARIES += -L/usr/lib -lncurses -lncursesw
+endif
 
 CLEAN_TARGETS = $(SUBDIRS:=/clean)
 DEPCLEAN_TARGETS = $(SUBDIRS:=/depclean)
@@ -83,7 +88,11 @@ install: all
 	$(INSTALL) -d $(GAMEDIR) $(GAMEDIR)/var/save
 	$(INSTALL) -m 0644 $(DAT_INSTALL_OBJECTS) $(GAMEDIR)
 	$(INSTALL) -m 2755 $(SRCDIR)/nethack $(GAMEDIR)
+ifneq ($(UNAME), OpenBSD)
 	$(INSTALL) -T $(RECOVER) $(GAMEDIR)/recover
+else
+	$(INSTALL) $(RECOVER) $(GAMEDIR)/recover
+endif
 	$(TOUCH) $(GAMEDIR)/var/{perm,record,logfile,xlogfile}
 
 %.exe:
