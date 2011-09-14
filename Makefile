@@ -86,7 +86,7 @@ update: all
 	$(TOUCH) -c $(GAMEDIR)/var/{bones*,?lock*,wizard*,save/*}
 
 install: all
-	$(INSTALL) -d $(GAMEDIR) $(GAMEDIR)/var/save $(GAMEDIR)/inc
+	$(INSTALL) -d $(GAMEDIR) $(GAMEDIR)/var/save $(GAMEDIR)/inc $(GAMEDIR)/var/fifos
 	$(INSTALL) -m 0644 $(DAT_INSTALL_OBJECTS) $(GAMEDIR)
 	$(INSTALL) -m 2755 $(SRCDIR)/nethack $(GAMEDIR)
 	$(INSTALL) -m 0755 $(UTILDIR)/struct2json.pl $(GAMEDIR)
