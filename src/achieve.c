@@ -65,11 +65,11 @@ void achievement_system_startup(){
 	const char *db_user, *db_pass, *db_db, *db_server;
 	if( !config_get_string("achievements.mysql.username", &db_user)   ) return;
 	if( !config_get_string("achievements.mysql.password", &db_pass)   ) return;
-	if( !config_get_string("achievements.mysql.database", &db_db)	  ) return;
+	if( !config_get_string("achievements.mysql.database", &db_db)     ) return;
 	if( !config_get_string("achievements.mysql.server",   &db_server) ) return; 
 
 
-	//Dynamically load MYSQL library	
+	//Dynamically load MYSQL library
 	if( mysql.handle != NULL ) return;
 	if( (mysql.handle = dlopen(libname("libmysqlclient"), RTLD_LAZY)) == NULL ) {
 		pline("Achievement system unavailabe: %s", nh_dlerror());

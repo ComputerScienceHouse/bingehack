@@ -6,6 +6,7 @@
 
 #include <stdint.h>
 
+#include "achieve.h"
 #include "hack.h"
 #include "eshk.h"
 #ifndef NO_SIGNAL
@@ -385,6 +386,8 @@ panic VA_DECL(const char *, str)
 	    exit_nhwindows((char *)0);
 	    iflags.window_inited = 0; /* they're gone; force raw_print()ing */
 	}
+
+	add_achievement_progress(AID_CRASH, ONE_TIME_ACHIEVEMENT);
 
 	raw_print(program_state.gameover ?
 		  "Postgame wrapup disrupted." :
