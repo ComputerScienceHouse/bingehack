@@ -373,8 +373,6 @@ register struct monst *mtmp;
 #endif
 
 void panic( const char *str, ... ) {
-	static bool award_achievement = true;
-
 	va_list ap;
 	va_start(ap, str);
 
@@ -388,11 +386,7 @@ void panic( const char *str, ... ) {
 	    iflags.window_inited = 0; /* they're gone; force raw_print()ing */
 	}
 
-	if( award_achievement ) {
-		award_achievement = false;
-		add_achievement_progress(AID_CRASH, ONE_TIME_ACHIEVEMENT);
-		award_achievement = true;
-	}
+	add_achievement_progress(AID_CRASH, ONE_TIME_ACHIEVEMENT);
 
 	raw_print(program_state.gameover ?
 		  "Postgame wrapup disrupted." :
