@@ -6,15 +6,13 @@ use warnings;
 use 5.010;
 
 use Convert::Binary::C;
-use Digest::SHA1;
-use POSIX qw/mkfifo/;
+use JSON::XS;
 
 $SIG{INT}  = 'teardown';
 $SIG{QUIT} = 'teardown';
 $SIG{TERM} = 'teardown';
 
-use constant INCDIR => 'inc/';
-use constant CMDFIFO => 'var/fifos/cmd';
+use constant INCDIR  => 'inc/';
 
 sub setup {
     state $c //= Convert::Binary::C->new(
@@ -24,11 +22,10 @@ sub setup {
 
     $c->parse_file(INCDIR()."hack.h");
 
-    mkfifo(CMDFIFO(), 644);
+    return $c;
 }
 
 sub teardown {
-    unlink(CMDFIFO()) or die "$!";
     exit(0);
 }
 
@@ -38,5 +35,9 @@ sub recv_structs {
 sub send_structs {
 }
 
-setup();
-while (1) { };
+my $c = setup();
+say $c->sizeof('monst')." bytes";
+given ($ARGV[0]) {
+    when ("save") { recv_structs($c) }
+    when ("restore") { send_structs($c) }
+}

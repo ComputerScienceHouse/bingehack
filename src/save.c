@@ -488,10 +488,10 @@ int mode;
 	if (lev >= 0 && lev <= maxledgerno())
 	    level_info[lev].flags |= VISITED;
 	bwrite(fd,(genericptr_t) &hackpid,sizeof(hackpid));
-#ifdef TOS
+/*#ifdef TOS
 	tlev=lev; tlev &= 0x00ff;
 	bwrite(fd,(genericptr_t) &tlev,sizeof(tlev));
-#else
+#else*/
 	bwrite(fd,(genericptr_t) &lev,sizeof(lev));
 #endif
 #ifdef RLECOMP
