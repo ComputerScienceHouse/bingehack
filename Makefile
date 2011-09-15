@@ -1,5 +1,4 @@
 CC := gcc
-#CC := clang
 DEPGEN := gcc
 YACC := bison
 LEX := flex

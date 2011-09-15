@@ -1,4 +1,5 @@
 #include <wchar.h>
+#include <stdbool.h>
 
 #include "hack.h"
 #include "unicode.h"

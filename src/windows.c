@@ -2,6 +2,7 @@
 /* Copyright (c) D. Cohrs, 1993. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdbool.h>
 #include "hack.h"
 #ifdef TTY_GRAPHICS
 #include "wintty.h"

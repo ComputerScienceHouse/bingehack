@@ -9,6 +9,7 @@
  *
  */
 
+#include <stdbool.h>
 #include "hack.h"
 #include "dlb.h"
 /* #define DEBUG */	/* uncomment to enable code debugging */

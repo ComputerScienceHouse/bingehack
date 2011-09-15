@@ -6,6 +6,7 @@
  * Support code for "rogue"-style level.
  */
 
+#include <stdbool.h>
 #include "hack.h"
 
 #ifdef REINCARNATION

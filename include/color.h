@@ -82,13 +82,13 @@ struct color_option {
 struct percent_color_option {
 	int percentage;
 	struct color_option color_option;
-	const struct percent_color_option *next;
+	struct percent_color_option *next;
 };
 
 struct text_color_option {
 	char *text;
 	struct color_option color_option;
-	const struct text_color_option *next;
+	struct text_color_option *next;
 };
 
 boolean parse_status_color_options(char *start);

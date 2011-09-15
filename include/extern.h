@@ -190,7 +190,7 @@ E const char *FDECL(click_to_cmd, (int,int,int));
 #ifdef DYNKEY
 E int FDECL(map_dkb, (char, char));
 E char FDECL(keydesc2char, (char *));
-E char FDECL(greadchar, (boolean));
+E char greadchar( bool );
 #define readchar() greadchar(FALSE)
 #else
 E char NDECL(readchar);
@@ -1445,7 +1445,7 @@ E void FDECL(set_wc_option_mod_status, (unsigned long, int));
 E void FDECL(set_wc2_option_mod_status, (unsigned long, int));
 E void FDECL(set_option_mod_status, (const char *,int));
 #ifdef DYNKEY
-E void FDECL(add_dkb, (char *, boolean));
+E void add_dkb( char *, bool );
 #endif
 #ifdef AUTOPICKUP_EXCEPTIONS
 E int FDECL(add_autopickup_exception, (const char *));

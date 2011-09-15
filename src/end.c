@@ -5,6 +5,7 @@
 #define NEED_VARARGS	/* comment line for pre-compiled headers */
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "achieve.h"
 #include "hack.h"

@@ -4,6 +4,7 @@
 
 /*  attribute modification routines. */
 
+#include <stdbool.h>
 #include "hack.h"
 
 /* #define DEBUG */	/* uncomment for debugging info */

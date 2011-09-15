@@ -6,6 +6,7 @@
  * Monster item usage routines.
  */
 
+#include <stdbool.h>
 #include "hack.h"
 #include "edog.h"
 

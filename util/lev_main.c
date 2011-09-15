@@ -9,6 +9,7 @@
 #define SPEC_LEV	/* for MPW */
 /* although, why don't we move those special defines here.. and in dgn_main? */
 
+#include <stdbool.h>
 #include "hack.h"
 #include "date.h"
 #include "sp_lev.h"

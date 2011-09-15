@@ -10,6 +10,7 @@
  * deal with players as well. - 11/89
  */
 
+#include <stdbool.h>
 #include "hack.h"
 
 #ifdef OVLB

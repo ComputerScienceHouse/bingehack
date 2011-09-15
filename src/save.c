@@ -2,6 +2,7 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdbool.h>
 #include "hack.h"
 #include "lev.h"
 #include "quest.h"
@@ -52,10 +53,10 @@ static long nulls[10];
 extern struct menucoloring *menu_colorings;
 #endif
 #if defined(STATUS_COLORS) && defined(TEXTCOLOR)
-extern const struct percent_color_option *hp_colors;
-extern const struct percent_color_option *pw_colors;
-extern const struct percent_color_option *wt_colors;
-extern const struct text_color_option *text_colors;
+extern struct percent_color_option *hp_colors;
+extern struct percent_color_option *pw_colors;
+extern struct percent_color_option *wt_colors;
+extern struct text_color_option *text_colors;
 #endif
 
 /* need to preserve these during save to avoid accessing freed memory */
