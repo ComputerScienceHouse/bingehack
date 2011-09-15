@@ -29,4 +29,8 @@ int push_achievement_progress(int achievement_id, int updated_progress_count);
 char * get_achievement_name(int achievement_id);
 
 void disable_achievements();
+
+int user_exists();
+
+int register_user();
 #endif

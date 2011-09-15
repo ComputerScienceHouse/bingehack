@@ -128,7 +128,9 @@ int add_achievement_progress(int achievement_id, int add_progress_count){
 	if( !achievement_system_startup() ) return ACHIEVEMENT_PUSH_FAILURE;
 
 	//Check if user exists
-	
+	if(!user_exists()){
+		register_user();
+	}
 	//Calculate user's completion on this achievement
 	int pre_achievement_progress = get_achievement_progress(achievement_id);
 	int max_achievement_progress = get_achievement_max_progress(achievement_id);
@@ -314,7 +316,7 @@ int register_user(){
 	}
 	free(query);
 	
-	if( asprintf(&query, "INSERT INTO `users_in_apps` . `app_username` VALUES ((SELECT `id` FROM `users` WHERE `users`.`username` = '%s'), %i, '%s')", str, GAME_ID , plname ) == -1) panic("asprintf: %s", strerror(errno));
+	if( asprintf(&query, "INSERT INTO `users_in_apps` VALUES ((SELECT `id` FROM `users` WHERE `users`.`username` = '%s'), %i, '%s')", str, GAME_ID , plname ) == -1) panic("asprintf: %s", strerror(errno));
 
 	if(mysql.real_query(&mysql.db, query, (unsigned int) strlen(query)) != 0){
 		pline("Real_query failed in register_user: %s", mysql.error(&mysql.db));
@@ -331,10 +333,9 @@ int user_exists(){
 	char* query;
 	int user_exists = 0;
 
-	if( asprintf(&query, "SELECT `app_username`` FROM `users_in_apps` WHERE app_username = '%s' AND app_id = %i ;", plname, GAME_ID) == -1 ) panic("asprintf: %s", strerror(errno));
+	if( asprintf(&query, "SELECT `app_username` FROM `users_in_apps` WHERE app_username = '%s' AND app_id = %i ;", plname, GAME_ID) == -1 ) panic("asprintf: %s", strerror(errno));
 	if( mysql.real_query(&mysql.db, query, (unsigned int) strlen(query)) != 0 ){
-
-		//fail nicely
+		goto fail;
 	}
         free(query);
 
@@ -353,5 +354,13 @@ int user_exists(){
 			user_exists = 1;
 		}
 	}
+	goto out;
+
+fail:
+        pline("Error in user_exists() (Error: %s)", mysql.error(&mysql.db));
+        disable_achievements();
+out:
+        if( res != NULL ) mysql.free_result(res);
+
 	return user_exists;
 }
