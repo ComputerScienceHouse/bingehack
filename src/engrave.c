@@ -1241,7 +1241,8 @@ static const char *csh_epitaphs[] = {
  * 		--Clockfort, 2010-01-10
 	,"Here lies Lisa Tufo Nault - Beloved house member",
 	"Here lies Ryan Phillips - Mark's Best Customer",
-	"Here lies Ryan Phillips - Plate Connoisseur"
+	"Here lies Ryan Phillips - Plate Connoisseur",
+	"Here lies Ryan Phillips - Our Best Friend at RIT"
 */
 };
 

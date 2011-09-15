@@ -51,6 +51,8 @@ int curses_read_char()
         tmpch = (ch - ALT_0) + '0';
         ch = M(tmpch);
     }
+#else 
+    (void) tmpch;
 #endif
 
 #if defined(ALT_A) && defined(ALT_Z)    /* PDCurses, maybe others */    
@@ -59,6 +61,8 @@ int curses_read_char()
         tmpch = (ch - ALT_A) + 'a';
         ch = M(tmpch);
     }
+#else
+    (void) tmpch;
 #endif
 
 #ifdef KEY_RESIZE
@@ -353,7 +357,7 @@ char *curses_break_str(const char *str, int width, int line_num)
     {
         return NULL;
     }
-    
+
     retstr = curses_copy_of(curstr);
     
     return retstr;
@@ -369,7 +373,6 @@ char *curses_str_remainder(const char *str, int width, int line_num)
     int curline = 0;
     int strsize = strlen(str);
     char substr[strsize];
-    char curstr[strsize];
     char tmpstr[strsize];
     
     strcpy(substr, str);
@@ -398,11 +401,6 @@ char *curses_str_remainder(const char *str, int width, int line_num)
         {
             last_space = count - 1;
         }
-        for (count = 0; count < last_space; count++)
-        {
-            curstr[count] = substr[count];
-        }
-        curstr[count] = '\0';
         if (substr[count] == '\0')
         {
             break;
