@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <dlfcn.h>
 #include <string.h>
+#include <assert.h>
 
 #include <mysql.h>
 #include <libconfig.h>
@@ -53,11 +54,20 @@ static bool config_get_string( const char *path, const char **str ) {
 	return true;
 }
 
+static const size_t MAX_LIBNAME_LEN = 64;
+static const char *libname( const char *name ) {
+	assert(name != NULL);
+	static const char *libsuffix;
 #if defined(__APPLE__) && defined(__MACH__)
-#define libname(s) (s ".dylib")
+	libsuffix = "dylib";
 #else
-#define libname(s) (s ".so")
+	libsuffix = "so";
 #endif
+	static char buf[MAX_LIBNAME_LEN];
+	size_t len = snprintf(buf, MAX_LIBNAME_LEN, "lib%s.%s", name, libsuffix);
+	assert(len < MAX_LIBNAME_LEN);
+	return buf;
+}
 
 void achievement_system_startup(){
 	
@@ -71,7 +81,7 @@ void achievement_system_startup(){
 
 	//Dynamically load MYSQL library
 	if( mysql.handle != NULL ) return;
-	if( (mysql.handle = dlopen(libname("libmysqlclient"), RTLD_LAZY)) == NULL ) {
+	if( (mysql.handle = dlopen(libname("mysqlclient"), RTLD_LAZY)) == NULL ) {
 		pline("Achievement system unavailabe: %s", nh_dlerror());
 		return;
 	}
@@ -98,8 +108,6 @@ void achievement_system_startup(){
 	}
 	started = 1;
 }
-
-#undef libname
 
 void achievement_system_shutdown() {
 	if( mysql.handle != NULL ) {
