@@ -11,6 +11,7 @@
 #include "configfile.h"
 #include "achieve.h"
 #include "hack.h"
+#include <ctype.h>
 
 struct {
 	void *handle;
@@ -299,14 +300,16 @@ void disable_achievements(){
 	achievement_system_disabled = 1;
 }
 
+//TODO Odd unregistered case where app_username is already taken
 int register_user(){
 	pline("Hey! Listen! You're not registered in the achievements database.");
-	pline("If you don't have a CSH account, just mash the escape key.");
+	pline("If you don't have a CSH account, you can probably leave this blank.");
 	char str[BUFSZ];
 	getlin("Enter CSH username to associate with this account:", str);
-	if(str[0] == '\033'){ /* user is mashing escape key, just use their natural plname . */
+	if(isspace(str[0]) || str[0] == '\033' || str[0] == '\n' || str[0] == 0){
 		strcpy(str,plname);
 	}
+	
 	char *query;
 	if( asprintf(&query, "INSERT INTO `users` (`username`) VALUES ('%s')", str ) == -1) panic("asprintf: %s", strerror(errno));
 	
@@ -337,17 +340,17 @@ int user_exists(){
 	if( mysql.real_query(&mysql.db, query, (unsigned int) strlen(query)) != 0 ){
 		goto fail;
 	}
-        free(query);
+	free(query);
 
-        if((res = mysql.use_result(&mysql.db)) == NULL){
+	if((res = mysql.use_result(&mysql.db)) == NULL){
 		disable_achievements();
 	}
 	else{
-        	if( (row = mysql.fetch_row(res)) == NULL ) {
-        		if( mysql.num_rows(res) == 0 ){ //Not a user of nethack
+		if( (row = mysql.fetch_row(res)) == NULL ) {
+			if( mysql.num_rows(res) == 0 ){ //Not a user of nethack
 				user_exists = 0;
 			}
-        	}
+		}
 		else{
 			row = mysql.fetch_row(res);
 			assert(row == NULL);
@@ -357,10 +360,10 @@ int user_exists(){
 	goto out;
 
 fail:
-        pline("Error in user_exists() (Error: %s)", mysql.error(&mysql.db));
-        disable_achievements();
+	pline("Error in user_exists() (Error: %s)", mysql.error(&mysql.db));
+	disable_achievements();
 out:
-        if( res != NULL ) mysql.free_result(res);
+	if( res != NULL ) mysql.free_result(res);
 
 	return user_exists;
 }
