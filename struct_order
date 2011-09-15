@@ -1,0 +1,10 @@
+version_info
+(char[])plname
+(int)hackpid
+(xchar)lev
+(dlevel_t)levl
+uid
+(struct flag)flags
+(struct you)u
+(long)timer_id
+(int)counter
