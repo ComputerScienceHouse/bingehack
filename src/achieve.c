@@ -307,6 +307,7 @@ int register_user(){
 	char str[BUFSZ];
 	getlin("Enter CSH username to associate with this account:", str);
 	if(isspace(str[0]) || str[0] == '\033' || str[0] == '\n' || str[0] == 0){
+		memset(str, 0, BUFSZ);
 		strcpy(str,plname);
 	}
 	
