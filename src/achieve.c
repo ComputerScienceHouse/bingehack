@@ -54,7 +54,7 @@ static bool config_get_string( const char *path, const char **str ) {
 	return true;
 }
 
-static const size_t MAX_LIBNAME_LEN = 64;
+#define MAX_LIBNAME_LEN 64
 static const char *libname( const char *name ) {
 	assert(name != NULL);
 	static const char *libsuffix;
@@ -126,6 +126,10 @@ int add_achievement_progress(int achievement_id, int add_progress_count){
 	if(ACHIEVEMENT_DEBUG){pline("DEBUG: add_achievement_progress(%i, %i)", achievement_id, add_progress_count);}
 	
 	if( !achievement_system_startup() ) return ACHIEVEMENT_PUSH_FAILURE;
+
+	//Check if user exists
+	
+	//Calculate user's completion on this achievement
 	int pre_achievement_progress = get_achievement_progress(achievement_id);
 	int max_achievement_progress = get_achievement_max_progress(achievement_id);
 	if(ACHIEVEMENT_DEBUG){pline("DEBUG: get_achievement_max_progress(%i)=%i", achievement_id, max_achievement_progress);}
@@ -255,7 +259,7 @@ int push_achievement_progress(int achievement_id, int updated_progress_count){
 
 // It is the caller's responsibility to free() the return value of this function.
 char *get_achievement_name( int achievement_id ){
-	MYSQL_RES *res = NULL;
+		MYSQL_RES *res = NULL;
 	MYSQL_ROW row;
 	char* query;
 	char* str_name;
@@ -291,4 +295,63 @@ out:
 void disable_achievements(){
 	pline("Disabling the achievements system for the duration of this session.");
 	achievement_system_disabled = 1;
+}
+
+int register_user(){
+	pline("Hey! Listen! You're not registered in the achievements database.");
+	pline("If you don't have a CSH account, just mash the escape key.");
+	char str[BUFSZ];
+	getlin("Enter CSH username to associate with this account:", str);
+	if(str[0] == '\033'){ /* user is mashing escape key, just use their natural plname . */
+		strcpy(str,plname);
+	}
+	char *query;
+	if( asprintf(&query, "INSERT INTO `users` (`username`) VALUES ('%s')", str ) == -1) panic("asprintf: %s", strerror(errno));
+	
+	if(mysql.real_query(&mysql.db, query, (unsigned int) strlen(query)) != 0){
+		pline("Real_query failed in register_user: %s", mysql.error(&mysql.db));
+		disable_achievements();
+	}
+	free(query);
+	
+	if( asprintf(&query, "INSERT INTO `users_in_apps` . `app_username` VALUES ((SELECT `id` FROM `users` WHERE `users`.`username` = '%s'), %i, '%s')", str, GAME_ID , plname ) == -1) panic("asprintf: %s", strerror(errno));
+
+	if(mysql.real_query(&mysql.db, query, (unsigned int) strlen(query)) != 0){
+		pline("Real_query failed in register_user: %s", mysql.error(&mysql.db));
+		disable_achievements();
+	}
+	free(query);
+
+	return 1;
+}
+
+int user_exists(){
+	MYSQL_RES *res = NULL;
+	MYSQL_ROW row;
+	char* query;
+	int user_exists = 0;
+
+	if( asprintf(&query, "SELECT `app_username`` FROM `users_in_apps` WHERE app_username = '%s' AND app_id = %i ;", plname, GAME_ID) == -1 ) panic("asprintf: %s", strerror(errno));
+	if( mysql.real_query(&mysql.db, query, (unsigned int) strlen(query)) != 0 ){
+
+		//fail nicely
+	}
+        free(query);
+
+        if((res = mysql.use_result(&mysql.db)) == NULL){
+		disable_achievements();
+	}
+	else{
+        	if( (row = mysql.fetch_row(res)) == NULL ) {
+        		if( mysql.num_rows(res) == 0 ){ //Not a user of nethack
+				user_exists = 0;
+			}
+        	}
+		else{
+			row = mysql.fetch_row(res);
+			assert(row == NULL);
+			user_exists = 1;
+		}
+	}
+	return user_exists;
 }
