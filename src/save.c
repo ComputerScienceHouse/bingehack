@@ -583,19 +583,13 @@ int mode;
 void bwrite(genericptr_t loc, unsigned int num, const char* structname) {
 	boolean failed = false;
 
-#if defined(BSD) || defined(ULTRIX)
-	failed = (write(fd, loc, (int)num) != (int)num);
-#else /* e.g. SYSV, __TURBOC__ */
-	failed = (write(fd, loc, num) != num);
-#endif
-
 	if (failed) {
 #if defined(UNIX) || defined(VMS) || defined(__EMX__)
 	    if (program_state.done_hup)
-		terminate(EXIT_FAILURE);
+			terminate(EXIT_FAILURE);
 	    else
 #endif
-		panic("cannot write %u bytes to file #%d", num, fd);
+			panic("cannot write %u bytes to file #%d", num, fd);
 	}
 }
 
