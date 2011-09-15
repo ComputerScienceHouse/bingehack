@@ -79,12 +79,12 @@ extern void NDECL(monst_init);
 extern void NDECL(objects_init);
 extern void NDECL(decl_init);
 
-static boolean FDECL(write_common_data, (int,int,lev_init *,long, const char*));
+static boolean FDECL(write_common_data, (int,int,lev_init *,long));
 static boolean FDECL(write_monsters, (int,char *,monster ***));
 static boolean FDECL(write_objects, (int,char *,object ***));
 static boolean FDECL(write_engravings, (int,char *,engraving ***));
-static boolean FDECL(write_maze, (int,specialmaze *, const char *));
-static boolean FDECL(write_rooms, (int,splev *, const char*));
+static boolean FDECL(write_maze, (int,specialmaze *));
+static boolean FDECL(write_rooms, (int,splev *));
 static void NDECL(init_obj_classes);
 
 static struct {
@@ -223,6 +223,7 @@ char **argv;
 				":dat:knox.des",
 				":dat:medusa.des",
 				":dat:mines.des",
+				":dat:oracle.des",
 				":dat:sokoban.des",
 				":dat:tower.des",
 				":dat:yendor.des"
@@ -950,7 +951,10 @@ store_room()
  * Output some info common to all special levels.
  */
 static boolean
-write_common_data(int fd, int typ, lev_init* init, long flgs, const char* filename)
+write_common_data(fd, typ, init, flgs)
+int fd, typ;
+lev_init *init;
+long flgs;
 {
 	char c;
 	uchar len;
@@ -964,10 +968,6 @@ write_common_data(int fd, int typ, lev_init* init, long flgs, const char* filena
 	Write(fd, &c, sizeof(c));	/* 1 byte header */
 	Write(fd, init, sizeof(lev_init));
 	Write(fd, &flgs, sizeof flgs);
-
-	len = (uchar) strlen(filename);
-	Write(fd, &len, sizeof len);
-	Write(fd, filename, len + 1);
 
 	len = (uchar) strlen(tmpmessage);
 	Write(fd, &len, sizeof len);
@@ -1110,10 +1110,10 @@ specialmaze *maze_level;
 	if (fout < 0) return FALSE;
 
 	if (room_level) {
-	    if (!write_rooms(fout, room_level, filename))
+	    if (!write_rooms(fout, room_level))
 		return FALSE;
 	} else if (maze_level) {
-	    if (!write_maze(fout, maze_level, filename))
+	    if (!write_maze(fout, maze_level))
 		return FALSE;
 	} else
 	    panic("write_level_file");
@@ -1127,12 +1127,14 @@ specialmaze *maze_level;
  * Also, we have to free the memory allocated via alloc().
  */
 static boolean
-write_maze(int fd, specialmaze* maze, const char* filename)
+write_maze(fd, maze)
+int fd;
+specialmaze *maze;
 {
 	short i,j;
 	mazepart *pt;
 
-	if (!write_common_data(fd, SP_LEV_MAZE, &(maze->init_lev), maze->flags, filename))
+	if (!write_common_data(fd, SP_LEV_MAZE, &(maze->init_lev), maze->flags))
 	    return FALSE;
 
 	Write(fd, &(maze->filling), sizeof(maze->filling));
@@ -1335,12 +1337,14 @@ write_maze(int fd, specialmaze* maze, const char* filename)
  * Here we write the structure of the room level in the specified file (fd).
  */
 static boolean
-write_rooms(int fd, splev* lev, const char* filename)
+write_rooms(fd, lev)
+int fd;
+splev *lev;
 {
 	short i,j, size;
 	room *pt;
 
-	if (!write_common_data(fd, SP_LEV_ROOMS, &(lev->init_lev), lev->flags, filename))
+	if (!write_common_data(fd, SP_LEV_ROOMS, &(lev->init_lev), lev->flags))
 		return FALSE;
 
 	/* Random registers */
