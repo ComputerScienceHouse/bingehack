@@ -1,0 +1,105 @@
+#	SCCS Id: @(#)nrh3.des	3.4.3
+#	Created by Spencer Bell, December 2010
+# NetHack may be freely redistributed.  See license for details.
+#
+# Code for a randomly appearing CSH level mirroring the layout of NRH3
+# Maps are 76x18
+# T is currently a stand-in for Drink
+
+MAZE:"csh",' '
+FLAGS: noteleport,hardfloor
+MESSAGE:"Welcome to CSH!"
+GEOMETRY:center,center
+MAP
+----------------------------------------------------------------------------
+|     ---                                                                  |
+|     |.|                                                                  |
+|  ----+-----                                                     ---      |
+|  |.+...+..|                                                     |{|      |
+| ---|...|---                                                    --+-----  |
+| |..+...+..|                                                    |...+..|  |
+| |..F...|---                                                    |...|..|  |
+| ---|...+.|------------------ --------- ------------------------|...|..|  |
+| |..+...|--|{||.||.||.||.||{| |.......| |{||.||.||.||.||.||.||{||...|---  |
+| ---|...+{||.||.||.||.||.||.| |.......| |.||.||.||.||.||.||.||.||...|..|  |
+| |..+...|---+--+--+--+--+--+--|..---..|--+--+--+--+--+--+--+--+-|...|..|  |
+|----|.........................|..| |..|.............................+..|  |
+||...+............................---................................|---  |
+||...|...............................................................|..|  |
+|-F+F|...|---+-+-+-FFF---+--+---+-----+---+--+-+-FFF---+--+--+---|...|..|  |
+||...|..T|  |.|.|......||.||.| |..| |..| |.||.|......||.||.||.|  |...|---  | 
+||...|-+--  --|.|......||.||.| |..| |..| |.||.|......||.||.|---  |...+..|  |
+|-----|.|     --|......|------ ---- ---- -----|......|------     ----|..|  |
+----------------------------------------------------------------------------
+ENDMAP
+# Non diggable walls
+NON_DIGGABLE:(00,00,75,19)
+# Random RTP places
+RANDOM_PLACES:(03,09),(22,09),(25,17),(70,07),(70,12),(42,17),(50,18),(55,17),(35,10),(03,14)\
+# Entire area is lit
+REGION:(00,00,75,19),lit,"ordinary"
+# Stairs locations
+STAIR:(04,03),down
+STAIR:(61,16),up
+#   Throne room, with Croesus on the throne
+#REGION:(37,08,46,11),lit,"throne"
+#MONSTER:'@',"Croesus",(43,10),hostile
+# Doors
+# T Doors
+DOOR:closed,(66,05)
+DOOR:random,(68,06)
+DOOR:random,(68,12)
+DOOR:locked,(68,17)
+# Southside doors
+DOOR:closed,(42,13)
+DOOR:open,(42,17)
+DOOR:random,(45,13)
+DOOR:random,(45,17)
+DOOR:open,(48,13)
+DOOR:locked,(47,17)
+DOOR:random,(51,13)
+DOOR:random,(54,13)
+DOOR:closed,(55,17)
+DOOR:locked,(57,13)
+DOOR:random,(58,17)
+DOOR:random,(60,13)
+DOOR:closed,(61,17)
+DOOR:closed,(63,13)
+# Vater lobby doors
+DOOR:locked,(32,17)
+DOOR:locked,(38,17)
+# Northside doors
+DOOR:closed,(13,13)
+DOOR:locked,(13,17)
+DOOR:random,(16,13)
+DOOR:locked,(15,17)
+DOOR:random,(19,13)
+DOOR:random,(17,17)
+DOOR:random,(22,13)
+DOOR:open,(25,13)
+DOOR:random,(25,17)
+DOOR:closed,(28,13)
+DOOR:locked,(28,17)
+# L side doors
+DOOR:locked,(07,03)
+DOOR:locked,(05,04)
+DOOR:locked,(09,04)
+DOOR:random,(05,06)
+DOOR:random,(09,06)
+DOOR:locked,(05,09)
+DOOR:open,(09,08)
+DOOR:random,(05,11)
+DOOR:random,(09,10)
+DOOR:locked,(05,13)
+DOOR:locked,(03,15)
+DOOR:locked,(07,17)
+# RTPs placed around floor
+MONSTER:'@',"rtp",place[0]
+MONSTER:'@',"rtp",place[1]
+MONSTER:'@',"rtp",place[2]
+MONSTER:'@',"rtp",place[3]
+MONSTER:'@',"rtp",place[4]
+MONSTER:'@',"rtp",place[5]
+# Random tool in the social closet and the project room
+OBJECT:'(',random,(07,02)
+OBJECT:'(',random,(10,08)
