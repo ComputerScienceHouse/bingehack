@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <limits.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -1165,7 +1166,7 @@ docompress_file(filename, uncomp)
 const char *filename;
 boolean uncomp;
 {
-	char cfn[80];
+	char cfn[PATH_MAX];
 	FILE *cf;
 	const char *args[10];
 # ifdef COMPRESS_OPTIONS
