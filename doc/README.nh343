@@ -1,10 +1,10 @@
-                NetHack 3.4.3 -- General information
+                NetHack 4.0.0 -- General information
 
 NetHack 3.4 is an enhancement to the dungeon exploration game NetHack.
 It is a distant descendent of Rogue and Hack, and a direct descendent of
 NetHack 3.3.
 
-NetHack 3.4.3 is a bugfix release for NetHack 3.4.2.
+NetHack 4.0.0 is a bugfix release for NetHack 3.4.2.
  *  Several dozen general bug fixes including at least one fatal bug
  *  Correct several inconsistencies
  *  Handle level completely filled with monsters better
@@ -20,11 +20,11 @@ for the development team's own use and is provided "as is", so please do
 not ask us to further explain the entries in that file.
 
 The internal structure of bones and save files has not changed between 
-NetHack 3.4.0, 3.4.1, 3.4.2 and now 3.4.3. That means that if you use the 
+NetHack 3.4.0, 3.4.1, 3.4.2 and now 4.0.0. That means that if you use the 
 same compiler, the same compiler version and compiler switches, the same 
 NetHack compile-time options, and you have not incorporated any additional 
 source code patches that altered the save file format on your system, then 
-bones and save files from 3.4.0 through 3.4.3 should be compatible.
+bones and save files from 3.4.0 through 4.0.0 should be compatible.
 
 
                         - - - - - - - - - - -
@@ -155,15 +155,15 @@ Please read items (1), (2) and (3) BEFORE doing anything with your new code.
     C compiler.
 
     With the demise of Windows NT on the DEC Alpha, no attempt has been
-    made to build NetHack 3.4.3 on that platform.
+    made to build NetHack 4.0.0 on that platform.
 
     Windows 98/Me have been the most problematic Windows platforms for
     running NetHack so far. Patches for 3.4.2 (courtesy Michael Lehotay)
-    have been incorporated into 3.4.3 to help make them work better. Your
+    have been incorporated into 4.0.0 to help make them work better. Your
     results may vary.
 
     A build for Intel 80286 machines and DOS "real mode" overlaid versions 
-    has not been produced for 3.4.3.  Nobody on the porting team has
+    has not been produced for 4.0.0.  Nobody on the porting team has
     the time or the software to attempt the necessary tuning that will allow 
     it to achieve the balance of having just the right amount of available 
     memory, and still have acceptable performance.  The sources necessary 

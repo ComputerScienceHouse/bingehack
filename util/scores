@@ -114,7 +114,7 @@ exec 3> "$tempfile"
 while true; do
 	dialog --output-fd 3 --title "High Scores" --menu "" 0 0 0 --file "$argsfile" || break
 	chosen_hash="$(cat "$tempfile")"
-	dumplog="/dgldir/userdata/${name_hash[$chosen_hash]}/dumplog/${time_hash[$chosen_hash]}.nh343.txt"
+	dumplog="/dgldir/userdata/${name_hash[$chosen_hash]}/dumplog/${time_hash[$chosen_hash]}.nh400.txt"
 	if [[ -f "$dumplog" ]]; then
 		less "$dumplog"
 	else

@@ -15,7 +15,7 @@ You can also create a `config.mk` to store your make defaults.
 #define HACKDIR "/prefix/dir/from/config.mk/nethack"
 #define WIZARD "myuser"
 #define VAR_PLAYGROUND HACKDIR "/var"
-#define DUMP_FN HACKDIR "%t.nh343.txt"
+#define DUMP_FN HACKDIR "%t.nh400.txt"
 
 // BSD and OSX only
 #define MENU_COLOR_REGEX_POSIX

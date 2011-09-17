@@ -215,7 +215,7 @@
  * otherwise it will be the current directory.
  */
 # ifndef HACKDIR
-#  define HACKDIR "/nh343"
+#  define HACKDIR "/nh400"
 # endif
 
 /*
@@ -392,7 +392,7 @@ typedef unsigned char	uchar;
 #define HALLU_GODS
 
 #define DUMP_LOG        /* Dump game end information to a file */
-//#define DUMP_FN "/dgldir/userdata/%n/dumplog/%t.nh343.txt"      /* Fixed dumpfile name, if you want
+//#define DUMP_FN "/dgldir/userdata/%n/dumplog/%t.nh400.txt"      /* Fixed dumpfile name, if you want
 //                                   * to prevent definition by users */
 #define DUMPMSGS 20     /* Number of latest messages in the dump file  */
 
