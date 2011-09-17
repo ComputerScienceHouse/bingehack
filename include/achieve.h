@@ -33,4 +33,6 @@ void disable_achievements();
 int user_exists();
 
 int register_user();
+
+int check_db_connection();
 #endif

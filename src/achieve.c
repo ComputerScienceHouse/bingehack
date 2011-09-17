@@ -128,6 +128,10 @@ int add_achievement_progress(int achievement_id, int add_progress_count){
 	
 	if( !achievement_system_startup() ) return ACHIEVEMENT_PUSH_FAILURE;
 
+	if(check_db_connection()){
+		disable_achievements();
+	}
+	
 	//Check if user exists
 	if(!user_exists()){
 		register_user();
@@ -367,4 +371,15 @@ out:
 	if( res != NULL ) mysql.free_result(res);
 
 	return user_exists;
+}
+
+
+int check_db_connection(){
+	if(mysql.ping(&mysql.db)){ // what we have here is a failure to communicate
+		pline("Error while attempting to reconnect to DB: %s", mysql.error(&mysql.db));
+		return 1;
+	}
+	else{
+		return 0;
+	}
 }
