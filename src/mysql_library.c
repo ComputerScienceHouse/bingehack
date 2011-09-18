@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <assert.h>
 #include <stdbool.h>
+#include <errno.h>
+#include <string.h>
 
 #include <mysql.h>
 
@@ -80,7 +82,8 @@ bool mysql_library_startup() {
 	    (mysql.ping = mysql_function("mysql_ping")) == NULL ||
 	    (mysql.options = mysql_function("mysql_options")) == NULL ||
 	    (mysql.num_rows = mysql_function("mysql_num_rows")) == NULL ||
-		(mysql.close = mysql_function("mysql_close")) == NULL ) {
+		(mysql.close = mysql_function("mysql_close")) == NULL ||
+		(mysql.real_escape_string = mysql_function("mysql_real_escape_string")) == NULL ) {
 		mysql_library_disabled = true;
 		mysql_library_shutdown();
 		return false;
@@ -91,4 +94,12 @@ bool mysql_library_startup() {
 
 bool mysql_library_available() {
 	return !mysql_library_disabled;
+}
+
+char *mysql_library_escape_string( MYSQL *db, const char *str ) {
+	char *to;
+	size_t len = strlen(str);
+	if( (to = malloc(len * 2 + 1)) == NULL ) panic("malloc: %s", strerror(errno));
+	mysql.real_escape_string(db, to, str, len);
+	return to;
 }

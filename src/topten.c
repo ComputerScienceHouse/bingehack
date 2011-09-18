@@ -2,6 +2,7 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdlib.h>
 #include <stdbool.h>
 #include <strings.h>
 #include <assert.h>
@@ -235,6 +236,17 @@ static bool write_mysql_playlog( struct toptenentry *tt ) {
 
 	if( mysql.real_connect(db, db_server, db_user, db_pass, db_db, 0, NULL, 0) == NULL ) goto fail;
 
+	char
+		*deathdungeon = mysql_library_escape_string(db, dungeons[tt->deathdnum].dname),
+		*role = mysql_library_escape_string(db, tt->plrole),
+		*race = mysql_library_escape_string(db, tt->plrace),
+		*gender = mysql_library_escape_string(db, tt->plgend),
+		*align = mysql_library_escape_string(db, tt->plalign),
+		*name = mysql_library_escape_string(db, plname),
+		*death = mysql_library_escape_string(db, tt->death),
+		*gender0 = mysql_library_escape_string(db, genders[flags.initgend].filecode),
+		*align0 = mysql_library_escape_string(db, aligns[1 - u.ualignbase[A_ORIGINAL]].filecode);
+
 	char *query;
 	if( asprintf(&query,
 				"INSERT INTO `playlog` ( "
@@ -376,23 +388,23 @@ static bool write_mysql_playlog( struct toptenentry *tt ) {
 				tt->ver_minor,
 				tt->patchlevel,
 				tt->points,
-				dungeons[tt->deathdnum].dname,
+				deathdungeon,
 				tt->deathlev,
 				tt->maxlvl,
 				tt->hp,
 				tt->maxhp,
 				tt->deaths,
-				tt->plrole,
-				tt->plrace,
-				tt->plgend,
-				tt->plalign,
-				plname,
-				tt->death,
+				role,
+				race,
+				gender,
+				align,
+				name,
+				death,
 				moves,
 				(uintmax_t) u.ubirthday,
 				(uintmax_t) deathtime,
-				genders[flags.initgend].filecode,
-				aligns[1 - u.ualignbase[A_ORIGINAL]].filecode,
+				gender0,
+				align0,
 				realtime_data.realtime,
 				!u.uconduct.food ? 1 : 0,
 				!u.uconduct.unvegan ? 1 : 0,
@@ -419,6 +431,15 @@ static bool write_mysql_playlog( struct toptenentry *tt ) {
 				achieve.finish_sokoban ? 1 : 0,
 				achieve.killed_medusa ? 1 : 0
 		) == -1 ) panic("asprintf: %s", strerror(errno));
+	free(deathdungeon);
+	free(role);
+	free(race);
+	free(gender);
+	free(align);
+	free(name);
+	free(death);
+	free(gender0);
+	free(align0);
 
 	if( mysql.real_query(db, query, strlen(query)) != 0 ) goto fail;
 	free(query);

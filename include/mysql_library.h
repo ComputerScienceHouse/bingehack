@@ -16,11 +16,13 @@ typedef struct {
 	int (*options)( MYSQL *mysql, enum mysql_option option, const void *arg );
 	my_ulonglong (*num_rows)( MYSQL_RES *result );
 	void (*close)( MYSQL *mysql );
+	unsigned long (*real_escape_string)( MYSQL *mysql, char *to, const char *from, unsigned long length );
 } mysql_t;
 
 bool mysql_library_startup();
 bool mysql_library_shutdown();
 bool mysql_library_available();
+char *mysql_library_escape_string( MYSQL *db, const char *str );
 
 mysql_t *_get_mysql();
 #define mysql (*_get_mysql())

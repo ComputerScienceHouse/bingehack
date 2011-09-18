@@ -108,7 +108,9 @@ int get_achievement_progress(int achievement_id){
 	char* str_progress;
 	int achievement_progress = -1;
 
-	if( asprintf(&query, "SELECT `achievement_progress`.`progress` FROM `achievement_progress` JOIN `users_in_apps` ON `users_in_apps`.`user_id` = `achievement_progress`.`user_id` where app_username = '%s' and app_id = %i and achievement_id = %i;", plname, GAME_ID, achievement_id) == -1 ) panic("asprintf: %s", strerror(errno));
+	char *name = mysql_library_escape_string(&db, plname);
+	if( asprintf(&query, "SELECT `achievement_progress`.`progress` FROM `achievement_progress` JOIN `users_in_apps` ON `users_in_apps`.`user_id` = `achievement_progress`.`user_id` where app_username = '%s' and app_id = %i and achievement_id = %i;", name, GAME_ID, achievement_id) == -1 ) panic("asprintf: %s", strerror(errno));
+	free(name);
 	if( mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0 ) goto fail;
 	free(query);
 	if( (res = mysql.use_result(&db)) == NULL ) goto fail;
@@ -185,7 +187,9 @@ int push_achievement_progress(int achievement_id, int updated_progress_count){
 	int progress = get_achievement_progress(achievement_id);
 	if( progress == -1 ) return -1;
 	if( progress == 0) { //no previous progress on achievement, INSERT time
-		if( asprintf(&query, "INSERT INTO `achievement_progress`(`user_id`, `achievement_id`, `progress`) VALUES ((select user_id from `users_in_apps` where app_id=1 and app_username='%s'), %i, %i);", plname, achievement_id, updated_progress_count) == -1 ) panic("asprintf: %s", strerror(errno));
+		char *name = mysql_library_escape_string(&db, plname);
+		if( asprintf(&query, "INSERT INTO `achievement_progress`(`user_id`, `achievement_id`, `progress`) VALUES ((select user_id from `users_in_apps` where app_id=1 and app_username='%s'), %i, %i);", name, achievement_id, updated_progress_count) == -1 ) panic("asprintf: %s", strerror(errno));
+		free(name);
 		if(mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0){
 			pline("Real_query failed in push_achievement_progress: %s", mysql.error(&db));
 			disable_achievements();
@@ -257,7 +261,11 @@ int register_user(){
 	}
 	free(query);
 	
-	if( asprintf(&query, "INSERT INTO `users_in_apps` VALUES ((SELECT `id` FROM `users` WHERE `users`.`username` = '%s'), %i, '%s')", str, GAME_ID , plname ) == -1) panic("asprintf: %s", strerror(errno));
+	char *allocstr = mysql_library_escape_string(&db, str),
+		 *name = mysql_library_escape_string(&db, plname);
+	if( asprintf(&query, "INSERT INTO `users_in_apps` VALUES ((SELECT `id` FROM `users` WHERE `users`.`username` = '%s'), %i, '%s')", allocstr, GAME_ID, name) == -1) panic("asprintf: %s", strerror(errno));
+	free(allocstr);
+	free(name);
 
 	if(mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0){
 		pline("Real_query failed in register_user: %s", mysql.error(&db));
@@ -274,7 +282,9 @@ int user_exists(){
 	char* query;
 	int user_exists = 0;
 
-	if( asprintf(&query, "SELECT `app_username` FROM `users_in_apps` WHERE app_username = '%s' AND app_id = %i ;", plname, GAME_ID) == -1 ) panic("asprintf: %s", strerror(errno));
+	char *name = mysql_library_escape_string(&db, plname);
+	if( asprintf(&query, "SELECT `app_username` FROM `users_in_apps` WHERE app_username = '%s' AND app_id = %i ;", name, GAME_ID) == -1 ) panic("asprintf: %s", strerror(errno));
+	free(name);
 	if( mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0 ){
 		goto fail;
 	}
