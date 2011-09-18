@@ -12,6 +12,7 @@ config_t *_get_config();
 
 bool configfile_init();
 void configfile_destroy();
+bool configfile_available();
 bool configfile_get_string( const char *path, const char **str );
 
 #endif

@@ -16,6 +16,10 @@ config_t *_get_config() {
 	return _configptr;
 }
 
+bool configfile_available() {
+	return _configptr != NULL;
+}
+
 void configfile_destroy() {
 	if( _configptr != NULL ) config_destroy(_configptr);
 }
