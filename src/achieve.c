@@ -4,121 +4,53 @@
 #include <string.h>
 #include <assert.h>
 #include <errno.h>
+#include <ctype.h>
 
 #include <mysql.h>
 #include <libconfig.h>
 
+#include "hack.h"
 #include "configfile.h"
 #include "achieve.h"
-#include "hack.h"
-#include <ctype.h>
+#include "mysql_library.h"
 
-struct {
-	void *handle;
-	MYSQL db;
-
-	// MySQL library functions
-	MYSQL *(*init)( MYSQL * );
-	MYSQL *(*real_connect)( MYSQL *mysql, const char *host, const char *user, const char *passwd, const char *db, unsigned int port, const char *unix_socket, unsigned long client_flag );
-	int (*real_query)( MYSQL *mysql, const char *stmt_str, unsigned long length );
-	MYSQL_RES *(*use_result)( MYSQL *mysql );
-	void (*free_result)( MYSQL_RES *result );
-	MYSQL_ROW (*fetch_row)( MYSQL_RES *result );
-	const char *(*error)( MYSQL *mysql );
-	int (*ping)( MYSQL *mysql );
-	int (*options)( MYSQL *mysql, enum mysql_option option, const void *arg );
-	my_ulonglong (*num_rows)( MYSQL_RES *result );
-} mysql = {
-	.handle = NULL
-};
+static MYSQL db;
 
 const int ACHIEVEMENT_DEBUG = 0; 
 int achievement_system_disabled = 0;
-
-static char *nh_dlerror() {
-	char *err = dlerror();
-	return err == NULL ? "dylib routine failed and no error message" : err;
-}
-
-static void *mysql_function( const char *name ) {
-	if( mysql.handle == NULL ) panic("Achievement system has not been initialized");
-	void *ret;
-	if( (ret = dlsym(mysql.handle, name)) == NULL ) panic("%s", nh_dlerror());
-	return ret;
-}
-
-static bool config_get_string( const char *path, const char **str ) {
-	if( config_lookup_string(config, path, str) == CONFIG_FALSE ) {
-		pline("Config setting %s not found or wrong type", path);
-		return false;
-	}
-	return true;
-}
-
-#define MAX_LIBNAME_LEN 64
-static const char *libname( const char *name ) {
-	assert(name != NULL);
-	static const char *libsuffix;
-#if defined(__APPLE__) && defined(__MACH__)
-	libsuffix = "dylib";
-#else
-	libsuffix = "so";
-#endif
-	static char buf[MAX_LIBNAME_LEN];
-	size_t len = snprintf(buf, MAX_LIBNAME_LEN, "lib%s.%s", name, libsuffix);
-	assert(len < MAX_LIBNAME_LEN);
-	return buf;
-}
+static bool achievement_system_initialized = false;
 
 bool achievement_system_startup() {
-	if( mysql.handle != NULL ) return true;
+	if( achievement_system_initialized ) return true;
+	assert(mysql.handle != NULL);
 
 	//read database configuration from file
 	const char *db_user, *db_pass, *db_db, *db_server;
-	if( !config_get_string("achievements.mysql.username", &db_user) ||
-	    !config_get_string("achievements.mysql.password", &db_pass) ||
-	    !config_get_string("achievements.mysql.database", &db_db) ||
-	    !config_get_string("achievements.mysql.server",   &db_server) ) return false;
+	if( !configfile_get_string("achievements.mysql.username", &db_user) ||
+	    !configfile_get_string("achievements.mysql.password", &db_pass) ||
+	    !configfile_get_string("achievements.mysql.database", &db_db) ||
+	    !configfile_get_string("achievements.mysql.server",   &db_server) ) return false;
 
-	//Dynamically load MYSQL library
-	if( (mysql.handle = dlopen(libname("mysqlclient"), RTLD_LAZY)) == NULL ) {
-		pline("Achievement system unavailabe: %s", nh_dlerror());
-		return false;
-	}
-	mysql.init = mysql_function("mysql_init");
-	mysql.real_connect = mysql_function("mysql_real_connect");
-	mysql.real_query = mysql_function("mysql_real_query");
-	mysql.use_result = mysql_function("mysql_use_result");
-	mysql.free_result = mysql_function("mysql_free_result");
-	mysql.fetch_row = mysql_function("mysql_fetch_row");
-	mysql.error = mysql_function("mysql_error");
-	mysql.ping = mysql_function("mysql_ping");
-	mysql.options = mysql_function("mysql_options");
-	mysql.num_rows = mysql_function("mysql_num_rows");
-	mysql.init(&mysql.db);
-	
+	mysql.init(&db);
+
 	//Respond in 3 seconds or assume db server is unreachable
 	int timeout_seconds = 3;
-	int ret = mysql.options(&mysql.db, MYSQL_OPT_CONNECT_TIMEOUT, &timeout_seconds);
+	int ret = mysql.options(&db, MYSQL_OPT_CONNECT_TIMEOUT, &timeout_seconds);
 	assert(ret == 0);
 
-	if(mysql.real_connect(&mysql.db, db_server, db_user, db_pass, db_db, 0, NULL, 0) == NULL){
-		pline("Can't connect to achievements database. Database error: %s", mysql.error(&mysql.db));
+	if(mysql.real_connect(&db, db_server, db_user, db_pass, db_db, 0, NULL, 0) == NULL){
+		pline("Can't connect to achievements database. Database error: %s", mysql.error(&db));
+		mysql.close(&db);
 		disable_achievements();
 		return false;
 	}
 
+	achievement_system_initialized = true;
 	return true;
 }
 
 void achievement_system_shutdown() {
-	if( mysql.handle != NULL ) {
-		if( dlclose(mysql.handle) != 0 ) {
-			panic("%s", nh_dlerror());
-		} else {
-			mysql.handle = NULL;
-		}
-	}
+	if( achievement_system_initialized ) mysql.close(&db);
 }
 
 //ret 1 on sucess, 0 on failure
@@ -126,8 +58,6 @@ int add_achievement_progress(int achievement_id, int add_progress_count){
 	if(achievement_system_disabled){ return ACHIEVEMENT_PUSH_FAILURE; }
 	if(ACHIEVEMENT_DEBUG){pline("DEBUG: add_achievement_progress(%i, %i)", achievement_id, add_progress_count);}
 	
-	if( !achievement_system_startup() ) return ACHIEVEMENT_PUSH_FAILURE;
-
 	if(check_db_connection()){
 		disable_achievements();
 	}
@@ -176,9 +106,9 @@ int get_achievement_progress(int achievement_id){
 	int achievement_progress = -1;
 
 	if( asprintf(&query, "SELECT `achievement_progress`.`progress` FROM `achievement_progress` JOIN `users_in_apps` ON `users_in_apps`.`user_id` = `achievement_progress`.`user_id` where app_username = '%s' and app_id = %i and achievement_id = %i;", plname, GAME_ID, achievement_id) == -1 ) panic("asprintf: %s", strerror(errno));
-	if( mysql.real_query(&mysql.db, query, (unsigned int) strlen(query)) != 0 ) goto fail;
+	if( mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0 ) goto fail;
 	free(query);
-	if( (res = mysql.use_result(&mysql.db)) == NULL ) goto fail;
+	if( (res = mysql.use_result(&db)) == NULL ) goto fail;
 	if( (row = mysql.fetch_row(res)) == NULL ) {
 		if( mysql.num_rows(res) == 0 ) {
 			achievement_progress = 0;
@@ -199,7 +129,7 @@ int get_achievement_progress(int achievement_id){
 	goto out;
 
 fail:
-	pline("Error in get_achievement_progress(%i) (Error: %s)", achievement_id, mysql.error(&mysql.db));
+	pline("Error in get_achievement_progress(%i) (Error: %s)", achievement_id, mysql.error(&db));
 	disable_achievements();
 	achievement_progress = -1;
 
@@ -218,9 +148,9 @@ int get_achievement_max_progress(int achievement_id){
 	int max_progress=0;
 
 	if( asprintf(&query, "SELECT `achievements`.`progress_max` FROM `achievements` WHERE id = %i ;", achievement_id) == -1 ) panic("asprintf: %s", strerror(errno));
-	if( mysql.real_query(&mysql.db, query, (unsigned int) strlen(query)) != 0 ) goto fail;
+	if( mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0 ) goto fail;
 	free(query);
-	if( (res = mysql.use_result(&mysql.db)) == NULL ) goto fail;
+	if( (res = mysql.use_result(&db)) == NULL ) goto fail;
 
 	if( (row = mysql.fetch_row(res)) == NULL ) {
 		if( mysql.num_rows(res) == 0 ) panic("Error in get_achievement_max_progress(%i): Requested achievement does not exist.", achievement_id);
@@ -236,7 +166,7 @@ int get_achievement_max_progress(int achievement_id){
 	goto out;
 
 fail:
-	pline("Error in get_achievement_max_progress(%i) (Error: %s)", achievement_id, mysql.error(&mysql.db));
+	pline("Error in get_achievement_max_progress(%i) (Error: %s)", achievement_id, mysql.error(&db));
 	disable_achievements();
 	max_progress = -1;
 
@@ -253,8 +183,8 @@ int push_achievement_progress(int achievement_id, int updated_progress_count){
 	if( progress == -1 ) return -1;
 	if( progress == 0) { //no previous progress on achievement, INSERT time
 		if( asprintf(&query, "INSERT INTO `achievement_progress`(`user_id`, `achievement_id`, `progress`) VALUES ((select user_id from `users_in_apps` where app_id=1 and app_username='%s'), %i, %i);", plname, achievement_id, updated_progress_count) == -1 ) panic("asprintf: %s", strerror(errno));
-		if(mysql.real_query(&mysql.db, query, (unsigned int) strlen(query)) != 0){
-			pline("Real_query failed in push_achievement_progress: %s", mysql.error(&mysql.db));
+		if(mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0){
+			pline("Real_query failed in push_achievement_progress: %s", mysql.error(&db));
 			disable_achievements();
 		}
 		free(query);
@@ -272,10 +202,10 @@ char *get_achievement_name( int achievement_id ){
 	char* str_name;
 
 	if( asprintf(&query, "SELECT `achievements`.`title` FROM `achievements` WHERE id = %i ;", achievement_id) == -1 ) panic("asprintf: %s", strerror(errno));
-	if( mysql.real_query(&mysql.db, query, (unsigned int) strlen(query)) != 0 ) goto fail;
+	if( mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0 ) goto fail;
 	free(query);
 
-	if( (res = mysql.use_result(&mysql.db)) == NULL ) goto fail;
+	if( (res = mysql.use_result(&db)) == NULL ) goto fail;
 	if( (row = mysql.fetch_row(res)) == NULL ) {
 		if( mysql.num_rows(res) == 0 ) panic("Attempt to call non-existant achievement_id %i", achievement_id);
 		goto fail;
@@ -289,7 +219,7 @@ char *get_achievement_name( int achievement_id ){
 	goto out;
 
 fail:
-	pline("Error in get_achievement_name(%i) (Error: %s)", achievement_id, mysql.error(&mysql.db));
+	pline("Error in get_achievement_name(%i) (Error: %s)", achievement_id, mysql.error(&db));
 	disable_achievements();
 	str_name = strdup("");
 	if( str_name == NULL ) panic("strdup: %s", strerror(errno));
@@ -318,16 +248,16 @@ int register_user(){
 	char *query;
 	if( asprintf(&query, "INSERT INTO `users` (`username`) VALUES ('%s')", str ) == -1) panic("asprintf: %s", strerror(errno));
 	
-	if(mysql.real_query(&mysql.db, query, (unsigned int) strlen(query)) != 0){
-		pline("Real_query failed in register_user: %s", mysql.error(&mysql.db));
+	if(mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0){
+		pline("Real_query failed in register_user: %s", mysql.error(&db));
 		disable_achievements();
 	}
 	free(query);
 	
 	if( asprintf(&query, "INSERT INTO `users_in_apps` VALUES ((SELECT `id` FROM `users` WHERE `users`.`username` = '%s'), %i, '%s')", str, GAME_ID , plname ) == -1) panic("asprintf: %s", strerror(errno));
 
-	if(mysql.real_query(&mysql.db, query, (unsigned int) strlen(query)) != 0){
-		pline("Real_query failed in register_user: %s", mysql.error(&mysql.db));
+	if(mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0){
+		pline("Real_query failed in register_user: %s", mysql.error(&db));
 		disable_achievements();
 	}
 	free(query);
@@ -342,12 +272,12 @@ int user_exists(){
 	int user_exists = 0;
 
 	if( asprintf(&query, "SELECT `app_username` FROM `users_in_apps` WHERE app_username = '%s' AND app_id = %i ;", plname, GAME_ID) == -1 ) panic("asprintf: %s", strerror(errno));
-	if( mysql.real_query(&mysql.db, query, (unsigned int) strlen(query)) != 0 ){
+	if( mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0 ){
 		goto fail;
 	}
 	free(query);
 
-	if((res = mysql.use_result(&mysql.db)) == NULL){
+	if((res = mysql.use_result(&db)) == NULL){
 		disable_achievements();
 	}
 	else{
@@ -365,7 +295,7 @@ int user_exists(){
 	goto out;
 
 fail:
-	pline("Error in user_exists() (Error: %s)", mysql.error(&mysql.db));
+	pline("Error in user_exists() (Error: %s)", mysql.error(&db));
 	disable_achievements();
 out:
 	if( res != NULL ) mysql.free_result(res);
@@ -375,8 +305,8 @@ out:
 
 
 int check_db_connection(){
-	if(mysql.ping(&mysql.db)){ // what we have here is a failure to communicate
-		pline("Error while attempting to reconnect to DB: %s", mysql.error(&mysql.db));
+	if(mysql.ping(&db)){ // what we have here is a failure to communicate
+		pline("Error while attempting to reconnect to DB: %s", mysql.error(&db));
 		return 1;
 	}
 	else{

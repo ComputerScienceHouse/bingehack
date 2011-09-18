@@ -10,10 +10,12 @@
 #include <errno.h>
 #include <unistd.h>
 
+#include <mysql.h>
 #include <libconfig.h>
 
 #include "achieve.h"
 #include "configfile.h"
+#include "mysql_library.h"
 #include "hack.h"
 
 #ifndef NO_SIGNAL
@@ -67,19 +69,23 @@ moveloop()
       mcast_addr.sin_port = htons(12345);
     }
 
-    configfile_init();
+    if( !configfile_init() || !mysql_library_startup() ) {
+        disable_achievements();
+    } else {
+        achievement_system_startup();
+    }
 
     flags.moonphase = phase_of_the_moon();
     if(flags.moonphase == FULL_MOON) {
-	You("are lucky!  Full moon tonight.");
-	change_luck(1);
+        You("are lucky!  Full moon tonight.");
+        change_luck(1);
     } else if(flags.moonphase == NEW_MOON) {
-	pline("Be careful!  New moon tonight.");
+        pline("Be careful!  New moon tonight.");
     }
     flags.friday13 = friday_13th();
     if (flags.friday13) {
-	pline("Watch out!  Bad things can happen on Friday the 13th.");
-	change_luck(-1);
+        pline("Watch out!  Bad things can happen on Friday the 13th.");
+        change_luck(-1);
     }
 
     initrack();
@@ -809,3 +815,4 @@ get_realtime(void)
 #endif /* OVLB */
 
 /*allmain.c*/
+// vim: et sts=4 ts=4 sw=4

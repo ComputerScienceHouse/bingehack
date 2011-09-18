@@ -10,7 +10,9 @@
 #define config _get_config()
 config_t *_get_config();
 
-void configfile_init();
+bool configfile_init();
+void configfile_destroy();
+bool configfile_get_string( const char *path, const char **str );
 
 #endif
 

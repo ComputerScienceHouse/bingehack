@@ -21,7 +21,8 @@ CLEAN_SOURCES := achieve.c allmain.c alloc.c apply.c artifact.c attrib.c ball.c 
 	lock.c mail.c makemon.c mapglyph.c mcastu.c mhitm.c mhitu.c \
 	minion.c mklev.c mkmap.c \
 	mkmaze.c mkobj.c mkroom.c mon.c mondata.c monmove.c monstr.c \
-	mplayer.c mthrowu.c muse.c music.c o_init.c objnam.c options.c \
+	mplayer.c mthrowu.c muse.c music.c mysql_library.c o_init.c objnam.c \
+	options.c \
 	pager.c pickup.c pline.c polyself.c potion.c pray.c priest.c \
 	quest.c questpgr.c read.c rect.c region.c restore.c rip.c rnd.c \
 	role.c rumors.c save.c shk.c shknam.c sit.c sounds.c sp_lev.c spell.c \
