@@ -9,6 +9,8 @@
 #include "hack.h"
 #include "mysql_library.h"
 
+static bool mysql_library_disabled = false;
+
 static char *nh_dlerror() {
 	char *err = dlerror();
 	return err == NULL ? "dylib routine failed and no error message" : err;
@@ -59,14 +61,13 @@ bool mysql_library_shutdown() {
 }
 
 bool mysql_library_startup() {
-	static bool disabled = false;
-	if( disabled ) return true;
+	if( mysql_library_disabled ) return true;
 	if( mysql.handle != NULL ) return true;
 
 	//Dynamically load MYSQL library
 	if( (mysql.handle = dlopen(libname("mysqlclient"), RTLD_LAZY)) == NULL ) {
 		pline("Achievement system unavailabe: %s", nh_dlerror());
-		disabled = true;
+		mysql_library_disabled = true;
 		return false;
 	}
 	if( (mysql.init = mysql_function("mysql_init")) == NULL ||
@@ -80,10 +81,14 @@ bool mysql_library_startup() {
 	    (mysql.options = mysql_function("mysql_options")) == NULL ||
 	    (mysql.num_rows = mysql_function("mysql_num_rows")) == NULL ||
 		(mysql.close = mysql_function("mysql_close")) == NULL ) {
-		disabled = true;
+		mysql_library_disabled = true;
 		mysql_library_shutdown();
 		return false;
 	}
 
 	return true;
+}
+
+bool mysql_library_available() {
+	return !mysql_library_disabled;
 }

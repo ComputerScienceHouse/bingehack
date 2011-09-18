@@ -69,11 +69,9 @@ moveloop()
       mcast_addr.sin_port = htons(12345);
     }
 
-    if( !configfile_init() || !mysql_library_startup() ) {
-        disable_achievements();
-    } else {
-        achievement_system_startup();
-    }
+    configfile_init();
+    mysql_library_startup();
+    achievement_system_startup();
 
     flags.moonphase = phase_of_the_moon();
     if(flags.moonphase == FULL_MOON) {

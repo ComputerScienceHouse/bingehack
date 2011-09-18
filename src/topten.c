@@ -4,7 +4,14 @@
 
 #include <stdbool.h>
 #include <strings.h>
+#include <assert.h>
+#include <errno.h>
 
+#include <libconfig.h>
+#include <mysql.h>
+
+#include "configfile.h"
+#include "mysql_library.h"
 #include "hack.h"
 #include "dlb.h"
 #ifdef SHORT_FILENAMES
@@ -204,6 +211,226 @@ struct toptenentry *tt;
 		if (tt->birthdate < 19000000L) tt->birthdate += 19000000L;
 		if (tt->deathdate < 19000000L) tt->deathdate += 19000000L;
 	}
+}
+
+static bool write_mysql_playlog( struct toptenentry *tt ) {
+	if( !configfile_available() || !mysql_library_available() ) return true;
+
+	bool ret = true;
+	MYSQL database, *db = &database;
+
+	//read database configuration from file
+	const char *db_user, *db_pass, *db_db, *db_server;
+	if( !configfile_get_string("playlog.mysql.username", &db_user) ||
+	    !configfile_get_string("playlog.mysql.password", &db_pass) ||
+	    !configfile_get_string("playlog.mysql.database", &db_db) ||
+	    !configfile_get_string("playlog.mysql.server",   &db_server) ) return false;
+
+	mysql.init(db);
+
+	//Respond in 3 seconds or assume db server is unreachable
+	int timeout_seconds = 3;
+	int sqlret = mysql.options(db, MYSQL_OPT_CONNECT_TIMEOUT, &timeout_seconds);
+	assert(sqlret == 0);
+
+	if( mysql.real_connect(db, db_server, db_user, db_pass, db_db, 0, NULL, 0) == NULL ) goto fail;
+
+	char *query;
+	if( asprintf(&query,
+				"INSERT INTO `playlog` ( "
+					"`version`, "
+					"`points`, "
+					"`deathdungeon`, "
+					"`deathlev`, "
+					"`maxlvl`, "
+					"`hp`, "
+					"`maxhp`, "
+					"`deaths`, "
+					"`role`, "
+					"`race`, "
+					"`gender`, "
+					"`align`, "
+					"`name`, "
+					"`death`, "
+					"`turns`, "
+					"`starttime`, "
+					"`endtime`, "
+					"`gender0`, "
+					"`align0`, "
+					"`realtime`, "
+					"`conduct_food`, "
+					"`conduct_unvegan`, "
+					"`conduct_unvegetarian`, "
+					"`conduct_gnostic`, "
+					"`conduct_weaphit`, "
+					"`conduct_killer`, "
+					"`conduct_literate`, "
+					"`conduct_polypiles`, "
+					"`conduct_polyselfs`, "
+					"`conduct_wishes`, "
+					"`conduct_wisharti`, "
+					"`conduct_genocide`, "
+					"`achieve_bell`, "
+					"`achieve_gehennom`, "
+					"`achieve_candelabrum`, "
+					"`achieve_book`, "
+					"`achieve_invocation`, "
+					"`achieve_amulet`, "
+					"`achieve_endgame`, "
+					"`achieve_astral`, "
+					"`achieve_ascend`, "
+					"`achieve_luckstone`, "
+					"`achieve_sokoban`, "
+					"`achieve_medusa` "
+				") VALUES ( "
+					/* version */
+					"'%d.%d.%d', "
+					/* points */
+					"'%ld', "
+					/* deathdungeon */
+					"'%s', "
+					/* deathlev */
+					"'%d', "
+					/* maxlvl */
+					"'%d', "
+					/* hp */
+					"'%d', "
+					/* maxhp */
+					"'%d', "
+					/* deaths */
+					"'%d', "
+					/* role */
+					"'%s', "
+					/* race */
+					"'%s', "
+					/* gender */
+					"'%s', "
+					/* align */
+					"'%s', "
+					/* name */
+					"'%s', "
+					/* death */
+					"'%s', "
+					/* turns */
+					"'%ld', "
+					/* starttime */
+					"FROM_UNIXTIME('%ju'), "
+					/* endtime */
+					"FROM_UNIXTIME('%ju'), "
+					/* gender0 */
+					"'%s', "
+					/* align0 */
+					"'%s', "
+					/* realtime */
+					"'%ju', "
+					/* conduct_food */
+					"'%d', "
+					/* conduct_unvegan */
+					"'%d', "
+					/* conduct_unvegetarian */
+					"'%d', "
+					/* conduct_gnostic */
+					"'%d', "
+					/* conduct_weaphit */
+					"'%d', "
+					/* conduct_killer */
+					"'%d', "
+					/* conduct_literate */
+					"'%d', "
+					/* conduct_polypiles */
+					"'%d', "
+					/* conduct_polyselfs */
+					"'%d', "
+					/* conduct_wishes */
+					"'%d', "
+					/* conduct_wisharti */
+					"'%d', "
+					/* conduct_genocide */
+					"'%d', "
+					/* achieve_bell */
+					"'%d', "
+					/* achieve_gehennom */
+					"'%d', "
+					/* achieve_candelabrum */
+					"'%d', "
+					/* achieve_book */
+					"'%d', "
+					/* achieve_invocation */
+					"'%d', "
+					/* achieve_amulet */
+					"'%d', "
+					/* achieve_endgame */
+					"'%d', "
+					/* achieve_astral */
+					"'%d', "
+					/* achieve_ascend */
+					"'%d', "
+					/* achieve_luckstone */
+					"'%d', "
+					/* achieve_sokoban */
+					"'%d', "
+					/* achieve_medus */
+					"'%d' "
+				");",
+				tt->ver_major,
+				tt->ver_minor,
+				tt->patchlevel,
+				tt->points,
+				dungeons[tt->deathdnum].dname,
+				tt->deathlev,
+				tt->maxlvl,
+				tt->hp,
+				tt->maxhp,
+				tt->deaths,
+				tt->plrole,
+				tt->plrace,
+				tt->plgend,
+				tt->plalign,
+				plname,
+				tt->death,
+				moves,
+				(uintmax_t) u.ubirthday,
+				(uintmax_t) deathtime,
+				genders[flags.initgend].filecode,
+				aligns[1 - u.ualignbase[A_ORIGINAL]].filecode,
+				realtime_data.realtime,
+				!u.uconduct.food ? 1 : 0,
+				!u.uconduct.unvegan ? 1 : 0,
+				!u.uconduct.unvegetarian ? 1 : 0,
+				!u.uconduct.gnostic ? 1 : 0,
+				!u.uconduct.weaphit ? 1 : 0,
+				!u.uconduct.killer ? 1 : 0,
+				!u.uconduct.literate ? 1 : 0,
+				!u.uconduct.polypiles ? 1 : 0,
+				!u.uconduct.polyselfs ? 1 : 0,
+				!u.uconduct.wishes ? 1 : 0,
+				!u.uconduct.wisharti ? 1 : 0,
+				!num_genocides() ? 1 : 0,
+				achieve.get_bell ? 1 : 0,
+				achieve.enter_gehennom ? 1 : 0,
+				achieve.get_candelabrum ? 1 : 0,
+				achieve.get_book ? 1 : 0,
+				achieve.perform_invocation ? 1 : 0,
+				achieve.get_amulet ? 1 : 0,
+				In_endgame(&u.uz) ? 1 : 0,
+				Is_astralevel(&u.uz) ? 1 : 0,
+				achieve.ascended ? 1 : 0,
+				achieve.get_luckstone ? 1 : 0,
+				achieve.finish_sokoban ? 1 : 0,
+				achieve.killed_medusa ? 1 : 0
+		) == -1 ) panic("asprintf: %s", strerror(errno));
+
+	if( mysql.real_query(db, query, strlen(query)) != 0 ) goto fail;
+	free(query);
+
+	goto out;
+fail:
+	pline("Unable to write playlog entry to database: %s", mysql.error(db));
+	ret = false;
+
+out:
+	mysql.close(db);
+	return ret;
 }
 
 STATIC_OVL void
@@ -522,6 +749,8 @@ int how;
 	    unlock_file(LOGFILE);
 	}
 #endif /* LOGFILE */
+
+	write_mysql_playlog(t0);
 
 #ifdef XLOGFILE
          if(lock_file(XLOGFILE, SCOREPREFIX, 10)) {

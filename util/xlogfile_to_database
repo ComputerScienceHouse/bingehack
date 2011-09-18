@@ -1,0 +1,94 @@
+#!/bin/zsh
+emulate -L zsh
+setopt err_exit
+#setopt xtrace
+
+if [[ $# -ne 1 ]]; then
+	printf "Usage: %s xlogfile\n" "$0" >&2
+	exit 1
+fi
+
+readonly TABLE="playlog"
+typeset -a conducts achieves dungeons
+# Order here must match the order in topten.c:encodeconduct()
+conducts=( food unvegan unvegetarian gnostic weaphit killer literate polypiles polyselfs wishes wisharti genocide )
+# Order here must match the order in topten.c:encodeachieve()
+achieves=( bell gehennom candelabrum book invocation amulet endgame astral ascend luckstone sokoban medusa )
+# Order here must match the dungeons order in nethack. IDK where that is set.
+dungeons=( "The Dungeons of Doom" "Gehennom" "The Gnomish Mines" "The Quest" "Sokoban" "Fort Ludios" "Vlad's Tower" "The Elemental Planes" )
+typeset -r conducts achieves
+
+function logentry {
+	typeset -A logentry
+	typeset -a cols vals
+	local IFS="=:"
+	for var in "${(AAk@)logentry::=${=*}}"; do
+		case "$var" in
+		birthdate)
+			! (( ${+logentry[starttime]} )) && cols+=( "\`starttime\`" )
+			;;
+		deathdate)
+			! (( ${+logentry[endtime]} )) && cols+=( "\`endtime\`" )
+			;;
+		conduct)
+			for c in "$conducts[@]"; do
+				cols+=( "\`conduct_$c\`" )
+			done
+			;;
+		achieve)
+			for a in "$achieves[@]"; do
+				cols+=( "\`achieve_$a\`" )
+			done
+			;;
+		uid) ;;
+		deathdnum)
+			cols+=( "deathdungeon" )
+			;;
+		*)
+			cols+=( "\`$var\`" )
+		esac
+	done
+	for var in "${(k@)logentry}"; do
+		typeset -i 16 mask=1
+		case "$var" in
+		birthdate)
+			[[ -z "$logentry[starttime]" ]] && vals+=( "'$logentry[birthdate]'" )
+			;;
+		deathdate)
+			[[ -z "$logentry[endtime]" ]] && vals+=( "'$logentry[deathdate]'" )
+			;;
+		conduct)
+			typeset -i 16 conduct="$logentry[$var]" mask=1
+			for c in "$conducts[@]"; do
+				vals+=( "'$(( $conduct & $mask ? 1 : 0 ))'" )
+				let mask="$mask << 1"
+			done
+			;;
+		achieve)
+			typeset -i 16 achieve="$logentry[$var]" mask=1
+			for a in "$achieves[@]"; do
+				vals+=( "'$(( $achieve & $mask ? 1 : 0 ))'" )
+				let mask="$mask << 1"
+			done
+			;;
+		starttime|endtime)
+			vals+=( "FROM_UNIXTIME('$logentry[$var]')" )
+			;;
+		uid) ;;
+		deathdnum)
+			vals+=( "'${dungeons[$(( ${logentry[$var]} + 1 ))]}'" )
+			;;
+		*)
+			# I don't escape all the mysql control chars. Whatevah.
+			vals+=( "'${logentry[$var]//\'/"\\'"}'" )
+		esac
+	done
+	printf 'INSERT INTO `%s` ( %s ) VALUES ( %s );\n' "$TABLE" "${(j:, :)cols}" "${(j:, :)vals}"
+}
+
+printf 'DELETE FROM %s;\n' "$TABLE"
+printf 'BEGIN;\n'
+while read -r; do
+	logentry "$REPLY"
+done < "$1"
+printf 'COMMIT;\n'

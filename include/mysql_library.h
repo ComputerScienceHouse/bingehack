@@ -20,6 +20,7 @@ typedef struct {
 
 bool mysql_library_startup();
 bool mysql_library_shutdown();
+bool mysql_library_available();
 
 mysql_t *_get_mysql();
 #define mysql (*_get_mysql())

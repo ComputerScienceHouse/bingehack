@@ -22,7 +22,10 @@ static bool achievement_system_initialized = false;
 
 bool achievement_system_startup() {
 	if( achievement_system_initialized ) return true;
-	assert(mysql.handle != NULL);
+	if( !configfile_available() || !mysql_library_available() ) {
+		disable_achievements();
+		return true;
+	}
 
 	//read database configuration from file
 	const char *db_user, *db_pass, *db_db, *db_server;
