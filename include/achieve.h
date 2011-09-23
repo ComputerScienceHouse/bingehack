@@ -1,13 +1,15 @@
 #ifndef ACHIEVE_H
 #define ACHIEVE_H
 
-const static int GAME_ID = 1;
+const static int ACHIEVEMENT_GAME_ID = 1;
 
-const static int AID_POTTER = 1;
-const static int AID_MAIL = 2;
-const static int AID_VAULT = 7;
-const static int AID_ELBERETH = 9;
-const static int AID_CRASH = 19;
+enum {
+	AID_POTTER_CHAT = 1,
+	AID_MAIL_RECEIVE = 2,
+	AID_VAULT_LIE = 7,
+	AID_ENGRAVE_ELBERETH = 9,
+	AID_CRASH = 19
+};
 
 const static int ACHIEVEMENT_PUSH_SUCCESS = 1;
 const static int ACHIEVEMENT_PUSH_FAILURE = 0;

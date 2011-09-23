@@ -114,7 +114,7 @@ int get_achievement_progress(int achievement_id){
 	int achievement_progress = -1;
 
 	char *name = mysql_library_escape_string(&db, plname);
-	if( asprintf(&query, "SELECT `achievement_progress`.`progress` FROM `achievement_progress` JOIN `users_in_apps` ON `users_in_apps`.`user_id` = `achievement_progress`.`user_id` where app_username = '%s' and app_id = %i and achievement_id = %i;", name, GAME_ID, achievement_id) == -1 ) panic("asprintf: %s", strerror(errno));
+	if( asprintf(&query, "SELECT `achievement_progress`.`progress` FROM `achievement_progress` JOIN `users_in_apps` ON `users_in_apps`.`user_id` = `achievement_progress`.`user_id` where app_username = '%s' and app_id = %i and achievement_id = %i;", name, ACHIEVEMENT_GAME_ID, achievement_id) == -1 ) panic("asprintf: %s", strerror(errno));
 	free(name);
 	if( mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0 ) goto fail;
 	free(query);
@@ -268,7 +268,7 @@ int register_user(){
 	
 	char *allocstr = mysql_library_escape_string(&db, str),
 		 *name = mysql_library_escape_string(&db, plname);
-	if( asprintf(&query, "INSERT INTO `users_in_apps` VALUES ((SELECT `id` FROM `users` WHERE `users`.`username` = '%s'), %i, '%s')", allocstr, GAME_ID, name) == -1) panic("asprintf: %s", strerror(errno));
+	if( asprintf(&query, "INSERT INTO `users_in_apps` VALUES ((SELECT `id` FROM `users` WHERE `users`.`username` = '%s'), %i, '%s')", allocstr, ACHIEVEMENT_GAME_ID, name) == -1) panic("asprintf: %s", strerror(errno));
 	free(allocstr);
 	free(name);
 
@@ -288,7 +288,7 @@ int user_exists(){
 	int user_exists = 0;
 
 	char *name = mysql_library_escape_string(&db, plname);
-	if( asprintf(&query, "SELECT `app_username` FROM `users_in_apps` WHERE app_username = '%s' AND app_id = %i ;", name, GAME_ID) == -1 ) panic("asprintf: %s", strerror(errno));
+	if( asprintf(&query, "SELECT `app_username` FROM `users_in_apps` WHERE app_username = '%s' AND app_id = %i ;", name, ACHIEVEMENT_GAME_ID) == -1 ) panic("asprintf: %s", strerror(errno));
 	free(name);
 	if( mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0 ){
 		goto fail;

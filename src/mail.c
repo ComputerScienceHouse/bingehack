@@ -390,7 +390,7 @@ struct mail_info *info;
     message_seen = TRUE;
     verbalize("%s, %s!  %s.", Hello(md), plname, info->display_txt);
 
-    award_achievement(AID_MAIL);
+    award_achievement(AID_MAIL_RECEIVE);
 
     if (info->message_typ) {
 	struct obj *obj = mksobj(SCR_MAIL, FALSE, FALSE);
