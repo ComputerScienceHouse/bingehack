@@ -58,12 +58,12 @@ enum {
 	AID_FALL_DOWN_STAIRS = 85, //TBI
 	AID_BREAK_URANIUM_WAND = 86, //TBI
 	/* Game progress */
-	AID_START_QUEST = 10, //TBI
-	AID_KILL_VLAD = 15, //TBI
-	AID_GET_BOTD = 77, //TBI
-	AID_FIND_VIBE_SQUARE = 16, //TBI
-	AID_GET_AOY = 4, //TBI
-	AID_ASCEND = 5, //TBI
+	AID_START_QUEST = 10,
+	AID_KILL_VLAD = 15,
+	AID_GET_BOTD = 77,
+	AID_FIND_VIBE_SQUARE = 16,
+	AID_GET_AOY = 4,
+	AID_ASCEND = 5,
 	/* Quest artifacts ("As <role>, <do something> using <your quest artifact>") */
 	AID_USE_ARTIFACT_ARC = 60, //TBI
 	AID_USE_ARTIFACT_BAR = 61, //TBI

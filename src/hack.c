@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include "hack.h"
+#include "achieve.h"
 
 #ifdef OVL1
 STATIC_DCL void NDECL(maybe_wail);
@@ -1457,6 +1458,8 @@ invocation_message()
 	    if (otmp && otmp->spe == 7 && otmp->lamplit)
 		pline("%s %s!", The(xname(otmp)),
 		    Blind ? "throbs palpably" : "glows with a strange light");
+	    
+	    award_achievement(AID_FIND_VIBE_SQUARE);
 	}
 }
 
