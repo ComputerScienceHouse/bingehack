@@ -1818,7 +1818,7 @@ E void FDECL(savelev, (int,XCHAR_P,int));
 E void FDECL(bufon, (int));
 E void FDECL(bufoff, (int));
 E void FDECL(bflush, (int));
-E void FDECL(bwrite, (int,genericptr_t,unsigned int));
+E void FDECL(bwrite, (genericptr_t,unsigned int, const char*));
 E void FDECL(bclose, (int));
 E void FDECL(savefruitchn, (int,int));
 E void NDECL(free_dungeons);
