@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include "hack.h"
 #include "epri.h"
+#include "achieve.h"
 
 STATIC_PTR int NDECL(prayer_done);
 STATIC_DCL struct obj *NDECL(worst_cursed_item);
@@ -1299,6 +1300,7 @@ dosacrifice()
 verbalize("In return for thy service, I grant thee the gift of Immortality!");
 		You("ascend to the status of Demigod%s...",
 		    flags.female ? "dess" : "");
+		award_achievement(AID_ASCEND);
 		done(ASCENDED);
 	    }
 	}
