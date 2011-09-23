@@ -83,12 +83,12 @@ int add_achievement_progress(int achievement_id, int add_progress_count){
 		if(pre_achievement_progress + add_progress_count >= max_achievement_progress){ //Achievement fully achieved!
 			if(push_achievement_progress(achievement_id, max_achievement_progress)){ //floor the value to max_progress
 				char * achievement_name = get_achievement_name(achievement_id);
-				pline("Congratulations! You've earned the achievement: %s", achievement_name);
+				pline("You unlock an achievement: %s", achievement_name);
 				free(achievement_name);
 				return ACHIEVEMENT_PUSH_SUCCESS;
 			}
 			else{
-				pline("Er, oops. You got an achievement, but it can't be recorded.");
+				pline("You would have unlocked an achievement, but it couldn't be recorded.");
 				return ACHIEVEMENT_PUSH_FAILURE;
 			}
 		}
