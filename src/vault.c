@@ -283,7 +283,7 @@ fnd:
 	    if (!mvitals[PM_CROESUS].died) {
 		verbalize("Oh, yes, of course.  Sorry to have disturbed you.");
 		mongone(guard);
-		add_achievement_progress(AID_VAULT, ONE_TIME_ACHIEVEMENT);
+		award_achievement(AID_VAULT);
 	    } else {
 		setmangry(guard);
 		verbalize("Back from the dead, are you?  I'll remedy that!");

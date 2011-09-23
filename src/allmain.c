@@ -38,7 +38,7 @@ void segv_award( int sig ) {
 	    perror("signal");
 		exit(EXIT_FAILURE);
 	}
-	add_achievement_progress(AID_CRASH, ONE_TIME_ACHIEVEMENT);
+	award_achievement(AID_CRASH);
 	if( kill(getpid(), SIGSEGV) == -1 ) {
 		perror("kill");
 		exit(EXIT_FAILURE);

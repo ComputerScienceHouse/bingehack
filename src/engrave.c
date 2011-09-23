@@ -400,7 +400,7 @@ register xchar e_type;
 	}
 #endif
 	if(!strcmp(s, "Elbereth")){
-		add_achievement_progress(AID_ELBERETH, ONE_TIME_ACHIEVEMENT);
+		award_achievement(AID_ELBERETH);
 	}
 	ep->engr_time = e_time;
 	ep->engr_type = e_type > 0 ? e_type : rnd(N_ENGRAVE-1);

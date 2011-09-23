@@ -386,7 +386,7 @@ void panic( const char *str, ... ) {
 	    iflags.window_inited = 0; /* they're gone; force raw_print()ing */
 	}
 
-	add_achievement_progress(AID_CRASH, ONE_TIME_ACHIEVEMENT);
+	award_achievement(AID_CRASH);
 
 	raw_print(program_state.gameover ?
 		  "Postgame wrapup disrupted." :
