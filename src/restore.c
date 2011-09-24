@@ -6,6 +6,7 @@
 #include "hack.h"
 #include "lev.h"
 #include "tcap.h" /* for TERMLIB and ASCIIGRAPH */
+#include "achieve.h"
 
 #if defined(MICRO)
 extern int dotcnt;	/* shared with save */
@@ -682,6 +683,9 @@ register int fd;
 	/* but before docrt().					    */
 	vision_reset();
 	vision_full_recalc = 1;	/* recompute vision (not saved) */
+	
+	/* Restore step count (roughly) from the highest step achievement */
+	step_count_for_achievements = get_achievement_progress(AID_WALK_10K);
 
 	run_timers();	/* expire all timers that have gone off while away */
 	docrt();

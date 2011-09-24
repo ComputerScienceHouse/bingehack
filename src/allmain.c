@@ -17,6 +17,7 @@
 #include "configfile.h"
 #include "mysql_library.h"
 #include "hack.h"
+#include "achieve.h"
 
 #ifndef NO_SIGNAL
 #include <signal.h>
@@ -682,6 +683,8 @@ newgame()
 		flush_screen(1);
 		com_pager(1);
 	}
+	
+	reset_single_game_achievements();
 
 #ifdef INSURANCE
 	save_currentstate();

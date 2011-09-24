@@ -1246,6 +1246,9 @@ die:
 	if (dump_fp) dump_exit();
 #endif
 
+	// Could panic under out-of-memory conditions, so do it last
+	reset_single_game_achievements();
+
 	if(done_stopprint) { raw_print(""); raw_print(""); }
 	terminate(EXIT_SUCCESS);
 }
