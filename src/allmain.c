@@ -389,7 +389,7 @@ moveloop()
 			        if (propagate(monsndx(&mons[PM_NAZGUL]), FALSE, FALSE))
 			            makemon(&mons[PM_NAZGUL], u.ux, u.uy, NO_MM_FLAGS);
 			if (!rn2(100))
-		    	    You_hear("unintelligable whispering.");
+		    	    You_hear("unintelligible whispering.");
 		    }
 		    if (!rn2(40+(int)(ACURR(A_DEX)*3)))
 			u_wipe_engr(rnd(3));
