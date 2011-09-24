@@ -486,7 +486,7 @@ E void FDECL(assign_colors, (uchar *,int,int,int));
 
 /* ### dungeon.c ### */
 
-E void FDECL(save_dungeon, (int,BOOLEAN_P,BOOLEAN_P));
+E void FDECL(save_dungeon, (BOOLEAN_P,BOOLEAN_P));
 E void FDECL(restore_dungeon, (int));
 E void FDECL(insert_branch, (branch *,BOOLEAN_P));
 E void NDECL(init_dungeons);

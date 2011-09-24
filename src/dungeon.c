@@ -94,6 +94,7 @@ dumpit()
 	for (br = branches; br; br = br->next) {
 	    fprintf(stderr, "%d: %s, end1 %d %d, end2 %d %d, %s\n",
 		br->id,
+    boolean perform_write, free_data;
 		br->type == BR_STAIR ? "stair" :
 		    br->type == BR_NO_END1 ? "no end1" :
 		    br->type == BR_NO_END2 ? "no end2" :
@@ -111,31 +112,32 @@ dumpit()
 
 /* Save the dungeon structures. */
 void
-save_dungeon(fd, perform_write, free_data)
-    int fd;
-    boolean perform_write, free_data;
+save_dungeon(boolean perform_write, boolean free_data)
 {
     branch *curr, *next;
     int    count;
 
     if (perform_write) {
-	bwrite(fd, (genericptr_t) &n_dgns, sizeof n_dgns);
-	bwrite(fd, (genericptr_t) dungeons, sizeof(dungeon) * (unsigned)n_dgns);
-	bwrite(fd, (genericptr_t) &dungeon_topology, sizeof dungeon_topology);
-	bwrite(fd, (genericptr_t) tune, sizeof tune);
+		bwrite((genericptr_t) &n_dgns, sizeof n_dgns, "int");
+		bwrite((genericptr_t) dungeons, sizeof(dungeon) * (unsigned)n_dgns,
+			"dungeon");
+		bwrite((genericptr_t) &dungeon_topology, sizeof dungeon_topology,
+			"dungeon_topology");
+		bwrite((genericptr_t) tune, sizeof tune, "tune");
 
 	for (count = 0, curr = branches; curr; curr = curr->next)
 	    count++;
-	bwrite(fd, (genericptr_t) &count, sizeof(count));
+
+	bwrite((genericptr_t) &count, sizeof(count), "int");
 
 	for (curr = branches; curr; curr = curr->next)
-	    bwrite(fd, (genericptr_t) curr, sizeof (branch));
+	    bwrite((genericptr_t) curr, sizeof (branch), "branch");
 
 	count = maxledgerno();
-	bwrite(fd, (genericptr_t) &count, sizeof count);
-	bwrite(fd, (genericptr_t) level_info,
-			(unsigned)count * sizeof (struct linfo));
-	bwrite(fd, (genericptr_t) &inv_pos, sizeof inv_pos);
+	bwrite((genericptr_t) &count, sizeof count, "int");
+	bwrite((genericptr_t) level_info,
+			(unsigned)count * sizeof (struct linfo), "linfo");
+	bwrite((genericptr_t) &inv_pos, sizeof inv_pos, "coord");
     }
 
     if (free_data) {
