@@ -1138,8 +1138,7 @@ doengrave()
 }
 
 void
-save_engravings(fd, mode)
-int fd, mode;
+save_engravings(int mode)
 {
 	register struct engr *ep = head_engr;
 	register struct engr *ep2;
@@ -1148,15 +1147,15 @@ int fd, mode;
 	while (ep) {
 	    ep2 = ep->nxt_engr;
 	    if (ep->engr_lth && ep->engr_txt[0] && perform_bwrite(mode)) {
-		bwrite(fd, (genericptr_t)&(ep->engr_lth), sizeof(ep->engr_lth));
-		bwrite(fd, (genericptr_t)ep, sizeof(struct engr) + ep->engr_lth);
+		bwrite((genericptr_t)&(ep->engr_lth), sizeof(ep->engr_lth), "int");
+		bwrite((genericptr_t)ep, sizeof(struct engr) + ep->engr_lth, "engr");
 	    }
 	    if (release_data(mode))
 		dealloc_engr(ep);
 	    ep = ep2;
 	}
 	if (perform_bwrite(mode))
-	    bwrite(fd, (genericptr_t)&no_more_engr, sizeof no_more_engr);
+	    bwrite((genericptr_t)&no_more_engr, sizeof no_more_engr, "int");
 	if (release_data(mode))
 	    head_engr = 0;
 }

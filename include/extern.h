@@ -605,7 +605,7 @@ E void FDECL(make_engr_at, (int,int,const char *,long,XCHAR_P));
 E void FDECL(del_engr_at, (int,int));
 E int NDECL(freehand);
 E int NDECL(doengrave);
-E void FDECL(save_engravings, (int,int));
+E void FDECL(save_engravings, (int));
 E void FDECL(rest_engravings, (int));
 E void FDECL(del_engr, (struct engr *));
 E void FDECL(rloc_engr, (struct engr *));
