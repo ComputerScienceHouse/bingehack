@@ -114,7 +114,7 @@ int get_achievement_progress(int achievement_id){
 	int achievement_progress = -1;
 
 	char *name = mysql_library_escape_string(&db, plname);
-	if( asprintf(&query, "SELECT `achievement_progress`.`progress` FROM `achievement_progress` JOIN `users_in_apps` ON `users_in_apps`.`user_id` = `achievement_progress`.`user_id` where app_username = '%s' and app_id = %i and achievement_id = %i;", name, ACHIEVEMENT_GAME_ID, achievement_id) == -1 ) panic("asprintf: %s", strerror(errno));
+	if( asprintf(&query, "SELECT `achievement_progress`.`progress` FROM `achievement_progress` JOIN `users_in_apps` ON `users_in_apps`.`user_id` = `achievement_progress`.`user_id` where app_username = '%s' and app_id = %i and achievement_id = %i;", name, ACHIEVEMENT_APP_ID, achievement_id) == -1 ) panic("asprintf: %s", strerror(errno));
 	free(name);
 	if( mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0 ) goto fail;
 	free(query);
@@ -185,25 +185,33 @@ out:
 	return max_progress;
 }
 
-//REQUIRES timeout on non-success!!!!!!!
+// TODO: Doesn't properly handle the case where there is a progress entry
+// in the database but its value is 0 (admittedly should never happen)
 int push_achievement_progress(int achievement_id, int updated_progress_count){
 	char* query;
 
 	int progress = get_achievement_progress(achievement_id);
 	if( progress == -1 ) return -1;
-	if( progress == 0) { //no previous progress on achievement, INSERT time
+	if( progress == 0) {
 		char *name = mysql_library_escape_string(&db, plname);
-		if( asprintf(&query, "INSERT INTO `achievement_progress`(`user_id`, `achievement_id`, `progress`) VALUES ((select user_id from `users_in_apps` where app_id=1 and app_username='%s'), %i, %i);", name, achievement_id, updated_progress_count) == -1 ) panic("asprintf: %s", strerror(errno));
+		if( asprintf(&query, "INSERT INTO `achievement_progress` (`user_id`, `achievement_id`, `progress`) VALUES ((SELECT user_id FROM `users_in_apps` WHERE app_id=%i AND app_username='%s'), %i, %i);", ACHIEVEMENT_APP_ID, name, achievement_id, updated_progress_count) == -1 ) panic("asprintf: %s", strerror(errno));
 		free(name);
 		if(mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0){
 			pline("Real_query failed in push_achievement_progress: %s", mysql.error(&db));
 			disable_achievements();
 		}
 		free(query);
-		return 1;
-	} else { //TODO: Implement Multi-part achievements (aka UPDATE)
-		return 0;
+	} else {
+		char *name = mysql_library_escape_string(&db, plname);
+		if( asprintf(&query, "UPDATE `achievement_progress` SET `progress`=%i WHERE `achievement_id`=%i AND `user_id`=(SELECT user_id FROM `users_in_apps` WHERE app_id=%i AND app_username='%s');", updated_progress_count, achievement_id, ACHIEVEMENT_APP_ID, name) == -1 ) panic("asprintf: %s", strerror(errno));
+		free(name);
+		if(mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0){
+			pline("Real_query failed in push_achievement_progress: %s", mysql.error(&db));
+			disable_achievements();
+		}
+		free(query);
 	}
+	return 1;
 }
 
 // It is the caller's responsibility to free() the return value of this function.
@@ -268,7 +276,7 @@ int register_user(){
 	
 	char *allocstr = mysql_library_escape_string(&db, str),
 		 *name = mysql_library_escape_string(&db, plname);
-	if( asprintf(&query, "INSERT INTO `users_in_apps` VALUES ((SELECT `id` FROM `users` WHERE `users`.`username` = '%s'), %i, '%s')", allocstr, ACHIEVEMENT_GAME_ID, name) == -1) panic("asprintf: %s", strerror(errno));
+	if( asprintf(&query, "INSERT INTO `users_in_apps` VALUES ((SELECT `id` FROM `users` WHERE `users`.`username` = '%s'), %i, '%s')", allocstr, ACHIEVEMENT_APP_ID, name) == -1) panic("asprintf: %s", strerror(errno));
 	free(allocstr);
 	free(name);
 
@@ -288,7 +296,7 @@ int user_exists(){
 	int user_exists = 0;
 
 	char *name = mysql_library_escape_string(&db, plname);
-	if( asprintf(&query, "SELECT `app_username` FROM `users_in_apps` WHERE app_username = '%s' AND app_id = %i ;", name, ACHIEVEMENT_GAME_ID) == -1 ) panic("asprintf: %s", strerror(errno));
+	if( asprintf(&query, "SELECT `app_username` FROM `users_in_apps` WHERE app_username = '%s' AND app_id = %i ;", name, ACHIEVEMENT_APP_ID) == -1 ) panic("asprintf: %s", strerror(errno));
 	free(name);
 	if( mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0 ){
 		goto fail;
