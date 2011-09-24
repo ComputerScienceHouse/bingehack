@@ -1405,6 +1405,13 @@ domove()
 	    /* Since the hero has moved, adjust what can be seen/unseen. */
 	    vision_recalc(1);	/* Do the work now in the recover time. */
 	    invocation_message();
+	    
+	    /* Do step achievement progress */
+	    step_count_for_achievements++;
+	    if (!(step_count_for_achievements % 100)) {
+		add_achievement_progress(AID_WALK_5K, 100);
+		add_achievement_progress(AID_WALK_10K, 100);
+	    }
 	}
 
 	if (Punished)				/* put back ball and chain */

@@ -16,8 +16,8 @@ enum {
 	AID_KILL_DEV_GHOST = 12, //TBI
 	AID_KILLED_HELPLESS = 13, //TBI
 	AID_KILLED_BY_ANTS = 14, //TBI
-	AID_WALK_5K = 17, //TBI
-	AID_WALK_10K = 18, //TBI
+	AID_WALK_5K = 17,
+	AID_WALK_10K = 18,
 	AID_CRASH = 19,
 	AID_UNCARING_GOD = 22, //TBI
 	AID_DIG_FOR_VICTORY = 26, //TBI
@@ -25,7 +25,7 @@ enum {
 	AID_RESURRECT_PLAYERS = 29, //TBI
 	AID_SKIN_OF_TEETH = 30, //TBI
 	AID_KOPS_FIGHT = 31, //TBI
-	AID_DJINN_THREE_WISHES = 32, //TBI
+	AID_DJINN_WISHES = 32, //TBI
 	AID_BLIND_GAZER_WITH_PIE = 42, //TBI
 	AID_EXTINCTION = 43, //TBI
 	AID_GET_ALL_AMULETS = 44, //TBI
@@ -109,9 +109,14 @@ int get_achievement_progress(int achievement_id);
 
 int get_achievement_max_progress(int achievement_id);
 
+// Return 1 if achievement is awarded, 0 if not
+int get_achievement_awarded(int achievement_id);
+
 int push_achievement_progress(int achievement_id, int updated_progress_count);
 
 char * get_achievement_name(int achievement_id);
+
+void reset_single_game_achievements();
 
 void disable_achievements();
 

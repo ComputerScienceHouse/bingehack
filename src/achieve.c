@@ -104,6 +104,9 @@ int add_achievement_progress(int achievement_id, int add_progress_count){
 	return ACHIEVEMENT_PUSH_SUCCESS;
 }
 
+// Returns -1 if achievement system disabled
+// Returns -2 to indicate that no progress record exists
+//   (as opposed to 0 when the record exists but is set to 0)
 int get_achievement_progress(int achievement_id){
 	if( achievement_system_disabled ) return -1;
 
@@ -114,14 +117,14 @@ int get_achievement_progress(int achievement_id){
 	int achievement_progress = -1;
 
 	char *name = mysql_library_escape_string(&db, plname);
-	if( asprintf(&query, "SELECT `achievement_progress`.`progress` FROM `achievement_progress` JOIN `users_in_apps` ON `users_in_apps`.`user_id` = `achievement_progress`.`user_id` where app_username = '%s' and app_id = %i and achievement_id = %i;", name, ACHIEVEMENT_APP_ID, achievement_id) == -1 ) panic("asprintf: %s", strerror(errno));
+	if( asprintf(&query, "SELECT `achievement_progress`.`progress` FROM `achievement_progress` JOIN `users_in_apps` ON `users_in_apps`.`user_id` = `achievement_progress`.`user_id` WHERE app_username = '%s' AND app_id = %i AND achievement_id = %i;", name, ACHIEVEMENT_APP_ID, achievement_id) == -1 ) panic("asprintf: %s", strerror(errno));
 	free(name);
 	if( mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0 ) goto fail;
 	free(query);
 	if( (res = mysql.use_result(&db)) == NULL ) goto fail;
 	if( (row = mysql.fetch_row(res)) == NULL ) {
 		if( mysql.num_rows(res) == 0 ) {
-			achievement_progress = 0;
+			achievement_progress = -2;
 			goto out;
 		} else {
 			goto fail;
@@ -185,14 +188,19 @@ out:
 	return max_progress;
 }
 
-// TODO: Doesn't properly handle the case where there is a progress entry
-// in the database but its value is 0 (admittedly should never happen)
+int get_achievement_awarded(int achievement_id){
+	if (get_achievement_progress(achievement_id) >= get_achievement_max_progress(achievement_id))
+		return 1;
+	else
+		return 0;
+}
+
 int push_achievement_progress(int achievement_id, int updated_progress_count){
 	char* query;
 
 	int progress = get_achievement_progress(achievement_id);
 	if( progress == -1 ) return -1;
-	if( progress == 0) {
+	if( progress == -2) { // Progress record doesn't exist yet
 		char *name = mysql_library_escape_string(&db, plname);
 		if( asprintf(&query, "INSERT INTO `achievement_progress` (`user_id`, `achievement_id`, `progress`) VALUES ((SELECT user_id FROM `users_in_apps` WHERE app_id=%i AND app_username='%s'), %i, %i);", ACHIEVEMENT_APP_ID, name, achievement_id, updated_progress_count) == -1 ) panic("asprintf: %s", strerror(errno));
 		free(name);
@@ -247,6 +255,16 @@ fail:
 out:
 	if( res != NULL ) mysql.free_result(res);
 	return str_name;
+}
+
+// Reset progress of all the "in a single game" achievements
+// TODO: Handle the error case somehow, otherwise progress for these
+//       achievements could "leak over" from a previous game if any of
+//       these calls fails
+void reset_single_game_achievements(){
+	push_achievement_progress(AID_WALK_5K, 0);
+	push_achievement_progress(AID_WALK_10K, 0);
+	push_achievement_progress(AID_DJINN_WISHES, 0);
 }
 
 void disable_achievements(){
