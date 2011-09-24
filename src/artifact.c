@@ -85,11 +85,10 @@ init_artifacts()
 }
 
 void
-save_artifacts(fd)
-int fd;
+save_artifacts()
 {
-	bwrite(fd, (genericptr_t) artiexist, sizeof artiexist);
-	bwrite(fd, (genericptr_t) artidisco, sizeof artidisco);
+	bwrite((genericptr_t) artiexist, sizeof artiexist, "boolean");
+	bwrite((genericptr_t) artidisco, sizeof artidisco, "char");
 }
 
 void
