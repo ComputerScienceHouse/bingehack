@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include "hack.h"
+#include "achieve.h"
 
 #define NOINVSYM	'#'
 #define CONTAINED_SYM	'>'	/* designator for inside a container */
@@ -278,6 +279,7 @@ struct obj *obj;
 	} else if (obj->otyp == AMULET_OF_YENDOR) {
 		if (u.uhave.amulet) impossible("already have amulet?");
 		u.uhave.amulet = 1;
+		award_achievement(AID_GET_AOY);
 #ifdef RECORD_ACHIEVE
                 achieve.get_amulet = 1;
 #endif
@@ -296,6 +298,7 @@ struct obj *obj;
 	} else if (obj->otyp == SPE_BOOK_OF_THE_DEAD) {
 		if (u.uhave.book) impossible("already have the book?");
 		u.uhave.book = 1;
+		award_achievement(AID_GET_BOTD);
 #ifdef RECORD_ACHIEVE
                 achieve.get_book = 1;
 #endif
