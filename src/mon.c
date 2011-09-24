@@ -12,7 +12,6 @@
 #include "mfndpos.h"
 #include "edog.h"
 #include <ctype.h>
-#include "achieve.h"
 
 STATIC_DCL boolean FDECL(restrap,(struct monst *));
 STATIC_DCL long FDECL(mm_aggression, (struct monst *,struct monst *));
@@ -1790,10 +1789,6 @@ xkilled(mtmp, dest)
 	register struct trap *t;
 	boolean redisp = FALSE;
 	boolean wasinside = u.uswallow && (u.ustuck == mtmp);
-	
-	/* Do checks for simple kill achievements */
-	if (mtmp->data == &mons[PM_VLAD_THE_IMPALER])
-		award_achievement(AID_KILL_VLAD);
 
 	/* KMH, conduct */
 	u.uconduct.killer++;
