@@ -1,7 +1,7 @@
 #ifndef ACHIEVE_H
 #define ACHIEVE_H
 
-const static int ACHIEVEMENT_GAME_ID = 1;
+const static int ACHIEVEMENT_APP_ID = 1;
 
 // TBI == To Be Implemented
 enum {
@@ -102,10 +102,8 @@ bool achievement_system_startup();
 void achievement_system_shutdown();
 
 // Return 1 on success, 0 on failure
-int add_achievement_progress(int achievement_id, int add_progress_count);
-
-// As above
 int award_achievement(int achievement_id);
+int add_achievement_progress(int achievement_id, int add_progress_count);
 
 int get_achievement_progress(int achievement_id);
 
