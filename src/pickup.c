@@ -8,7 +8,6 @@
 
 #include <stdbool.h>
 #include "hack.h"
-#include "achieve.h"
 
 STATIC_DCL void FDECL(simple_look, (struct obj *,BOOLEAN_P));
 #ifndef GOLDOBJ
@@ -1408,12 +1407,6 @@ boolean telekinesis;	/* not picking it up directly by hand */
 	    obj = splitobj(obj, count);
 
 	obj = pick_obj(obj);
-	
-	/* Do checks for item pickup achievements */
-	if (obj->otyp == SPE_BOOK_OF_THE_DEAD)
-		award_achievement(AID_GET_BOTD);
-	if (obj->otyp == AMULET_OF_YENDOR)
-		award_achievement(AID_GET_AOY);
 
 	if (uwep && uwep == obj) mrg_to_wielded = TRUE;
 	nearload = near_capacity();
