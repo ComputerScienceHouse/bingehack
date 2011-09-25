@@ -655,8 +655,6 @@ newgame()
 	(void) makedog();
 	docrt();
 
-    reset_single_game_achievements();
-
 	if (flags.legacy) {
 		flush_screen(1);
 		com_pager(1);

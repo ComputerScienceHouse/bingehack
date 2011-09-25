@@ -120,9 +120,9 @@ void reset_single_game_achievements();
 
 void disable_achievements();
 
-int user_exists();
+int achievements_user_exists();
 
-int register_user();
+int achievements_register_user();
 
 int check_db_connection();
 #endif

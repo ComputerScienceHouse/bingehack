@@ -47,7 +47,7 @@ bool achievement_system_startup() {
 		disable_achievements();
 		return false;
 	}
-
+	
 	achievement_system_initialized = true;
 	return true;
 }
@@ -63,27 +63,21 @@ int award_achievement(int achievement_id){
 
 // Return 1 on success, 0 on failure
 int add_achievement_progress(int achievement_id, int add_progress_count){
+	if (check_db_connection()) disable_achievements();
+
 	if(achievement_system_disabled){ return ACHIEVEMENT_PUSH_FAILURE; }
 	if(ACHIEVEMENT_DEBUG){pline("DEBUG: add_achievement_progress(%i, %i)", achievement_id, add_progress_count);}
-	
-	if(check_db_connection()){
-		disable_achievements();
-	}
-	
-	//Check if user exists
-	if(!user_exists()){
-		register_user();
-	}
+
 	//Calculate user's completion on this achievement
 	int pre_achievement_progress = get_achievement_progress(achievement_id);
+	if (pre_achievement_progress < 0) pre_achievement_progress = 0;
 	int max_achievement_progress = get_achievement_max_progress(achievement_id);
-	if(ACHIEVEMENT_DEBUG){pline("DEBUG: get_achievement_max_progress(%i)=%i", achievement_id, max_achievement_progress);}
 
 	if(pre_achievement_progress < max_achievement_progress){ //user still needs achievement
 		if(pre_achievement_progress + add_progress_count >= max_achievement_progress){ //Achievement fully achieved!
 			if(push_achievement_progress(achievement_id, max_achievement_progress)){ //floor the value to max_progress
 				char * achievement_name = get_achievement_name(achievement_id);
-				pline("You unlock an achievement: %s", achievement_name);
+				pline("You unlock an achievement: %s ", achievement_name);
 				free(achievement_name);
 				return ACHIEVEMENT_PUSH_SUCCESS;
 			}
@@ -108,6 +102,7 @@ int add_achievement_progress(int achievement_id, int add_progress_count){
 // Returns -2 to indicate that no progress record exists
 //   (as opposed to 0 when the record exists but is set to 0)
 int get_achievement_progress(int achievement_id){
+	if (check_db_connection()) disable_achievements();
 	if( achievement_system_disabled ) return -1;
 
 	char* query;
@@ -152,6 +147,7 @@ out:
 }
 
 int get_achievement_max_progress(int achievement_id){
+	if (check_db_connection()) disable_achievements();
 	if( achievement_system_disabled ) return -1;
 
 	MYSQL_RES *res = NULL;
@@ -173,6 +169,8 @@ int get_achievement_max_progress(int achievement_id){
 	max_progress = atoi(str_max_progress);
 
 	free(str_max_progress);
+	
+	if(ACHIEVEMENT_DEBUG){pline("DEBUG: get_achievement_max_progress(%i)=%i", achievement_id, max_progress);}
 
 	row = mysql.fetch_row(res);
 	assert(row == NULL);
@@ -224,7 +222,7 @@ int push_achievement_progress(int achievement_id, int updated_progress_count){
 
 // It is the caller's responsibility to free() the return value of this function.
 char *get_achievement_name( int achievement_id ){
-		MYSQL_RES *res = NULL;
+	MYSQL_RES *res = NULL;
 	MYSQL_ROW row;
 	char* query;
 	char* str_name;
@@ -272,8 +270,8 @@ void disable_achievements(){
 	achievement_system_disabled = 1;
 }
 
-//TODO Odd unregistered case where app_username is already taken
-int register_user(){
+// TODO: Handle case where user already exists in users, but not in users_in_apps
+int achievements_register_user(){
 	pline("Hey! Listen! You're not registered in the achievements database.");
 	pline("If you don't have a CSH account, you can probably leave this blank.");
 	char str[BUFSZ];
@@ -287,7 +285,7 @@ int register_user(){
 	if( asprintf(&query, "INSERT INTO `users` (`username`) VALUES ('%s')", str ) == -1) panic("asprintf: %s", strerror(errno));
 	
 	if(mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0){
-		pline("Real_query failed in register_user: %s", mysql.error(&db));
+		pline("Real_query failed in achievements_register_user: %s", mysql.error(&db));
 		disable_achievements();
 	}
 	free(query);
@@ -299,7 +297,7 @@ int register_user(){
 	free(name);
 
 	if(mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0){
-		pline("Real_query failed in register_user: %s", mysql.error(&db));
+		pline("Real_query failed in achievements_register_user: %s", mysql.error(&db));
 		disable_achievements();
 	}
 	free(query);
@@ -307,7 +305,7 @@ int register_user(){
 	return 1;
 }
 
-int user_exists(){
+int achievements_user_exists(){
 	MYSQL_RES *res = NULL;
 	MYSQL_ROW row;
 	char* query;
