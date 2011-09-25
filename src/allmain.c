@@ -38,7 +38,7 @@ void segv_award( int sig ) {
 	    perror("signal");
 		exit(EXIT_FAILURE);
 	}
-	add_achievement_progress(AID_CRASH, ONE_TIME_ACHIEVEMENT);
+	award_achievement(AID_CRASH);
 	if( kill(getpid(), SIGSEGV) == -1 ) {
 		perror("kill");
 		exit(EXIT_FAILURE);
@@ -389,7 +389,7 @@ moveloop()
 			        if (propagate(monsndx(&mons[PM_NAZGUL]), FALSE, FALSE))
 			            makemon(&mons[PM_NAZGUL], u.ux, u.uy, NO_MM_FLAGS);
 			if (!rn2(100))
-		    	    You_hear("unintelligable whispering.");
+		    	    You_hear("unintelligible whispering.");
 		    }
 		    if (!rn2(40+(int)(ACURR(A_DEX)*3)))
 			u_wipe_engr(rnd(3));

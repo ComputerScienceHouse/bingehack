@@ -181,7 +181,7 @@ int mechanism;
 	}
 	else{
 		truth=3; /* We're talking to potter, we want the Potter quotes */
-		add_achievement_progress(AID_POTTER, ONE_TIME_ACHIEVEMENT);
+		award_achievement(AID_POTTER);
 	}
 	line = getrumor(truth, buf, reading ? FALSE : TRUE);
 	if (!*line)
