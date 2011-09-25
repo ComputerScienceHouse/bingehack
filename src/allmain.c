@@ -10,14 +10,8 @@
 #include <errno.h>
 #include <unistd.h>
 
-#include <mysql.h>
-#include <libconfig.h>
-
 #include "achieve.h"
-#include "configfile.h"
-#include "mysql_library.h"
 #include "hack.h"
-#include "achieve.h"
 
 #ifndef NO_SIGNAL
 #include <signal.h>
@@ -35,18 +29,6 @@ struct sockaddr_in mcast_addr;
 
 struct u_stat_t u_stat;
 
-void segv_award( int sig ) {
-    if( signal(SIGSEGV, SIG_DFL) == SIG_ERR ) {
-	    perror("signal");
-		exit(EXIT_FAILURE);
-	}
-	award_achievement(AID_CRASH);
-	if( kill(getpid(), SIGSEGV) == -1 ) {
-		perror("kill");
-		exit(EXIT_FAILURE);
-	}
-}
-
 void
 moveloop()
 {
@@ -58,8 +40,6 @@ moveloop()
     boolean didmove = FALSE, monscanmove = FALSE;
     int last_dnum = -1;
     int i;
-
-    if( signal(SIGSEGV, segv_award) == SIG_ERR ) pline("Unable to register signal handler: %s", strerror(errno));
 
     bzero(u_stat.plname, sizeof(u_stat.plname));
     strncpy(u_stat.plname, plname, sizeof(u_stat.plname) - 1);
@@ -78,10 +58,6 @@ moveloop()
         if( setsockopt(mcast_socket, IPPROTO_IP, IP_MULTICAST_IF, &localhost_addr, sizeof(localhost_addr)) == -1 )
           pline("setsockopt: %s", strerror(errno));
     }
-
-    configfile_init();
-    mysql_library_startup();
-    achievement_system_startup();
 
     flags.moonphase = phase_of_the_moon();
     if(flags.moonphase == FULL_MOON) {
@@ -679,15 +655,13 @@ newgame()
 	(void) makedog();
 	docrt();
 
+    reset_single_game_achievements();
+
 	if (flags.legacy) {
 		flush_screen(1);
 		com_pager(1);
 	}
 	
-    if(!mysql_library_startup()){
-	    reset_single_game_achievements();
-    }
-
 #ifdef INSURANCE
 	save_currentstate();
 #endif

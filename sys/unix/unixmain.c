@@ -5,15 +5,22 @@
 /* main.c - Unix NetHack */
 
 #include <stdbool.h>
-#include "hack.h"
-#include "dlb.h"
-
+#include <errno.h>
 #include <sys/stat.h>
 #include <signal.h>
 #include <pwd.h>
 #ifndef O_RDONLY
 #include <fcntl.h>
 #endif
+
+#include <mysql.h>
+#include <libconfig.h>
+
+#include "hack.h"
+#include "dlb.h"
+#include "mysql_library.h"
+#include "achieve.h"
+#include "configfile.h"
 
 #if !defined(_BULL_SOURCE) && !defined(__sgi) && !defined(_M_UNIX)
 # if !defined(SUNOS4) && !(defined(ULTRIX) && defined(__GNUC__))
@@ -48,6 +55,18 @@ static void NDECL(wd_message);
 #ifdef WIZARD
 static boolean wiz_error_flag = FALSE;
 #endif
+
+static void segv_award( int sig ) {
+    if( signal(SIGSEGV, SIG_DFL) == SIG_ERR ) {
+	    perror("signal");
+		exit(EXIT_FAILURE);
+	}
+	award_achievement(AID_CRASH);
+	if( kill(getpid(), SIGSEGV) == -1 ) {
+		perror("kill");
+		exit(EXIT_FAILURE);
+	}
+}
 
 int
 main(argc,argv)
@@ -254,6 +273,12 @@ char *argv[];
 	vision_init();
 
 	display_gamewindows();
+
+	if( signal(SIGSEGV, segv_award) == SIG_ERR ) pline("Unable to register signal handler: %s", strerror(errno));
+
+	configfile_init();
+	mysql_library_startup();
+	achievement_system_startup();
 
 	if ((fd = restore_saved_game()) >= 0) {
 #ifdef WIZARD
