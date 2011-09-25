@@ -306,6 +306,8 @@ char *argv[];
 #endif
 		check_special_room(FALSE);
 		wd_message();
+		// Can't do this until after plname is set!
+		if (!achievements_user_exists()) achievements_register_user();
 
 		if (discover || wizard) {
 			if(yn("Do you want to keep the save file?") == 'n')
@@ -321,12 +323,15 @@ not_recovered:
 		player_selection();
 		newgame();
 		wd_message();
+		// See above comment
+		if (!achievements_user_exists()) achievements_register_user();
+		reset_single_game_achievements();
 
 		flags.move = 0;
 		set_wear();
 		(void) pickup(1);
 	}
-
+	
 	moveloop();
 	exit(EXIT_SUCCESS);
 	/*NOTREACHED*/
