@@ -684,7 +684,9 @@ newgame()
 		com_pager(1);
 	}
 	
-	reset_single_game_achievements();
+    if(!mysql_library_startup()){
+	    reset_single_game_achievements();
+    }
 
 #ifdef INSURANCE
 	save_currentstate();
