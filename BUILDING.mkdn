@@ -29,7 +29,7 @@ Local overrides for make variables.
 
 ### Example
 <pre>
-PREFIX = $(PWD)/install
+PREFIX := $(PWD)/install
 
 # FreeBSD and OSX only
 INSTALL := ginstall
