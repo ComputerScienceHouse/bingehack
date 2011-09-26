@@ -2,6 +2,8 @@ RECOVER := $(CURDIR)/recover.exe
 MAKEDEFS := $(CURDIR)/makedefs.exe
 DGN_COMP := $(CURDIR)/dgn_comp.exe
 LEV_COMP := $(CURDIR)/lev_comp.exe
+RX := $(CURDIR)/rx.exe
+BOARD := $(CURDIR)/board.exe
 
 MAKEDEFS_SOURCES := makedefs.c
 MAKEDEFS_SOURCES := $(MAKEDEFS_SOURCES:%=$(CURDIR)/%)
@@ -44,3 +46,11 @@ LEV_LEX_OBJECTS := $(LEV_LEX_GENERATED_SOURCES:.c=.o)
 LEV_COMP_SOURCES := $(CURDIR)/lev_main.c
 LEV_COMP_OBJECTS := $(LEV_COMP_SOURCES:.c=.o)
 LEV_COMP_DEPS := $(LEV_COMP_SOURCES:.c=.d)
+
+RX_SOURCES := $(CURDIR)/rx.c $(CURDIR)/list.c
+RX_OBJECTS := $(RX_SOURCES:.c=.o)
+RX_DEPS := $(RX_SOURCES:.c=.d)
+
+BOARD_SOURCES := $(CURDIR)/board.c $(CURDIR)/list.c
+BOARD_OBJECTS := $(BOARD_SOURCES:.c=.o)
+BOARD_DEPS := $(BOARD_SOURCES:.c=.d)
