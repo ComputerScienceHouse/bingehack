@@ -184,12 +184,6 @@
 #define doquickwhatis()   doquickwhatis_()
 
 
-/* ### pcsys.c ### */
-#ifdef SHELL
-#define dosh()	     dosh_()
-#endif /* SHELL */
-
-
 /* ### pickup.c ### */
 #define ck_bag(x)	 ck_bag_(x)
 #define doloot()	 doloot_()

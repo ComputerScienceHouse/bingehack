@@ -194,6 +194,8 @@ int get_achievement_awarded(int achievement_id){
 }
 
 int push_achievement_progress(int achievement_id, int updated_progress_count){
+	if( achievement_system_disabled ) return -1;
+
 	char* query;
 
 	int progress = get_achievement_progress(achievement_id);
@@ -271,6 +273,8 @@ void disable_achievements(){
 
 // TODO: Handle case where user already exists in users, but not in users_in_apps
 int achievements_register_user(){
+	if( achievement_system_disabled ) return 0;
+
 	pline("Hey! Listen! You're not registered in the achievements database.");
 	pline("If you don't have a CSH account, you can probably leave this blank.");
 	char str[BUFSZ];
@@ -304,7 +308,9 @@ int achievements_register_user(){
 	return 1;
 }
 
-int achievements_user_exists(){
+int achievements_user_exists() {
+	if( achievement_system_disabled ) return 0;
+
 	MYSQL_RES *res = NULL;
 	MYSQL_ROW row;
 	char* query;
@@ -336,7 +342,7 @@ int achievements_user_exists(){
 	goto out;
 
 fail:
-	pline("Error in user_exists() (Error: %s)", mysql.error(&db));
+	pline("Error in achievements_user_exists() (Error: %s)", mysql.error(&db));
 	disable_achievements();
 out:
 	if( res != NULL ) mysql.free_result(res);
@@ -346,6 +352,8 @@ out:
 
 
 int check_db_connection(){
+	if( achievement_system_disabled ) return 0;
+
 	if(mysql.ping(&db)){ // what we have here is a failure to communicate
 		pline("Error while attempting to reconnect to DB: %s", mysql.error(&db));
 		return 1;
