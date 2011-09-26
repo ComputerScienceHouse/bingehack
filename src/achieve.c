@@ -61,49 +61,65 @@ int award_achievement(int achievement_id){
 	return add_achievement_progress(achievement_id, get_achievement_max_progress(achievement_id));
 }
 
-// Return 1 on success, 0 on failure
-int add_achievement_progress(int achievement_id, int add_progress_count){
-	if (check_db_connection()) disable_achievements();
+int add_achievement_progress(int achievement_id, int add_progress){
+	if (achievement_system_disabled) return ACHIEVEMENT_PUSH_FAILURE;
+	int old_progress = get_achievement_progress(achievement_id);
+	if (old_progress < 0) old_progress = 0;
+	return push_achievement_progress(achievement_id, old_progress + add_progress);
+}
 
-	if(achievement_system_disabled){ return ACHIEVEMENT_PUSH_FAILURE; }
-	if(ACHIEVEMENT_DEBUG){pline("DEBUG: add_achievement_progress(%i, %i)", achievement_id, add_progress_count);}
-
-	//Calculate user's completion on this achievement
-	int pre_achievement_progress = get_achievement_progress(achievement_id);
-	if (pre_achievement_progress < 0) pre_achievement_progress = 0;
-	int max_achievement_progress = get_achievement_max_progress(achievement_id);
-
-	if(pre_achievement_progress < max_achievement_progress){ //user still needs achievement
-		if(pre_achievement_progress + add_progress_count >= max_achievement_progress){ //Achievement fully achieved!
-			if(push_achievement_progress(achievement_id, max_achievement_progress)){ //floor the value to max_progress
-				char * achievement_name = get_achievement_name(achievement_id);
-				pline("You unlock an achievement: %s ", achievement_name);
-				free(achievement_name);
-				return ACHIEVEMENT_PUSH_SUCCESS;
-			}
-			else{
-				pline("You would have unlocked an achievement, but it couldn't be recorded.");
-				return ACHIEVEMENT_PUSH_FAILURE;
-			}
+int push_achievement_progress(int achievement_id, int new_progress){
+	if (!check_db_connection()) disable_achievements();
+	if (achievement_system_disabled) return ACHIEVEMENT_PUSH_FAILURE;
+	
+	int push_failed = 0;
+	int old_progress = get_achievement_progress(achievement_id);
+	int max_progress = get_achievement_max_progress(achievement_id);
+	
+	// Clamp the new progress to a valid range
+	if (new_progress < 0) new_progress = 0;
+	if (new_progress > max_progress) new_progress = max_progress;
+	
+	char* query;
+	if (old_progress == -2) { // Progress record doesn't exist yet
+		char *name = mysql_library_escape_string(&db, plname);
+		if( asprintf(&query, "INSERT INTO `achievement_progress` (`user_id`, `achievement_id`, `progress`) VALUES ((SELECT user_id FROM `users_in_apps` WHERE app_id=%i AND app_username='%s'), %i, %i);", ACHIEVEMENT_APP_ID, name, achievement_id, new_progress) == -1 ) panic("asprintf: %s", strerror(errno));
+		free(name);
+		if(mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0){
+			pline("Real_query failed in push_achievement_progress: %s", mysql.error(&db));
+			disable_achievements();
+			push_failed = 1;
 		}
-		else{ //user stills needs achievement, but isn't quite there yet
-			if(push_achievement_progress(achievement_id, pre_achievement_progress+add_progress_count)){
-				return ACHIEVEMENT_PUSH_SUCCESS;
-			}
-			else{
-				return ACHIEVEMENT_PUSH_FAILURE;
-			}
+	} else {
+		char *name = mysql_library_escape_string(&db, plname);
+		if( asprintf(&query, "UPDATE `achievement_progress` SET `progress`=%i WHERE `achievement_id`=%i AND `user_id`=(SELECT user_id FROM `users_in_apps` WHERE app_id=%i AND app_username='%s');", new_progress, achievement_id, ACHIEVEMENT_APP_ID, name) == -1 ) panic("asprintf: %s", strerror(errno));
+		free(name);
+		if(mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0){
+			pline("Real_query failed in push_achievement_progress: %s", mysql.error(&db));
+			disable_achievements();
+			push_failed = 1;
 		}
 	}
-	return ACHIEVEMENT_PUSH_SUCCESS;
+	free(query);
+	
+	if (push_failed) {
+		return ACHIEVEMENT_PUSH_FAILURE;
+	} else {
+		if (old_progress < max_progress && new_progress == max_progress) {
+			char * achievement_name = get_achievement_name(achievement_id);
+			pline("You unlock an achievement: %s ", achievement_name);
+			free(achievement_name);
+		}
+		return ACHIEVEMENT_PUSH_SUCCESS;
+	}
 }
 
 // Returns -1 if achievement system disabled
 // Returns -2 to indicate that no progress record exists
 //   (as opposed to 0 when the record exists but is set to 0)
 int get_achievement_progress(int achievement_id){
-	if (check_db_connection()) disable_achievements();
-	if( achievement_system_disabled ) return -1;
+	if (!check_db_connection()) disable_achievements();
+	if (achievement_system_disabled) return -1;
 
 	char* query;
 	MYSQL_RES *res = NULL;
@@ -147,8 +163,8 @@ out:
 }
 
 int get_achievement_max_progress(int achievement_id){
-	if (check_db_connection()) disable_achievements();
-	if( achievement_system_disabled ) return -1;
+	if (!check_db_connection()) disable_achievements();
+	if (achievement_system_disabled) return -1;
 
 	MYSQL_RES *res = NULL;
 	MYSQL_ROW row;
@@ -187,43 +203,17 @@ out:
 }
 
 int get_achievement_awarded(int achievement_id){
+	if (achievement_system_disabled) return 0;
 	if (get_achievement_progress(achievement_id) >= get_achievement_max_progress(achievement_id))
 		return 1;
 	else
 		return 0;
 }
 
-int push_achievement_progress(int achievement_id, int updated_progress_count){
-	if( achievement_system_disabled ) return -1;
-
-	char* query;
-
-	int progress = get_achievement_progress(achievement_id);
-	if( progress == -1 ) return -1;
-	if( progress == -2) { // Progress record doesn't exist yet
-		char *name = mysql_library_escape_string(&db, plname);
-		if( asprintf(&query, "INSERT INTO `achievement_progress` (`user_id`, `achievement_id`, `progress`) VALUES ((SELECT user_id FROM `users_in_apps` WHERE app_id=%i AND app_username='%s'), %i, %i);", ACHIEVEMENT_APP_ID, name, achievement_id, updated_progress_count) == -1 ) panic("asprintf: %s", strerror(errno));
-		free(name);
-		if(mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0){
-			pline("Real_query failed in push_achievement_progress: %s", mysql.error(&db));
-			disable_achievements();
-		}
-		free(query);
-	} else {
-		char *name = mysql_library_escape_string(&db, plname);
-		if( asprintf(&query, "UPDATE `achievement_progress` SET `progress`=%i WHERE `achievement_id`=%i AND `user_id`=(SELECT user_id FROM `users_in_apps` WHERE app_id=%i AND app_username='%s');", updated_progress_count, achievement_id, ACHIEVEMENT_APP_ID, name) == -1 ) panic("asprintf: %s", strerror(errno));
-		free(name);
-		if(mysql.real_query(&db, query, (unsigned int) strlen(query)) != 0){
-			pline("Real_query failed in push_achievement_progress: %s", mysql.error(&db));
-			disable_achievements();
-		}
-		free(query);
-	}
-	return 1;
-}
-
 // It is the caller's responsibility to free() the return value of this function.
 char *get_achievement_name( int achievement_id ){
+	if (!check_db_connection()) disable_achievements();
+	
 	MYSQL_RES *res = NULL;
 	MYSQL_ROW row;
 	char* query;
@@ -267,13 +257,15 @@ void reset_single_game_achievements(){
 }
 
 void disable_achievements(){
-	pline("Disabling the achievements system for the duration of this session.");
+	if (!achievement_system_disabled)
+		pline("Disabling the achievements system for the duration of this session.");
 	achievement_system_disabled = 1;
 }
 
 // TODO: Handle case where user already exists in users, but not in users_in_apps
 int achievements_register_user(){
-	if( achievement_system_disabled ) return 0;
+	if (!check_db_connection()) disable_achievements();
+	if (achievement_system_disabled) return 0;
 
 	pline("Hey! Listen! You're not registered in the achievements database.");
 	pline("If you don't have a CSH account, you can probably leave this blank.");
@@ -308,8 +300,9 @@ int achievements_register_user(){
 	return 1;
 }
 
-int achievements_user_exists() {
-	if( achievement_system_disabled ) return 0;
+int achievements_user_exists(){
+	if (!check_db_connection()) disable_achievements();
+	if (achievement_system_disabled) return 0;
 
 	MYSQL_RES *res = NULL;
 	MYSQL_ROW row;
@@ -350,15 +343,17 @@ out:
 	return user_exists;
 }
 
-
+/* Make sure the database connection is still there and if not, attempt
+   to reconnect it ("ping" == worst-named function). A check involving this
+   function MUST be placed at the top of any function that directly interacts
+   with the database (see e.g. get_achievement_name for the exact code). */
 int check_db_connection(){
-	if( achievement_system_disabled ) return 0;
+	if (achievement_system_disabled) return 0;
 
-	if(mysql.ping(&db)){ // what we have here is a failure to communicate
+	if (mysql.ping(&db)) { // what we have here is a failure to communicate
 		pline("Error while attempting to reconnect to DB: %s", mysql.error(&db));
-		return 1;
-	}
-	else{
 		return 0;
+	} else {
+		return 1;
 	}
 }

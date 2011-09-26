@@ -101,18 +101,16 @@ const static int ACHIEVEMENT_PUSH_FAILURE = 0;
 bool achievement_system_startup();
 void achievement_system_shutdown();
 
-// Return 1 on success, 0 on failure
+// Return ACHIEVEMENT_PUSH_* values above
 int award_achievement(int achievement_id);
-int add_achievement_progress(int achievement_id, int add_progress_count);
+int add_achievement_progress(int achievement_id, int add_progress);
+int push_achievement_progress(int achievement_id, int new_progress);
 
 int get_achievement_progress(int achievement_id);
-
 int get_achievement_max_progress(int achievement_id);
 
 // Return 1 if achievement is awarded, 0 if not
 int get_achievement_awarded(int achievement_id);
-
-int push_achievement_progress(int achievement_id, int updated_progress_count);
 
 char * get_achievement_name(int achievement_id);
 
@@ -121,7 +119,6 @@ void reset_single_game_achievements();
 void disable_achievements();
 
 int achievements_user_exists();
-
 int achievements_register_user();
 
 int check_db_connection();
