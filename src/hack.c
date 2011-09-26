@@ -1409,8 +1409,8 @@ domove()
 	    
 	    /* Do step achievement progress */
 	    if (!(step_count % 100)) {
-		add_achievement_progress(AID_WALK_5K, 100);
-		add_achievement_progress(AID_WALK_10K, 100);
+		push_achievement_progress(AID_WALK_5K, (int)step_count);
+		push_achievement_progress(AID_WALK_10K, (int)step_count);
 	    }
 	}
 
