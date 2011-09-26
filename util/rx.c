@@ -149,10 +149,12 @@ main( int argc, char *argv[] )
     exit(EXIT_FAILURE);
   }
 
+#ifdef __FreeBSD__
   if( setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &yes, sizeof(yes)) != 0 ) {
     perror("setsockopt");
     exit(EXIT_FAILURE);
   }
+#endif
 
   const struct in_addr localhost_addr = {
       .s_addr = htonl(INADDR_LOOPBACK)
