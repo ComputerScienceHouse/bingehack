@@ -64,24 +64,19 @@ moveloop()
     strncpy(u_stat.plname, plname, sizeof(u_stat.plname) - 1);
 
     if( (mcast_socket = socket(PF_INET, SOCK_DGRAM, 0)) == -1 ) {
-      pline("socket: %s", strerror(errno));
+        pline("socket: %s", strerror(errno));
     } else {
-      memset(&mcast_addr, 0, sizeof(mcast_addr));
-      mcast_addr.sin_family = AF_INET;
-      mcast_addr.sin_addr.s_addr = inet_addr("225.0.0.37");
-      mcast_addr.sin_port = htons(12345);
-    }
+        memset(&mcast_addr, 0, sizeof(mcast_addr));
+        mcast_addr.sin_family = AF_INET;
+        mcast_addr.sin_addr.s_addr = inet_addr("225.0.0.37");
+        mcast_addr.sin_port = htons(12345);
 
-    const struct ip_mreq localhost_addr = {
-        .imr_multiaddr = {
-          .s_addr = inet_addr("225.0.0.37")
-        },
-        .imr_interface = {
-          .s_addr = htonl(INADDR_LOOPBACK)
-        }
-    };
-    if( setsockopt(mcast_socket, IPPROTO_IP, IP_MULTICAST_IF, &localhost_addr, sizeof(localhost_addr)) == -1 )
-      pline("setsockopt: %s", strerror(errno));
+        const struct in_addr localhost_addr = {
+            .s_addr = htonl(INADDR_LOOPBACK)
+        };
+        if( setsockopt(mcast_socket, IPPROTO_IP, IP_MULTICAST_IF, &localhost_addr, sizeof(localhost_addr)) == -1 )
+          pline("setsockopt: %s", strerror(errno));
+    }
 
     configfile_init();
     mysql_library_startup();

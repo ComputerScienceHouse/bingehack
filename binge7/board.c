@@ -128,8 +128,8 @@ main( int argc, char *argv[] )
 {
   char name[256];
   struct u_stat_t u_stat;
-  struct sockaddr_in addr, from;
-  socklen_t fromlen;
+  struct sockaddr_in addr;
+  socklen_t addrlen;
   struct hostent *hent;
   u_int yes = 1;
   bool first_time = true;
@@ -154,24 +154,20 @@ main( int argc, char *argv[] )
     exit(EXIT_FAILURE);
   }
 
-#ifdef __FreeBSD__
   if( setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &yes, sizeof(yes)) != 0 ) {
     perror("setsockopt");
     exit(EXIT_FAILURE);
   }
-#endif
 
-  memset(&addr, 0, sizeof(addr));
-  addr.sin_family = AF_INET;
-  addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-  addr.sin_port = htons(12345);
-
-  if( bind(s, (struct sockaddr *) &addr, sizeof(addr)) != 0 ) {
-    perror("bind");
+  const struct in_addr localhost_addr = {
+      .s_addr = htonl(INADDR_LOOPBACK)
+  };
+  if( setsockopt(s, IPPROTO_IP, IP_MULTICAST_IF, &localhost_addr, sizeof(localhost_addr)) == -1 ) {
+    perror("setsockopt");
     exit(EXIT_FAILURE);
   }
 
-  struct ip_mreq mreq = {
+  const struct ip_mreq mreq = {
     .imr_multiaddr = {
       .s_addr = inet_addr("225.0.0.37")
     },
@@ -179,10 +175,18 @@ main( int argc, char *argv[] )
       .s_addr = htonl(INADDR_LOOPBACK)
     }
   };
-
-  if( setsockopt(s, IPPROTO_IP, IP_ADD_MEMBERSHIP,
-                 &mreq, sizeof(mreq)) != 0 ) {
+  if( setsockopt(s, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) != 0 ) {
     perror("setsockopt");
+    exit(EXIT_FAILURE);
+  }
+
+  memset(&addr, 0, sizeof(addr));
+  addr.sin_family = AF_INET;
+  addr.sin_addr.s_addr = htonl(INADDR_ANY);
+  addr.sin_port = htons(12345);
+
+  if( bind(s, (struct sockaddr *) &addr, sizeof(addr)) != 0 ) {
+    perror("bind");
     exit(EXIT_FAILURE);
   }
 
@@ -357,9 +361,8 @@ main( int argc, char *argv[] )
       exit(EXIT_FAILURE);
     default:
       if( FD_ISSET(s, &rfds) ) {
-        fromlen = sizeof(from);
-        memset(&from, 0, sizeof(from));
-        if( recvfrom(s, &u_stat, sizeof(u_stat), 0, (struct sockaddr *) &from, &fromlen) < 0 ) {
+        addrlen = sizeof(addr);
+        if( recvfrom(s, &u_stat, sizeof(u_stat), 0, (struct sockaddr *) &addr, &addrlen) < 0 ) {
           endwin();
           perror("recvfrom");
           exit(EXIT_FAILURE);
@@ -397,3 +400,5 @@ main( int argc, char *argv[] )
 
   exit(EXIT_SUCCESS);
 }
+
+// vim: et ts=2 sw=2 sts=2

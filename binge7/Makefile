@@ -1,4 +1,4 @@
-CFLAGS=-Wall
+CFLAGS=-Wall -ggdb3
 
 all: build
 
