@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include "hack.h"
 #include "epri.h"
+#include "achieve.h"
 
 STATIC_PTR int NDECL(prayer_done);
 STATIC_DCL struct obj *NDECL(worst_cursed_item);
@@ -1299,6 +1300,7 @@ dosacrifice()
 verbalize("In return for thy service, I grant thee the gift of Immortality!");
 		You("ascend to the status of Demigod%s...",
 		    flags.female ? "dess" : "");
+		award_achievement(AID_ASCEND);
 		done(ASCENDED);
 	    }
 	}
@@ -1780,36 +1782,22 @@ const char * const hallu_gods[] = {
 	"George W. Bush",
 	"Albert Einstein",
 	"Jackie Chan",
-
-	"Speedy Gonzales",
 	"Homer Simpson",
 	"Dagobert Duck",
-	"Xena",
 	"Super Mario",
-	"Donkey Kong",
 	"Jack Bauer",
 	"the blue Power Ranger",
 	"Mr. Spock",
-
-	"the universe",
-	"Capitalism",
-	"Communism",
-	"Burger King",
-	"McDonald's",
-	"something",
-	"the U.N.O.",
-	"the Flying Spaghetti Monster",
-	"the Invisible Pink Unicorn",
-
-	"the gnome with the wand of death",
-	"the DevTeam",
+	"Capitalism", "Communism",
+	"the Flying Spaghetti Monster", "the Invisible Pink Unicorn",
+	"the gnome with the wand of death", "the DevTeam", "the RNG", 
 	"Dion Nicolaas",
 	"marvin",
 	"Dudley",
-	"the RNG",
-
-	"Maud"
-
+	"Maud",
+	"Clockfort", "Big Drink",
+	"Fluttershy", "Rainbow Dash", "Pinkie Pie", 
+	"Porcelain God"
 };
 #endif
 

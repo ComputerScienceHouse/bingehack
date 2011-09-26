@@ -3,9 +3,16 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include <stdbool.h>
+
+#include <libconfig.h>
+#include <mysql.h>
+
 #include "hack.h"
 #include "lev.h"
 #include "quest.h"
+#include "achieve.h"
+#include "mysql_library.h"
+#include "configfile.h"
 
 #ifndef NO_SIGNAL
 #include <signal.h>
@@ -1034,6 +1041,9 @@ free_menu_coloring()
 void
 freedynamicdata()
 {
+	achievement_system_shutdown();
+	mysql_library_shutdown();
+	configfile_destroy();
 #if defined(STATUS_COLORS) && defined(TEXTCOLOR)
 	free_status_colors();
 #endif

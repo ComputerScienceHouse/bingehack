@@ -16,7 +16,11 @@ config_t *_get_config() {
 	return _configptr;
 }
 
-__attribute__((destructor)) static void configfile_destroy() {
+bool configfile_available() {
+	return _configptr != NULL;
+}
+
+void configfile_destroy() {
 	if( _configptr != NULL ) config_destroy(_configptr);
 }
 
@@ -44,14 +48,24 @@ static bool configfile_read_file( const char *filename ) {
 	return true;
 }
 
-void configfile_init() {
+bool configfile_init() {
 	config_init(&_config);
 	static const char * const locations[] = CONFIGFILE_LOCATIONS;
+	bool ret = false;
 
 	for( const char * const *location = locations; *location != NULL; location++ ) {
-		configfile_read_file(*location);
+		if( configfile_read_file(*location) ) ret = true;
 	}
 	_configptr = &_config;
+	return ret;
+}
+
+bool configfile_get_string( const char *path, const char **str ) {
+	if( config_lookup_string(config, path, str) == CONFIG_FALSE ) {
+		pline("Config setting %s not found or wrong type", path);
+		return false;
+	}
+	return true;
 }
 
 // vim:set noexpandtab textwidth=120

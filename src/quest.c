@@ -9,6 +9,7 @@
 
 #include "quest.h"
 #include "qtext.h"
+#include "achieve.h"
 
 #define Not_firsttime	(on_level(&u.uz0, &u.uz))
 #define Qstat(x)	(quest_status.x)
@@ -266,6 +267,7 @@ chat_with_leader()
 	    qt_pager(QT_ASSIGNQUEST);
 	    exercise(A_WIS, TRUE);
 	    Qstat(got_quest) = TRUE;
+	    award_achievement(AID_START_QUEST);
 	  }
 	}
 }

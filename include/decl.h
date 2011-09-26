@@ -235,6 +235,8 @@ E NEARDATA struct dig_info {		/* apply.c, hack.c */
 E NEARDATA long moves, monstermoves;
 E NEARDATA long wailmsg;
 
+E int step_count_for_achievements;
+
 E NEARDATA boolean in_mklev;
 E NEARDATA boolean stoned;
 E NEARDATA boolean unweapon;

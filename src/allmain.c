@@ -10,10 +10,7 @@
 #include <errno.h>
 #include <unistd.h>
 
-#include <libconfig.h>
-
 #include "achieve.h"
-#include "configfile.h"
 #include "hack.h"
 
 #ifndef NO_SIGNAL
@@ -31,18 +28,6 @@ struct sockaddr_in mcast_addr;
 
 struct u_stat_t u_stat;
 
-void segv_award( int sig ) {
-    if( signal(SIGSEGV, SIG_DFL) == SIG_ERR ) {
-	    perror("signal");
-		exit(EXIT_FAILURE);
-	}
-	add_achievement_progress(AID_CRASH, ONE_TIME_ACHIEVEMENT);
-	if( kill(getpid(), SIGSEGV) == -1 ) {
-		perror("kill");
-		exit(EXIT_FAILURE);
-	}
-}
-
 void
 moveloop()
 {
@@ -55,8 +40,6 @@ moveloop()
     int last_dnum = -1;
     int i;
 
-    if( signal(SIGSEGV, segv_award) == SIG_ERR ) pline("Unable to register signal handler: %s", strerror(errno));
-
     bzero(u_stat.plname, sizeof(u_stat.plname));
     strncpy(u_stat.plname, plname, sizeof(u_stat.plname) - 1);
 
@@ -67,19 +50,17 @@ moveloop()
       mcast_addr.sin_port = htons(12345);
     }
 
-    configfile_init();
-
     flags.moonphase = phase_of_the_moon();
     if(flags.moonphase == FULL_MOON) {
-	You("are lucky!  Full moon tonight.");
-	change_luck(1);
+        You("are lucky!  Full moon tonight.");
+        change_luck(1);
     } else if(flags.moonphase == NEW_MOON) {
-	pline("Be careful!  New moon tonight.");
+        pline("Be careful!  New moon tonight.");
     }
     flags.friday13 = friday_13th();
     if (flags.friday13) {
-	pline("Watch out!  Bad things can happen on Friday the 13th.");
-	change_luck(-1);
+        pline("Watch out!  Bad things can happen on Friday the 13th.");
+        change_luck(-1);
     }
 
     initrack();
@@ -385,7 +366,7 @@ moveloop()
 			        if (propagate(monsndx(&mons[PM_NAZGUL]), FALSE, FALSE))
 			            makemon(&mons[PM_NAZGUL], u.ux, u.uy, NO_MM_FLAGS);
 			if (!rn2(100))
-		    	    You_hear("unintelligable whispering.");
+		    	    You_hear("unintelligible whispering.");
 		    }
 		    if (!rn2(40+(int)(ACURR(A_DEX)*3)))
 			u_wipe_engr(rnd(3));
@@ -669,7 +650,7 @@ newgame()
 		flush_screen(1);
 		com_pager(1);
 	}
-
+	
 #ifdef INSURANCE
 	save_currentstate();
 #endif
@@ -809,3 +790,4 @@ get_realtime(void)
 #endif /* OVLB */
 
 /*allmain.c*/
+// vim: et sts=4 ts=4 sw=4

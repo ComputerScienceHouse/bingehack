@@ -96,7 +96,7 @@ ifneq ($(UNAME), OpenBSD)
 else
 	$(INSTALL) $(RECOVER) $(GAMEDIR)/recover
 endif
-	$(TOUCH) $(GAMEDIR)/var/{perm,record,logfile,xlogfile} $(GAMEDIR)/nethack.conf
+	$(TOUCH) $(GAMEDIR)/var/perm $(GAMEDIR)/var/record $(GAMEDIR)/var/logfile $(GAMEDIR)/var/xlogfile $(GAMEDIR)/nethack.conf
 
 %.exe:
 	$(CC) $(LDFLAGS) -o $@ $(EXE_OBJECTS)
