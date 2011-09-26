@@ -262,7 +262,6 @@ out:
 void reset_single_game_achievements(){
 	push_achievement_progress(AID_WALK_5K, 0);
 	push_achievement_progress(AID_WALK_10K, 0);
-	push_achievement_progress(AID_DJINN_WISHES, 0);
 }
 
 void disable_achievements(){
