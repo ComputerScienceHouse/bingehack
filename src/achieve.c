@@ -257,10 +257,10 @@ out:
 	return str_name;
 }
 
-// Reset progress of all the "in a single game" achievements
-// TODO: Handle the error case somehow, otherwise progress for these
-//       achievements could "leak over" from a previous game if any of
-//       these calls fails
+/* Reset progress of all the "in a single game" achievements
+  (called on newgame and gameover just for the sake of displaying the correct
+  numbers on the frontend; individual achievements should make sure they're
+  not "leaking" progress, typically through a savegame-stored counter) */
 void reset_single_game_achievements(){
 	push_achievement_progress(AID_WALK_5K, 0);
 	push_achievement_progress(AID_WALK_10K, 0);

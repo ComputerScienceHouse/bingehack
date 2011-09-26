@@ -427,6 +427,7 @@ unsigned int *stuckid, *steedid;	/* STEED */
 	restlevchn(fd);
 	mread(fd, (genericptr_t) &moves, sizeof moves);
 	mread(fd, (genericptr_t) &monstermoves, sizeof monstermoves);
+	mread(fd, (genericptr_t) &step_count, sizeof step_count);
 	mread(fd, (genericptr_t) &quest_status, sizeof(struct q_score));
 	mread(fd, (genericptr_t) spl_book,
 				sizeof(struct spell) * (MAXSPELL + 1));
@@ -683,9 +684,6 @@ register int fd;
 	/* but before docrt().					    */
 	vision_reset();
 	vision_full_recalc = 1;	/* recompute vision (not saved) */
-	
-	/* Restore step count (roughly) from the highest step achievement */
-	step_count_for_achievements = get_achievement_progress(AID_WALK_10K);
 
 	run_timers();	/* expire all timers that have gone off while away */
 	docrt();

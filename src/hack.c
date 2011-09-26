@@ -1400,6 +1400,7 @@ domove()
 
 	if(u.ux0 != u.ux || u.uy0 != u.uy) {
 	    u.umoved = TRUE;
+	    step_count++;
 	    /* Clean old position -- vision_recalc() will print our new one. */
 	    newsym(u.ux0,u.uy0);
 	    /* Since the hero has moved, adjust what can be seen/unseen. */
@@ -1407,8 +1408,7 @@ domove()
 	    invocation_message();
 	    
 	    /* Do step achievement progress */
-	    step_count_for_achievements++;
-	    if (!(step_count_for_achievements % 100)) {
+	    if (!(step_count % 100)) {
 		add_achievement_progress(AID_WALK_5K, 100);
 		add_achievement_progress(AID_WALK_10K, 100);
 	    }

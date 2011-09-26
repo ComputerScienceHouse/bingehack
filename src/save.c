@@ -328,6 +328,7 @@ register int fd, mode;
 	savelevchn(fd, mode);
 	bwrite(fd, (genericptr_t) &moves, sizeof moves);
 	bwrite(fd, (genericptr_t) &monstermoves, sizeof monstermoves);
+	bwrite(fd, (genericptr_t) &step_count, sizeof step_count);
 	bwrite(fd, (genericptr_t) &quest_status, sizeof(struct q_score));
 	bwrite(fd, (genericptr_t) spl_book,
 				sizeof(struct spell) * (MAXSPELL + 1));
