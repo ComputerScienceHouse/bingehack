@@ -110,7 +110,7 @@ endif
 	$(TOUCH) $(GAMEDIR)/var/perm $(GAMEDIR)/var/record $(GAMEDIR)/var/logfile $(GAMEDIR)/var/xlogfile $(GAMEDIR)/nethack.conf
 
 %.exe:
-	$(CC) $(LDFLAGS) -o $@ $(EXE_OBJECTS)
+	$(CC) $(EXE_LIBRARIES) $(LDFLAGS) -o $@ $(EXE_OBJECTS)
 
 %.d: %.c
 	$(DEPGEN) -MM $(CPPFLAGS) -MQ $(@:.d=.o) -MQ $@ -MF $*.d $<
