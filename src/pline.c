@@ -2,6 +2,7 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdbool.h>
 #define NEED_VARARGS /* Uses ... */	/* comment line for pre-compiled headers */
 #include "hack.h"
 #include "epri.h"
@@ -20,44 +21,13 @@ char msgs[DUMPMSGS][BUFSZ];
 int lastmsg = -1;
 #endif
 
-/*VARARGS1*/
-/* Note that these declarations rely on knowledge of the internals
- * of the variable argument handling stuff in "tradstdc.h"
- */
-
-#if defined(USE_STDARG) || defined(USE_VARARGS)
-static void FDECL(vpline, (const char *, va_list));
-
-void
-pline VA_DECL(const char *, line)
-	VA_START(line);
-	VA_INIT(line, char *);
-	vpline(line, VA_ARGS);
-	VA_END();
-}
-
-# ifdef USE_STDARG
-static void
-vpline(const char *line, va_list the_args) {
-# else
-static void
-vpline(line, the_args) const char *line; va_list the_args; {
-# endif
-
-#else	/* USE_STDARG | USE_VARARG */
-
-#define vpline pline
-
-void
-pline VA_DECL(const char *, line)
-#endif	/* USE_STDARG | USE_VARARG */
-
+static void vpline( const char *line, va_list the_args ) {
 	char pbuf[BUFSZ];
 /* Do NOT use VA_START and VA_END in here... see above */
 
 	if (!line || !*line) return;
 	if (index(line, '%')) {
-	    Vsprintf(pbuf,line,VA_ARGS);
+	    vsprintf(pbuf, line, the_args);
 	    line = pbuf;
 	}
 #if defined(DUMP_LOG) && defined(DUMPMSGS)
@@ -79,6 +49,14 @@ pline VA_DECL(const char *, line)
 	putstr(WIN_MESSAGE, 0, line);
 	
 	time_check();	/* actually, we should do this once the hero dismisses the command */
+}
+
+__attribute__((format(printf, 1, 2)))
+void pline( const char *fmt, ... ) {
+    va_list ap;
+    va_start(ap, fmt);
+    vpline(fmt, ap);
+    va_end(ap);
 }
 
 /*VARARGS1*/
@@ -256,23 +234,24 @@ raw_printf VA_DECL(const char *, line)
 }
 
 
-/*VARARGS1*/
-void
-impossible VA_DECL(const char *, s)
-	VA_START(s);
-	VA_INIT(s, const char *);
+__attribute__((format(printf, 1, 2)))
+void impossible( const char *fmt, ... ) {
+    va_list ap;
+    va_start(ap, fmt);
 	if (program_state.in_impossible)
 		panic("impossible called impossible");
 	program_state.in_impossible = 1;
 	{
 	    char pbuf[BUFSZ];
-	    Vsprintf(pbuf,s,VA_ARGS);
+	    vsprintf(pbuf, fmt, ap);
 	    paniclog("impossible", pbuf);
 	}
-	vpline(s,VA_ARGS);
+    va_end(ap);
+    va_start(ap, fmt);
+	vpline(fmt, ap);
 	pline("Program in disorder - perhaps you'd better #quit.");
 	program_state.in_impossible = 0;
-	VA_END();
+    va_end(ap);
 }
 
 #ifdef HALLU_GODS

@@ -3,6 +3,7 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "hack.h"
 #include "wintty.h"

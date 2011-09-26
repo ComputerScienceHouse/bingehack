@@ -4,6 +4,7 @@
 
 /* main.c - Unix NetHack */
 
+#include <stdbool.h>
 #include "hack.h"
 #include "dlb.h"
 

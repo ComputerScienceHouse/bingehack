@@ -4,6 +4,7 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 /* We could include only config.h, except for the overlay definitions... */
+#include <stdbool.h>
 #include "hack.h"
 /*=
     Assorted 'small' utility routines.	They're virtually independent of

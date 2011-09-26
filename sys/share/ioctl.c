@@ -6,6 +6,7 @@
    systems (e.g. MUNIX) the include files <termio.h> and <sgtty.h>
    define the same constants, and the C preprocessor complains. */
 
+#include <stdbool.h>
 #include "hack.h"
 
 #if defined(BSD_JOB_CONTROL) || defined(_BULL_SOURCE)

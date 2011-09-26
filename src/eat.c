@@ -2,6 +2,7 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdbool.h>
 #include "hack.h"
 /* #define DEBUG */	/* uncomment to enable new eat code debugging */
 
@@ -2126,10 +2127,8 @@ use_tin_opener(obj)
 register struct obj *obj;
 {
     register struct obj *otmp;
-    int res = 0;
     if (obj != uwep) {
 	if (!wield_tool(obj, "use")) return 0;
-	else res = 1;
     }
 
     otmp = getobj((const char *)comestibles, "open");

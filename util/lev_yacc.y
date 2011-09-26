@@ -21,6 +21,7 @@
  #pragma alloca		/* keep leading space! */
 #endif
 
+#include <stdbool.h>
 #include "hack.h"
 #include "sp_lev.h"
 

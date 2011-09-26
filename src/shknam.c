@@ -4,6 +4,7 @@
 
 /* shknam.c -- initialize a shop */
 
+#include <stdbool.h>
 #include "hack.h"
 #include "eshk.h"
 

@@ -5,6 +5,7 @@
 /* This file contains the command routines dowhatis() and dohelp() and */
 /* a few other help related facilities */
 
+#include <stdbool.h>
 #include "hack.h"
 #include "dlb.h"
 
@@ -946,7 +947,7 @@ dohelp()
 			case  5:  option_help();  break;
 			case  6:  display_file(OPTIONFILE, TRUE);  break;
 			case  7:  (void) doextlist();  break;
-			case  8:  display_file(LICENSE, TRUE);  break;
+			case  8:  display_file(LICENSEFILE, TRUE);  break;
 #ifdef WIZARD
 			/* handle slot 9 or 10 */
 			default: display_file(DEBUGHELP, TRUE);  break;

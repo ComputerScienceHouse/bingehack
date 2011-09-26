@@ -2,6 +2,7 @@
 /* Copyright (c) J. C. Collet, M. Stephenson and D. Cohrs, 1992   */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdbool.h>
 #include "hack.h"
 #include "sp_lev.h"
 

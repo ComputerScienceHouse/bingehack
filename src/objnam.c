@@ -2,6 +2,7 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdbool.h>
 #include "hack.h"
 
 /* "an uncursed greased partly eaten guardian naga hatchling [corpse]" */
@@ -16,7 +17,7 @@ static boolean FDECL(wishymatch, (const char *,const char *,BOOLEAN_P));
 static char *NDECL(nextobuf);
 static void FDECL(add_erosion_words, (struct obj *, char *));
 #ifdef SORTLOOT
-char * FDECL(xname2, (struct obj *, boolean));
+char *xname2( struct obj *, bool );
 #endif
 
 struct Jitem {
@@ -240,10 +241,7 @@ register struct obj *obj;
 {
 	return xname2(obj, FALSE);
 }
-char *
-xname2(obj, ignore_oquan)
-register struct obj *obj;
-boolean ignore_oquan;
+char *xname2( register struct obj *obj, bool ignore_oquan)
 #endif
 {
 	register char *buf;
@@ -497,10 +495,7 @@ nameit:
 }
 
 /* xname() output augmented for multishot missile feedback */
-char *
-mshot_xname(obj)
-struct obj *obj;
-{
+char *mshot_xname( struct obj *obj ) {
     char tmpbuf[BUFSZ];
     char *onm = xname(obj);
 

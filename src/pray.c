@@ -2,6 +2,7 @@
 /* Copyright (c) Benson I. Margulies, Mike Stephenson, Steve Linhart, 1989. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdbool.h>
 #include "hack.h"
 #include "epri.h"
 
@@ -1779,36 +1780,22 @@ const char * const hallu_gods[] = {
 	"George W. Bush",
 	"Albert Einstein",
 	"Jackie Chan",
-
-	"Speedy Gonzales",
 	"Homer Simpson",
 	"Dagobert Duck",
-	"Xena",
 	"Super Mario",
-	"Donkey Kong",
 	"Jack Bauer",
 	"the blue Power Ranger",
 	"Mr. Spock",
-
-	"the universe",
-	"Capitalism",
-	"Communism",
-	"Burger King",
-	"McDonald's",
-	"something",
-	"the U.N.O.",
-	"the Flying Spaghetti Monster",
-	"the Invisible Pink Unicorn",
-
-	"the gnome with the wand of death",
-	"the DevTeam",
+	"Capitalism", "Communism",
+	"the Flying Spaghetti Monster", "the Invisible Pink Unicorn",
+	"the gnome with the wand of death", "the DevTeam", "the RNG", 
 	"Dion Nicolaas",
 	"marvin",
 	"Dudley",
-	"the RNG",
-
-	"Maud"
-
+	"Maud",
+	"Clockfort", "Big Drink",
+	"Fluttershy", "Rainbow Dash", "Pinkie Pie", 
+	"Porcelain God"
 };
 #endif
 

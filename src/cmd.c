@@ -3,6 +3,7 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include <signal.h>
+#include <stdbool.h>
 
 #include "hack.h"
 #include "func_tab.h"
@@ -2047,21 +2048,18 @@ struct dkb_tab *dkblist = (struct dkb_tab *) 0;
 
 static int dkblist_sz=-1;
 
-int
-map_dkb(b, c)
-char b, c;
-{
-        if(dkblist_sz<0) {
-                dkblist=(struct dkb_tab *) alloc(DYNKEY_SZ+1); /* 0-term */
-                memset(dkblist, 0, DYNKEY_SZ+1);
-                dkblist_sz=0;
-        }
-        dkblist_sz++;
-        if(sizeof(struct dkb_tab) * dkblist_sz>DYNKEY_SZ)
-                return 0;
-        dkblist[dkblist_sz-1].bound_char=b;
-        dkblist[dkblist_sz-1].cmd_char=c;
-        return 1;
+int map_dkb( char b, char c ) {
+	if(dkblist_sz<0) {
+			dkblist=(struct dkb_tab *) alloc(DYNKEY_SZ+1); /* 0-term */
+			memset(dkblist, 0, DYNKEY_SZ+1);
+			dkblist_sz=0;
+	}
+	dkblist_sz++;
+	if(sizeof(struct dkb_tab) * dkblist_sz>DYNKEY_SZ)
+			return 0;
+	dkblist[dkblist_sz-1].bound_char=b;
+	dkblist[dkblist_sz-1].cmd_char=c;
+	return 1;
 }
 
 char
@@ -3066,12 +3064,10 @@ end_of_input()
 
 char
 #ifdef DYNKEY
-greadchar(dynkey)
-boolean dynkey;
+greadchar( bool dynkey ) {
 #else
-readchar()
+readchar() {
 #endif
-{
 	register int sym;
 	int x = u.ux, y = u.uy, mod = 0;
 

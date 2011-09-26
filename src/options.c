@@ -2,6 +2,7 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdbool.h>
 #ifdef OPTION_LISTS_ONLY	/* (AMIGA) external program for opt lists */
 #include "config.h"
 #include "objclass.h"
@@ -1239,10 +1240,10 @@ char *start;
 	return result;
 }
 
-const struct percent_color_option *hp_colors = NULL;
-const struct percent_color_option *pw_colors = NULL;
-const struct percent_color_option *wt_colors = NULL;
-const struct text_color_option *text_colors = NULL;
+struct percent_color_option *hp_colors = NULL;
+struct percent_color_option *pw_colors = NULL;
+struct percent_color_option *wt_colors = NULL;
+struct text_color_option *text_colors = NULL;
 
 struct percent_color_option *
 add_percent_option(new_option, list_head)
@@ -3361,7 +3362,6 @@ boolean setinitial,setfromfile;
         retval = TRUE;
 #ifdef AUTOPICKUP_EXCEPTIONS
     } else if (!strcmp("autopickup_exception", optname)) {
-    	boolean retval;
 	int pick_cnt, pick_idx, opt_idx, pass;
 	int totalapes = 0, numapes[2] = {0,0};
 	menu_item *pick_list = (menu_item *)0;
@@ -3863,10 +3863,7 @@ free_autopickup_exceptions()
 #endif /* AUTOPICKUP_EXCEPTIONS */
 
 #ifdef DYNKEY
-void
-add_dkb(bufp, swap)
-char *bufp;
-boolean swap;
+void add_dkb( char *bufp, bool swap)
 {
         char *p;
         char b, c;

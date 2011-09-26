@@ -6,6 +6,7 @@
  *	Contains code for picking objects up, and container use.
  */
 
+#include <stdbool.h>
 #include "hack.h"
 
 STATIC_DCL void FDECL(simple_look, (struct obj *,BOOLEAN_P));

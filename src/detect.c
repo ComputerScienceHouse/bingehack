@@ -7,6 +7,7 @@
  * command.
  */
 
+#include <stdbool.h>
 #include "hack.h"
 #include "artifact.h"
 

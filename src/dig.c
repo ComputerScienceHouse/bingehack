@@ -2,6 +2,7 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdbool.h>
 #include "hack.h"
 #include "edog.h"
 /* #define DEBUG */	/* turn on for diagnostics */
@@ -716,7 +717,7 @@ boolean pit_only;
 			return FALSE;
 		}
 
-		lev->drawbridgemask &= ~DB_UNDER;
+		lev->drawbridgemask = lev->drawbridgemask & ~DB_UNDER;
 		lev->drawbridgemask |= (typ == LAVAPOOL) ? DB_LAVA : DB_MOAT;
 
  liquid_flow:

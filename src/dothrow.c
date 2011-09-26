@@ -4,6 +4,7 @@
 
 /* Contains code for 't' (throw) */
 
+#include <stdbool.h>
 #include "hack.h"
 #include "edog.h"
 

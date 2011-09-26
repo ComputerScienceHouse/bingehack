@@ -4,6 +4,7 @@
 
 /* Code for drinking from fountains. */
 
+#include <stdbool.h>
 #include "hack.h"
 
 STATIC_DCL void NDECL(dowatersnakes);

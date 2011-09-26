@@ -2,6 +2,7 @@
 /* Copyright (c) David Cohrs, 1991				  */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdbool.h>
 #include "hack.h"
 #include "tcap.h"
 #if defined(TTY_GRAPHICS)

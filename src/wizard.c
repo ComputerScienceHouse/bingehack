@@ -7,6 +7,7 @@
 /*	       - dewimped and given some maledictions. -3. */
 /*	       - generalized for 3.1 (mike@bullns.on01.bull.ca) */
 
+#include <stdbool.h>
 #include "hack.h"
 #include "qtext.h"
 #include "epri.h"

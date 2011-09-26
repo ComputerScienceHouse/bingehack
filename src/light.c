@@ -2,6 +2,7 @@
 /* Copyright (c) Dean Luick, 1994					*/
 /* NetHack may be freely redistributed.  See license for details.	*/
 
+#include <stdbool.h>
 #include "hack.h"
 #include "lev.h"	/* for checking save modes */
 

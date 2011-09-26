@@ -115,6 +115,7 @@
  *	horizontal - Indicates whether the wall or door is horizontal or
  *		     vertical.
  */
+#include <stdbool.h>
 #include "hack.h"
 #include "region.h"
 

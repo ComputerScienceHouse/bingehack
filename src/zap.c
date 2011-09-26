@@ -2,6 +2,7 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdbool.h>
 #include "hack.h"
 
 /* Disintegration rays have special treatment; corpses are never left.
@@ -3748,7 +3749,7 @@ boolean *shopdamage;
 		} else {
 		    rangemod -= 3;
 		    if (lev->typ == DRAWBRIDGE_UP) {
-			lev->drawbridgemask &= ~DB_UNDER;  /* clear lava */
+			lev->drawbridgemask = lev->drawbridgemask & ~DB_UNDER;  /* clear lava */
 			lev->drawbridgemask |= (lava ? DB_FLOOR : DB_ICE);
 		    } else {
 			if (!lava)

@@ -1,6 +1,7 @@
 /*	SCCS Id: @(#)rnd.c	3.4	1996/02/07	*/
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdbool.h>
 #include "hack.h"
 
 unsigned int good_random(void);
@@ -156,7 +157,9 @@ int i;
 
 #define RORc(x, y) ( ((((unsigned long)(x)&0xFFFFFFFFUL)>>(unsigned long)((y)&31)) | ((unsigned long)(x)<<(unsigned long)(32-((y)&31)))) & 0xFFFFFFFFUL)
 
-#define MIN(x, y) ( ((x)<(y))?(x):(y) )
+#if !defined(__OpenBSD__)
+# define MIN(x, y) ( ((x)<(y))?(x):(y) )
+#endif
 
 #define STORE64H(x, y)                                                                     \
    { (y)[0] = (unsigned char)(((x)>>56)&255); (y)[1] = (unsigned char)(((x)>>48)&255);     \
