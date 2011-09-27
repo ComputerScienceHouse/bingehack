@@ -720,7 +720,7 @@ struct mkroom *r;
 	 * of writing the whole structure. That is I should not write
 	 * the subrooms pointers, but who cares ?
 	 */
-	bwrite(fd, (genericptr_t) r, sizeof(struct mkroom));
+	bwrite((genericptr_t) r, sizeof(struct mkroom), "mkroom");
 	for(i=0; i<r->nsubrooms; i++)
 	    save_room(fd, r->sbrooms[i]);
 }
@@ -736,7 +736,7 @@ int fd;
 	short i;
 
 	/* First, write the number of rooms */
-	bwrite(fd, (genericptr_t) &nroom, sizeof(nroom));
+	bwrite((genericptr_t) &nroom, sizeof(nroom), "nroom");
 	for(i=0; i<nroom; i++)
 	    save_room(fd, &rooms[i]);
 }
