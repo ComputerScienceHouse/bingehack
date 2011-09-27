@@ -136,7 +136,7 @@ int fd;
 
 	bufoff(fd);
 	/* bwrite() before bufon() uses plain write() */
-	bwrite(fd,(genericptr_t)&version_data,(unsigned)(sizeof version_data));
+	bwrite((genericptr_t)&version_data,(unsigned)(sizeof version_data), "version_data");
 	bufon(fd);
 	return;
 }
