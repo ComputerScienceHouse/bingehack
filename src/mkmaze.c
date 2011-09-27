@@ -1111,13 +1111,13 @@ int fd, mode;
 	if (perform_bwrite(mode)) {
 	    int n = 0;
 	    for (b = bbubbles; b; b = b->next) ++n;
-	    bwrite(fd, (genericptr_t)&n, sizeof (int));
-	    bwrite(fd, (genericptr_t)&xmin, sizeof (int));
-	    bwrite(fd, (genericptr_t)&ymin, sizeof (int));
-	    bwrite(fd, (genericptr_t)&xmax, sizeof (int));
-	    bwrite(fd, (genericptr_t)&ymax, sizeof (int));
+	    bwrite((genericptr_t)&n, sizeof (int), "int");
+	    bwrite((genericptr_t)&xmin, sizeof (int), "int");
+	    bwrite((genericptr_t)&ymin, sizeof (int), "int");
+	    bwrite((genericptr_t)&xmax, sizeof (int), "int");
+	    bwrite((genericptr_t)&ymax, sizeof (int), "int");
 	    for (b = bbubbles; b; b = b->next)
-		bwrite(fd, (genericptr_t)b, sizeof (struct bubble));
+		bwrite((genericptr_t)b, sizeof (struct bubble), "bubble");
 	}
 	if (release_data(mode))
 	    unsetup_waterlevel();
