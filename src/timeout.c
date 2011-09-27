@@ -1615,18 +1615,18 @@ write_timer(fd, timer)
 	case TIMER_GLOBAL:
 	case TIMER_LEVEL:
 	    /* assume no pointers in arg */
-	    bwrite(fd, (genericptr_t) timer, sizeof(timer_element));
+	    bwrite((genericptr_t) timer, sizeof(timer_element), "fe");
 	    break;
 
 	case TIMER_OBJECT:
 	    if (timer->needs_fixup)
-		bwrite(fd, (genericptr_t)timer, sizeof(timer_element));
+		bwrite((genericptr_t)timer, sizeof(timer_element), "fe");
 	    else {
 		/* replace object pointer with id */
 		arg_save = timer->arg;
 		timer->arg = (genericptr_t)((struct obj *)timer->arg)->o_id;
 		timer->needs_fixup = 1;
-		bwrite(fd, (genericptr_t)timer, sizeof(timer_element));
+		bwrite((genericptr_t)timer, sizeof(timer_element), "fe");
 		timer->arg = arg_save;
 		timer->needs_fixup = 0;
 	    }
@@ -1634,13 +1634,13 @@ write_timer(fd, timer)
 
 	case TIMER_MONSTER:
 	    if (timer->needs_fixup)
-		bwrite(fd, (genericptr_t)timer, sizeof(timer_element));
+		bwrite((genericptr_t)timer, sizeof(timer_element), "fe");
 	    else {
 		/* replace monster pointer with id */
 		arg_save = timer->arg;
 		timer->arg = (genericptr_t)((struct monst *)timer->arg)->m_id;
 		timer->needs_fixup = 1;
-		bwrite(fd, (genericptr_t)timer, sizeof(timer_element));
+		bwrite((genericptr_t)timer, sizeof(timer_element), "fe");
 		timer->arg = arg_save;
 		timer->needs_fixup = 0;
 	    }
@@ -1770,10 +1770,10 @@ save_timers(fd, mode, range)
 
     if (perform_bwrite(mode)) {
 	if (range == RANGE_GLOBAL)
-	    bwrite(fd, (genericptr_t) &timer_id, sizeof(timer_id));
+	    bwrite((genericptr_t) &timer_id, sizeof(timer_id), "long");
 
 	count = maybe_write_timer(fd, range, FALSE);
-	bwrite(fd, (genericptr_t) &count, sizeof count);
+	bwrite((genericptr_t) &count, sizeof count, "int");
 	(void) maybe_write_timer(fd, range, TRUE);
     }
 
