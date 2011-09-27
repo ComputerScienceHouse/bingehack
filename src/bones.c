@@ -346,7 +346,6 @@ struct obj *corpse;
 	    bwrite((genericptr_t) &c, sizeof c, "char");
 	    bwrite((genericptr_t) bonesid, (unsigned) c, "char");	/* DD.nnn */
 	    savefruitchn(fd, COUNT_SAVE);
-	    bflush(fd);
 	    if (bytes_counted > freediskspace(bones)) { /* not enough room */
 # ifdef WIZARD
 		if (wizard)
@@ -366,7 +365,6 @@ struct obj *corpse;
 	savefruitchn(fd, WRITE_SAVE | FREE_SAVE);
 	update_mlstmv();	/* update monsters for eventual restoration */
 	savelev(fd, ledger_no(&u.uz), WRITE_SAVE | FREE_SAVE);
-	bclose(fd);
 	commit_bonesfile(&u.uz);
 	compress_bonesfile();
 }

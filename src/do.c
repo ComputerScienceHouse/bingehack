@@ -934,9 +934,7 @@ save_currentstate()
 		/* write out just-attained level, with pets and everything */
 		fd = currentlevel_rewrite();
 		if(fd < 0) return;
-		bufon(fd);
 		savelev(fd,ledger_no(&u.uz), WRITE_SAVE);
-		bclose(fd);
 	}
 
 	/* write out non-level state */
@@ -1063,11 +1061,9 @@ boolean at_stairs, falling, portal;
 	cant_go_back = (newdungeon && In_endgame(newlevel));
 	if (!cant_go_back) {
 	    update_mlstmv();	/* current monsters are becoming inactive */
-	    bufon(fd);		/* use buffered output */
 	}
 	savelev(fd, ledger_no(&u.uz),
 		cant_go_back ? FREE_SAVE : (WRITE_SAVE | FREE_SAVE));
-	bclose(fd);
 	if (cant_go_back) {
 	    /* discard unreachable levels; keep #0 */
 	    for (l_idx = maxledgerno(); l_idx > 0; --l_idx)

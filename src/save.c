@@ -5,6 +5,7 @@
 #include "hack.h"
 #include "lev.h"
 #include "quest.h"
+#include "stdbool.h"
 
 #ifndef NO_SIGNAL
 #include <signal.h>
@@ -274,7 +275,6 @@ dosave0()
 		savelev(fd, ltmp, WRITE_SAVE | FREE_SAVE);     /* actual level*/
 		delete_levelfile(ltmp);
 	}
-	bclose(fd);
 
 	u.uz = uz_save;
 
@@ -317,7 +317,7 @@ register int fd, mode;
 	}
 	bwrite((genericptr_t) mvitals, sizeof(mvitals), "mvitals");
 
-	save_dungeon(fd, (boolean)!!perform_bwrite(mode),
+	save_dungeon((boolean)!!perform_bwrite(mode),
 			 (boolean)!!release_data(mode));
 	savelevchn(fd, mode);
 	bwrite((genericptr_t) &moves, sizeof moves, "long");
@@ -325,7 +325,7 @@ register int fd, mode;
 	bwrite((genericptr_t) &quest_status, sizeof(struct q_score), "q_score");
 	bwrite((genericptr_t) spl_book,
 				sizeof(struct spell) * (MAXSPELL + 1), "spell");
-	save_artifacts(fd);
+	save_artifacts();
 	save_oracles(fd, mode);
 	if(ustuck_id)
 	    bwrite((genericptr_t) &ustuck_id, sizeof ustuck_id, "int");
@@ -348,7 +348,6 @@ register int fd, mode;
         bwrite((genericptr_t) &realtime, sizeof realtime, "time_t");
 #endif
 
-	bflush(fd);
 }
 
 #ifdef INSURANCE
@@ -420,7 +419,6 @@ savestateinlock()
 #endif
 		    savegamestate(fd, WRITE_SAVE);
 		}
-		bclose(fd);
 	}
 	havestate = flags.ins_chkpt;
 }
@@ -490,12 +488,7 @@ int mode;
 	if (lev >= 0 && lev <= maxledgerno())
 	    level_info[lev].flags |= VISITED;
 	bwrite((genericptr_t) &hackpid,sizeof(hackpid), "int");
-/*#ifdef TOS
-	tlev=lev; tlev &= 0x00ff;
-	bwrite((genericptr_t) &tlev,sizeof(tlev));
-#else*/
 	bwrite((genericptr_t) &lev,sizeof(lev), "char");
-#endif
 #ifdef RLECOMP
 	{
 	    /* perform run-length encoding of rm structs */
@@ -576,10 +569,9 @@ int mode;
 	    level.buriedobjlist = 0;
 	    billobjs = 0;
 	}
-	save_engravings(fd, mode);
+	save_engravings(mode);
 	savedamage(fd, mode);
 	save_regions(fd, mode);
-	if (mode != FREE_SAVE) bflush(fd);
 }
 
 void bwrite(genericptr_t loc, unsigned int num, const char* structname) {
@@ -595,7 +587,7 @@ void bwrite(genericptr_t loc, unsigned int num, const char* structname) {
 			terminate(EXIT_FAILURE);
 	    else
 #endif
-			panic("cannot write %u bytes to file #%d", num, fd);
+			panic("cannot write %u bytes to file", num);
 	}
 
 	printf("\n");
@@ -638,7 +630,7 @@ register int fd, mode;
 
 	while (xl--) {
 	    if (perform_bwrite(mode))
-		bwrite((genericptr_t) damageptr, sizeof(*damageptr));
+		bwrite((genericptr_t) damageptr, sizeof(*damageptr), "damage");
 	    tmp_dam = damageptr;
 	    damageptr = damageptr->next;
 	    if (release_data(mode))

@@ -546,9 +546,7 @@ xchar ltmp;
 # endif
 	}
 #endif
-	bufon(nfd);
 	savelev(nfd, ltmp, WRITE_SAVE | FREE_SAVE);
-	bclose(nfd);
 	return(2);
 }
 

@@ -134,10 +134,8 @@ int fd;
 			VERSION_SANITY1, VERSION_SANITY2
 	};
 
-	bufoff(fd);
 	/* bwrite() before bufon() uses plain write() */
 	bwrite((genericptr_t)&version_data,(unsigned)(sizeof version_data), "version_data");
-	bufon(fd);
 	return;
 }
 
