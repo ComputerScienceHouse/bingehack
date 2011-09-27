@@ -7,6 +7,7 @@
 #define MKROOM_H
 #endif
 
+#include <stdbool.h>
 #include "hack.h"
 #include "mfndpos.h"
 #include "edog.h"

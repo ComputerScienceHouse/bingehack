@@ -4,6 +4,7 @@
 
 /* Contains code for 'd', 'D' (drop), '>', '<' (up, down) */
 
+#include <stdbool.h>
 #include "hack.h"
 #include "lev.h"
 
@@ -75,7 +76,7 @@ boolean pushing;
 		struct trap *ttmp = t_at(rx, ry);
 
 		if (ltyp == DRAWBRIDGE_UP) {
-		    levl[rx][ry].drawbridgemask &= ~DB_UNDER; /* clear lava */
+			levl[rx][ry].drawbridgemask = levl[rx][ry].drawbridgemask & ~DB_UNDER; /* clear lava */
 		    levl[rx][ry].drawbridgemask |= DB_FLOOR;
 		} else
 		    levl[rx][ry].typ = ROOM;

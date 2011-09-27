@@ -2,9 +2,11 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdbool.h>
 #include "hack.h"
 #include "lev.h"
 #include <ctype.h>
+#include "achieve.h"
 
 STATIC_VAR NEARDATA struct engr *head_engr;
 
@@ -397,6 +399,9 @@ register xchar e_type;
 		u.uconduct.elbereth++;
 	}
 #endif
+	if(!strcmp(s, "Elbereth")){
+		award_achievement(AID_ELBERETH);
+	}
 	ep->engr_time = e_time;
 	ep->engr_type = e_type > 0 ? e_type : rnd(N_ENGRAVE-1);
 	ep->engr_lth = strlen(s) + 1;
@@ -1234,12 +1239,18 @@ static const char *csh_epitaphs[] = {
 	"Here lies Big Drink, dead but not gone. We'd throw it out, if not for Sean.",
 	"Here lies Big Infosys, of days long past. Little Infosys did it outlast.",
 	"Here lies Multitouch, a project misled. It had many problems besides infrared.",
-	"Here lies the ARG Committee. 1985 - 1997."
+	"Here lies the ARG Committee. 1985 - 1997.",
+	"Here lies Whitefox, a brave old box. Don't plug serial cables into its docks!",
+	"Here lies your heart, garbage-plate'd apart. Next time read the calorie chart.",
+	"Here lies the Flying Ostrich - a lean, mean, pterodactyl-fighting machine.",
+	"Here lies Tron - He died for the users.",
 /* TODO: Uncomment this code in a year or so when it's not nearly as fresh 
  * 	and painful, and is instead just a thoughtful reminder.	
  * 		--Clockfort, 2010-01-10
-	,"Here lies Lisa Tufo Nault - Beloved house member",
+ */
+	"Here lies Lisa Tufo Nault - Beloved house member",
 	"Here lies Ryan Phillips - Mark's Best Customer",
+/*
 	"Here lies Ryan Phillips - Plate Connoisseur",
 	"Here lies Ryan Phillips - Our Best Friend at RIT"
 */
@@ -1656,7 +1667,7 @@ const char *str;
 
 	/* Engrave the headstone */
 	if (!str){
-		if(rn2(5)){ /* 1/5 chance of choosing a CSH headstone. */
+		if(rn2(3)){ /* 1/5 chance of choosing a CSH headstone. */
 			str = csh_epitaphs[rn2(SIZE(csh_epitaphs))];
 		}
 		else{

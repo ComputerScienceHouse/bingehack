@@ -2,8 +2,10 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdbool.h>
 #include "hack.h"
 #include "vault.h"
+#include "achieve.h"
 
 STATIC_DCL struct monst *NDECL(findgd);
 
@@ -281,6 +283,7 @@ fnd:
 	    if (!mvitals[PM_CROESUS].died) {
 		verbalize("Oh, yes, of course.  Sorry to have disturbed you.");
 		mongone(guard);
+		award_achievement(AID_VAULT);
 	    } else {
 		setmangry(guard);
 		verbalize("Back from the dead, are you?  I'll remedy that!");

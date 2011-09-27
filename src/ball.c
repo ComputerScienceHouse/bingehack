@@ -4,6 +4,7 @@
 
 /* Ball & Chain =============================================================*/
 
+#include <stdbool.h>
 #include "hack.h"
 
 STATIC_DCL int NDECL(bc_order);

@@ -2,12 +2,14 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdbool.h>
 #include "hack.h"
 
 #ifdef MAIL
 #include <fcntl.h>
 #include <errno.h>
 #include "mail.h"
+#include "achieve.h"
 
 /*
  * Notify user when new mail has arrived.  Idea by Merlyn Leroy.
@@ -386,7 +388,9 @@ struct mail_info *info;
     if (!md_rush(md, stop.x, stop.y)) goto go_back;
 
     message_seen = TRUE;
-    verbalize("%s, %s!  %s.", Hello(md), plname, info->display_txt);
+    verbalize("%s, %s!  %s", Hello(md), plname, info->display_txt);
+
+    award_achievement(AID_MAIL);
 
     if (info->message_typ) {
 	struct obj *obj = mksobj(SCR_MAIL, FALSE, FALSE);
@@ -415,7 +419,7 @@ go_back:
     /* deliver some classes of messages even if no daemon ever shows up */
 give_up:
     if (!message_seen && info->message_typ == MSG_OTHER)
-	pline("Hark!  \"%s.\"", info->display_txt);
+	pline("Hark!  \"%s\"", info->display_txt);
 }
 
 # if !defined(UNIX) && !defined(VMS) && !defined(LAN_MAIL)
@@ -432,7 +436,7 @@ ckmailstatus()
 	}
 	if (--mustgetmail <= 0) {
 		static struct mail_info
-			deliver = {MSG_MAIL,"I have some mail for you",0,0};
+			deliver = {MSG_MAIL,"I have some mail for you.",0,0};
 		newmail(&deliver);
 		mustgetmail = -1;
 	}
@@ -467,7 +471,7 @@ struct obj *otmp;
 void
 trigger_mail()
 {
-        static struct mail_info deliver = {MSG_MAIL,"Tom's message delivery service!",0,0};
+        static struct mail_info deliver = {MSG_MAIL,"Tom's mail delivery service!",0,0};
         newmail(&deliver);
 }
 
@@ -499,10 +503,10 @@ ckmailstatus()
 		if (nmstat.st_size) {
 		    static struct mail_info deliver = {
 #  ifndef NO_MAILREADER
-			MSG_MAIL, "I have some mail for you",
+			MSG_MAIL, "I have some mail for you.",
 #  else
 			/* suppress creation and delivery of scroll of mail */
-			MSG_OTHER, "You have some mail in the outside world",
+			MSG_OTHER, "You have some mail in the outside world.",
 #  endif
 			0, 0
 		    };
@@ -675,10 +679,10 @@ ckmailstatus()
 	if (lan_mail_check()) {
 		    static struct mail_info deliver = {
 #  ifndef NO_MAILREADER
-			MSG_MAIL, "I have some mail for you",
+			MSG_MAIL, "I have some mail for you.",
 #  else
 			/* suppress creation and delivery of scroll of mail */
-			MSG_OTHER, "You have some mail in the outside world",
+			MSG_OTHER, "You have some mail in the outside world.",
 #  endif
 			0, 0
 		    };

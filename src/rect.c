@@ -2,6 +2,7 @@
 /* Copyright (c) 1990 by Jean-Christophe Collet	 */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdbool.h>
 #include "hack.h"
 
 int FDECL(get_rect_ind, (NhRect *));

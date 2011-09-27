@@ -13,6 +13,7 @@
  *	rest_rooms() -- restore rooms from file fd
  */
 
+#include <stdbool.h>
 #include "hack.h"
 
 #ifdef OVLB

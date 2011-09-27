@@ -2,6 +2,7 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <stdbool.h>
 #include "hack.h"
 
 extern const char * const destroy_strings[];	/* from zap.c */
@@ -3615,7 +3616,7 @@ boolean force;
 			if (*in_rooms(x, y, SHOPBASE)) add_damage(x, y, 0L);
 		    } else {
 			You("disarm it!");
-			levl[x][y].doormask &= ~D_TRAPPED;
+			levl[x][y].doormask = levl[x][y].doormask & ~D_TRAPPED;
 		    }
 		} else pline("This door was not trapped.");
 		return(1);

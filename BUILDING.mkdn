@@ -29,12 +29,19 @@ Local overrides for make variables.
 
 ### Example
 <pre>
-PREFIX = $(PWD)/install
+PREFIX := $(PWD)/install
 
-# BSD and OSX only
+# FreeBSD and OSX only
 INSTALL := ginstall
 NCURSESW_CONFIG := ncursesw5-config
 </pre>
+
+## nethack.conf
+Nethack system configuration.
+
+Examples can be found in `doc/nethack.conf`
+
+Must be installed to `HACKDIR/nethack.conf`
 
 # Dependencies
 Compilation requires at least the following:
@@ -43,7 +50,9 @@ Compilation requires at least the following:
 - GNU bison
 - GNU coreutils
 - GNU make
+- libconfig
 - NCurses (with wide character support)
+- MYSQL Client (libmysqlclient)
 
 # Building
 Once this has all been satisfied, simply type `make`.

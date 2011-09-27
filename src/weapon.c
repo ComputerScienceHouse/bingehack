@@ -7,6 +7,7 @@
  *	bonuses for any given weapon used, as well as weapons selection
  *	code for monsters.
  */
+#include <stdbool.h>
 #include "hack.h"
 
 #ifdef DUMP_LOG

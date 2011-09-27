@@ -3,6 +3,7 @@
 /* NetHack may be freely redistributed.  See license for details. */
 /* track.c - version 1.0.2 */
 
+#include <stdbool.h>
 #include "hack.h"
 
 #define UTSZ	50

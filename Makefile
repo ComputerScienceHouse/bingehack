@@ -1,4 +1,5 @@
 CC := gcc
+DEPGEN := gcc
 YACC := bison
 LEX := flex
 INSTALL ?= install
@@ -8,6 +9,8 @@ CSCOPE ?= cscope
 
 NCURSESW_CONFIG ?= ncursesw5-config
 NCURSES_CONFIG ?= ncurses5-config
+MYSQL_CONFIG ?= mysql_config
+PKG_CONFIG ?= pkg-config
 
 PREFIX ?= /usr/local
 GAMEDIR ?= $(PREFIX)/nethack
@@ -23,20 +26,30 @@ INCDIR := $(TOPDIR)/include
 SRCDIR := $(TOPDIR)/src
 UTILDIR := $(TOPDIR)/util
 
-CPPFLAGS += -I$(INCDIR) -D_GNU_SOURCE
-CFLAGS += -fPIC -Werror -Wall -Wno-format -Wnonnull -std=gnu99
+CPPFLAGS := $(CPPFLAGS) -I$(INCDIR) -D_GNU_SOURCE
+CFLAGS := $(CFLAGS) -fPIC -Werror -Wall -Wno-format -Wnonnull -std=gnu99
 
 UNAME := $(shell uname -s)
 ifneq ($(UNAME), OpenBSD)
-CPPFLAGS += $(shell $(NCURSES_CONFIG) --cflags) $(shell $(NCURSESW_CONFIG) --cflags)
-LIBRARIES += $(shell $(NCURSES_CONFIG) --libs) $(shell $(NCURSESW_CONFIG) --libs)
+NCURSES_CPPFLAGS ?= $(shell $(NCURSES_CONFIG) --cflags)
+NCURSES_LIBRARIES ?= $(shell $(NCURSES_CONFIG) --libs)
+NCURSESW_CPPFLAGS ?= $(shell $(NCURSESW_CONFIG) --cflags)
+NCURSESW_LIBRARIES ?= $(shell $(NCURSESW_CONFIG) --libs)
+LIBCONFIG_CPPFLAGS ?= $(shell $(PKG_CONFIG) --cflags libconfig)
+LIBCONFIG_LIBRARIES ?= $(shell $(PKG_CONFIG) --libs libconfig)
+DYLD_LIBRARIES ?= -ldl
+MYSQL_CPPFLAGS ?= $(shell $(MYSQL_CONFIG) --cflags)
 else
-LIBRARIES += -L/usr/lib -lncurses -lncursesw
+NCURSES_LIBRARIES ?= -L/usr/lib -lncurses
+NCURSESW_LIBRARIES ?= -L/usr/lib -lncursesw
 endif
 
-CLEAN_TARGETS = $(SUBDIRS:=/clean)
-DEPCLEAN_TARGETS = $(SUBDIRS:=/depclean)
-ALL_TARGETS = $(SUBDIRS:=/all)
+CPPFLAGS := $(CPPFLAGS) $(NCURSES_CPPFLAGS) $(NCURSESW_CPPFLAGS) $(LIBCONFIG_CPPFLAGS) $(DYLD_CPPFLAGS) $(MYSQL_CPPFLAGS)
+LIBRARIES := $(LIBRARIES) $(NCURSES_LIBRARIES) $(NCURSESW_LIBRARIES) $(LIBCONFIG_LIBRARIES) $(DYLD_LIBARIES)
+
+CLEAN_TARGETS := $(SUBDIRS:=/clean)
+DEPCLEAN_TARGETS := $(SUBDIRS:=/depclean)
+ALL_TARGETS := $(SUBDIRS:=/all)
 
 .PHONY: all clean depclean install update cscope pristine cscope-clean
 .DEFAULT_GOAL: all
@@ -96,13 +109,13 @@ ifneq ($(UNAME), OpenBSD)
 else
 	$(INSTALL) $(RECOVER) $(GAMEDIR)/recover
 endif
-	$(TOUCH) $(GAMEDIR)/var/{perm,record,logfile,xlogfile}
+	$(TOUCH) $(GAMEDIR)/var/perm $(GAMEDIR)/var/record $(GAMEDIR)/var/logfile $(GAMEDIR)/var/xlogfile $(GAMEDIR)/nethack.conf
 
 %.exe:
-	$(CC) $(LDFLAGS) -o $@ $(EXE_OBJECTS)
+	$(CC) $(EXE_LIBRARIES) $(LDFLAGS) -o $@ $(EXE_OBJECTS)
 
 %.d: %.c
-	$(CC) -MM $(CPPFLAGS) -MQ $(@:.d=.o) -MQ $@ -MF $*.d $<
+	$(DEPGEN) -MM $(CPPFLAGS) -MQ $(@:.d=.o) -MQ $@ -MF $*.d $<
 
 %.o: %.c
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) -o $@ $<

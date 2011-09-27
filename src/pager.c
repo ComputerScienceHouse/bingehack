@@ -5,6 +5,7 @@
 /* This file contains the command routines dowhatis() and dohelp() and */
 /* a few other help related facilities */
 
+#include <stdbool.h>
 #include "hack.h"
 #include "dlb.h"
 
