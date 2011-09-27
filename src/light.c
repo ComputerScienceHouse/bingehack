@@ -236,7 +236,7 @@ save_light_sources(fd, mode, range)
 
     if (perform_bwrite(mode)) {
 	count = maybe_write_ls(fd, range, FALSE);
-	bwrite(fd, (genericptr_t) &count, sizeof count);
+	bwrite((genericptr_t) &count, sizeof count, "int");
 	actual = maybe_write_ls(fd, range, TRUE);
 	if (actual != count)
 	    panic("counted %d light sources, wrote %d! [range=%d]",
@@ -383,7 +383,7 @@ write_ls(fd, ls)
 
     if (ls->type == LS_OBJECT || ls->type == LS_MONSTER) {
 	if (ls->flags & LSF_NEEDS_FIXUP)
-	    bwrite(fd, (genericptr_t)ls, sizeof(light_source));
+	    bwrite((genericptr_t)ls, sizeof(light_source), "light_source");
 	else {
 	    /* replace object pointer with id for write, then put back */
 	    arg_save = ls->id;
@@ -403,7 +403,7 @@ write_ls(fd, ls)
 #endif
 	    }
 	    ls->flags |= LSF_NEEDS_FIXUP;
-	    bwrite(fd, (genericptr_t)ls, sizeof(light_source));
+	    bwrite((genericptr_t)ls, sizeof(light_source), "light_source");
 	    ls->id = arg_save;
 	    ls->flags &= ~LSF_NEEDS_FIXUP;
 	}

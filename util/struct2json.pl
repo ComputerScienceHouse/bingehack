@@ -6,11 +6,8 @@ use warnings;
 use 5.010;
 
 use Convert::Binary::C;
+use Data::Dumper;
 use JSON::XS;
-
-$SIG{INT}  = 'teardown';
-$SIG{QUIT} = 'teardown';
-$SIG{TERM} = 'teardown';
 
 use constant INCDIR  => 'inc/';
 
@@ -25,18 +22,21 @@ sub setup {
     return $c;
 }
 
-sub teardown {
-    exit(0);
-}
-
 sub recv_structs {
+    while (<STDIN>) {
+        my $struct_name = $_;
+        my $struct_size = $c->sizeof($struct_name);
+
+        read(<STDIN>, my $struct_data, $struct_size) or die $!;
+        my $struct_obj = $c->unpack($struct_name, $struct_data);
+		print Dumper($struct_obj);
+    }
 }
 
 sub send_structs {
 }
 
 my $c = setup();
-say $c->sizeof('monst')." bytes";
 given ($ARGV[0]) {
     when ("save") { recv_structs($c) }
     when ("restore") { send_structs($c) }

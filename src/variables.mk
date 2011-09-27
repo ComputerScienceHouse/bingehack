@@ -27,7 +27,7 @@ CLEAN_SOURCES := allmain.c alloc.c apply.c artifact.c attrib.c ball.c \
 	role.c rumors.c save.c shk.c shknam.c sit.c sounds.c sp_lev.c spell.c \
 	steal.c steed.c teleport.c timeout.c topten.c track.c trap.c u_init.c \
 	uhitm.c vault.c vision.c vis_tab.c weapon.c were.c wield.c windows.c \
-	wizard.c worm.c worn.c write.c zap.c version.c
+	wizard.c worm.c worn.c write.c zap.c version.c test.c
 CLEAN_SOURCES := $(CLEAN_SOURCES:%=$(CURDIR)/%)
 CLEAN_OBJECTS := $(CLEAN_SOURCES:.c=.o)
 CLEAN_DEPS := $(CLEAN_SOURCES:.c=.d)
