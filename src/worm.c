@@ -488,16 +488,16 @@ save_worm(fd, mode)
 	for (i = 1; i < MAX_NUM_WORMS; i++) {
 	    for (count = 0, curr = wtails[i]; curr; curr = curr->nseg) count++;
 	    /* Save number of segments */
-	    bwrite(fd, (genericptr_t) &count, sizeof(int));
+	    bwrite((genericptr_t) &count, sizeof(int), "int");
 	    /* Save segment locations of the monster. */
 	    if (count) {
 		for (curr = wtails[i]; curr; curr = curr->nseg) {
-		    bwrite(fd, (genericptr_t) &(curr->wx), sizeof(xchar));
-		    bwrite(fd, (genericptr_t) &(curr->wy), sizeof(xchar));
+		    bwrite((genericptr_t) &(curr->wx), sizeof(xchar), "char");
+		    bwrite((genericptr_t) &(curr->wy), sizeof(xchar), "char");
 		}
 	    }
 	}
-	bwrite(fd, (genericptr_t) wgrowtime, sizeof(wgrowtime));
+	bwrite((genericptr_t) wgrowtime, sizeof(wgrowtime), "long");
     }
 
     if (release_data(mode)) {
