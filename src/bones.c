@@ -361,7 +361,7 @@ struct obj *corpse;
 #endif /* MFLOPPY */
 
 	store_version(fd);
-	bwrite((genericptr_t) &c, sizeof cm "char");
+	bwrite((genericptr_t) &c, sizeof c, "char");
 	bwrite((genericptr_t) bonesid, (unsigned) c, "char");	/* DD.nnn */
 	savefruitchn(fd, WRITE_SAVE | FREE_SAVE);
 	update_mlstmv();	/* update monsters for eventual restoration */

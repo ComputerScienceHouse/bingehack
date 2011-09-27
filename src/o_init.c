@@ -254,10 +254,10 @@ int fd, mode;
 	unsigned int len;
 
 	if (perform_bwrite(mode)) {
-	    bwrite(fd, (genericptr_t)bases, sizeof bases);
-	    bwrite(fd, (genericptr_t)disco, sizeof disco);
-	    bwrite(fd, (genericptr_t)objects,
-		   sizeof(struct objclass) * NUM_OBJECTS);
+	    bwrite((genericptr_t)bases, sizeof bases, "int");
+	    bwrite((genericptr_t)disco, sizeof disco, "short");
+	    bwrite((genericptr_t)objects,
+		   sizeof(struct objclass) * NUM_OBJECTS, "objclass");
 	}
 	/* as long as we use only one version of Hack we
 	   need not save oc_name and oc_descr, but we must save
@@ -266,8 +266,8 @@ int fd, mode;
 	    if (objects[i].oc_uname) {
 		if (perform_bwrite(mode)) {
 		    len = strlen(objects[i].oc_uname)+1;
-		    bwrite(fd, (genericptr_t)&len, sizeof len);
-		    bwrite(fd, (genericptr_t)objects[i].oc_uname, len);
+		    bwrite((genericptr_t)&len, sizeof len, "int");
+		    bwrite((genericptr_t)objects[i].oc_uname, len, "char");
 		}
 		if (release_data(mode)) {
 		    free((genericptr_t)objects[i].oc_uname);

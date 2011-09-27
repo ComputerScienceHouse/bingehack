@@ -621,39 +621,42 @@ int mode;
 
     if (!perform_bwrite(mode)) goto skip_lots;
 
-    bwrite(fd, (genericptr_t) &moves, sizeof (moves));	/* timestamp */
-    bwrite(fd, (genericptr_t) &n_regions, sizeof (n_regions));
+    bwrite((genericptr_t) &moves, sizeof (moves), "long");	/* timestamp */
+    bwrite((genericptr_t) &n_regions, sizeof (n_regions), "int");
     for (i = 0; i < n_regions; i++) {
-	bwrite(fd, (genericptr_t) &regions[i]->bounding_box, sizeof (NhRect));
-	bwrite(fd, (genericptr_t) &regions[i]->nrects, sizeof (short));
+	bwrite((genericptr_t) &regions[i]->bounding_box, sizeof (NhRect), "nhrect");
+	bwrite((genericptr_t) &regions[i]->nrects, sizeof (short), "short");
 	for (j = 0; j < regions[i]->nrects; j++)
-	    bwrite(fd, (genericptr_t) &regions[i]->rects[j], sizeof (NhRect));
-	bwrite(fd, (genericptr_t) &regions[i]->attach_2_u, sizeof (boolean));
+	    bwrite((genericptr_t) &regions[i]->rects[j], sizeof (NhRect), "nhrect");
+	bwrite((genericptr_t) &regions[i]->attach_2_u, sizeof (boolean), "boolean");
 	n = 0;
-	bwrite(fd, (genericptr_t) &regions[i]->attach_2_m, sizeof (unsigned long));
+	bwrite((genericptr_t) &regions[i]->attach_2_m, sizeof (unsigned long),
+		"long");
 	n = regions[i]->enter_msg != NULL ? strlen(regions[i]->enter_msg) : 0;
-	bwrite(fd, (genericptr_t) &n, sizeof n);
+	bwrite((genericptr_t) &n, sizeof n, "long");
 	if (n > 0)
-	    bwrite(fd, (genericptr_t) regions[i]->enter_msg, n);
+	    bwrite((genericptr_t) regions[i]->enter_msg, n, "char");
 	n = regions[i]->leave_msg != NULL ? strlen(regions[i]->leave_msg) : 0;
-	bwrite(fd, (genericptr_t) &n, sizeof n);
+	bwrite((genericptr_t) &n, sizeof n, "long");
 	if (n > 0)
-	    bwrite(fd, (genericptr_t) regions[i]->leave_msg, n);
-	bwrite(fd, (genericptr_t) &regions[i]->ttl, sizeof (short));
-	bwrite(fd, (genericptr_t) &regions[i]->expire_f, sizeof (short));
-	bwrite(fd, (genericptr_t) &regions[i]->can_enter_f, sizeof (short));
-	bwrite(fd, (genericptr_t) &regions[i]->enter_f, sizeof (short));
-	bwrite(fd, (genericptr_t) &regions[i]->can_leave_f, sizeof (short));
-	bwrite(fd, (genericptr_t) &regions[i]->leave_f, sizeof (short));
-	bwrite(fd, (genericptr_t) &regions[i]->inside_f, sizeof (short));
-	bwrite(fd, (genericptr_t) &regions[i]->player_flags, sizeof (boolean));
-	bwrite(fd, (genericptr_t) &regions[i]->n_monst, sizeof (short));
+	    bwrite((genericptr_t) regions[i]->leave_msg, n, "char");
+	bwrite((genericptr_t) &regions[i]->ttl, sizeof (short), "short");
+	bwrite((genericptr_t) &regions[i]->expire_f, sizeof (short), "short");
+	bwrite((genericptr_t) &regions[i]->can_enter_f, sizeof (short), "short");
+	bwrite((genericptr_t) &regions[i]->enter_f, sizeof (short), "short");
+	bwrite((genericptr_t) &regions[i]->can_leave_f, sizeof (short), "short");
+	bwrite((genericptr_t) &regions[i]->leave_f, sizeof (short), "short");
+	bwrite((genericptr_t) &regions[i]->inside_f, sizeof (short), "short");
+	bwrite((genericptr_t) &regions[i]->player_flags, sizeof (boolean),
+		"boolean");
+	bwrite((genericptr_t) &regions[i]->n_monst, sizeof (short), "short");
 	for (j = 0; j < regions[i]->n_monst; j++)
-	    bwrite(fd, (genericptr_t) &regions[i]->monsters[j],
-	     sizeof (unsigned long));
-	bwrite(fd, (genericptr_t) &regions[i]->visible, sizeof (boolean));
-	bwrite(fd, (genericptr_t) &regions[i]->glyph, sizeof (int));
-	bwrite(fd, (genericptr_t) &regions[i]->arg, sizeof (genericptr_t));
+	    bwrite((genericptr_t) &regions[i]->monsters[j],
+	     sizeof (unsigned long), "long");
+	bwrite((genericptr_t) &regions[i]->visible, sizeof (boolean), "boolean");
+	bwrite((genericptr_t) &regions[i]->glyph, sizeof (int), "int");
+	bwrite((genericptr_t) &regions[i]->arg, sizeof (genericptr_t),
+		"genericptr_t");
     }
 
 skip_lots:

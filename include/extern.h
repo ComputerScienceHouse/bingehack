@@ -55,7 +55,7 @@ E int FDECL(unfixable_trouble_count,(BOOLEAN_P));
 /* ### artifact.c ### */
 
 E void NDECL(init_artifacts);
-E void FDECL(save_artifacts);
+E void NDECL(save_artifacts);
 E void FDECL(restore_artifacts, (int));
 E const char *FDECL(artiname, (int));
 E struct obj *FDECL(mk_artifact, (struct obj *,ALIGNTYP_P));
@@ -486,7 +486,7 @@ E void FDECL(assign_colors, (uchar *,int,int,int));
 
 /* ### dungeon.c ### */
 
-E void FDECL(save_dungeon, (BOOLEAN_P,BOOLEAN_P));
+E void FDECL(save_dungeon, (boolean,boolean));
 E void FDECL(restore_dungeon, (int));
 E void FDECL(insert_branch, (branch *,BOOLEAN_P));
 E void NDECL(init_dungeons);
