@@ -229,9 +229,9 @@ save_oracles(fd, mode)
 int fd, mode;
 {
 	if (perform_bwrite(mode)) {
-	    bwrite(fd, (genericptr_t) &oracle_cnt, sizeof oracle_cnt);
+	    bwrite((genericptr_t) &oracle_cnt, sizeof oracle_cnt, "int");
 	    if (oracle_cnt)
-		bwrite(fd, (genericptr_t)oracle_loc, oracle_cnt*sizeof (long));
+		bwrite((genericptr_t)oracle_loc, oracle_cnt*sizeof (long), "long");
 	}
 	if (release_data(mode)) {
 	    if (oracle_cnt) {
