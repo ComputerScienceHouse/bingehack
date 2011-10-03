@@ -8,7 +8,9 @@ CREATE FUNCTION `shell_escape` ( command VARCHAR(255) )
 						REPLACE(
 							REPLACE(
 								REPLACE(
-									REPLACE(command, '\\', '\\\\')
+									REPLACE(
+										REPLACE(command, '\\', '\\\\')
+									, ';', '\\;')
 								, '\'', '\\\'')
 							, '\`', '\\\`')
 						, '$', '\\$')
