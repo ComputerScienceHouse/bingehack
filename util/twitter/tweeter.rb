@@ -27,4 +27,4 @@ end
 
 client = Twitter::Client.new
 
-client.update("#{name}-#{role}-#{race}-#{gender}-#{align} #{death} on level #{deathlev} (HP: #{hp} [#{maxhp}])")
+client.update("#{name}-#{role}-#{race}-#{gender}-#{align} #{death} on level #{deathlev} (HP: #{hp} [#{maxhp}])"[0,140])
