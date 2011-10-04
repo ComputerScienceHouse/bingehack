@@ -441,8 +441,9 @@ static bool write_mysql_playlog( struct toptenentry *tt ) {
 	free(gender0);
 	free(align0);
 
-	if( mysql.real_query(db, query, strlen(query)) != 0 ) goto fail;
+	int rc = mysql.real_query(db, query, strlen(query));
 	free(query);
+	if( rc != 0 ) goto fail;
 
 	goto out;
 fail:
