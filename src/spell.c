@@ -966,8 +966,11 @@ boolean atme;
 		break;
 
 	case SPE_CURE_BLINDNESS:
-		healup(0, 0, FALSE, TRUE);
-		break;
+        if(haseyes(youmonst.data)) 
+		    healup(0, 0, FALSE, TRUE); 
+        else 
+           You("spend a few minutes willing your face to have eyes, then give up in disgust.");
+        break;
 	case SPE_CURE_SICKNESS:
 		if (Sick) You("are no longer ill.");
 		if (Slimed) {
