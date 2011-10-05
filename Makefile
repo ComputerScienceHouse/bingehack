@@ -29,19 +29,23 @@ CPPFLAGS := $(CPPFLAGS) -I$(INCDIR) -D_GNU_SOURCE
 CFLAGS := $(CFLAGS) -fPIC -Werror -Wall -Wno-format -Wnonnull -std=gnu99
 
 UNAME := $(shell uname -s)
-ifneq ($(UNAME), OpenBSD)
+ifeq ($(UNAME), OpenBSD)
+NCURSES_LIBRARIES ?= -L/usr/lib -lncurses
+NCURSESW_LIBRARIES ?= -L/usr/lib -lncursesw
+else
 NCURSES_CPPFLAGS ?= $(shell $(NCURSES_CONFIG) --cflags)
 NCURSES_LIBRARIES ?= $(shell $(NCURSES_CONFIG) --libs)
 NCURSESW_CPPFLAGS ?= $(shell $(NCURSESW_CONFIG) --cflags)
 NCURSESW_LIBRARIES ?= $(shell $(NCURSESW_CONFIG) --libs)
+endif
+
+ifeq ($(UNAME), Linux)
+DYLD_LIBRARIES ?= -ldl
+endif
+
 LIBCONFIG_CPPFLAGS ?= $(shell $(PKG_CONFIG) --cflags libconfig)
 LIBCONFIG_LIBRARIES ?= $(shell $(PKG_CONFIG) --libs libconfig)
-DYLD_LIBRARIES ?= -ldl
 MYSQL_CPPFLAGS ?= $(shell $(MYSQL_CONFIG) --cflags)
-else
-NCURSES_LIBRARIES ?= -L/usr/lib -lncurses
-NCURSESW_LIBRARIES ?= -L/usr/lib -lncursesw
-endif
 
 CPPFLAGS := $(CPPFLAGS) $(NCURSES_CPPFLAGS) $(NCURSESW_CPPFLAGS) $(LIBCONFIG_CPPFLAGS) $(DYLD_CPPFLAGS) $(MYSQL_CPPFLAGS)
 LIBRARIES := $(DYLD_LIBRARIES) $(LIBRARIES) $(NCURSES_LIBRARIES) $(NCURSESW_LIBRARIES) $(LIBCONFIG_LIBRARIES)
