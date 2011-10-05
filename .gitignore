@@ -5,3 +5,4 @@
 .*.swo
 config.mk
 cscope.*
+.nfs*
