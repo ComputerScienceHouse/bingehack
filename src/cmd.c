@@ -9,6 +9,7 @@
 #include "func_tab.h"
 /* #define DEBUG */	/* uncomment for debugging */
 #include "mail.h"
+#include "chat.h"
 
 /*
  * Some systems may have getchar() return EOF for various reasons, and
@@ -552,7 +553,7 @@ testchat()
 	struct sockaddr_in chat_addr;
 	char str[BUFSZ];
 	getlin("Send chat:", str);
-	if(str[0] == '\033'){ /* user is mashing escape key, abort chat. */
+	if(isspace(str[0]) || str[0] == '\033' || str[0] == '\n' || str[0] == 0){ /* user cancel */
 		pline("Fine, chat aborted. They probably didn't want to talk to you anyway.");
 	}
 	else{
@@ -562,7 +563,7 @@ testchat()
 		memset(&chat_addr, 0, sizeof(chat_addr));
 		chat_addr.sin_family = AF_INET;
     		chat_addr.sin_port = htons(chat_port);
-		chat_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+		chat_addr.sin_addr.s_addr = inet_addr(chat_ip_address);
 		if(sendto(chat_socket, str, strlen(str), 0, (const struct sockaddr *) &chat_addr, sizeof(chat_addr)) < 0){ /* error: couldn't transmit */
 			pline("You call out, but you have a nagging feeling nobody can hear you...");
 		}
