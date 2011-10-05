@@ -781,6 +781,9 @@ POTION("water", "clear",                0, 0,          92, 100, CLR_CYAN),
 	SCROLL((char *)0,		"GARVEN DEH",           1,   0, 100),
 	SCROLL((char *)0,		"SEGFAULT",		1,   0, 100),
 	SCROLL((char *)0,		"READ ME",              1,   0, 100),
+	SCROLL((char *)0,		"NEBBOC",		1,   0, 100),
+	SCROLL((char *)0,		"WORDHORD",		1,   0, 100),
+	SCROLL((char *)0,		"PALIMPSEST PLURALIS",	1,   0, 100),
 	/* these must come last because they have special descriptions */
 #ifdef MAIL
 	SCROLL("mail",                  "stamped",          0,   0,   0),

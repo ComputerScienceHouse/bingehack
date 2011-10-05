@@ -56,7 +56,12 @@ void achievement_system_shutdown() {
 	if( achievement_system_initialized ) mysql.close(&db);
 }
 
-//ret 1 on sucess, 0 on failure
+// Convenience function for awarding achievements that have no progress metric
+int award_achievement(int achievement_id){
+	return add_achievement_progress(achievement_id, get_achievement_max_progress(achievement_id));
+}
+
+// Return 1 on success, 0 on failure
 int add_achievement_progress(int achievement_id, int add_progress_count){
 	if(achievement_system_disabled){ return ACHIEVEMENT_PUSH_FAILURE; }
 	if(ACHIEVEMENT_DEBUG){pline("DEBUG: add_achievement_progress(%i, %i)", achievement_id, add_progress_count);}

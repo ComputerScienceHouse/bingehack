@@ -21,6 +21,7 @@
 #ifndef NO_SIGNAL
 #include <signal.h>
 #endif
+#include <errno.h>
 
 #ifdef POSITIONBAR
 STATIC_DCL void NDECL(do_positionbar);
@@ -38,7 +39,7 @@ void segv_award( int sig ) {
 	    perror("signal");
 		exit(EXIT_FAILURE);
 	}
-	add_achievement_progress(AID_CRASH, ONE_TIME_ACHIEVEMENT);
+	award_achievement(AID_CRASH);
 	if( kill(getpid(), SIGSEGV) == -1 ) {
 		perror("kill");
 		exit(EXIT_FAILURE);
@@ -62,11 +63,19 @@ moveloop()
     bzero(u_stat.plname, sizeof(u_stat.plname));
     strncpy(u_stat.plname, plname, sizeof(u_stat.plname) - 1);
 
-    if( (mcast_socket = socket(PF_INET, SOCK_DGRAM, 0)) >= 0 ) {
-      memset(&mcast_addr, 0, sizeof(mcast_addr));
-      mcast_addr.sin_family = AF_INET;
-      mcast_addr.sin_addr.s_addr = inet_addr("225.0.0.37");
-      mcast_addr.sin_port = htons(12345);
+    if( (mcast_socket = socket(PF_INET, SOCK_DGRAM, 0)) == -1 ) {
+        pline("socket: %s", strerror(errno));
+    } else {
+        memset(&mcast_addr, 0, sizeof(mcast_addr));
+        mcast_addr.sin_family = AF_INET;
+        mcast_addr.sin_addr.s_addr = inet_addr("225.0.0.37");
+        mcast_addr.sin_port = htons(12345);
+
+        const struct in_addr localhost_addr = {
+            .s_addr = htonl(INADDR_LOOPBACK)
+        };
+        if( setsockopt(mcast_socket, IPPROTO_IP, IP_MULTICAST_IF, &localhost_addr, sizeof(localhost_addr)) == -1 )
+          pline("setsockopt: %s", strerror(errno));
     }
 
     configfile_init();
@@ -389,7 +398,7 @@ moveloop()
 			        if (propagate(monsndx(&mons[PM_NAZGUL]), FALSE, FALSE))
 			            makemon(&mons[PM_NAZGUL], u.ux, u.uy, NO_MM_FLAGS);
 			if (!rn2(100))
-		    	    You_hear("unintelligable whispering.");
+		    	    You_hear("unintelligible whispering.");
 		    }
 		    if (!rn2(40+(int)(ACURR(A_DEX)*3)))
 			u_wipe_engr(rnd(3));

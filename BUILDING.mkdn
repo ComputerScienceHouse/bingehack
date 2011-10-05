@@ -29,7 +29,7 @@ Local overrides for make variables.
 
 ### Example
 <pre>
-PREFIX = $(PWD)/install
+PREFIX := $(PWD)/install
 
 # FreeBSD and OSX only
 INSTALL := ginstall
@@ -52,6 +52,7 @@ Compilation requires at least the following:
 - GNU make
 - libconfig
 - NCurses (with wide character support)
+- MYSQL Client (libmysqlclient)
 
 # Building
 Once this has all been satisfied, simply type `make`.
