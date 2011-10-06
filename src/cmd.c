@@ -320,13 +320,13 @@ doextlist()	/* here after #? - now list all full-word commands */
 
 	datawin = create_nhwindow(NHW_TEXT);
 	putstr(datawin, 0, "");
-	putstr(datawin, 0, "		Extended Commands List");
+	putstr(datawin, 0, "            Extended Commands List");
 	putstr(datawin, 0, "");
-	putstr(datawin, 0, "	Press '#', then type:");
+	putstr(datawin, 0, "    Press '#', then type:");
 	putstr(datawin, 0, "");
 
 	for(efp = extcmdlist; efp->ef_txt; efp++) {
-		Sprintf(buf, "	  %-15s - %s.", efp->ef_txt, efp->ef_desc);
+		Sprintf(buf, "    %-15s - %s.", efp->ef_txt, efp->ef_desc);
 		putstr(datawin, 0, buf);
 	}
 	display_nhwindow(datawin, FALSE);
@@ -1060,7 +1060,7 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 	else if (Levitation) you_are("levitating");	/* without control */
 	else if (Flying) you_can("fly");
 	if (Wwalking) you_can("walk on water");
-	if (Swimming) you_can("swim");	      
+	if (Swimming) you_can("swim");
 	if (Breathless) you_can("survive without air");
 	else if (Amphibious) you_can("breathe water");
 	if (Passes_walls) you_can("walk through walls");
@@ -1260,7 +1260,7 @@ int final;
 	else if (u.ualign.record >= -8)	dump(youhave, "sinned");
 	else dump("  You have ", "transgressed");
 	Sprintf(buf, " %d", u.ualign.record);
-	dump("	Your alignment was ", buf);
+	dump("  Your alignment was ", buf);
 
 
 	/*** Resistances to troubles ***/
@@ -1279,7 +1279,7 @@ int final;
 	if (u.uedibility) dump(youcould, "recognize detrimental food");
 
 	/*** Troubles ***/
-	if (Halluc_resistance)	dump("	", "You resisted hallucinations");
+	if (Halluc_resistance)	dump("  ", "You resisted hallucinations");
 	if (Hallucination) dump(youwere, "hallucinating");
 	if (Stunned) dump(youwere, "stunned");
 	if (Confusion) dump(youwere, "confused");
@@ -1437,7 +1437,7 @@ int final;
 	if (Free_action) dump(youhad, "free action");
 	if (Fixed_abil) dump(youhad, "fixed abilities");
 	if (Lifesaved)
-		dump("	", "Your life would have been saved");
+		dump("  ", "Your life would have been saved");
 	if (u.twoweap) dump(youwere, "wielding two weapons at once");
 
 	/*** Miscellany ***/
@@ -1456,9 +1456,9 @@ int final;
 	if (carrying(LUCKSTONE) || stone_luck(TRUE)) {
 	    ltmp = stone_luck(FALSE);
 	    if (ltmp <= 0)
-		dump("	", "Bad luck did not time out for you");
+		dump("  ", "Bad luck did not time out for you");
 	    if (ltmp >= 0)
-		dump("	", "Good luck did not time out for you");
+		dump("  ", "Good luck did not time out for you");
 	}
 
 	if (u.ugangr) {
@@ -1825,12 +1825,12 @@ int final;
 	dump("", "Voluntary challenges");
 
 	if (!u.uconduct.food)
-	    dump("", "	You went without food");
+	    dump("", "  You went without food");
 	    /* But beverages are okay */
 	else if (!u.uconduct.unvegan)
-	    dump("", "	You followed a strict vegan diet");
+	    dump("", "  You followed a strict vegan diet");
 	else if (!u.uconduct.unvegetarian)
-	    dump("", "	You were a vegetarian");
+	    dump("", "  You were a vegetarian");
 	else if (Role_if(PM_MONK) && u.uconduct.unvegetarian < 10) {
 	    sprintf(buf, "  You ate non-vegetarian food %ld time%s.", 
 		u.uconduct.unvegetarian, plur(u.uconduct.unvegetarian));
@@ -1841,7 +1841,7 @@ int final;
 	    dump("", "	You were an atheist");
 
 	if (!u.uconduct.weaphit)
-	    dump("", "	You never hit with a wielded weapon");
+	    dump("", "  You never hit with a wielded weapon");
 	else if (Role_if(PM_MONK) && u.uconduct.weaphit < 10) {
 	    Sprintf(buf, "  You hit with a wielded weapon %ld time%s",
 		    u.uconduct.weaphit, plur(u.uconduct.weaphit));
@@ -1855,10 +1855,10 @@ int final;
 	}
 #endif
 	if (!u.uconduct.killer)
-	    dump("", "	You were a pacifist");
+	    dump("", "  You were a pacifist");
 
 	if (!u.uconduct.literate)
-	    dump("", "	You were illiterate");
+	    dump("", "  You were illiterate");
 #ifdef WIZARD
 	else if (wizard) {
 	    Sprintf(buf, "read items or engraved %ld time%s",
@@ -1869,7 +1869,7 @@ int final;
 
 	ngenocided = num_genocides();
 	if (ngenocided == 0) {
-	    dump("", "	You never genocided any monsters");
+	    dump("", "  You never genocided any monsters");
 	} else {
 	    Sprintf(buf, "genocided %d type%s of monster%s",
 		    ngenocided, plur(ngenocided), plur(ngenocided));
@@ -1877,7 +1877,7 @@ int final;
 	}
 
 	if (!u.uconduct.polypiles)
-	    dump("", "	You never polymorphed an object");
+	    dump("", "  You never polymorphed an object");
 	else {
 	    Sprintf(buf, "polymorphed %ld item%s",
 		    u.uconduct.polypiles, plur(u.uconduct.polypiles));
@@ -1885,7 +1885,7 @@ int final;
 	}
 
 	if (!u.uconduct.polyselfs)
-	    dump("", "	You never changed form");
+	    dump("", "  You never changed form");
 	else {
 	    Sprintf(buf, "changed form %ld time%s",
 		    u.uconduct.polyselfs, plur(u.uconduct.polyselfs));
@@ -1893,7 +1893,7 @@ int final;
 	}
 
 	if (!u.uconduct.wishes)
-	    dump("", "	You used no wishes");
+	    dump("", "  You used no wishes");
 	else {
 	    Sprintf(buf, "used %ld wish%s",
 		    u.uconduct.wishes, (u.uconduct.wishes > 1L) ? "es" : "");
@@ -2211,7 +2211,7 @@ add_debug_extended_commands()
 
 
 static const char template[] = "%-18s %4ld  %6ld";
-static const char count_str[] = "		    count  bytes";
+static const char count_str[] = "                   count  bytes";
 static const char separator[] = "------------------ -----  ------";
 
 STATIC_OVL void
@@ -2797,37 +2797,37 @@ const char *msg;
 	}
 	if (iflags.num_pad && u.umonnum == PM_GRID_BUG) {
 	    putstr(win, 0, "Valid direction keys in your current form (with number_pad on) are:");
-	    putstr(win, 0, "		 8   ");
-	    putstr(win, 0, "		 |   ");
-	    putstr(win, 0, "	      4- . -6");
-	    putstr(win, 0, "		 |   ");
-	    putstr(win, 0, "		 2   ");
+	    putstr(win, 0, "             8   ");
+	    putstr(win, 0, "             |   ");
+	    putstr(win, 0, "          4- . -6");
+	    putstr(win, 0, "             |   ");
+	    putstr(win, 0, "             2   ");
 	} else if (u.umonnum == PM_GRID_BUG) {
 	    putstr(win, 0, "Valid direction keys in your current form are:");
-	    putstr(win, 0, "		 k   ");
-	    putstr(win, 0, "		 |   ");
-	    putstr(win, 0, "	      h- . -l");
-	    putstr(win, 0, "		 |   ");
-	    putstr(win, 0, "		 j   ");
+	    putstr(win, 0, "             k   ");
+	    putstr(win, 0, "             |   ");
+	    putstr(win, 0, "          h- . -l");
+	    putstr(win, 0, "             |   ");
+	    putstr(win, 0, "             j   ");
 	} else if (iflags.num_pad) {
 	    putstr(win, 0, "Valid direction keys (with number_pad on) are:");
-	    putstr(win, 0, "	      7  8  9");
-	    putstr(win, 0, "	       \\ | / ");
-	    putstr(win, 0, "	      4- . -6");
-	    putstr(win, 0, "	       / | \\ ");
-	    putstr(win, 0, "	      1  2  3");
+	    putstr(win, 0, "          7  8  9 ");
+	    putstr(win, 0, "          \\ | /  ");
+	    putstr(win, 0, "          4- . -6 ");
+	    putstr(win, 0, "           / | \\ ");
+	    putstr(win, 0, "          1  2  3 ");
 	} else {
 	    putstr(win, 0, "Valid direction keys are:");
-	    putstr(win, 0, "	      y  k  u");
-	    putstr(win, 0, "	       \\ | / ");
-	    putstr(win, 0, "	      h- . -l");
-	    putstr(win, 0, "	       / | \\ ");
-	    putstr(win, 0, "	      b  j  n");
+	    putstr(win, 0, "           y  k  u ");
+	    putstr(win, 0, "           \\ | /  ");
+	    putstr(win, 0, "           h- . -l ");
+	    putstr(win, 0, "            / | \\ ");
+	    putstr(win, 0, "           b  j  n ");
 	};
 	putstr(win, 0, "");
-	putstr(win, 0, "	  <  up");
-	putstr(win, 0, "	  >  down");
-	putstr(win, 0, "	  .  direct at yourself");
+	putstr(win, 0, "          <  up");
+	putstr(win, 0, "          >  down");
+	putstr(win, 0, "          .  direct at yourself");
 	putstr(win, 0, "");
 	putstr(win, 0, "(Suppress this message with !cmdassist in config file.)");
 	display_nhwindow(win, FALSE);
