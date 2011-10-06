@@ -2140,6 +2140,9 @@ struct ext_func_tab extcmdlist[] = {
 	{(char *)0, (char *)0, donull, TRUE},
 	{(char *)0, (char *)0, donull, TRUE}, /* showkills (showborn patch) */
 	{(char *)0, (char *)0, donull, TRUE},
+#ifdef MAIL
+	{(char *)0, (char *)0, donull, TRUE},
+#endif
 	{(char *)0, (char *)0, donull, TRUE},
 	{(char *)0, (char *)0, donull, TRUE},
 #ifdef DEBUG
