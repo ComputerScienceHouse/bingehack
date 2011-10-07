@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include "hack.h"
+#include "achieve.h"
 
 extern const char * const destroy_strings[];	/* from zap.c */
 
@@ -3289,8 +3290,13 @@ struct trap *ttmp;
 	You("repair the squeaky board.");	/* no madeby_u */
 	deltrap(ttmp);
 	newsym(u.ux + u.dx, u.uy + u.dy);
+	/* Implementation of this achievement is not great (see also
+	   fountain.c and eat.c). Maybe change newexplevel to return
+	   whether or not a level-up occurred? */
+	int oldlevel = u.ulevel;
 	more_experienced(1, 5);
 	newexplevel();
+	if (u.ulevel > oldlevel) award_achievement(AID_TRIVIAL_LEVEL_UP);
 	return 1;
 }
 

@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include "hack.h"
+#include "achieve.h"
 
 #ifndef OVLB
 
@@ -1648,6 +1649,10 @@ find_ac()
 	if(uac != u.uac){
 		u.uac = uac;
 		flags.botl = 1;
+		/* AC achievements (only check when AC has changed) */
+		if (u.uac > 10) award_achievement(AID_TERRIBLE_AC);
+		if (u.uac <= -30 && magic_negation(&youmonst) >= 3)
+			award_achievement(AID_AWESOME_AC);
 	}
 }
 

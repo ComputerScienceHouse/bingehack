@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include "hack.h"
+#include "achieve.h"
 
 #ifdef OVLB
 boolean notonhead = FALSE;
@@ -1901,6 +1902,7 @@ dodip()
 		if (obj->cursed || obj->otyp == POT_ACID ||
 		    potion->cursed || potion->otyp == POT_ACID || !rn2(10)) {
 			pline("BOOM!  They explode!");
+			award_achievement(AID_ALCHEMIZE_EXPLOSION);
 			exercise(A_STR, FALSE);
 			if (!breathless(youmonst.data) || haseyes(youmonst.data))
 				potionbreathe(obj);
@@ -1918,6 +1920,8 @@ dodip()
 
 		if ((mixture = mixtype(obj, potion)) != 0) {
 			obj->otyp = mixture;
+			if (mixture == POT_GAIN_LEVEL)
+				award_achievement(AID_ALCHEMIZE_GAIN_LEVEL);
 		} else {
 		    switch (obj->odiluted ? 1 : rnd(8)) {
 			case 1:
@@ -2173,6 +2177,7 @@ dodip()
 		      pline("Warning, Captain! The warp core has been breached!");
 		    }
 		    pline("BOOM! %s explodes!", The(xname(singlegem)));
+		    award_achievement(AID_ALCHEMIZE_EXPLOSION);
 		    exercise(A_STR, FALSE);
 		    if (!breathless(youmonst.data) || haseyes(youmonst.data))
 		      potionbreathe(singlepotion);
@@ -2277,6 +2282,7 @@ register struct obj *obj;
 	case 0 : verbalize("I am in your debt.  I will grant one wish!");
 		makewish();
 		mongone(mtmp);
+		add_achievement_progress(AID_DJINN_WISHES, 1);
 		break;
 	case 1 : verbalize("Thank you for freeing me!");
 		(void) tamedog(mtmp, (struct obj *)0);

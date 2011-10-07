@@ -12,6 +12,7 @@
 #include "mfndpos.h"
 #include "edog.h"
 #include <ctype.h>
+#include "achieve.h"
 
 STATIC_DCL boolean FDECL(restrap,(struct monst *));
 STATIC_DCL long FDECL(mm_aggression, (struct monst *,struct monst *));
@@ -1910,6 +1911,21 @@ cleanup:
 		change_luck(-5);
 		You_feel("guilty...");
 	}
+	
+	/* Kill-related achievements */
+	if (u.uhp <= 5) award_achievement(AID_SKIN_OF_TEETH);
+	if (mdat == &mons[PM_DEMOGORGON]) award_achievement(AID_KILL_DEMOGORGON);
+	if (mdat == &mons[PM_GHOST]) add_achievement_progress(AID_KILL_GHOSTS, 1);
+#ifdef KOPS
+	if (mdat->mlet == S_KOP) award_achievement(AID_FOUGHT_THE_LAW);
+#endif
+	if (
+		(is_dprince(mdat) || is_dlord(mdat)) &&
+		(mvitals[PM_JUIBLEX].mvflags & G_GONE) &&
+		(mvitals[PM_ORCUS].mvflags & G_GONE) &&
+		(mvitals[PM_BAALZEBUB].mvflags & G_GONE) &&
+		(mvitals[PM_ASMODEUS].mvflags & G_GONE)
+	) award_achievement(AID_KILL_GUARANTEED_DEMONS);
 
 	/* give experience points */
 	tmp = experience(mtmp, (int)mvitals[mndx].died + 1);
@@ -1958,6 +1974,7 @@ mon_to_stone(mtmp)
 	if (newcham(mtmp, &mons[PM_STONE_GOLEM], FALSE, FALSE)) {
 	    if(canseemon(mtmp))
 		pline("Now it's %s.", an(mtmp->data->mname));
+	    award_achievement(AID_STONE_A_GOLEM);
 	} else {
 	    if(canseemon(mtmp))
 		pline("... and returns to normal.");
@@ -2612,7 +2629,11 @@ boolean msg;		/* "The oldmon turns into a newmon!" */
 		}
 	    }
 	}
-
+	
+	if (mtmp->mtame &&
+		(mdat == &mons[PM_SUCCUBUS] || mdat == &mons[PM_INCUBUS])
+	) award_achievement(AID_TAME_FOOCUBUS);
+	
 	return(1);
 }
 
