@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include "hack.h"
 #include "lev.h"
+#include "achieve.h"
 
 #ifdef SINKS
 # ifdef OVLB
@@ -1180,6 +1181,7 @@ boolean at_stairs, falling, portal;
 		else if (u.dz &&
 		    (near_capacity() > UNENCUMBERED || Punished || Fumbling)) {
 		    You("fall down the %s.", at_ladder ? "ladder" : "stairs");
+		    add_achievement_progress(AID_FALL_DOWN_STAIRS, 1);
 		    if (Punished) {
 			drag_down();
 			if (carried(uball)) {
@@ -1380,6 +1382,9 @@ boolean at_stairs, falling, portal;
 #ifdef WHEREIS_FILE
         touch_whereis();
 #endif
+	
+	if (moves <= 2000 && Is_stronghold(&u.uz))
+		award_achievement(AID_DIG_FOR_VICTORY);
 }
 
 STATIC_OVL void

@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include "hack.h"
+#include "achieve.h"
 
 static NEARDATA schar delay;		/* moves left for this spell */
 static NEARDATA struct obj *book;	/* last/current book being xscribed */
@@ -258,6 +259,25 @@ struct obj *book2;
 	       you just did */
 	    u.uevent.udemigod = 1;	/* wizdead() */
 	    if (!u.udg_cnt || u.udg_cnt > soon) u.udg_cnt = soon;
+	    
+	    /* "ascension kit" achievement */
+	    /* TODO: determine how much this would suck for performance if it
+	             were moved to addinv (making it a bit more achievable) */
+	    if (
+		in_possession(WAN_DIGGING) &&
+		in_possession(SCR_GOLD_DETECTION) &&
+		in_possession(RIN_LEVITATION) &&
+		in_possession(POT_FULL_HEALING) &&
+		(
+			in_possession(AMULET_OF_REFLECTION) ||
+			in_possession(AMULET_OF_LIFE_SAVING)
+		) &&
+		in_possession(UNICORN_HORN) &&
+		in_possession(LUCKSTONE) &&
+		in_possession(TOWEL) &&
+		in_possession(CAN_OF_GREASE) &&
+		in_possession(BAG_OF_HOLDING)
+	    ) award_achievement(AID_ASCENSION_KIT);
 	} else {	/* at least one artifact not prepared properly */
 	    You("have a feeling that %s is amiss...", something);
 	    goto raise_dead;
@@ -841,6 +861,9 @@ boolean atme;
 	    flags.botl = 1;
 	    return(1);
 	}
+	
+	if (chance == 100 && spellev(spell) >= 7)
+	    award_achievement(AID_MASTER_CASTER);
 
 	if (crball_divin(uwep,spell)) {
 	    You_feel("your mind expand as you focus on %s.",yname(uwep));

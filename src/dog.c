@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include "hack.h"
 #include "edog.h"
+#include "achieve.h"
 
 #ifdef OVLB
 
@@ -122,6 +123,12 @@ boolean quietly;
 		mtmp->weapon_check = NEED_HTH_WEAPON;
 		(void) mon_wield_item(mtmp);
 	}
+	
+	if (mtmp->mtame &&
+		(mtmp->data == &mons[PM_SUCCUBUS] ||
+		 mtmp->data == &mons[PM_INCUBUS])
+	) award_achievement(AID_TAME_FOOCUBUS);
+	
 	return mtmp;
 }
 
@@ -865,6 +872,9 @@ register struct obj *obj;
 		return mtmp2;		/* oops, it died... */
 	    /* `obj' is now obsolete */
 	}
+	
+	if (mtmp2->data == &mons[PM_SUCCUBUS] || mtmp2->data == &mons[PM_INCUBUS])
+		award_achievement(AID_TAME_FOOCUBUS);
 
 	newsym(mtmp2->mx, mtmp2->my);
 	if (attacktype(mtmp2->data, AT_WEAP)) {

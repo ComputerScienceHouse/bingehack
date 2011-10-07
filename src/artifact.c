@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include "hack.h"
 #include "artifact.h"
+#include "achieve.h"
 #ifdef OVLB
 #include "artilist.h"
 #else
@@ -562,6 +563,7 @@ touch_artifact(obj,mon)
 
 	if (!yours) return 0;
 	You("are blasted by %s power!", s_suffix(the(xname(obj))));
+	award_achievement(AID_ARTIFACT_BLAST);
 	dmg = d((Antimagic ? 2 : 4), (self_willed ? 10 : 4));
 	Sprintf(buf, "touching %s", oart->name);
 	losehp(dmg, buf, KILLED_BY);
@@ -1068,6 +1070,7 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 			}
 			*dmgptr = 2 * mdef->mhp + FATAL_DAMAGE_MODIFIER;
 			pline("%s cuts %s in half!", wepdesc, mon_nam(mdef));
+			if (Role_if(PM_SAMURAI)) award_achievement(AID_USE_ARTIFACT_SAM);
 			otmp->dknown = TRUE;
 			return TRUE;
 		} else {
@@ -1277,6 +1280,7 @@ arti_invoke(obj)
 	    if(Sick) make_sick(0L,(char *)0,FALSE,SICK_ALL);
 	    if(Slimed) Slimed = 0L;
 	    if (Blinded > creamed) make_blinded(creamed, FALSE);
+	    if (Role_if(PM_HEALER)) award_achievement(AID_USE_ARTIFACT_HEA);
 	    flags.botl = 1;
 	    break;
 	  }
@@ -1287,6 +1291,7 @@ arti_invoke(obj)
 	    if(epboost) {
 		You_feel("re-energized.");
 		u.uen += epboost;
+		if (Role_if(PM_PRIEST)) award_achievement(AID_USE_ARTIFACT_PRI);
 		flags.botl = 1;
 	    } else
 		goto nothing_special;
@@ -1297,6 +1302,7 @@ arti_invoke(obj)
 		obj->age = 0; /* don't charge for changing their mind */
 		return 0;
 	    }
+	    if (Role_if(PM_ROGUE)) award_achievement(AID_USE_ARTIFACT_ROG);
 	    break;
 	  }
 	case CHARGE_OBJ: {
@@ -1311,10 +1317,12 @@ arti_invoke(obj)
 		(Role_switch == oart->role || !oart->role);
 	    recharge(otmp, b_effect ? 1 : obj->cursed ? -1 : 0);
 	    update_inventory();
+	    if (Role_if(PM_TOURIST)) award_achievement(AID_USE_ARTIFACT_TOU);
 	    break;
 	  }
 	case LEV_TELE:
 	    level_tele();
+	    if (Role_if(PM_VALKYRIE)) award_achievement(AID_USE_ARTIFACT_VAL);
 	    break;
 	case CREATE_PORTAL: {
 	    int i, num_ok_dungeons, last_ok_dungeon = 0;
@@ -1368,12 +1376,14 @@ arti_invoke(obj)
 	    } else {
 		if(!Blind) You("are surrounded by a shimmering sphere!");
 		else You_feel("weightless for a moment.");
+		if (Role_if(PM_WIZARD)) award_achievement(AID_USE_ARTIFACT_WIZ);
 		goto_level(&newlev, FALSE, FALSE, FALSE);
 	    }
 	    break;
 	  }
 	case ENLIGHTENING:
 	    enlightenment(0);
+	    if (Role_if(PM_MONK)) award_achievement(AID_USE_ARTIFACT_MON);
 	    break;
 	case CREATE_AMMO: {
 	    struct obj *otmp = mksobj(ARROW, TRUE, FALSE);
@@ -1392,6 +1402,7 @@ arti_invoke(obj)
 	    otmp->owt = weight(otmp);
 	    otmp = hold_another_object(otmp, "Suddenly %s out.",
 				       aobjnam(otmp, "fall"), (const char *)0);
+	    if (Role_if(PM_RANGER)) award_achievement(AID_USE_ARTIFACT_RAN);
 	    break;
 	  }
 	}
@@ -1427,6 +1438,7 @@ nothing_special:
 	    {
 	    	You_feel("like a rabble-rouser.");
 	    	u.uconduct.conflict++;
+		if (Role_if(PM_CAVEMAN)) award_achievement(AID_USE_ARTIFACT_CAV);
 	    }
 	    else You_feel("the tension decrease around you.");
 	    break;
@@ -1434,6 +1446,7 @@ nothing_special:
 	    if(on) {
 		float_up();
 		spoteffects(FALSE);
+		if (Role_if(PM_BARBARIAN)) award_achievement(AID_USE_ARTIFACT_BAR);
 	    } else (void) float_down(I_SPECIAL|TIMEOUT, W_ARTI);
 	    break;
 	case INVIS:
@@ -1442,6 +1455,7 @@ nothing_special:
 	    if (on)
 		Your("body takes on a %s transparency...",
 		     Hallucination ? "normal" : "strange");
+		if (Role_if(PM_ARCHEOLOGIST)) award_achievement(AID_USE_ARTIFACT_ARC);
 	    else
 		Your("body seems to unfade...");
 	    break;

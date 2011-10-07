@@ -395,6 +395,18 @@ added:
 	addinv_core2(obj);
 	carry_obj_effects(obj);		/* carrying affects the obj */
 	update_inventory();
+	
+	/* Inventory-related achievements */
+	if (obj->oclass == AMULET_CLASS) {
+		int amulets_exist = 0;
+		int amulets_gotten = 0;
+		for(int atyp = AMULET_OF_ESP; atyp <= AMULET_OF_YENDOR; atyp++) {
+			amulets_exist++;
+			if (in_possession(atyp)) amulets_gotten++;
+		}
+		if (amulets_exist == amulets_gotten) award_achievement(AID_GET_ALL_AMULETS);
+	}
+	
 	return(obj);
 }
 
@@ -722,6 +734,27 @@ register struct obj *objchn;
 		objchn = objchn->nobj;
 	}
 	return((struct obj *) 0);
+}
+
+boolean
+otype_on(type, objchn)
+register int type;
+register struct obj *objchn;
+{
+	while(objchn) {
+		if(objchn->otyp == type) return(TRUE);
+		if (Has_contents(objchn) && otype_on(type, objchn->cobj))
+			return(TRUE);
+		objchn = objchn->nobj;
+	}
+	return(FALSE);
+}
+
+boolean
+in_possession(type)
+register int type;
+{
+	return otype_on(type, invent);
 }
 
 boolean

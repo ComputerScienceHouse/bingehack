@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include "hack.h"
 #include "edog.h"
+#include "achieve.h"
 
 #ifdef OVLB
 
@@ -55,6 +56,7 @@ use_camera(obj)
 	struct obj *obj;
 {
 	register struct monst *mtmp;
+	int flash_hit = 0;
 
 	if(Underwater) {
 		pline("Using your camera underwater would void the warranty.");
@@ -83,7 +85,10 @@ use_camera(obj)
 				(int FDECL((*),(OBJ_P,OBJ_P)))0,
 				obj, NULL)) != 0) {
 		obj->ox = u.ux,  obj->oy = u.uy;
-		(void) flash_hits_mon(mtmp, obj);
+		flash_hit = flash_hits_mon(mtmp, obj);
+		if (flash_hit && is_endgamenasty(mtmp->data)) {
+			award_achievement(AID_BLIND_RIDER_WITH_CAMERA);
+		}
 	}
 	return 1;
 }
@@ -1455,6 +1460,9 @@ register struct obj *obj;
 
 	if ((can = mksobj(TIN, FALSE, FALSE)) != 0) {
 	    static const char you_buy_it[] = "You tin it, you bought it!";
+	    
+	    if (corpse->corpsenm == PM_WIZARD_OF_YENDOR)
+		award_achievement(AID_TIN_OF_RODNEY);
 
 	    can->corpsenm = corpse->corpsenm;
 	    can->cursed = obj->cursed;
