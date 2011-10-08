@@ -6,6 +6,7 @@
 #define GLOBAL_H
 
 #include <stdio.h>
+#include <stdbool.h>
 
 
 /* #define BETA	*/	/* if a beta-test copy	[MRS] */
@@ -52,9 +53,7 @@
  * since otherwise comparisons with signed quantities are done incorrectly
  */
 typedef schar	xchar;
-#ifndef SKIP_BOOLEAN
-typedef xchar	boolean;		/* 0 or 1 */
-#endif
+typedef bool	boolean;		/* 0 or 1 */
 
 #ifndef TRUE		/* defined in some systems' native include files */
 #define TRUE	((boolean)1)
