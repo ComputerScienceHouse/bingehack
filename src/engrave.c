@@ -399,7 +399,7 @@ register xchar e_type;
 		u.uconduct.elbereth++;
 	}
 #endif
-	if(!strcmp(s, "Elbereth")){
+	if(!in_mklev && !strcmp(s, "Elbereth")){
 		award_achievement(AID_ENGRAVE_ELBERETH);
 	}
 	ep->engr_time = e_time;
