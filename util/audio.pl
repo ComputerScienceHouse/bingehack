@@ -6,10 +6,9 @@ my $tts = "festival --pipe";
 my $board = "./rx";
 my %players = ();
 
-open(my $BOARD, "$board |") or die "Couldn't open board executable.\n";
 my $team_ant=0;
 my $i = 0;
-while (<$BOARD>){
+while (<STDIN>){
 #chomp $line;
 my $line = $_;
 #print "Got: $line\n";
@@ -36,8 +35,7 @@ else{
 $i++;
 if($i==10000){
 	print "Restarting backend.\n";
-#	close($BOARD);
-	open($BOARD, "$board |") or die "Couldn't open board executable.\n";	
+#	close(STDIN);
 	$i=0;
 }
 }
