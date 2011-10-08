@@ -368,7 +368,11 @@ register struct monst *mtmp;
 	
 	/* Death achievements (see also "while helpless" above) */
 	if (!Lifesaved) {
-		if (mtmp->data->mlet == S_ANT) award_achievement(AID_KILLED_BY_ANT);
+		if (
+			mtmp->data == &mons[PM_GIANT_ANT] ||
+			mtmp->data == &mons[PM_SOLDIER_ANT] ||
+			mtmp->data == &mons[PM_FIRE_ANT]
+		) award_achievement(AID_KILLED_BY_ANT);
 	}
 	
 	if (touch_petrifies(mtmp->data))
