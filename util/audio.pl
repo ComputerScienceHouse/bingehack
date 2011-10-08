@@ -3,8 +3,7 @@ use strict;
 use warnings;
 use Env qw( FESTIVAL );
 
-#my $festival  = "/Users/russ/Sources/festival/festival/bin/festival";
-my $festival  = "$FESTIVAL";
+my $festival  = "$FESTIVAL" eq "" ? "festival" : "$FESTIVAL";
 my $tts = "$festival --pipe";
 my $board = "./rx";
 my %players = ();
@@ -15,8 +14,8 @@ while (<STDIN>){
 	my $line = $_;
 
 	my @player_import = split(",", $line);
+	chomp($player_import[-1]);
 	my ($name, $race, $gender, $alignment, $class, $hp, $hpmax, $ulevel, $ac, $num_prayers, $num_wishes, $num_deaths, $num_moves, $dlevel, $msg) = @player_import;
-	chomp($msg);
 	if($name =~ m/port34/){
 		$name='port__';
 		$player_import[0]=$name;
@@ -53,24 +52,20 @@ sub say_if_important{
 	unless($old_gender eq $new_gender ){
 		play_text("$name decided to bat for the other team. $old_gender_pronoun is now a $new_gender_pronoun.");
 	}
-	unless($old_player_stats{ 'num_prayers' } eq $new_player_stats{ 'num_prayers' } ){
+	if( defined($new_player_stats{'num_prayers'}) && ( ! defined($old_player_stats{'num_prayers'}) || $old_player_stats{'num_prayers'} ne $new_player_stats{'num_prayers'} ) ){
 		play_text("$name got down on $long_new_gender knees and prayed to $long_new_gender god.");
 	}
-	if($old_player_stats{ 'num_wishes' } lt $new_player_stats{ 'num_wishes' }){
+	if( defined($new_player_stats{'num_wishes'}) && ( ! defined($old_player_stats{'num_wishes'} || $old_player_stats{'num_wishes'} ge $new_player_stats{'num_wishes'}) ) ){
 		play_text("$name pretends that airplanes in the night sky are like shooting stars. $new_gender_pronoun made a wish!");
 	}
-	if($old_player_stats{ 'num_deaths' }  lt $new_player_stats{ 'num_deaths'}){
-		play_text("$name has died.");
-	}
-	unless(($old_player_stats{ 'ulevel' } eq $new_player_stats{ 'ulevel' }) and $new_player_stats{'ulevel'} > 5 ){
-		if($old_player_stats{ 'ulevel' } gt $new_player_stats{ 'ulevel' }){
+	if( defined($new_player_stats{'ulevel'}) && ( !defined($old_player_stats{'ulevel'}) || ($old_player_stats{'ulevel'} ne $new_player_stats{'ulevel'}) ) and $new_player_stats{'ulevel'} > 5 ){
+		if( !defined($old_player_stats{'ulevel'}) || $old_player_stats{ 'ulevel' } gt $new_player_stats{ 'ulevel' }){
 			play_text("Poor $name. $new_gender_pronoun just lost a level!");
+		} elsif($new_player_stats{'ulevel'} > 5){ #First 5 are basically just audio spam and not worthy of mention.
+			play_text("Congratulations to $name $new_gender_pronoun just hit level $new_player_stats{'ulevel'}.");
 		}
-                elsif($new_player_stats{'ulevel'} > 5){ #First 5 are basically just audio spam and not worthy of mention.
-                        play_text("Congratulations to $name $new_gender_pronoun just hit level $new_player_stats{'ulevel'}.");
-                }
 	}
-	unless($old_msg eq $new_msg){
+	if( defined($new_msg) && ( !defined($old_msg) || $old_msg ne $new_msg ) ){
 		if($new_msg =~ m/quit/){
 			play_text("$name the $new_long_class rage-quit.");
 		}
@@ -85,16 +80,23 @@ sub say_if_important{
 				$team_ant++;
 				play_text("Go team ant! This has been kill number $team_ant for team ant.");
 			}
+			if($new_msg =~ m/ water moccasin/i){
+				play_text("An endless stream of snakes pours forth!");
+			}
 			play_text("$name the $new_long_class was $new_msg");
 		}
 		else{
 			play_text("$name the $new_long_class has entered the $new_msg");
 		}
+	} else {
+		if( defined($new_player_stats{'num_deaths'}) && ( !defined($old_player_stats{'num_deaths'}) || $old_player_stats{'num_deaths'} lt $new_player_stats{'num_deaths'} ) ) {
+			play_text("$name has died.");
+		}
 	}
 }
 
 sub gender_pronoun{
-	if(shift =~ m/^male/){
+	if(shift =~ m/^m/){
 		return "he";
 	}
 	else{
@@ -103,7 +105,7 @@ sub gender_pronoun{
 }
 
 sub gender_possessive{
-	return gender_pronoun(shift)? "his" : "her";
+	return gender_pronoun(shift) eq "he" ? "his" : "her";
 }
 
 sub class_expander{
