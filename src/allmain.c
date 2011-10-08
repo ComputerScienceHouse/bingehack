@@ -522,8 +522,12 @@ moveloop()
 		continue;
 	    }
 	    if (flags.mv) {
-		if(multi < COLNO && !--multi)
-		    flags.travel = iflags.travel1 = flags.mv = flags.run = 0;
+		if(multi < COLNO && !--multi) {
+		    flags.travel = 0;
+		    iflags.travel1 = 0;
+		    flags.mv = 0;
+		    flags.run = 0;
+		}
 		domove();
 	    } else {
 		--multi;

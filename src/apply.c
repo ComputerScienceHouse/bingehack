@@ -1771,7 +1771,8 @@ struct obj **optr;
 			return;
 	}
 	if(!getdir((char *)0)) {
-		flags.move = multi = 0;
+		flags.move = 0;
+		multi = 0;
 		return;
 	}
 	x = u.ux + u.dx; y = u.uy + u.dy;

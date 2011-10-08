@@ -2095,7 +2095,10 @@ const char *txt;
 	  (void) strncpy(multi_txt, txt, BUFSZ);
 	else
 	  (void) memset(multi_txt, 0, BUFSZ);
-	flags.travel = iflags.travel1 = flags.mv = flags.run = 0;
+	flags.travel = 0;
+	iflags.travel1 = 0;
+	flags.mv = 0;
+	flags.run = 0;
 }
 
 /* called when a non-movement, multi-turn action has completed */
