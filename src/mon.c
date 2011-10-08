@@ -1914,8 +1914,14 @@ cleanup:
 	
 	/* Kill-related achievements */
 	if (u.uhp <= 5) award_achievement(AID_SKIN_OF_TEETH);
+	if (is_undead(mdat)) add_achievement_progress(AID_KILL_UNDEAD, 1);
 	if (mdat == &mons[PM_DEMOGORGON]) award_achievement(AID_KILL_DEMOGORGON);
 	if (mdat == &mons[PM_GHOST]) add_achievement_progress(AID_KILL_GHOSTS, 1);
+	if (mdat == &mons[PM_GRID_BUG]) add_achievement_progress(AID_KILL_GRID_BUGS, 1);
+	if (mdat == &mons[PM_WOODCHUCK]) award_achievement(AID_KILL_WOODCHUCK);
+	if (mdat->mlet == S_ORC) add_achievement_progress(AID_KILL_ORCS, 1);
+	if (mdat->mlet == S_ORC) add_achievement_progress(AID_KILL_ORCS, 1);
+	if (mdat->mlet == S_DRAGON) add_achievement_progress(AID_KILL_DRAGONS, 1);
 #ifdef KOPS
 	if (mdat->mlet == S_KOP) award_achievement(AID_FOUGHT_THE_LAW);
 #endif
