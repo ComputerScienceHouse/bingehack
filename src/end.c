@@ -373,6 +373,10 @@ register struct monst *mtmp;
 			mtmp->data == &mons[PM_SOLDIER_ANT] ||
 			mtmp->data == &mons[PM_FIRE_ANT]
 		) award_achievement(AID_KILLED_BY_ANT);
+#ifdef KOPS
+		if (mtmp->data->mlet == S_KOP)
+			award_achievement(AID_FOUGHT_THE_LAW);
+#endif
 	}
 	
 	if (touch_petrifies(mtmp->data))
