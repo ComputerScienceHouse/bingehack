@@ -9,6 +9,7 @@
 #include "func_tab.h"
 /* #define DEBUG */	/* uncomment for debugging */
 #include "mail.h"
+#include "chat.h"
 
 /*
  * Some systems may have getchar() return EOF for various reasons, and
@@ -399,7 +400,7 @@ extcmd_via_menu()	/* here after # - now show pick-list of possible commands */
 		accelerator = choices[i]->ef_txt[matchlevel];
 		if (accelerator != prevaccelerator || nchoices < (ROWNO - 3)) {
 		    if (acount) {
- 			/* flush the extended commands for that letter already in buf */
+			/* flush the extended commands for that letter already in buf */
 			Sprintf(buf, fmtstr, prompt);
 			any.a_char = prevaccelerator;
 			add_menu(win, NO_GLYPH, &any, any.a_char, 0,
@@ -523,7 +524,7 @@ enter_explore_mode()
 	int really_xplor = FALSE;
 
 	if(!discover && !wizard) {
-		pline("Beware!  From explore mode there will be no return to normal game.");
+		pline("Beware!	From explore mode there will be no return to normal game.");
 		really_xplor = enter_explore_mode_from_death();
 		if (!really_xplor) {
 			clear_nhwindow(WIN_MESSAGE);
@@ -537,7 +538,8 @@ enter_explore_mode()
 STATIC_PTR int
 testmail()
 {
-	trigger_mail();
+	if(wizard)
+		trigger_mail();
 	return 0;
 }
 #endif
@@ -552,7 +554,7 @@ testchat()
 	struct sockaddr_in chat_addr;
 	char str[BUFSZ];
 	getlin("Send chat:", str);
-	if(str[0] == '\033'){ /* user is mashing escape key, abort chat. */
+	if(isspace(str[0]) || str[0] == '\033' || str[0] == '\n' || str[0] == 0){ /* user cancel */
 		pline("Fine, chat aborted. They probably didn't want to talk to you anyway.");
 	}
 	else{
@@ -561,8 +563,8 @@ testchat()
 		}
 		memset(&chat_addr, 0, sizeof(chat_addr));
 		chat_addr.sin_family = AF_INET;
-    		chat_addr.sin_port = htons(chat_port);
-		chat_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+		chat_addr.sin_port = htons(chat_port);
+		chat_addr.sin_addr.s_addr = inet_addr(chat_ip_address);
 		if(sendto(chat_socket, str, strlen(str), 0, (const struct sockaddr *) &chat_addr, sizeof(chat_addr)) < 0){ /* error: couldn't transmit */
 			pline("You call out, but you have a nagging feeling nobody can hear you...");
 		}
@@ -713,15 +715,15 @@ wiz_panic()
 {
 	if (yn("Do you want to call panic() and end your game?") == 'y')
 		panic("crash test.");
-        return 0;
+	return 0;
 }
 
 /* #polyself command - change hero's form */
 STATIC_PTR int
 wiz_polyself()
 {
-        polyself(TRUE);
-        return 0;
+	polyself(TRUE);
+	return 0;
 }
 
 /* #seenv command */
@@ -1058,7 +1060,7 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 	else if (Levitation) you_are("levitating");	/* without control */
 	else if (Flying) you_can("fly");
 	if (Wwalking) you_can("walk on water");
-	if (Swimming) you_can("swim");        
+	if (Swimming) you_can("swim");
 	if (Breathless) you_can("survive without air");
 	else if (Amphibious) you_can("breathe water");
 	if (Passes_walls) you_can("walk through walls");
@@ -1277,7 +1279,7 @@ int final;
 	if (u.uedibility) dump(youcould, "recognize detrimental food");
 
 	/*** Troubles ***/
-	if (Halluc_resistance) 	dump("  ", "You resisted hallucinations");
+	if (Halluc_resistance)	dump("  ", "You resisted hallucinations");
 	if (Hallucination) dump(youwere, "hallucinating");
 	if (Stunned) dump(youwere, "stunned");
 	if (Confusion) dump(youwere, "confused");
@@ -1582,24 +1584,24 @@ minimal_enlightenment()
 	Sprintf(buf2, deity_fmtstr, align_gname(A_CHAOTIC),
 	    (u.ualignbase[A_ORIGINAL] == u.ualign.type
 		&& u.ualign.type == A_CHAOTIC) ? " (s,c)" :
-	    (u.ualignbase[A_ORIGINAL] == A_CHAOTIC)       ? " (s)" :
-	    (u.ualign.type   == A_CHAOTIC)       ? " (c)" : "");
+	    (u.ualignbase[A_ORIGINAL] == A_CHAOTIC)	  ? " (s)" :
+	    (u.ualign.type   == A_CHAOTIC)	 ? " (c)" : "");
 	Sprintf(buf, fmtstr, "Chaotic", buf2);
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
 
 	Sprintf(buf2, deity_fmtstr, align_gname(A_NEUTRAL),
 	    (u.ualignbase[A_ORIGINAL] == u.ualign.type
 		&& u.ualign.type == A_NEUTRAL) ? " (s,c)" :
-	    (u.ualignbase[A_ORIGINAL] == A_NEUTRAL)       ? " (s)" :
-	    (u.ualign.type   == A_NEUTRAL)       ? " (c)" : "");
+	    (u.ualignbase[A_ORIGINAL] == A_NEUTRAL)	  ? " (s)" :
+	    (u.ualign.type   == A_NEUTRAL)	 ? " (c)" : "");
 	Sprintf(buf, fmtstr, "Neutral", buf2);
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
 
 	Sprintf(buf2, deity_fmtstr, align_gname(A_LAWFUL),
 	    (u.ualignbase[A_ORIGINAL] == u.ualign.type &&
 		u.ualign.type == A_LAWFUL)  ? " (s,c)" :
-	    (u.ualignbase[A_ORIGINAL] == A_LAWFUL)        ? " (s)" :
-	    (u.ualign.type   == A_LAWFUL)        ? " (c)" : "");
+	    (u.ualignbase[A_ORIGINAL] == A_LAWFUL)	  ? " (s)" :
+	    (u.ualign.type   == A_LAWFUL)	 ? " (c)" : "");
 	Sprintf(buf, fmtstr, "Lawful", buf2);
 	add_menu(tmpwin, NO_GLYPH, &any, 0, 0, ATR_NONE, buf, FALSE);
 
@@ -1669,10 +1671,10 @@ short_time(char *buf, time_t t)
 	obuf=buf;
 #define UNIT(T,x) if (t>=(T)) {buf+=sprintf(buf,"%d%s ",y=t/(T),x);t-=y*(T);}
 	UNIT(365*24*3600, "y");
-	UNIT(    24*3600, "d");
-	UNIT(       3600, "h");
-	UNIT(         60, "m");
-	UNIT(          1, "s");
+	UNIT(	 24*3600, "d");
+	UNIT(	    3600, "h");
+	UNIT(	      60, "m");
+	UNIT(	       1, "s");
 #undef UNIT
 	*--buf=0;
 	return obuf;
@@ -1771,7 +1773,7 @@ int final;
 	{
 	case 1:
 	    Sprintf(buf, "defiled %s brain with the depravity of hell",
-	    	an(urace.noun));
+		an(urace.noun));
 	    you_have_never(buf);
 	    break;
 	case 2:
@@ -1792,20 +1794,20 @@ int final;
 	       but somehow I don't think the patch would get accepted */
 #endif
 	
-        if (u.uconduct.armour<10 && !uarm && !uarmc && !uarmh && !uarmg
-                && !uarms && !uarmf
+	if (u.uconduct.armour<10 && !uarm && !uarmc && !uarmh && !uarmg
+		&& !uarms && !uarmf
 #ifdef TOURIST
-                && !uarmu
+		&& !uarmu
 #endif
-                )
-            you_have_never("used armour");
-            /* "used" not "worn", as we give a bit of leeway */
+		)
+	    you_have_never("used armour");
+	    /* "used" not "worn", as we give a bit of leeway */
 
-        if (Blind && u.uconduct.sight<10)
-            you_have_been("true to the spirit of Zen");
+	if (Blind && u.uconduct.sight<10)
+	    you_have_been("true to the spirit of Zen");
 
-        Sprintf(buf, "wasted %s of time%s", short_time(buf2, u.uage), final?"":" so far");
-        you_have_X(buf);
+	Sprintf(buf, "wasted %s of time%s", short_time(buf2, u.uage), final?"":" so far");
+	you_have_X(buf);
 
 	/* Pop up the window and wait for a key */
 	display_nhwindow(en_win, TRUE);
@@ -1836,7 +1838,7 @@ int final;
 	}
 
 	if (!u.uconduct.gnostic)
-	    dump("", "  You were an atheist");
+	    dump("", "	You were an atheist");
 
 	if (!u.uconduct.weaphit)
 	    dump("", "  You never hit with a wielded weapon");
@@ -2066,26 +2068,26 @@ char
 keydesc2char(desc)
 char *desc;
 {
-        char key;
-        int l=strlen(desc);
+	char key;
+	int l=strlen(desc);
 
-        if(l)
-                key=desc[l-1];
-        switch(l) {
-                case 1:
-                        return key;
-                case 3:
-                        if(desc[1]=='-') {
-                                if(desc[0]=='M') {
-                                    return M(key);
+	if(l)
+		key=desc[l-1];
+	switch(l) {
+		case 1:
+			return key;
+		case 3:
+			if(desc[1]=='-') {
+				if(desc[0]=='M') {
+				    return M(key);
 								} else if(desc[0]=='C') {
-                                	return C(key);
+					return C(key);
 								}
 						}
-                        /*fall through*/
-                default:
-                        return 0;
-        }
+			/*fall through*/
+		default:
+			return 0;
+	}
 }
 #undef DYNKEY_SZ
 #endif /* DYNKEY */
@@ -2118,9 +2120,7 @@ struct ext_func_tab extcmdlist[] = {
 		doextversion, TRUE},
 	{"wipe", "wipe off your face", dowipe, FALSE},
 	{"?", "get this list of extended commands", doextlist, TRUE},
-#ifdef MAIL
-	{"testmail", "DEBUG USE ONLY - Test mail command", testmail, TRUE},
-#endif
+
 #if defined(WIZARD)
 	/*
 	 * There must be a blank entry here for every entry in the table
@@ -2139,7 +2139,10 @@ struct ext_func_tab extcmdlist[] = {
 #endif
 	{(char *)0, (char *)0, donull, TRUE},
 	{(char *)0, (char *)0, donull, TRUE}, /* showkills (showborn patch) */
-        {(char *)0, (char *)0, donull, TRUE},
+	{(char *)0, (char *)0, donull, TRUE},
+#ifdef MAIL
+	{(char *)0, (char *)0, donull, TRUE},
+#endif
 	{(char *)0, (char *)0, donull, TRUE},
 	{(char *)0, (char *)0, donull, TRUE},
 #ifdef DEBUG
@@ -2166,6 +2169,9 @@ static const struct ext_func_tab debug_extcmdlist[] = {
 	{"seenv", "show seen vectors", wiz_show_seenv, TRUE},
 	{"showkills", "show list of monsters killed", wiz_showkills, TRUE},
 	{"stats", "show memory statistics", wiz_show_stats, TRUE},
+#ifdef MAIL
+	{"testmail", "test mail system", testmail, TRUE},
+#endif
 	{"timeout", "look at timeout queue", wiz_timeout_queue, TRUE},
 	{"vision", "show vision array", wiz_show_vision, TRUE},
 #ifdef DEBUG
@@ -2477,11 +2483,11 @@ register char *cmd;
 		 * number pad. Now do not map them until here. 
 		 */
 		switch (*cmd) {
-		    case '5':       *cmd = 'g'; break;
+		    case '5':	    *cmd = 'g'; break;
 		    case M('5'):    *cmd = 'G'; break;
 		    case M('0'):    *cmd = 'I'; break;
-        	}
-        }
+		}
+	}
 	/* handle most movement commands */
 	do_walk = do_rush = prefix_seen = FALSE;
 	flags.travel = iflags.travel1 = 0;
@@ -2721,9 +2727,9 @@ const char *s;
 	if(in_doagain || *readchar_queue)
 	    dirsym =
 #ifdef DYNKEY
-                    greadchar(TRUE);
+		    greadchar(TRUE);
 #else
-                    readchar();
+		    readchar();
 #endif
 	else
 #endif /* REDO */
@@ -2774,7 +2780,7 @@ const char *msg;
 #ifdef WIZARD
 		    || wizard
 #endif
-	                     )) {
+			     )) {
 		Sprintf(buf, "Are you trying to use ^%c%s?", sym,
 			index(wiz_only_list, sym) ? "" :
 			" as specified in the Guidebook");
@@ -2805,18 +2811,18 @@ const char *msg;
 	    putstr(win, 0, "             j   ");
 	} else if (iflags.num_pad) {
 	    putstr(win, 0, "Valid direction keys (with number_pad on) are:");
-	    putstr(win, 0, "          7  8  9");
-	    putstr(win, 0, "           \\ | / ");
-	    putstr(win, 0, "          4- . -6");
+	    putstr(win, 0, "          7  8  9 ");
+	    putstr(win, 0, "          \\ | /  ");
+	    putstr(win, 0, "          4- . -6 ");
 	    putstr(win, 0, "           / | \\ ");
-	    putstr(win, 0, "          1  2  3");
+	    putstr(win, 0, "          1  2  3 ");
 	} else {
 	    putstr(win, 0, "Valid direction keys are:");
-	    putstr(win, 0, "          y  k  u");
-	    putstr(win, 0, "           \\ | / ");
-	    putstr(win, 0, "          h- . -l");
-	    putstr(win, 0, "           / | \\ ");
-	    putstr(win, 0, "          b  j  n");
+	    putstr(win, 0, "           y  k  u ");
+	    putstr(win, 0, "           \\ | /  ");
+	    putstr(win, 0, "           h- . -l ");
+	    putstr(win, 0, "            / | \\ ");
+	    putstr(win, 0, "           b  j  n ");
 	};
 	putstr(win, 0, "");
 	putstr(win, 0, "          <  up");
@@ -2869,80 +2875,80 @@ click_to_cmd(x, y, mod)
     y -= u.uy;
 
     if (iflags.travelcmd) {
-        if (abs(x) <= 1 && abs(y) <= 1 ) {
-            x = sgn(x), y = sgn(y);
-        } else {
-            u.tx = u.ux+x;
-            u.ty = u.uy+y;
-            cmd[0] = CMD_TRAVEL;
-            return cmd;
-        }
+	if (abs(x) <= 1 && abs(y) <= 1 ) {
+	    x = sgn(x), y = sgn(y);
+	} else {
+	    u.tx = u.ux+x;
+	    u.ty = u.uy+y;
+	    cmd[0] = CMD_TRAVEL;
+	    return cmd;
+	}
 
-        if(x == 0 && y == 0) {
-            /* here */
-            if(IS_FOUNTAIN(levl[u.ux][u.uy].typ) || IS_SINK(levl[u.ux][u.uy].typ)) {
-                cmd[0]=mod == CLICK_1 ? 'q' : M('d');
-                return cmd;
-            } else if(IS_THRONE(levl[u.ux][u.uy].typ)) {
-                cmd[0]=M('s');
-                return cmd;
-            } else if((u.ux == xupstair && u.uy == yupstair)
-                      || (u.ux == sstairs.sx && u.uy == sstairs.sy && sstairs.up)
-                      || (u.ux == xupladder && u.uy == yupladder)) {
-                return "<";
-            } else if((u.ux == xdnstair && u.uy == ydnstair)
-                      || (u.ux == sstairs.sx && u.uy == sstairs.sy && !sstairs.up)
-                      || (u.ux == xdnladder && u.uy == ydnladder)) {
-                return ">";
-            } else if(OBJ_AT(u.ux, u.uy)) {
-                cmd[0] = Is_container(level.objects[u.ux][u.uy]) ? M('l') : ',';
-                return cmd;
-            } else {
-                return "."; /* just rest */
-            }
-        }
+	if(x == 0 && y == 0) {
+	    /* here */
+	    if(IS_FOUNTAIN(levl[u.ux][u.uy].typ) || IS_SINK(levl[u.ux][u.uy].typ)) {
+		cmd[0]=mod == CLICK_1 ? 'q' : M('d');
+		return cmd;
+	    } else if(IS_THRONE(levl[u.ux][u.uy].typ)) {
+		cmd[0]=M('s');
+		return cmd;
+	    } else if((u.ux == xupstair && u.uy == yupstair)
+		      || (u.ux == sstairs.sx && u.uy == sstairs.sy && sstairs.up)
+		      || (u.ux == xupladder && u.uy == yupladder)) {
+		return "<";
+	    } else if((u.ux == xdnstair && u.uy == ydnstair)
+		      || (u.ux == sstairs.sx && u.uy == sstairs.sy && !sstairs.up)
+		      || (u.ux == xdnladder && u.uy == ydnladder)) {
+		return ">";
+	    } else if(OBJ_AT(u.ux, u.uy)) {
+		cmd[0] = Is_container(level.objects[u.ux][u.uy]) ? M('l') : ',';
+		return cmd;
+	    } else {
+		return "."; /* just rest */
+	    }
+	}
 
-        /* directional commands */
+	/* directional commands */
 
-        dir = xytod(x, y);
+	dir = xytod(x, y);
 
 	if (!m_at(u.ux+x, u.uy+y) && !test_move(u.ux, u.uy, x, y, TEST_MOVE)) {
-            cmd[1] = (iflags.num_pad ? ndir[dir] : sdir[dir]);
-            cmd[2] = 0;
-            if (IS_DOOR(levl[u.ux+x][u.uy+y].typ)) {
-                /* slight assistance to the player: choose kick/open for them */
-                if (levl[u.ux+x][u.uy+y].doormask & D_LOCKED) {
-                    cmd[0] = C('d');
-                    return cmd;
-                }
-                if (levl[u.ux+x][u.uy+y].doormask & D_CLOSED) {
-                    cmd[0] = 'o';
-                    return cmd;
-                }
-            }
-            if (levl[u.ux+x][u.uy+y].typ <= SCORR) {
-                cmd[0] = 's';
-                cmd[1] = 0;
-                return cmd;
-            }
-        }
+	    cmd[1] = (iflags.num_pad ? ndir[dir] : sdir[dir]);
+	    cmd[2] = 0;
+	    if (IS_DOOR(levl[u.ux+x][u.uy+y].typ)) {
+		/* slight assistance to the player: choose kick/open for them */
+		if (levl[u.ux+x][u.uy+y].doormask & D_LOCKED) {
+		    cmd[0] = C('d');
+		    return cmd;
+		}
+		if (levl[u.ux+x][u.uy+y].doormask & D_CLOSED) {
+		    cmd[0] = 'o';
+		    return cmd;
+		}
+	    }
+	    if (levl[u.ux+x][u.uy+y].typ <= SCORR) {
+		cmd[0] = 's';
+		cmd[1] = 0;
+		return cmd;
+	    }
+	}
     } else {
-        /* convert without using floating point, allowing sloppy clicking */
-        if(x > 2*abs(y))
-            x = 1, y = 0;
-        else if(y > 2*abs(x))
-            x = 0, y = 1;
-        else if(x < -2*abs(y))
-            x = -1, y = 0;
-        else if(y < -2*abs(x))
-            x = 0, y = -1;
-        else
-            x = sgn(x), y = sgn(y);
+	/* convert without using floating point, allowing sloppy clicking */
+	if(x > 2*abs(y))
+	    x = 1, y = 0;
+	else if(y > 2*abs(x))
+	    x = 0, y = 1;
+	else if(x < -2*abs(y))
+	    x = -1, y = 0;
+	else if(y < -2*abs(x))
+	    x = 0, y = -1;
+	else
+	    x = sgn(x), y = sgn(y);
 
-        if(x == 0 && y == 0)	/* map click on player to "rest" command */
-            return ".";
+	if(x == 0 && y == 0)	/* map click on player to "rest" command */
+	    return ".";
 
-        dir = xytod(x, y);
+	dir = xytod(x, y);
     }
 
     /* move, attack, etc. */
@@ -2974,17 +2980,17 @@ parse()
 
 	if (!iflags.num_pad || (foo =
 #ifdef DYNKEY
-                                greadchar(TRUE)
+				greadchar(TRUE)
 #else
-                                readchar()
+				readchar()
 #endif
-                               ) == 'n')
+			       ) == 'n')
 	    for (;;) {
 		foo =
 #ifdef DYNKEY
-                        greadchar(TRUE);
+			greadchar(TRUE);
 #else
-                        readchar();
+			readchar();
 #endif
 		if (foo >= '0' && foo <= '9') {
 		    multi = 10 * multi + foo - '0';
@@ -3023,11 +3029,11 @@ parse()
 	in_line[1] = '\0';
 	if (foo == 'g' || foo == 'G' || foo == 'm' || foo == 'M' ||
 	    foo == 'F' || (iflags.num_pad && (foo == '5' || foo == '-'))) {
-            foo =
+	    foo =
 #ifdef DYNKEY
-                    greadchar(TRUE);
+		    greadchar(TRUE);
 #else
-                    readchar();
+		    readchar();
 #endif
 
 #ifdef REDO
@@ -3105,15 +3111,15 @@ readchar() {
 	    sym = *readchar_queue++;
 	}
 #ifdef DYNKEY
-        if(dkblist && dynkey) {
-                register const struct dkb_tab *dlist;
+	if(dkblist && dynkey) {
+		register const struct dkb_tab *dlist;
 
-                for(dlist = dkblist; dlist->bound_char; dlist++) {
-                    if((sym & 0xff) != (dlist->bound_char & 0xff)) continue;
-                    sym=dlist->cmd_char;
-                    break;
-                }
-        }
+		for(dlist = dkblist; dlist->bound_char; dlist++) {
+		    if((sym & 0xff) != (dlist->bound_char & 0xff)) continue;
+		    sym=dlist->cmd_char;
+		    break;
+		}
+	}
 #endif
 	return((char) sym);
 }

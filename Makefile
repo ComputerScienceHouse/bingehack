@@ -29,12 +29,26 @@ CPPFLAGS := $(CPPFLAGS) -I$(INCDIR) -D_GNU_SOURCE
 CFLAGS := $(CFLAGS) -fPIC -Werror -Wall -Wno-format -Wnonnull -std=gnu99
 
 UNAME := $(shell uname -s)
-ifneq ($(UNAME), OpenBSD)
-CPPFLAGS := $(CPPFLAGS) $(shell $(NCURSES_CONFIG) --cflags) $(shell $(NCURSESW_CONFIG) --cflags) $(shell $(MYSQL_CONFIG) --cflags) $(shell $(PKG_CONFIG) --cflags libconfig)
-LIBRARIES := $(LIBRARIES) $(shell $(NCURSES_CONFIG) --libs) $(shell $(NCURSESW_CONFIG) --libs) $(shell $(PKG_CONFIG) --libs libconfig) -ldl
+ifeq ($(UNAME), OpenBSD)
+NCURSES_LIBRARIES ?= -L/usr/lib -lncurses
+NCURSESW_LIBRARIES ?= -L/usr/lib -lncursesw
 else
-LIBRARIES := $(LIBARAIES) -L/usr/lib -lncurses -lncursesw
+NCURSES_CPPFLAGS ?= $(shell $(NCURSES_CONFIG) --cflags)
+NCURSES_LIBRARIES ?= $(shell $(NCURSES_CONFIG) --libs)
+NCURSESW_CPPFLAGS ?= $(shell $(NCURSESW_CONFIG) --cflags)
+NCURSESW_LIBRARIES ?= $(shell $(NCURSESW_CONFIG) --libs)
 endif
+
+ifeq ($(UNAME), Linux)
+DYLD_LIBRARIES ?= -ldl
+endif
+
+LIBCONFIG_CPPFLAGS ?= $(shell $(PKG_CONFIG) --cflags libconfig)
+LIBCONFIG_LIBRARIES ?= $(shell $(PKG_CONFIG) --libs libconfig)
+MYSQL_CPPFLAGS ?= $(shell $(MYSQL_CONFIG) --cflags)
+
+CPPFLAGS := $(CPPFLAGS) $(NCURSES_CPPFLAGS) $(NCURSESW_CPPFLAGS) $(LIBCONFIG_CPPFLAGS) $(DYLD_CPPFLAGS) $(MYSQL_CPPFLAGS)
+LIBRARIES := $(DYLD_LIBRARIES) $(LIBRARIES) $(NCURSES_LIBRARIES) $(NCURSESW_LIBRARIES) $(LIBCONFIG_LIBRARIES)
 
 CLEAN_TARGETS := $(SUBDIRS:=/clean)
 DEPCLEAN_TARGETS := $(SUBDIRS:=/depclean)
@@ -96,10 +110,10 @@ ifneq ($(UNAME), OpenBSD)
 else
 	$(INSTALL) $(RECOVER) $(GAMEDIR)/recover
 endif
-	$(TOUCH) $(GAMEDIR)/var/perm $(GAMEDIR)/var/record $(GAMEDIR)/var/logfile $(GAMEDIR)/var/xlogfile $(GAMEDIR)/nethack.conf
+	$(TOUCH) $(GAMEDIR)/nethack.conf
 
 %.exe:
-	$(CC) $(LDFLAGS) -o $@ $(EXE_OBJECTS)
+	$(CC) $(EXE_LIBRARIES) $(LDFLAGS) -o $@ $(EXE_OBJECTS)
 
 %.d: %.c
 	$(DEPGEN) -MM $(CPPFLAGS) -MQ $(@:.d=.o) -MQ $@ -MF $*.d $<
