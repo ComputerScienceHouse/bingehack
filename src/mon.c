@@ -1913,7 +1913,7 @@ cleanup:
 	}
 	
 	/* Kill-related achievements */
-	if (u.uhp <= 5) award_achievement(AID_SKIN_OF_TEETH);
+	if (u.uhp <= 5 && u.ulevel >= 5) award_achievement(AID_SKIN_OF_TEETH);
 	if (is_undead(mdat)) add_achievement_progress(AID_KILL_UNDEAD, 1);
 	if (mdat == &mons[PM_DEMOGORGON]) award_achievement(AID_KILL_DEMOGORGON);
 	if (mdat == &mons[PM_GHOST]) add_achievement_progress(AID_KILL_GHOSTS, 1);
