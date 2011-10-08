@@ -1,43 +1,37 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+use Env qw( FESTIVAL );
 
-my $tts = "festival --pipe";
+#my $festival  = "/Users/russ/Sources/festival/festival/bin/festival";
+my $festival  = "$FESTIVAL";
+my $tts = "$festival --pipe";
 my $board = "./rx";
 my %players = ();
 
 my $team_ant=0;
 my $i = 0;
 while (<STDIN>){
-#chomp $line;
-my $line = $_;
-#print "Got: $line\n";
+	my $line = $_;
 
-my @player_import = split(",", $line);
-my ($name, $race, $gender, $alignment, $class, $hp, $hpmax, $ulevel, $ac, $num_prayers, $num_wishes, $num_deaths, $num_moves, $dlevel, $msg) = @player_import;
-if($name =~ m/port34/){
-	$name='port__';
-	$player_import[0]=$name;
-}
+	my @player_import = split(",", $line);
+	my ($name, $race, $gender, $alignment, $class, $hp, $hpmax, $ulevel, $ac, $num_prayers, $num_wishes, $num_deaths, $num_moves, $dlevel, $msg) = @player_import;
+	if($name =~ m/port34/){
+		$name='port__';
+		$player_import[0]=$name;
+	}
 
-if(exists($players{ $name } )){
-	# check to see if something important changed
-	say_if_important(player_hasher(@player_import));
-	$players{ $name } = player_hasher(@player_import);
-}
-else{
-	my %player_stats = %{player_hasher(@player_import)};
-	$players{ $name } = \%player_stats;
-	my $long_class = class_expander($class,$gender);
-	play_text("$name the $long_class has entered $msg!\n");
-}
-
-$i++;
-if($i==10000){
-	print "Restarting backend.\n";
-#	close(STDIN);
-	$i=0;
-}
+	if(exists($players{ $name } )){
+		# check to see if something important changed
+		say_if_important(player_hasher(@player_import));
+		$players{ $name } = player_hasher(@player_import);
+	}
+	else{
+		my %player_stats = %{player_hasher(@player_import)};
+		$players{ $name } = \%player_stats;
+		my $long_class = class_expander($class,$gender);
+		play_text("$name the $long_class has entered $msg!\n");
+	}
 }
 
 sub say_if_important{
@@ -201,5 +195,5 @@ sub player_hasher{
 sub play_text{
 	my $text = shift;
 	print "Saying: $text\n";
-	`echo "$text" | festival --tts`;
+	`echo "$text" | "$festival" --tts`;
 }
