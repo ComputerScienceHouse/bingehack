@@ -16,6 +16,7 @@ while (<STDIN>){
 
 	my @player_import = split(",", $line);
 	my ($name, $race, $gender, $alignment, $class, $hp, $hpmax, $ulevel, $ac, $num_prayers, $num_wishes, $num_deaths, $num_moves, $dlevel, $msg) = @player_import;
+	chomp($msg);
 	if($name =~ m/port34/){
 		$name='port__';
 		$player_import[0]=$name;
@@ -30,7 +31,7 @@ while (<STDIN>){
 		my %player_stats = %{player_hasher(@player_import)};
 		$players{ $name } = \%player_stats;
 		my $long_class = class_expander($class,$gender);
-		play_text("$name the $long_class has entered $msg!\n");
+		play_text("$name the $long_class has entered $msg!");
 	}
 }
 
@@ -84,7 +85,7 @@ sub say_if_important{
 				$team_ant++;
 				play_text("Go team ant! This has been kill number $team_ant for team ant.");
 			}
-			play_text("$name the $new_long_class was $new_msg\n");
+			play_text("$name the $new_long_class was $new_msg");
 		}
 		else{
 			play_text("$name the $new_long_class has entered the $new_msg");
