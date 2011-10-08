@@ -181,7 +181,7 @@ int mechanism;
 	}
 	else{
 		truth=3; /* We're talking to potter, we want the Potter quotes */
-		award_achievement(AID_POTTER);
+		award_achievement(AID_POTTER_CHAT);
 	}
 	line = getrumor(truth, buf, reading ? FALSE : TRUE);
 	if (!*line)

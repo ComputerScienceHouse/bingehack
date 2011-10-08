@@ -810,6 +810,8 @@ E struct obj *FDECL(sobj_at, (int,int,int));
 E struct obj *FDECL(carrying, (int));
 E boolean NDECL(have_lizard);
 E struct obj *FDECL(o_on, (unsigned int,struct obj *));
+extern bool otype_on( int, struct obj * );
+extern bool in_possession( int );
 E boolean FDECL(obj_here, (struct obj *,int,int));
 E boolean NDECL(wearing_armor);
 E boolean FDECL(is_worn, (struct obj *));
@@ -1464,55 +1466,6 @@ E int NDECL(dowhatdoes);
 E char *FDECL(dowhatdoes_core,(CHAR_P, char *));
 E int NDECL(dohelp);
 E int NDECL(dohistory);
-
-/* ### pcmain.c ### */
-
-#if defined(MICRO) || defined(WIN32)
-# ifdef CHDIR
-E void FDECL(chdirx, (char *,BOOLEAN_P));
-# endif /* CHDIR */
-#endif /* MICRO || WIN32 */
-
-/* ### pcsys.c ### */
-
-#if defined(MICRO) || defined(WIN32)
-E void NDECL(flushout);
-E int NDECL(dosh);
-# ifdef MFLOPPY
-E void FDECL(eraseall, (const char *,const char *));
-E void FDECL(copybones, (int));
-E void NDECL(playwoRAMdisk);
-E int FDECL(saveDiskPrompt, (int));
-E void NDECL(gameDiskPrompt);
-# endif
-E void FDECL(append_slash, (char *));
-E void FDECL(getreturn, (const char *));
-# ifndef AMIGA
-E void VDECL(msmsg, (const char *,...));
-# endif
-E FILE *FDECL(fopenp, (const char *,const char *));
-#endif /* MICRO || WIN32 */
-
-/* ### pctty.c ### */
-
-#if defined(MICRO) || defined(WIN32)
-E void NDECL(gettty);
-E void FDECL(settty, (const char *));
-E void NDECL(setftty);
-E void VDECL(error, (const char *,...));
-#if defined(TIMED_DELAY) && defined(_MSC_VER)
-E void FDECL(msleep, (unsigned));
-#endif
-#endif /* MICRO || WIN32 */
-
-/* ### pcunix.c ### */
-
-#if defined(MICRO)
-E void FDECL(regularize, (char *));
-#endif /* MICRO */
-#if defined(PC_LOCKING)
-E void NDECL(getlock);
-#endif
 
 /* ### pickup.c ### */
 

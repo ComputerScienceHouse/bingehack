@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include "hack.h"
+#include "achieve.h"
 
 int NDECL((*afternmv));
 int NDECL((*occupation));
@@ -190,6 +191,12 @@ NEARDATA struct spell spl_book[MAXSPELL + 1] = {DUMMY};
 NEARDATA long moves = 1L, monstermoves = 1L;
 	 /* These diverge when player is Fast */
 NEARDATA long wailmsg = 0L;
+
+/* Number of steps (not moves) the player has taken, used for awarding
+   the step count achievements. Since it's not stored in savegames, this
+   can only count as high as the highest step count achievement, and
+   some steps will be lost on save/load as per the "granularity" in hack.c */
+int step_count_for_achievements = 0;
 
 /* objects that are moving to another dungeon level */
 NEARDATA struct obj *migrating_objs = (struct obj *)0;

@@ -10,12 +10,7 @@
 #include <errno.h>
 #include <unistd.h>
 
-#include <mysql.h>
-#include <libconfig.h>
-
 #include "achieve.h"
-#include "configfile.h"
-#include "mysql_library.h"
 #include "hack.h"
 
 #ifndef NO_SIGNAL
@@ -34,18 +29,6 @@ struct sockaddr_in mcast_addr;
 
 struct u_stat_t u_stat;
 
-void segv_award( int sig ) {
-    if( signal(SIGSEGV, SIG_DFL) == SIG_ERR ) {
-	    perror("signal");
-		exit(EXIT_FAILURE);
-	}
-	award_achievement(AID_CRASH);
-	if( kill(getpid(), SIGSEGV) == -1 ) {
-		perror("kill");
-		exit(EXIT_FAILURE);
-	}
-}
-
 void
 moveloop()
 {
@@ -57,8 +40,6 @@ moveloop()
     boolean didmove = FALSE, monscanmove = FALSE;
     int last_dnum = -1;
     int i;
-
-    if( signal(SIGSEGV, segv_award) == SIG_ERR ) pline("Unable to register signal handler: %s", strerror(errno));
 
     bzero(u_stat.plname, sizeof(u_stat.plname));
     strncpy(u_stat.plname, plname, sizeof(u_stat.plname) - 1);
@@ -77,10 +58,6 @@ moveloop()
         if( setsockopt(mcast_socket, IPPROTO_IP, IP_MULTICAST_IF, &localhost_addr, sizeof(localhost_addr)) == -1 )
           pline("setsockopt: %s", strerror(errno));
     }
-
-    configfile_init();
-    mysql_library_startup();
-    achievement_system_startup();
 
     flags.moonphase = phase_of_the_moon();
     if(flags.moonphase == FULL_MOON) {
@@ -545,8 +522,12 @@ moveloop()
 		continue;
 	    }
 	    if (flags.mv) {
-		if(multi < COLNO && !--multi)
-		    flags.travel = iflags.travel1 = flags.mv = flags.run = 0;
+		if(multi < COLNO && !--multi) {
+		    flags.travel = 0;
+		    iflags.travel1 = 0;
+		    flags.mv = 0;
+		    flags.run = 0;
+		}
 		domove();
 	    } else {
 		--multi;
@@ -682,7 +663,7 @@ newgame()
 		flush_screen(1);
 		com_pager(1);
 	}
-
+	
 #ifdef INSURANCE
 	save_currentstate();
 #endif

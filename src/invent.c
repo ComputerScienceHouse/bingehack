@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include "hack.h"
+#include "achieve.h"
 
 #define NOINVSYM	'#'
 #define CONTAINED_SYM	'>'	/* designator for inside a container */
@@ -278,24 +279,28 @@ struct obj *obj;
 	} else if (obj->otyp == AMULET_OF_YENDOR) {
 		if (u.uhave.amulet) impossible("already have amulet?");
 		u.uhave.amulet = 1;
+		award_achievement(AID_GET_AMULET);
 #ifdef RECORD_ACHIEVE
                 achieve.get_amulet = 1;
 #endif
 	} else if (obj->otyp == CANDELABRUM_OF_INVOCATION) {
 		if (u.uhave.menorah) impossible("already have candelabrum?");
 		u.uhave.menorah = 1;
+		award_achievement(AID_GET_CANDELABRUM);
 #ifdef RECORD_ACHIEVE
                 achieve.get_candelabrum = 1;
 #endif
 	} else if (obj->otyp == BELL_OF_OPENING) {
 		if (u.uhave.bell) impossible("already have silver bell?");
 		u.uhave.bell = 1;
+		award_achievement(AID_GET_BELL);
 #ifdef RECORD_ACHIEVE
                 achieve.get_bell = 1;
 #endif
 	} else if (obj->otyp == SPE_BOOK_OF_THE_DEAD) {
 		if (u.uhave.book) impossible("already have the book?");
 		u.uhave.book = 1;
+		award_achievement(AID_GET_BOOK);
 #ifdef RECORD_ACHIEVE
                 achieve.get_book = 1;
 #endif
@@ -390,6 +395,18 @@ added:
 	addinv_core2(obj);
 	carry_obj_effects(obj);		/* carrying affects the obj */
 	update_inventory();
+	
+	/* Inventory-related achievements */
+	if (obj->oclass == AMULET_CLASS) {
+		int amulets_exist = 0;
+		int amulets_gotten = 0;
+		for(int atyp = AMULET_OF_ESP; atyp <= AMULET_OF_YENDOR; atyp++) {
+			amulets_exist++;
+			if (in_possession(atyp)) amulets_gotten++;
+		}
+		if (amulets_exist == amulets_gotten) award_achievement(AID_GET_ALL_AMULETS);
+	}
+	
 	return(obj);
 }
 
@@ -717,6 +734,27 @@ register struct obj *objchn;
 		objchn = objchn->nobj;
 	}
 	return((struct obj *) 0);
+}
+
+boolean
+otype_on(type, objchn)
+register int type;
+register struct obj *objchn;
+{
+	while(objchn) {
+		if(objchn->otyp == type) return(TRUE);
+		if (Has_contents(objchn) && otype_on(type, objchn->cobj))
+			return(TRUE);
+		objchn = objchn->nobj;
+	}
+	return(FALSE);
+}
+
+boolean
+in_possession(type)
+register int type;
+{
+	return otype_on(type, invent);
 }
 
 boolean

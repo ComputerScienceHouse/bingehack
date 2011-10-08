@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include "hack.h"
+#include "achieve.h"
 
 #ifdef OVL1
 STATIC_DCL void NDECL(maybe_wail);
@@ -1404,6 +1405,13 @@ domove()
 	    /* Since the hero has moved, adjust what can be seen/unseen. */
 	    vision_recalc(1);	/* Do the work now in the recover time. */
 	    invocation_message();
+	    
+	    /* Do step achievement progress */
+	    step_count_for_achievements++;
+	    if (!(step_count_for_achievements % 100)) {
+		add_achievement_progress(AID_WALK_5K, 100);
+		add_achievement_progress(AID_WALK_10K, 100);
+	    }
 	}
 
 	if (Punished)				/* put back ball and chain */
@@ -1457,6 +1465,8 @@ invocation_message()
 	    if (otmp && otmp->spe == 7 && otmp->lamplit)
 		pline("%s %s!", The(xname(otmp)),
 		    Blind ? "throbs palpably" : "glows with a strange light");
+	    
+	    award_achievement(AID_FIND_VIBE_SQUARE);
 	}
 }
 
@@ -2085,7 +2095,10 @@ const char *txt;
 	  (void) strncpy(multi_txt, txt, BUFSZ);
 	else
 	  (void) memset(multi_txt, 0, BUFSZ);
-	flags.travel = iflags.travel1 = flags.mv = flags.run = 0;
+	flags.travel = 0;
+	iflags.travel1 = 0;
+	flags.mv = 0;
+	flags.run = 0;
 }
 
 /* called when a non-movement, multi-turn action has completed */

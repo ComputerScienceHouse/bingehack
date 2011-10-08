@@ -129,7 +129,6 @@ main( int argc, char *argv[] )
   struct u_stat_t u_stat;
   struct sockaddr_in addr, from;
   socklen_t fromlen;
-  struct hostent *hent;
   u_int yes = 1;
   bool first_time = true;
   int i;
@@ -141,8 +140,6 @@ main( int argc, char *argv[] )
   }
 
   gethostname(name, sizeof(name));
-
-  hent = gethostbyname(name);
 
   if( setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) != 0 ) {
     perror("setsockopt");

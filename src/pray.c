@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include "hack.h"
 #include "epri.h"
+#include "achieve.h"
 
 STATIC_PTR int NDECL(prayer_done);
 STATIC_DCL struct obj *NDECL(worst_cursed_item);
@@ -524,6 +525,7 @@ aligntyp resp_god;
 	    else {
 		You("bask in its %s glow for a minute...", NH_BLACK);
 		godvoice(resp_god, "I believe it not!");
+		award_achievement(AID_SURVIVE_GOD_DISINTEGRATION);
 	    }
 	    if (Is_astralevel(&u.uz) || Is_sanctum(&u.uz)) {
 		/* one more try for high altars */
@@ -840,7 +842,8 @@ pleased(g_align)
 		    break;
 
 	    case 1: if (trouble > 0) fix_worst_trouble(trouble);
-	    case 0: break; /* your god blows you off, too bad */
+	    case 0: if (trouble > 0) award_achievement(AID_UNCARING_GOD);
+		    break; /* your god blows you off, too bad */
 	    }
 	}
 
@@ -1299,6 +1302,8 @@ dosacrifice()
 verbalize("In return for thy service, I grant thee the gift of Immortality!");
 		You("ascend to the status of Demigod%s...",
 		    flags.female ? "dess" : "");
+		award_achievement(AID_ASCEND);
+		add_achievement_progress(AID_ASCEND_THRICE, 1);
 		done(ASCENDED);
 	    }
 	}
@@ -1400,7 +1405,9 @@ verbalize("In return for thy service, I grant thee the gift of Immortality!");
 			      hcolor(
 			      u.ualign.type == A_LAWFUL ? NH_WHITE :
 			      u.ualign.type ? NH_BLACK : (const char *)"gray"));
-
+		    
+		    award_achievement(AID_CONVERT_ALTAR);
+		    
 		    if (rnl(u.ulevel) > 6 && u.ualign.record > 0 &&
 		       rnd(u.ualign.record) > (3*ALIGNLIM)/4)
 			summon_minion(altaralign, TRUE);
