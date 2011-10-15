@@ -1245,16 +1245,10 @@ static const char *csh_epitaphs[] = {
 	"Here lies your heart, garbage-plate'd apart. Next time read the calorie chart.",
 	"Here lies the Flying Ostrich - a lean, mean, pterodactyl-fighting machine.",
 	"Here lies Tron - He died for the users.",
-/* TODO: Uncomment this code in a year or so when it's not nearly as fresh 
- * 	and painful, and is instead just a thoughtful reminder.	
- * 		--Clockfort, 2010-01-10
- */
 	"Here lies Lisa Tufo Nault - Beloved house member",
 	"Here lies Ryan Phillips - Mark's Best Customer",
-/*
 	"Here lies Ryan Phillips - Plate Connoisseur",
 	"Here lies Ryan Phillips - Our Best Friend at RIT"
-*/
 };
 
 /* Epitaphs for random headstones */
