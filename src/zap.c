@@ -4279,6 +4279,13 @@ retry:
 	    return;
 	}
 
+	/* Guilt for wishing for a boulder in Sokoban
+	 *	- Chris Becker (topher@csh.rit.edu) 
+	 */
+	if (In_sokoban(&u.uz) && otmp->otyp == BOULDER) 
+		change_luck(-1);
+
+
 	/* KMH, conduct */
 	u.uconduct.wishes++;
 
