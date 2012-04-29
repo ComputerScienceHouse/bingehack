@@ -2138,6 +2138,10 @@ set_trap()
 	    if (!trapinfo.force_bungle)
 		You("finish arming %s.",
 			the(defsyms[trap_to_defsym(what_trap(ttyp))].explanation));
+		/* pay for an unpayed trap - Chris Becker (topher@csh.rit.edu) */
+		if (otmp->unpaid) {
+			bill_dummy_object(otmp);	
+		}
 	    if (((otmp->cursed || Fumbling) && (rnl(10) > 5)) || trapinfo.force_bungle)
 		dotrap(ttmp,
 			(unsigned)(trapinfo.force_bungle ? FORCEBUNGLE : 0));
