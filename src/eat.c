@@ -1921,6 +1921,28 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 		}
 	}
 
+	/* Can't eat trapped food - Chris Becker (topher@csh.rit.edu) */
+	{
+		struct trap* ttmp = t_at(u.ux,u.uy);
+		if (ttmp) {
+			switch(ttmp->ttyp) {
+			case PIT:
+			case SPIKED_PIT:
+				if (!(u.utraptype == TT_PIT && u.utrap)) {
+					You("can't reach %s, it's at the bottom of the %s!", the(xname(otmp)), 
+						ttmp->ttyp == PIT ? "pit" :	"spiked pit" );
+					return 0;
+				}
+				break;
+			case WEB:
+				You("can't eat %s, it's caught in the spider web%s!", the(xname(otmp)),
+					u.utraptype == TT_WEB && u.utrap ? " with you" : "" );
+				return 0;
+			default:
+				break;
+			}
+		}
+	}
 	/* We have to make non-foods take 1 move to eat, unless we want to
 	 * do ridiculous amounts of coding to deal with partly eaten plate
 	 * mails, players who polymorph back to human in the middle of their
