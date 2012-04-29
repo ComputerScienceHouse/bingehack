@@ -796,7 +796,8 @@ dodown()
 	}
 	if (!stairs_down && !ladder_down) {
 		if (!(trap = t_at(u.ux,u.uy)) ||
-			(trap->ttyp != TRAPDOOR && trap->ttyp != HOLE)
+			(trap->ttyp != TRAPDOOR && trap->ttyp != HOLE &&
+			 trap->ttyp != PIT && trap->ttyp != SPIKED_PIT)
 			|| !Can_fall_thru(&u.uz) || !trap->tseen) {
 
 			if (flags.autodig && !flags.nopick &&
@@ -828,6 +829,14 @@ dodown()
 		return(0);
 	}
 
+	/* Move into the pit */
+	if (trap && (trap->ttyp == PIT || trap->ttyp == SPIKED_PIT)) {
+		You("carefully slide down into the %spit", 
+			trap->ttyp == SPIKED_PIT ? "spiked " : "");
+		u.utraptype = TT_PIT;
+		u.utrap = rn1(6,2);
+		return(0);
+	} else {
 	if (trap)
 	    You("%s %s.", locomotion(youmonst.data, "jump"),
 		trap->ttyp == HOLE ? "down the hole" : "through the trap door");
@@ -838,6 +847,7 @@ dodown()
 		at_ladder = (boolean) (levl[u.ux][u.uy].typ == LADDER);
 		next_level(!trap);
 		at_ladder = FALSE;
+	}
 	}
 	return(1);
 }
