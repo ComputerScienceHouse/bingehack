@@ -159,7 +159,11 @@ static struct Bool_Opt
 #else
 	{"menu_tab_sep", (boolean *)0, FALSE, SET_IN_FILE},
 #endif
+#ifdef CURSES_GRAPHICS
+	{"mouse_support", &iflags.wc_mouse_support, FALSE, DISP_IN_GAME},	/*WC*/
+#else
 	{"mouse_support", &iflags.wc_mouse_support, TRUE, DISP_IN_GAME},	/*WC*/
+#endif
 #ifdef NEWS
 	{"news", &iflags.news, TRUE, DISP_IN_GAME},
 #else

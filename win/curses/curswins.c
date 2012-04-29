@@ -66,7 +66,7 @@ WINDOW *curses_create_window(int width, int height, orient orientation)
     int mapb_offset = 0;
         
     if ((orientation == UP) || (orientation == DOWN) ||
-     (orientation == LEFT))
+     (orientation == LEFT) || (orientation == RIGHT))
     {
         if (invent || (moves > 1))
         {
@@ -141,7 +141,15 @@ WINDOW *curses_create_window(int width, int height, orient orientation)
         }
         case RIGHT:
         {
-            startx = term_cols - width;
+            if (invent || (moves > 1))
+            {
+                startx = (mapw + mapx + (mapb_offset * 2)) - width;
+            }
+            else
+            {
+                startx = term_cols - width;
+            }
+            
             starty = 0;
             break;
         }
@@ -150,6 +158,17 @@ WINDOW *curses_create_window(int width, int height, orient orientation)
             panic("curses_create_window: Bad orientation");
         }
     }
+    
+    if (startx < 0)
+    {
+        startx = 0;
+    }
+    
+    if (starty < 0)
+    {
+        starty = 0;
+    }
+  
     win = newwin(height, width, starty, startx);
     curses_toggle_color_attr(win, DIALOG_BORDER_COLOR, NONE, ON);
     box(win, 0, 0);
@@ -530,19 +549,18 @@ void curses_clear_nhwin(winid wid)
     WINDOW *win = curses_get_nhwin(wid);
     boolean border = curses_window_has_border(wid);
     
-    werase(win);
-    
     if (wid == MAP_WIN)
     {
+        clearok(win, TRUE); /* Redraw entire screen when refreshed */
         clear_map();
     }
-    
+        
+    werase(win);
+
     if (border)
     {
         box(win, 0, 0);
     }
-    
-//    wrefresh(win);
 }
 
 
