@@ -1629,9 +1629,12 @@ boolean from_invent;
 			(*o_shop != u.ushops[0] || !inside_shop(u.ux, u.uy)) &&
 			moves != lastmovetime) make_angry_shk(shkp, x, y);
 		    lastmovetime = moves;
-		}
-	    }
+		} 
+	    } 	
 	}
+	
+	/* don't delete boulders/statues so they can create rocks */
+	if (!(obj->otyp == BOULDER || obj->otyp == STATUE))
 	delobj(obj);
 }
 
@@ -1657,6 +1660,8 @@ struct obj *obj;
 		case MELON:
 		case ACID_VENOM:
 		case BLINDING_VENOM:
+		case BOULDER:
+		case STATUE:
 			return 1;
 		default:
 			return 0;
@@ -1701,6 +1706,9 @@ boolean in_view;
 		case ACID_VENOM:
 		case BLINDING_VENOM:
 			pline("Splash!");
+			break;
+		case BOULDER:
+		case STATUE:	/* message already taken care of */
 			break;
 	}
 }
