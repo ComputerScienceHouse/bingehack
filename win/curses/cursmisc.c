@@ -770,7 +770,14 @@ int curses_read_attrs(char *attrs)
 
 
 /* Convert special keys into values that NetHack can understand.
-Currently this is limited to arrow keys, but this may be expanded. */
+Currently this is limited to arrow keys, but this may be expanded. 
+
+Curses has this following keymap for the numpad:
+A1    UP      A3
+LEFT  B2   RIGHT
+C1   DOWN     C3
+
+*/
 
 int curses_convert_keys(int key)
 {
@@ -902,6 +909,14 @@ int curses_convert_keys(int key)
             break;
         }
 #endif  /* KEY_B2 */
+        case KEY_ENTER:
+        {
+            if (iflags.num_pad)
+            {
+                ret = '\n';
+            }
+            break;
+        }
     }
 
     return ret;
