@@ -1371,6 +1371,23 @@ boolean at_stairs, falling, portal;
 	    final_level();
 	else
 	    onquest();
+
+	/* Guilt for carrying boulders into Sokoban 
+	 *	- Chris Becker (topher@csh.rit.edu) 
+	 */
+	if (In_sokoban(&u.uz) && !In_sokoban(&u.uz0) && is_giant(youmonst.data)) {
+		struct obj *obj;
+
+		for(obj = invent; obj; obj = obj->nobj) {
+			if (obj->otyp == BOULDER) {
+				change_luck(-1); /* Sokoban guilt */
+				break;			 /* only penalizing once is consistent with
+                                    scroll of earth only penalizing once per
+                                    boulder created */
+			}
+		}
+	}
+
 	assign_level(&u.uz0, &u.uz); /* reset u.uz0 */
 
 #ifdef INSURANCE
