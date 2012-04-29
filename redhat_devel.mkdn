@@ -5,7 +5,9 @@ I use Fedora 17 and RHEL6.2 personally.
 
 ## Building ##
 
-   sudo yum install mysql-libs mysql-devel ncurses-libs ncurses-devel
+You'll need mysql and ncurses libraries and headers.
+
+    sudo yum install mysql-libs mysql-devel ncurses-libs ncurses-devel
 
 ## Debugging ##
 
