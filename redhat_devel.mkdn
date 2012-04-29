@@ -1,0 +1,16 @@
+# Red Hat Development/Build Environment Setup #
+
+Should be helpful for those trying to setup a dev environment to help out - 
+I use Fedora 17 and RHEL6.2 personally.
+
+## Building ##
+
+   sudo yum install mysql-libs mysql-devel ncurses-libs ncurses-devel
+
+## Debugging ##
+
+Debug libraries (the odd ones are used as parts of libraries we do use; if you want you don't necessarily have to install them; I doubt mysql will be crashing on kerberos oddities in our setup):
+
+    sudo debuginfo-install glibc libconfig ncurses-libs keyutils-libs krb5-libs libcom_err libselinux mysql-devel openssl zlib
+
+
