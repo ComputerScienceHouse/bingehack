@@ -6,3 +6,4 @@
 config.mk
 cscope.*
 .nfs*
+install/
