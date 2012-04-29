@@ -1097,7 +1097,12 @@ nexttry:	/* eels prefer the water, but if there is no water nearby,
 		}
 
 		info[cnt] = 0;
-		if ((checkobj || Displaced) && onscary(dispx, dispy, mon)) {
+		/* doesn't seem to be a need for the first statement below
+		 * maybe at some point for a speed up but it skips altars
+		 * which are scary but are not objects and can be scary without
+		 * displacement - Chris Becker (topher@csh.rit.edu)
+		 */
+		if (/*(checkobj || Displaced) &&*/ onscary(dispx, dispy, mon)) {
 		    if(!(flag & ALLOW_SSM)) continue;
 		    info[cnt] |= ALLOW_SSM;
 		}
