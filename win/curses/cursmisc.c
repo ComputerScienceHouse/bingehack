@@ -917,6 +917,71 @@ int curses_convert_keys(int key)
             }
             break;
         }
+        case KEY_FIND:
+        {
+            ret = 's';
+            break;
+        }
+        case KEY_REFRESH:
+        {
+            ret = '\022'; // ^R, redraw screen
+            break;
+        }
+        case KEY_OPTIONS:
+        {
+            ret = 'O';
+            break;
+        }
+        case KEY_HELP:
+        {
+            ret = '?';
+            break;
+        }
+        case KEY_SHELP:
+        {
+            ret = '/';
+            break;
+        }
+        case KEY_SAVE:
+        {
+            ret = 'S';
+            break;
+        }
+        case KEY_MOVE:
+        {
+            ret = 'm';
+            break;
+        }
+        case KEY_OPEN:
+        {
+            ret = 'o';
+            break;
+        }
+        case KEY_CANCEL:
+        {
+            ret = '\033'; //escape
+            break;
+        }
+        case KEY_COMMAND:
+        {
+            ret = '#';
+            break;
+        }
+        case KEY_F(1):
+        {
+            ret = '?';
+            break;
+        }
+        case KEY_EXIT:
+        {
+            ret = '\003'; //^C
+            break;
+        }
+        case KEY_REFERENCE:
+        {
+            ret = '&';
+            break;
+        }
     }
 
     return ret;
