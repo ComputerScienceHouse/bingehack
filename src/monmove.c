@@ -413,7 +413,7 @@ register struct monst *mtmp;
 		if (canseemon(mtmp))
 			pline("%s concentrates.", Monnam(mtmp));
 		/* MRKR: tinfoil hats block psychic energy */
-		if (uarmh && uarmh->otyp == TINFOIL_HAT || 
+		if ((uarmh && uarmh->otyp == TINFOIL_HAT) || 
 		    distu(mtmp->mx, mtmp->my) > BOLT_LIM * BOLT_LIM) {
 			You("sense a faint wave of psychic energy.");
 			goto toofar;
