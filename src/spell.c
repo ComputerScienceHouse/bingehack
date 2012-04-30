@@ -1081,7 +1081,7 @@ losespells()
 	for (n = 0; n < MAXSPELL && spellid(n) != NO_SPELL; n++)
 		continue;
 	if (n) {
-		nzap = rnd(n) + confused ? 1 : 0;
+		nzap = rnd(n) + (confused ? 1 : 0);
 		if (nzap > n) nzap = n;
 		for (i = n - nzap; i < n; i++) {
 		    spellid(i) = NO_SPELL;
