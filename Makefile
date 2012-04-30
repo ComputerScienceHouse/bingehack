@@ -1,3 +1,4 @@
+PUMP := pump
 CC := gcc
 DEPGEN := gcc
 YACC := bison
@@ -67,6 +68,9 @@ cscope-clean:
 
 cscope:
 	$(CSCOPE) -R -b -q
+
+distcc:
+	DISTCC_FALLBACK=0 $(PUMP) $(MAKE) CC="distcc $(CC)" $(DISTCC_JOBS) all
 
 # Define default hooks so a subdir doesn't need to define them.
 $(CLEAN_TARGETS):

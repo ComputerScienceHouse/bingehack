@@ -770,7 +770,14 @@ int curses_read_attrs(char *attrs)
 
 
 /* Convert special keys into values that NetHack can understand.
-Currently this is limited to arrow keys, but this may be expanded. */
+Currently this is limited to arrow keys, but this may be expanded. 
+
+Curses has this following keymap for the numpad:
+A1    UP      A3
+LEFT  B2   RIGHT
+C1   DOWN     C3
+
+*/
 
 int curses_convert_keys(int key)
 {
@@ -902,9 +909,120 @@ int curses_convert_keys(int key)
             break;
         }
 #endif  /* KEY_B2 */
+        case KEY_ENTER:
+        {
+            if (iflags.num_pad)
+            {
+                ret = '\n';
+            }
+            break;
+        }
+        case KEY_FIND:
+        {
+            ret = 's';
+            break;
+        }
+        case KEY_REFRESH:
+        {
+            ret = '\022'; // ^R, redraw screen
+            break;
+        }
+        case KEY_OPTIONS:
+        {
+            ret = 'O';
+            break;
+        }
+        case KEY_HELP:
+        {
+            ret = '?';
+            break;
+        }
+        case KEY_SHELP:
+        {
+            ret = '/';
+            break;
+        }
+        case KEY_SAVE:
+        {
+            ret = 'S';
+            break;
+        }
+        case KEY_MOVE:
+        {
+            ret = 'm';
+            break;
+        }
+        case KEY_OPEN:
+        {
+            ret = 'o';
+            break;
+        }
+        case KEY_CANCEL:
+        {
+            ret = '\033'; //escape
+            break;
+        }
+        case KEY_COMMAND:
+        {
+            ret = '#';
+            break;
+        }
+        case KEY_F(1):
+        {
+            ret = '?';
+            break;
+        }
+        case KEY_EXIT:
+        {
+            ret = '\003'; //^C
+            break;
+        }
+        case KEY_REFERENCE:
+        {
+            ret = '&';
+            break;
+        }
     }
 
     return ret;
+}
+
+
+/* Process mouse events.  Mouse movement is processed until no further
+mouse movement events are available.  Returns 0 for a mouse click
+event, or the first non-mouse key event in the case of mouse
+movement. */
+
+int curses_get_mouse(int *mousex, int *mousey, int *mod)
+{
+    int key = '\033';
+#ifdef NCURSES_MOUSE_VERSION
+	MEVENT event;
+
+    if (getmouse(&event) == OK)
+    {   /* When the user clicks left mouse button */
+        if(event.bstate & BUTTON1_CLICKED)
+        {
+            /* See if coords are in map window & convert coords */
+            if (wmouse_trafo(mapwin, &event.y, &event.x, TRUE))
+            {
+                key = 0;    /* Flag mouse click */
+                *mousex = event.x;
+                *mousey = event.y;
+                
+                if (curses_window_has_border(MAP_WIN))
+                {
+                    (*mousex)--;
+                    (*mousey)--;
+                }
+                
+                *mod = CLICK_1;
+            }
+        }
+    }
+#endif  /* NCURSES_MOUSE_VERSION */
+
+    return key;
 }
 
 
@@ -945,8 +1063,11 @@ static int parse_escape_sequence(void)
     timeout(-1);
 
     return ret;
+#else
+    return '\033';
 #endif  /* !PDCURSES */
 }
+
 
 /* This is a kludge for the statuscolors patch which calls tty-specific
 functions, which causes a compiler error if TTY_GRAPHICS is not

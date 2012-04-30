@@ -244,12 +244,12 @@ dosounds()
 	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon)
 	    if (!DEADMONSTER(mtmp) && mtmp->data == &mons[PM_POTTER])
 		break;
-	/* and don't produce silly effects when she's clearly visible */
+	/* and don't produce silly effects when he's clearly visible */
 	if (mtmp && (hallu || !canseemon(mtmp))) {
 	    static const char * const ora_msg[5] = {
 		    "political commentary.",
 		    "convulsive ravings about WLAN controllers.",	
-		    "an Adirondack woodsman",
+		    "an Adirondack woodsman.",
 		    "someone ask you for your punchcards.", /* if(hallucinating) */
 		    "loud praise for Netgear devices." /* if(hallucinating) */
 	    };

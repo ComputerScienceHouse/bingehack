@@ -1248,7 +1248,9 @@ static const char *csh_epitaphs[] = {
 	"Here lies Lisa Tufo Nault - Beloved house member",
 	"Here lies Ryan Phillips - Mark's Best Customer",
 	"Here lies Ryan Phillips - Plate Connoisseur",
-	"Here lies Ryan Phillips - Our Best Friend at RIT"
+	"Here lies Ryan Phillips - Our Best Friend at RIT",
+	"Here lies Kyle Donaldson - Fixed Everyone's Computer But His Own",
+	"Here lies Kyle Donaldson - Quiet Fellow and Beloved Computer Sledgehammerer"
 };
 
 /* Epitaphs for random headstones */
