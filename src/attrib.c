@@ -219,6 +219,9 @@ boolean parameter; /* So I can't think up of a good name.  So sue me. --KAA */
 		else if (parameter) bonchance += otmp->quan;
 	    }
 
+	/* Stephen White's code for lucky fedoras from SLASHEM */
+	if (uarmh && uarmh->otyp == FEDORA && !uarmh->cursed) bonchance += 2;
+
 	return sgn((int)bonchance);
 }
 
