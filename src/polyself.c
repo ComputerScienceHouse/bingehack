@@ -1089,6 +1089,10 @@ domindblast()
 	flags.botl = 1;
 
 	You("concentrate.");
+	if (uarmh && uarmh->otyp == TINFOIL_HAT) {
+	    	pline("A wave of psychic energy pours out, but it is blocked by your tinfoil hat.");
+		return 0;
+	}
 	pline("A wave of psychic energy pours out.");
 	for(mtmp=fmon; mtmp; mtmp = nmon) {
 		int u_sen;
