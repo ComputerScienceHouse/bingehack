@@ -334,8 +334,6 @@ typedef unsigned char	uchar;
 /* monsters & objects */
 #define KOPS		/* Keystone Kops by Scott R. Turner */
 #define SEDUCE		/* Succubi/incubi seduction, by KAA, suggested by IM */
-#define STEED		/* Riding steeds */
-#define TOURIST		/* Tourist players with cameras and Hawaiian shirts */
 #define TOUGHVLAD	/* Vlad Balance patch 0.3, by CWC, suggestions by DACOD and JAH */
 /* #define MENTALPLYS */ /* Mental paralysis attacks yielding WIS saving throw by CWC */
 #define DYNKEY

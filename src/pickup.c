@@ -1520,11 +1520,9 @@ able_to_loot(x, y)
 int x, y;
 {
 	if (!can_reach_floor()) {
-#ifdef STEED
 		if (u.usteed && P_SKILL(P_RIDING) < P_BASIC)
 			rider_cant_reach(); /* not skilled enough to reach */
 		else
-#endif
 			You("cannot reach the %s.", surface(x, y));
 		return FALSE;
 	} else if (is_pool(x, y) || is_lava(x, y)) {
@@ -1741,7 +1739,6 @@ boolean *prev_loot;
 {
     int c = -1;
     int timepassed = 0;
-#ifdef STEED
     struct obj *otmp;
     char qbuf[QBUFSZ];
 
@@ -1780,7 +1777,6 @@ boolean *prev_loot;
 		return (0);
 	}
     }
-#endif	/* STEED */
     /* 3.4.0 introduced the ability to pick things up from within swallower's stomach */
     if (u.uswallow) {
 	int count = passed_info ? *passed_info : 0;

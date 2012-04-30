@@ -6,7 +6,6 @@
 #include "hack.h"
 
 
-#ifdef STEED
 
 /* Monsters that might be ridden */
 static NEARDATA const char steeds[] = {
@@ -636,7 +635,5 @@ int x, y;
     mon->mx = x, mon->my = y;
     level.monsters[x][y] = mon;
 }
-
-#endif /* STEED */
 
 /*steed.c*/

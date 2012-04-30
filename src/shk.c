@@ -601,13 +601,11 @@ register char *enterstring;
 			  "Leave the %s%s outside.",
 			  tool, plur(cnt));
 		should_block = TRUE;
-#ifdef STEED
 	    } else if (u.usteed) {
 		verbalize(NOTANGRY(shkp) ?
 			  "Will you please leave %s outside?" :
 			  "Leave %s outside.", y_monnam(u.usteed));
 		should_block = TRUE;
-#endif
 	    } else {
 		should_block = (Fast && (sobj_at(PICK_AXE, u.ux, u.uy) ||
 				      sobj_at(DWARVISH_MATTOCK, u.ux, u.uy)));
@@ -1913,13 +1911,10 @@ register struct monst *shkp;	/* if angry, impose a surcharge */
 		} else if (!(obj->o_id % 4)) /* arbitrarily impose surcharge */
 		    tmp += tmp / 3L;
 	}
-#ifdef TOURIST
 	if ((Role_if(PM_TOURIST) && u.ulevel < (MAXULEV/2))
 	    || (uarmu && !uarm && !uarmc))	/* touristy shirt visible */
 		tmp += tmp / 3L;
-	else
-#endif
-	if (uarmh && uarmh->otyp == DUNCE_CAP)
+	else if (uarmh && uarmh->otyp == DUNCE_CAP)
 		tmp += tmp / 3L;
 
 	if (ACURR(A_CHA) > 18)		tmp /= 2L;
@@ -2039,13 +2034,10 @@ register struct monst *shkp;
 {
 	long tmp = getprice(obj, TRUE) * obj->quan;
 
-#ifdef TOURIST
 	if ((Role_if(PM_TOURIST) && u.ulevel < (MAXULEV/2))
 	    || (uarmu && !uarm && !uarmc))	/* touristy shirt visible */
 		tmp /= 3L;
-	else
-#endif
-	if (uarmh && uarmh->otyp == DUNCE_CAP)
+	else if (uarmh && uarmh->otyp == DUNCE_CAP)
 		tmp /= 3L;
 	else
 		tmp /= 2L;
@@ -3279,11 +3271,7 @@ register struct monst *shkp;
 		avoid = FALSE;
 	} else {
 #define	GDIST(x,y)	(dist2(x,y,gx,gy))
-		if (Invis
-#ifdef STEED
-			|| u.usteed
-#endif
-			) {
+		if (Invis || u.usteed) {
 		    avoid = FALSE;
 		} else {
 		    uondoor = (u.ux == eshkp->shd.x && u.uy == eshkp->shd.y);
@@ -3879,11 +3867,8 @@ boolean altusage; /* some items have an "alternate" use with different cost */
 	} else if (otmp->oclass == SPBOOK_CLASS) {
 		tmp -= tmp / 5L;
 	} else if (otmp->otyp == CAN_OF_GREASE ||
-		   otmp->otyp == TINNING_KIT
-#ifdef TOURIST
-		   || otmp->otyp == EXPENSIVE_CAMERA
-#endif
-		   ) {
+		   otmp->otyp == TINNING_KIT || 
+		   otmp->otyp == EXPENSIVE_CAMERA) {
 		tmp /= 10L;
 	} else if (otmp->otyp == POT_OIL) {
 		tmp /= 5L;
@@ -4037,10 +4022,7 @@ register xchar x, y;
 		&& shkp->mcanmove && !shkp->msleeping
 		&& (x == sx-1 || x == sx+1 || y == sy-1 || y == sy+1)
 		&& (Invis || carrying(PICK_AXE) || carrying(DWARVISH_MATTOCK)
-#ifdef STEED
-			|| u.usteed
-#endif
-	  )) {
+			|| u.usteed)) {
 		pline("%s%s blocks your way!", shkname(shkp),
 				Invis ? " senses your motion and" : "");
 		return(TRUE);

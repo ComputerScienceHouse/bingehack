@@ -108,9 +108,7 @@ int mndx, mode;
 	case PM_HUNTER:      mndx = mode ? PM_RANGER    : PM_HUMAN; break;
 	case PM_THUG:        mndx = mode ? PM_ROGUE     : PM_HUMAN; break;
 	case PM_ROSHI:       mndx = mode ? PM_SAMURAI   : PM_HUMAN; break;
-#ifdef TOURIST
 	case PM_GUIDE:       mndx = mode ? PM_TOURIST   : PM_HUMAN; break;
-#endif
 	case PM_APPRENTICE:  mndx = mode ? PM_WIZARD    : PM_HUMAN; break;
 	case PM_WARRIOR:     mndx = mode ? PM_VALKYRIE  : PM_HUMAN; break;
 	default:
@@ -391,12 +389,10 @@ register struct monst *mtmp;
 	     !is_flyer(mtmp->data) && !is_floater(mtmp->data);
     infountain = IS_FOUNTAIN(levl[mtmp->mx][mtmp->my].typ);
 
-#ifdef STEED
 	/* Flying and levitation keeps our steed out of the liquid */
 	/* (but not water-walking or swimming) */
 	if (mtmp == u.usteed && (Flying || Levitation))
 		return (0);
-#endif
 
     /* Gremlin multiplying won't go on forever since the hit points
      * keep going down, and when it gets to 1 hit point the clone
@@ -502,14 +498,12 @@ struct monst *mon;
     else if (mon->mspeed == MFAST)
 	mmove = (4 * mmove + 2) / 3;
 
-#ifdef STEED
     if (mon == u.usteed) {
 	if (u.ugallop && flags.mv) {
 	    /* average movement is 1.50 times normal */
 	    mmove = ((rn2(2) ? 4 : 5) * mmove) / 3;
 	}
     }
-#endif
 
     return mmove;
 }
@@ -974,10 +968,8 @@ struct obj *otmp;
 		(otyp != BELL_OF_OPENING || !is_covetous(mdat)))
 	    return FALSE;
 
-#ifdef STEED
 	/* Steeds don't pick up stuff (to avoid shop abuse) */
 	if (mtmp == u.usteed) return (FALSE);
-#endif
 	if (mtmp->isshk) return(TRUE); /* no limit */
 	if (mtmp->mpeaceful && !mtmp->mtame) return(FALSE);
 	/* otherwise players might find themselves obligated to violate
@@ -1325,9 +1317,7 @@ register struct monst *mtmp, *mtmp2;
     relmon(mtmp);
 
     /* finish adding its replacement */
-#ifdef STEED
     if (mtmp == u.usteed) ; else	/* don't place steed onto the map */
-#endif
     place_monster(mtmp2, mtmp2->mx, mtmp2->my);
     if (mtmp2->wormno)	    /* update level.monsters[wseg->wx][wseg->wy] */
 	place_wsegs(mtmp2); /* locations to mtmp2 not mtmp. */
@@ -1342,9 +1332,7 @@ register struct monst *mtmp, *mtmp2;
     mtmp2->nmon = fmon;
     fmon = mtmp2;
     if (u.ustuck == mtmp) u.ustuck = mtmp2;
-#ifdef STEED
     if (u.usteed == mtmp) u.usteed = mtmp2;
-#endif
     if (mtmp2->isshk) replshk(mtmp,mtmp2);
 
     /* discard the old monster */
@@ -1463,11 +1451,9 @@ register struct monst *mtmp;
 	lifesaved_monster(mtmp);
 	if (mtmp->mhp > 0) return;
 
-#ifdef STEED
 	/* Player is thrown from his steed when it dies */
 	if (mtmp == u.usteed)
 		dismount_steed(DISMOUNT_GENERIC);
-#endif
 
 	mptr = mtmp->data;		/* save this for m_detach() */
 	/* restore chameleon, lycanthropes to true form at death */
@@ -1621,12 +1607,9 @@ mongone(mdef)
 register struct monst *mdef;
 {
 	mdef->mhp = 0;	/* can skip some inventory bookkeeping */
-#ifdef STEED
 	/* Player is thrown from his steed when it disappears */
 	if (mdef == u.usteed)
 		dismount_steed(DISMOUNT_GENERIC);
-#endif
-
 	/* drop special items like the Amulet so that a dismissed Kop or nurse
 	   can't remove them from the game */
 	mdrop_special_objs(mdef);
@@ -2005,14 +1988,12 @@ mnexto(mtmp)	/* Make monster mtmp next to you (if possible) */
     return;
   }
 
-#ifdef STEED
 	if (mtmp == u.usteed) {
 		/* Keep your steed in sync with you instead */
 		mtmp->mx = u.ux;
 		mtmp->my = u.uy;
 		return;
 	}
-#endif
 
 	if(!enexto(&mm, u.ux, u.uy, mtmp->data)) return;
 	rloc_to(mtmp, mm.x, mm.y);

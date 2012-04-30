@@ -392,9 +392,7 @@ E int NDECL(Gloves_off);
 E int NDECL(Boots_off);
 E int NDECL(Cloak_off);
 E int NDECL(Shield_off);
-#ifdef TOURIST
 E int NDECL(Shirt_off);
-#endif
 E void NDECL(Amulet_off);
 E void FDECL(Ring_on, (struct obj *));
 E void FDECL(Ring_off, (struct obj *));
@@ -1920,7 +1918,6 @@ E struct obj *FDECL(findgold, (struct obj *));
 
 /* ### steed.c ### */
 
-#ifdef STEED
 E void NDECL(rider_cant_reach);
 E boolean FDECL(can_saddle, (struct monst *));
 E int FDECL(use_saddle, (struct obj *));
@@ -1931,7 +1928,6 @@ E void NDECL(exercise_steed);
 E void NDECL(kick_steed);
 E void FDECL(dismount_steed, (int));
 E void FDECL(place_monster, (struct monst *,int,int));
-#endif
 
 /* ### teleport.c ### */
 

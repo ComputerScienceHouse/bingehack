@@ -10,9 +10,7 @@ STATIC_DCL boolean FDECL(known_hitum, (struct monst *,int *,struct attack *));
 STATIC_DCL void FDECL(steal_it, (struct monst *, struct attack *));
 STATIC_DCL boolean FDECL(hitum, (struct monst *,int,struct attack *));
 STATIC_DCL boolean FDECL(hmon_hitmon, (struct monst *,struct obj *,int));
-#ifdef STEED
 STATIC_DCL int FDECL(joust, (struct monst *,struct obj *));
-#endif
 STATIC_DCL void NDECL(demonpet);
 STATIC_DCL boolean FDECL(m_slips_free, (struct monst *mtmp,struct attack *mattk));
 STATIC_DCL int FDECL(explum, (struct monst *,struct attack *));
@@ -68,10 +66,8 @@ int attk;
 		}
 		if ((target = which_armor(mdef, W_ARM)) != (struct obj *)0) {
 		    (void)rust_dmg(target, xname(target), hurt, TRUE, mdef);
-#ifdef TOURIST
 		} else if ((target = which_armor(mdef, W_ARMU)) != (struct obj *)0) {
 		    (void)rust_dmg(target, xname(target), hurt, TRUE, mdef);
-#endif
 		}
 		break;
 	    case 2:
@@ -544,9 +540,8 @@ int thrown;
 	boolean silvermsg = FALSE, silverobj = FALSE;
 	boolean valid_weapon_attack = FALSE;
 	boolean unarmed = !uwep && !uarm && !uarms;
-#ifdef STEED
+
 	int jousting = 0;
-#endif
 	int wtype;
 	struct obj *monwep;
 	char yourbuf[BUFSZ];
@@ -592,11 +587,7 @@ int thrown;
 		    /* or strike with a missile in your hand... */
 		    (!thrown && (is_missile(obj) || is_ammo(obj))) ||
 		    /* or use a pole at short range and not mounted... */
-		    (!thrown &&
-#ifdef STEED
-		     !u.usteed &&
-#endif
-		     is_pole(obj)) ||
+		    (!thrown && !u.usteed && is_pole(obj)) ||
 		    /* or throw a missile without the proper bow... */
 		    (is_ammo(obj) && !ammo_and_launcher(obj, uwep))) {
 		    /* then do only 1-2 points of damage */
@@ -676,14 +667,14 @@ int thrown;
 				&& hates_silver(mdat)) {
 			silvermsg = TRUE; silverobj = TRUE;
 		    }
-#ifdef STEED
+
 		    if (u.usteed && !thrown && tmp > 0 &&
 			    weapon_type(obj) == P_LANCE && mon != u.ustuck) {
 			jousting = joust(mon, obj);
 			/* exercise skill even for minimal damage hits */
 			if (jousting) valid_weapon_attack = TRUE;
 		    }
-#endif
+
 		    if (thrown && (is_ammo(obj) || is_missile(obj))) {
 			if (ammo_and_launcher(obj, uwep)) {
 			    /* Elves and Samurai do extra damage using
@@ -738,7 +729,6 @@ int thrown;
 			}
 			tmp = 1;
 			break;
-#ifdef TOURIST
 		    case EXPENSIVE_CAMERA:
 			You("succeed in destroying %s camera.  Congratulations!",
 			        shk_your(yourbuf, obj));
@@ -746,7 +736,6 @@ int thrown;
 			return(TRUE);
 			/*NOTREACHED*/
 			break;
-#endif
 		    case CORPSE:		/* fixed by polder@cs.vu.nl */
 			if (touch_petrifies(&mons[obj->corpsenm])) {
 			    static const char withwhat[] = "corpse";
@@ -978,7 +967,6 @@ int thrown;
 	    }
 	}
 
-#ifdef STEED
 	if (jousting) {
 	    tmp += d(2, (obj == uwep) ? 10 : 2);	/* [was in dmgval()] */
 	    You("joust %s%s",
@@ -999,9 +987,7 @@ int thrown;
 		if (DEADMONSTER(mon)) already_killed = TRUE;
 	    }
 	    hittxt = TRUE;
-	} else
-#endif
-
+	} else {
 	/* VERY small chance of stunning opponent if unarmed. */
 	if (unarmed && tmp > 1 && !thrown && !obj && !Upolyd) {
 	    if (rnd(100) < P_SKILL(P_BARE_HANDED_COMBAT) &&
@@ -1017,6 +1003,7 @@ int thrown;
 		}
 		hittxt = TRUE;
 	    }
+	}
 	}
 
 	if (!already_killed) mon->mhp -= tmp;
@@ -1137,9 +1124,7 @@ struct attack *mattk;
 	    /* grabbing attacks the body */
 	    obj = which_armor(mdef, W_ARMC);		/* cloak */
 	    if (!obj) obj = which_armor(mdef, W_ARM);	/* suit */
-#ifdef TOURIST
 	    if (!obj) obj = which_armor(mdef, W_ARMU);	/* shirt */
-#endif
 	}
 
 	/* if your cloak/armor is greased, monster slips off; this

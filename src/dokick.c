@@ -634,7 +634,6 @@ dokick()
 	} else if (verysmall(youmonst.data)) {
 		You("are too small to do any kicking.");
 		no_kick = TRUE;
-#ifdef STEED
 	} else if (u.usteed) {
 		if (yn_function("Kick your steed?", ynchars, 'y') == 'y') {
 		    You("kick %s.", mon_nam(u.usteed));
@@ -643,7 +642,6 @@ dokick()
 		} else {
 		    return 0;
 		}
-#endif
 	} else if (Wounded_legs) {
 		/* note: jump() has similar code */
 		long wl = (EWounded_legs & BOTH_SIDES);
@@ -1346,10 +1344,7 @@ boolean shop_floor_obj;
 	    const char *result;
 
 	    if (objects[otmp->otyp].oc_material == GLASS
-#ifdef TOURIST
-		|| otmp->otyp == EXPENSIVE_CAMERA
-#endif
-		) {
+		|| otmp->otyp == EXPENSIVE_CAMERA) {
 		if (otmp->otyp == MIRROR)
 		    change_luck(-2);
 		result = "crash";

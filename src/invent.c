@@ -660,9 +660,7 @@ register struct obj *obj;
 	else if (obj == uarmh) setnotworn(obj);
 	else if (obj == uarms) setnotworn(obj);
 	else if (obj == uarmg) setnotworn(obj);
-#ifdef TOURIST
 	else if (obj == uarmu) setnotworn(obj);
-#endif
 	else if (obj == uarmf) setnotworn(obj);
 
 	update_map = (obj->where == OBJ_FLOOR);
@@ -944,9 +942,7 @@ register const char *let,*word;
 		if ((taking_off(word) &&
 		    (!(otmp->owornmask & (W_ARMOR | W_RING | W_AMUL | W_TOOL))
 		     || (otmp==uarm && uarmc)
-#ifdef TOURIST
 		     || (otmp==uarmu && (uarm || uarmc))
-#endif
 		     || (otmp==uarmh && uarmc &&
 			     OBJ_DESCR(objects[uarmc->otyp]) &&
 			     !strcmp(OBJ_DESCR(objects[uarmc->otyp]),
@@ -1036,10 +1032,7 @@ register const char *let,*word;
 		/* "ugly check" for reading fortune cookies, part 2 */
 		if ((!strcmp(word, "read") &&
 		    (otmp->otyp == FORTUNE_COOKIE
-#ifdef TOURIST
-			|| otmp->otyp == T_SHIRT
-#endif
-		    )))
+			|| otmp->otyp == T_SHIRT)))
 			allowall = TRUE;
 	    }
 
@@ -1274,11 +1267,8 @@ register struct obj *otmp;
 boolean
 wearing_armor()
 {
-	return((boolean)(uarm || uarmc || uarmf || uarmg || uarmh || uarms
-#ifdef TOURIST
-		|| uarmu
-#endif
-		));
+    return((boolean)(uarm || uarmc || uarmf || 
+		     uarmg || uarmh || uarms || uarmu));
 }
 
 boolean
@@ -1286,10 +1276,7 @@ is_worn(otmp)
 register struct obj *otmp;
 {
     return((boolean)(!!(otmp->owornmask & (W_ARMOR | W_RING | W_AMUL | W_TOOL |
-#ifdef STEED
-			W_SADDLE |
-#endif
-			W_WEP | W_SWAPWEP | W_QUIVER))));
+			W_SADDLE | W_WEP | W_SWAPWEP | W_QUIVER))));
 }
 
 static NEARDATA const char removeables[] =
@@ -2709,16 +2696,10 @@ doprarm()
 	if(!wearing_armor())
 		You("are not wearing any armor.");
 	else {
-#ifdef TOURIST
 		char lets[8];
-#else
-		char lets[7];
-#endif
 		register int ct = 0;
 
-#ifdef TOURIST
 		if(uarmu) lets[ct++] = obj_to_let(uarmu);
-#endif
 		if(uarm) lets[ct++] = obj_to_let(uarm);
 		if(uarmc) lets[ct++] = obj_to_let(uarmc);
 		if(uarmh) lets[ct++] = obj_to_let(uarmh);
@@ -2762,11 +2743,7 @@ STATIC_OVL boolean
 tool_in_use(obj)
 struct obj *obj;
 {
-	if ((obj->owornmask & (W_TOOL
-#ifdef STEED
-			| W_SADDLE
-#endif
-			)) != 0L) return TRUE;
+	if ((obj->owornmask & (W_TOOL | W_SADDLE)) != 0L) return TRUE;
 	if (obj->oclass != TOOL_CLASS) return FALSE;
 	return (boolean)(obj == uwep || obj->lamplit ||
 				(obj->otyp == LEASH && obj->leashmon));

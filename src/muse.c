@@ -980,10 +980,8 @@ struct monst *mtmp;
 	if (u.uswallow) return FALSE;
 	if (in_your_sanctuary(mtmp, 0, 0)) return FALSE;
 	if (dmgtype(mtmp->data, AD_HEAL) && !uwep
-#ifdef TOURIST
-	    && !uarmu
-#endif
-	    && !uarm && !uarmh && !uarms && !uarmg && !uarmc && !uarmf)
+	    && !uarmu && !uarm && !uarmh && !uarms 
+	    && !uarmg && !uarmc && !uarmf)
 		return FALSE;
 
 	if (!ranged_stuff) return FALSE;

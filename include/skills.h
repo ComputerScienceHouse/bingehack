@@ -67,15 +67,12 @@
 #define P_BARE_HANDED_COMBAT	37
 #define P_MARTIAL_ARTS		P_BARE_HANDED_COMBAT	/* Role distinguishes */
 #define P_TWO_WEAPON_COMBAT	38	/* Finally implemented */
-#ifdef STEED
-#define P_RIDING		39	/* How well you control your steed */
-#define P_LAST_H_TO_H		P_RIDING
-#else
-#define P_LAST_H_TO_H		P_TWO_WEAPON_COMBAT
-#endif
 #define P_FIRST_H_TO_H		P_BARE_HANDED_COMBAT
-
-#define P_NUM_SKILLS		(P_LAST_H_TO_H+1)
+#define P_LAST_H_TO_H		P_TWO_WEAPON_COMBAT
+#define P_RIDING		39	/* How well you control your steed */
+#define P_FIRST_NON_COMBAT      P_RIDING
+#define P_LAST_NON_COMBAT       P_RIDING
+#define P_NUM_SKILLS		(P_LAST_NON_COMBAT+1)
 
 /* These roles qualify for a martial arts bonus */
 #define martial_bonus()	(Role_if(PM_SAMURAI) || Role_if(PM_MONK))
