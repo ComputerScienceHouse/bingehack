@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include "hack.h"
+#include "achieve.h"
 
 STATIC_DCL boolean FDECL(known_hitum, (struct monst *,int *,struct attack *));
 STATIC_DCL void FDECL(steal_it, (struct monst *, struct attack *));
@@ -537,6 +538,7 @@ int thrown;
 	 * a hit message.
 	 */
 	boolean hittxt = FALSE, destroyed = FALSE, already_killed = FALSE;
+	boolean smashed_mirror = FALSE; /* for achievement */
 	boolean get_dmg_bonus = TRUE;
 	boolean ispoisoned = FALSE, needpoismsg = FALSE, poiskilled = FALSE;
 	boolean silvermsg = FALSE, silverobj = FALSE;
@@ -615,6 +617,12 @@ int thrown;
 			hittxt = TRUE;
 			if (mdat != &mons[PM_SHADE])
 			    tmp++;
+		    }
+			/* silver arrows do silver damage - Chris Becker (topher@csh.rit.edu) */
+			if (objects[obj->otyp].oc_material == SILVER
+				&& hates_silver(mdat)) {
+			silvermsg = TRUE; silverobj = TRUE;
+			tmp += rnd(20);
 		    }
 		} else {
 		    tmp = dmgval(obj, mon);
@@ -726,6 +734,7 @@ int thrown;
 			    unarmed = FALSE;	/* avoid obj==0 confusion */
 			    get_dmg_bonus = FALSE;
 			    hittxt = TRUE;
+			    smashed_mirror = TRUE;
 			}
 			tmp = 1;
 			break;
@@ -747,8 +756,11 @@ int thrown;
 				obj->dknown ? the(mons[obj->corpsenm].mname) :
 				an(mons[obj->corpsenm].mname),
 				(obj->quan > 1) ? makeplural(withwhat) : withwhat);
-			    if (!munstone(mon, TRUE))
+			    if (!munstone(mon, TRUE)) {
 				minstapetrify(mon, TRUE);
+				if (!resists_ston(mon) && !poly_when_stoned(mon->data))
+				    award_achievement(AID_RUBBER_CHICKEN);
+			    }
 			    if (resists_ston(mon)) break;
 			    /* note: hp may be <= 0 even if munstoned==TRUE */
 			    return (boolean) (mon->mhp > 0);
@@ -862,6 +874,8 @@ int thrown;
 			    pline(obj->otyp==CREAM_PIE ? "Splat!" : "Splash!");
 			    setmangry(mon);
 			}
+			if (obj->otyp == CREAM_PIE && attacktype(mon->data, AT_GAZE))
+				award_achievement(AID_BLIND_GAZER_WITH_PIE);
 			if (thrown) obfree(obj, (struct obj *)0);
 			else useup(obj);
 			hittxt = TRUE;
@@ -1009,8 +1023,10 @@ int thrown;
 	/* adjustments might have made tmp become less than what
 	   a level draining artifact has already done to max HP */
 	if (mon->mhp > mon->mhpmax) mon->mhp = mon->mhpmax;
-	if (mon->mhp < 1)
+	if (mon->mhp < 1) {
 		destroyed = TRUE;
+		if (smashed_mirror) award_achievement(AID_MIRROR_SMASH_KILL);
+	}
 	if (mon->mtame && (!mon->mflee || mon->mfleetim) && tmp > 0) {
 		abuse_dog(mon);
 		monflee(mon, 10 * rnd(tmp), FALSE, FALSE);

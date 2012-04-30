@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include "hack.h"
 #include "lev.h"
+#include "achieve.h"
 
 #ifdef SINKS
 # ifdef OVLB
@@ -795,7 +796,8 @@ dodown()
 	}
 	if (!stairs_down && !ladder_down) {
 		if (!(trap = t_at(u.ux,u.uy)) ||
-			(trap->ttyp != TRAPDOOR && trap->ttyp != HOLE)
+			(trap->ttyp != TRAPDOOR && trap->ttyp != HOLE &&
+			 trap->ttyp != PIT && trap->ttyp != SPIKED_PIT)
 			|| !Can_fall_thru(&u.uz) || !trap->tseen) {
 
 			if (flags.autodig && !flags.nopick &&
@@ -827,6 +829,14 @@ dodown()
 		return(0);
 	}
 
+	/* Move into the pit */
+	if (trap && (trap->ttyp == PIT || trap->ttyp == SPIKED_PIT)) {
+		You("carefully slide down into the %spit", 
+			trap->ttyp == SPIKED_PIT ? "spiked " : "");
+		u.utraptype = TT_PIT;
+		u.utrap = rn1(6,2);
+		return(0);
+	} else {
 	if (trap)
 	    You("%s %s.", locomotion(youmonst.data, "jump"),
 		trap->ttyp == HOLE ? "down the hole" : "through the trap door");
@@ -837,6 +847,7 @@ dodown()
 		at_ladder = (boolean) (levl[u.ux][u.uy].typ == LADDER);
 		next_level(!trap);
 		at_ladder = FALSE;
+	}
 	}
 	return(1);
 }
@@ -1180,6 +1191,7 @@ boolean at_stairs, falling, portal;
 		else if (u.dz &&
 		    (near_capacity() > UNENCUMBERED || Punished || Fumbling)) {
 		    You("fall down the %s.", at_ladder ? "ladder" : "stairs");
+		    add_achievement_progress(AID_FALL_DOWN_STAIRS, 1);
 		    if (Punished) {
 			drag_down();
 			if (carried(uball)) {
@@ -1299,6 +1311,8 @@ boolean at_stairs, falling, portal;
 #endif
 		You_hear("groans and moans everywhere.");
 	    } else pline("It is hot here.  You smell smoke...");
+	    
+	    award_achievement(AID_ENTER_GEHENNOM);
 
 #ifdef RECORD_ACHIEVE
             achieve.enter_gehennom = 1;
@@ -1367,6 +1381,23 @@ boolean at_stairs, falling, portal;
 	    final_level();
 	else
 	    onquest();
+
+	/* Guilt for carrying boulders into Sokoban 
+	 *	- Chris Becker (topher@csh.rit.edu) 
+	 */
+	if (In_sokoban(&u.uz) && !In_sokoban(&u.uz0) && is_giant(youmonst.data)) {
+		struct obj *obj;
+
+		for(obj = invent; obj; obj = obj->nobj) {
+			if (obj->otyp == BOULDER) {
+				change_luck(-1); /* Sokoban guilt */
+				break;			 /* only penalizing once is consistent with
+                                    scroll of earth only penalizing once per
+                                    boulder created */
+			}
+		}
+	}
+
 	assign_level(&u.uz0, &u.uz); /* reset u.uz0 */
 
 #ifdef INSURANCE
@@ -1380,6 +1411,9 @@ boolean at_stairs, falling, portal;
 #ifdef WHEREIS_FILE
         touch_whereis();
 #endif
+	
+	if (moves <= 2000 && Is_stronghold(&u.uz))
+		award_achievement(AID_DIG_FOR_VICTORY);
 }
 
 STATIC_OVL void

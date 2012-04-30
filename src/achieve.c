@@ -107,7 +107,7 @@ int push_achievement_progress(int achievement_id, int new_progress){
 	} else {
 		if (old_progress < max_progress && new_progress == max_progress) {
 			char * achievement_name = get_achievement_name(achievement_id);
-			pline("You unlock an achievement: %s ", achievement_name);
+			You("unlock an achievement: \"%s\"", achievement_name);
 			free(achievement_name);
 		}
 		return ACHIEVEMENT_PUSH_SUCCESS;

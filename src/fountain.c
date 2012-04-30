@@ -6,6 +6,7 @@
 
 #include <stdbool.h>
 #include "hack.h"
+#include "achieve.h"
 
 STATIC_DCL void NDECL(dowatersnakes);
 STATIC_DCL void NDECL(dowaterdemon);
@@ -574,8 +575,10 @@ drinksink()
 				pline("But it quiets down.");
 			break;
 		case 8: pline("Yuk, this water tastes awful.");
+			int oldlevel = u.ulevel;
 			more_experienced(1,0);
 			newexplevel();
+			if (u.ulevel > oldlevel) award_achievement(AID_TRIVIAL_LEVEL_UP);
 			break;
 		case 9: pline("Gaggg... this tastes like sewage!  You vomit.");
 			morehungry(rn1(30-ACURR(A_CON), 11));

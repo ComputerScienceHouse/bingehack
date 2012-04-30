@@ -516,6 +516,14 @@ int spellnum;
 
 	pline("A bolt of lightning strikes down at you from above!");
 	reflects = ureflects("It bounces off your %s%s.", "");
+	   
+	/* copied from zap.c
+	 * Chris Becker (topher@csh.rit.edu)
+	 */
+    You("are blinded by the flash!");
+    make_blinded((long)rnd(100),FALSE);
+    if (!Blind) Your(vision_clears);
+
 	if (reflects || Shock_resistance) {
 	    shieldeff(u.ux, u.uy);
 	    dmg = 0;

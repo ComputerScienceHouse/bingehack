@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include "hack.h"
+#include "achieve.h"
 
 /* Disintegration rays have special treatment; corpses are never left.
  * But the routine which calculates the damage is separate from the routine
@@ -373,6 +374,7 @@ struct obj *otmp;
 							!canspotmon(mtmp))
 		map_invisible(bhitpos.x, bhitpos.y);
 	}
+	if (dbldam) award_achievement(AID_USE_ARTIFACT_KNI);
 	return 0;
 }
 
@@ -675,6 +677,7 @@ register struct obj *obj;
 						Monnam(ghost));
 				    mondead(ghost);
 				    recorporealization = TRUE;
+				    add_achievement_progress(AID_RESURRECT_PLAYERS, 1);
 				    newsym(x2, y2);
 			    }
 			    /* don't mess with obj->oxlth here */
@@ -1270,8 +1273,10 @@ poly_obj(obj, id)
 	boolean can_merge = (id == STRANGE_OBJECT);
 	int obj_location = obj->where;
 
-	if (obj->otyp == BOULDER && In_sokoban(&u.uz))
+	if (obj->otyp == BOULDER && In_sokoban(&u.uz)) {
 	    change_luck(-1);	/* Sokoban guilt */
+	    award_achievement(AID_SOKOBAN_DESTROY_BOULDER);
+	}
 	if (id == STRANGE_OBJECT) { /* preserve symbol */
 	    int try_limit = 3;
 	    /* Try up to 3 times to make the magic-or-not status of
@@ -1816,8 +1821,12 @@ register struct obj *wand;
 {
 	if(wand->spe < 0 || (wand->spe == 0 && rn2(121)))
 		return 0;
-	if(wand->spe == 0)
+	if(wand->spe == 0) {
 		You("wrest one last charge from the worn-out wand.");
+		if (wand->otyp == WAN_WISHING && wand->recharged > 0) {
+			award_achievement(AID_WREST_FROM_RECHARGED_WOW);
+		}
+	}
 	wand->spe--;
 	return 1;
 }
@@ -3103,6 +3112,9 @@ struct obj **ootmp;	/* to return worn armor for caller to disintegrate */
 			sho_shieldeff = TRUE;
 			break;
 		    }
+		    if (mon->data == &mons[PM_WIZARD_OF_YENDOR]) {
+			award_achievement(AID_ZAP_RODNEY_WITH_DEATH);
+		    }
 		    type = -1; /* so they don't get saving throws */
 		} else {
 		    struct obj *otmp2;
@@ -3177,8 +3189,10 @@ struct obj **ootmp;	/* to return worn armor for caller to disintegrate */
 		break;
 	}
 	if (sho_shieldeff) shieldeff(mon->mx, mon->my);
-	if (is_hero_spell(type) && (Role_if(PM_KNIGHT) && u.uhave.questart))
+	if (is_hero_spell(type) && (Role_if(PM_KNIGHT) && u.uhave.questart)) {
 	    tmp *= 2;
+	    award_achievement(AID_USE_ARTIFACT_KNI);
+	}
 	if (tmp > 0 && type >= 0 &&
 		resist(mon, type < ZT_SPELL(0) ? WAND_CLASS : '\0', 0, NOTELL))
 	    tmp /= 2;
@@ -3890,9 +3904,17 @@ fracture_rock(obj)	/* fractured by pick-axe or wand of striking */
 register struct obj *obj;		   /* no texts here! */
 {
 	/* A little Sokoban guilt... */
-	if (obj->otyp == BOULDER && In_sokoban(&u.uz) && !flags.mon_moving)
+	if (obj->otyp == BOULDER && In_sokoban(&u.uz) && !flags.mon_moving) {
 	    change_luck(-1);
-
+	    award_achievement(AID_SOKOBAN_DESTROY_BOULDER);
+	}
+	
+	/* so hero gets charged for breaking statues/boulders
+	 * - Chris Becker (topher@csh.rit.edu)
+	 */
+	if (!flags.mon_moving) hero_breaks(obj,obj->ox,obj->oy,
+		obj->where == OBJ_INVENT);
+	
 	obj->otyp = ROCK;
 	obj->quan = (long) rn1(60, 7);
 	obj->owt = weight(obj);
@@ -4256,6 +4278,13 @@ retry:
 	       to retain wishless conduct */
 	    return;
 	}
+
+	/* Guilt for wishing for a boulder in Sokoban
+	 *	- Chris Becker (topher@csh.rit.edu) 
+	 */
+	if (In_sokoban(&u.uz) && otmp->otyp == BOULDER) 
+		change_luck(-1);
+
 
 	/* KMH, conduct */
 	u.uconduct.wishes++;

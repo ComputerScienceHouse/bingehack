@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include "hack.h"
+#include "achieve.h"
 
 /* KMH -- Copied from pray.c; this really belongs in a header file */
 #define DEVOUT 14
@@ -859,6 +860,10 @@ register struct obj	*sobj;
 			adj_abon(otmp, s);
 			known = otmp->known;
 		}
+		
+		/* Weapon condition located in wield.c */
+		if (otmp->spe >= (is_elven_armor(otmp) ? 7 : 5))
+			award_achievement(AID_ENCHANT_HIGH);
 
 		if ((otmp->spe > (special_armor ? 5 : 3)) &&
 		    (special_armor || !rn2(7)))
@@ -1758,6 +1763,7 @@ int how;
 	    mvitals[mndx].mvflags |= (G_GENOD | G_NOCORPSE);
 	    pline("Wiped out %s%s.", which,
 		  (*which != 'a') ? buf : makeplural(buf));
+	    add_achievement_progress(AID_GENOCIDES, 1);
 
 	    if (killplayer) {
 		/* might need to wipe out dual role */
@@ -1845,6 +1851,8 @@ register struct obj	*sobj;
 	    if (Blind) set_bc(1);	/* set up ball and chain variables */
 	    newsym(u.ux,u.uy);		/* see ball&chain if can't see self */
 	}
+	
+	award_achievement(AID_PUNISHMENT);
 }
 
 void

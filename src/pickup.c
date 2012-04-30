@@ -8,6 +8,7 @@
 
 #include <stdbool.h>
 #include "hack.h"
+#include "achieve.h"
 
 STATIC_DCL void FDECL(simple_look, (struct obj *,BOOLEAN_P));
 #ifndef GOLDOBJ
@@ -2158,6 +2159,7 @@ struct obj *box;
 	    Hallucination ? rndmonnam() : "housecat");
     }
     box->owt = weight(box);
+    award_achievement(AID_SCHROEDINGERS_CAT);
     return;
 }
 

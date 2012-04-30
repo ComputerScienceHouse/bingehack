@@ -10,8 +10,9 @@
 #include <sys/types.h>
 #include <sys/time.h>
 
+#include <ncurses.h>
 #include <signal.h>
-#include <stdbool.h>
+
 #include "list.h"
 
 #define PL_NSIZ 32
@@ -127,12 +128,14 @@ main( int argc, char *argv[] )
 {
   char name[256];
   struct u_stat_t u_stat;
-  struct sockaddr_in addr, from;
-  socklen_t fromlen;
-  struct ip_mreq mreq;
-  struct hostent *hent;
+  struct sockaddr_in addr;
+  socklen_t addrlen;
   u_int yes = 1;
   bool first_time = true;
+  const char topl[] =
+/*         1         2         3         4         5         6         7         8 */
+/* 2345678901234567890123456789012345678901234567890123456789012345678901234567890 */
+"            Name Items R/G/A/Cla HIT MAX Lv  AC  Pr Wi De Moves DL Dungeon Name";
   int i;
 
   int s = socket(PF_INET, SOCK_DGRAM, 0);
@@ -142,8 +145,6 @@ main( int argc, char *argv[] )
   }
 
   gethostname(name, sizeof(name));
-
-  hent = gethostbyname(name);
 
   if( setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) != 0 ) {
     perror("setsockopt");
@@ -157,6 +158,27 @@ main( int argc, char *argv[] )
   }
 #endif
 
+  const struct in_addr localhost_addr = {
+      .s_addr = htonl(INADDR_LOOPBACK)
+  };
+  if( setsockopt(s, IPPROTO_IP, IP_MULTICAST_IF, &localhost_addr, sizeof(localhost_addr)) == -1 ) {
+    perror("setsockopt");
+    exit(EXIT_FAILURE);
+  }
+
+  const struct ip_mreq mreq = {
+    .imr_multiaddr = {
+      .s_addr = inet_addr("225.0.0.37")
+    },
+    .imr_interface = {
+      .s_addr = htonl(INADDR_LOOPBACK)
+    }
+  };
+  if( setsockopt(s, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) != 0 ) {
+    perror("setsockopt");
+    exit(EXIT_FAILURE);
+  }
+
   memset(&addr, 0, sizeof(addr));
   addr.sin_family = AF_INET;
   addr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -167,19 +189,23 @@ main( int argc, char *argv[] )
     exit(EXIT_FAILURE);
   }
 
-  mreq.imr_multiaddr.s_addr = inet_addr("225.0.0.37");
-  mreq.imr_interface.s_addr = htonl(INADDR_ANY);
-
-  if( setsockopt(s, IPPROTO_IP, IP_ADD_MEMBERSHIP,
-                 &mreq, sizeof(struct ip_mreq)) != 0 ) {
-    perror("setsockopt");
-    exit(EXIT_FAILURE);
-  }
-
   players = list_new();
   list_set_free(players, (free_function) free, NULL);
 
   signal(SIGINT, int_handler);
+
+  initscr();
+  keypad(stdscr, TRUE);
+  cbreak();
+  noecho();
+  nonl();
+  intrflush(stdscr, FALSE);
+
+  if( has_colors() ) {
+    start_color();
+    init_pair( COLOR_RED, COLOR_BLACK, COLOR_RED );
+  }
+  clear();
 
   while(!done) {
     fd_set rfds;
@@ -187,6 +213,13 @@ main( int argc, char *argv[] )
     char *sline;
     struct timeval tv, *tvp;
 
+    attrset(A_REVERSE);
+
+    mvaddstr(0, 0, topl);
+    for( i = COLS - sizeof(topl) + 1; i > 0; i-- )
+      addch(' ');
+
+    attrset(A_NORMAL);
     /* shitty */
 
     list_sort(players, (compare) cmp_player);
@@ -197,12 +230,24 @@ main( int argc, char *argv[] )
     case PLAYER_PLNAME: indl = 11; indr = 16; break;
     case PLAYER_ITEMS: indl = 16; indr = 22; break;
     case PLAYER_RACE: indl = -1; indr = -1;
+      if( player_direction < 0 )
+        color_set(COLOR_RED, NULL);
+      mvaddch(0, 23, 'R');
       break;
     case PLAYER_GENDER: indl = -1; indr = -1;
+      if( player_direction < 0 )
+        color_set(COLOR_RED, NULL);
+      mvaddch(0, 25, 'G');
       break;
     case PLAYER_ALIGN: indl = -1; indr = -1;
+      if( player_direction < 0 )
+        color_set(COLOR_RED, NULL);
+      mvaddch(0, 27, 'A');
       break;
     case PLAYER_CLASS: indl = -1; indr = -1;
+      if( player_direction < 0 )
+        color_set(COLOR_RED, NULL);
+      mvaddstr(0, 29, "Cla");
       break;
     case PLAYER_HP: indl = 32; indr = 36; break;
     case PLAYER_MAXHP: indl = 36; indr = 40; break;
@@ -215,37 +260,60 @@ main( int argc, char *argv[] )
     case PLAYER_DLEVEL: indl = 63; indr = 66; break;
     case PLAYER_DUNGEON: indl = 66; indr = 79; break;
     }
+    attrset(A_REVERSE);
     if( indl >= 0 ) {
+      mvaddch(0, indl, player_direction > 0 ? '<' : '>');
     }
     if( indr >= 0 ) {
+      mvaddch(0, indr, player_direction > 0 ? '>' : '<');
     }
-	//MAGIC NUMBERS
-    sline = (char *) malloc(400);
+    sline = (char *) malloc(COLS - 23);
 
     struct timeval now;
     gettimeofday(&now, NULL);
-	//MAGIC NUMBERS++
-    for( i = 0; i < list_count(players); i++ ) {
+
+    for( i = 0; i < (LINES - 1 < list_count(players) ?
+                     LINES - 1 : list_count(players)); i++ ) {
+      int j;
       const char alignments[3] = "cnl";
       struct player_t *player = list_goto_index(players, i);
       struct u_stat_t *stats = &player->stats;
-	// (MAGIC_NUMBER++)++
-      snprintf(sline, 400,
-         "%s,%c,%c,%c,%s,%d,%d,%d,%d,%d,%d,%d,%ld,%d,%s\n",
-	 stats->plname,
+
+      long usecdiff = (now.tv_sec - player->updated_at.tv_sec) * 1000000 + now.tv_usec - player->updated_at.tv_usec;
+      if( usecdiff > 500000 )
+	attrset(A_NORMAL);
+      else {
+	attrset(A_REVERSE);
+	any_changed = true;
+      }
+
+      move(i + 1, 0);
+      for( j = 0; j < 16 - strlen(stats->plname); j++ )
+        addch(' ');
+      move(i + 1, 16 - strlen(stats->plname));
+      addstr(stats->plname);
+      addstr(" ----- "); /* have */
+      snprintf(sline, COLS - 23,
+         "%c/%c/%c/%3.3s %3d %3d %2d %3d %3d %2d %2d %5ld %2d %s",
          stats->race, stats->gender, alignments[stats->align + 1],
          stats->class, stats->hp, stats->hpmax, stats->ulevel,
          stats->ac, stats->prayers, stats->wishes, stats->deaths,
          stats->moves, stats->dlevel, stats->dungeon_or_death);
+      addstr(sline);
+      for( j = 67 + strlen(stats->dungeon_or_death); j < COLS; j++ )
+        addch(' ');
     }
-    printf(sline);
-    fflush(stdout);
+
+    free(sline);
+
+    move(0, 0);
+    refresh();
+
     if( first_time ) {
       int bsock;
       struct sockaddr_in other;
       first_time = false;
-      fprintf(stderr, sline);
-      free(sline);
+
       bsock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
       if( bsock == -1 ) {
         perror("socket");
@@ -269,9 +337,6 @@ main( int argc, char *argv[] )
       shutdown(bsock, SHUT_RDWR);
       close(bsock);
     }
-    else{
-	free(sline);
-    }
 
     FD_ZERO(&rfds);
     FD_SET(s, &rfds);
@@ -290,25 +355,49 @@ main( int argc, char *argv[] )
     case -1:
       if( errno == EINTR || errno == ETIMEDOUT )
         continue;
+      endwin();
       perror("select");
       exit(EXIT_FAILURE);
     default:
       if( FD_ISSET(s, &rfds) ) {
-        fromlen = sizeof(from);
-        memset(&from, 0, sizeof(from));
-        if( recvfrom(s, &u_stat, sizeof(u_stat), 0, (struct sockaddr *) &from, &fromlen) < 0 ) {
+        addrlen = sizeof(addr);
+        if( recvfrom(s, &u_stat, sizeof(u_stat), 0, (struct sockaddr *) &addr, &addrlen) < 0 ) {
+          endwin();
           perror("recvfrom");
           exit(EXIT_FAILURE);
         }
 
         update(&u_stat);
       }
+      if( FD_ISSET(0, &rfds) ) {
+        switch( getch() ) {
+        case '<':
+          if( player_sorting ) {
+            player_sorting--;
+            player_direction = 1;
+          }
+          break;
+        case '>':
+          if( player_sorting < PLAYER_MAX ) {
+            player_sorting++;
+            player_direction = 1;
+          }
+          break;
+        case '-':
+          player_direction = -player_direction;
+          break;
+        case 'q': done = true; break;
+        }
+      }
     }
 
   }
 
+  endwin();
 
   list_destroy(players);
 
   exit(EXIT_SUCCESS);
 }
+
+// vim: et ts=2 sw=2 sts=2

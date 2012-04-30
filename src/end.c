@@ -348,6 +348,10 @@ register struct monst *mtmp;
 	    Sprintf(eos(buf), ", while %s", multi_txt);
 	  else
 	    Strcat(buf, ", while helpless");
+	  // Covers some things that aren't strictly "while helpless", but
+	  // since multi_txt is now used for practically everything that used
+	  // to be "while helpless", making the distinction is difficult
+	  if (!Lifesaved) award_achievement(AID_KILLED_HELPLESS);
 	}
 	killer = buf;
 	if (mtmp->data->mlet == S_WRAITH)
@@ -361,6 +365,20 @@ register struct monst *mtmp;
 	if (u.ugrave_arise >= LOW_PM &&
 				(mvitals[u.ugrave_arise].mvflags & G_GENOD))
 		u.ugrave_arise = NON_PM;
+	
+	/* Death achievements (see also "while helpless" above) */
+	if (!Lifesaved) {
+		if (
+			mtmp->data == &mons[PM_GIANT_ANT] ||
+			mtmp->data == &mons[PM_SOLDIER_ANT] ||
+			mtmp->data == &mons[PM_FIRE_ANT]
+		) award_achievement(AID_KILLED_BY_ANT);
+#ifdef KOPS
+		if (mtmp->data->mlet == S_KOP)
+			award_achievement(AID_FOUGHT_THE_LAW);
+#endif
+	}
+	
 	if (touch_petrifies(mtmp->data))
 		done(STONING);
 	else
@@ -957,6 +975,21 @@ die:
 		}
 #endif
 	}
+	
+	/* Conduct achievements - placed after conduct disclosure */
+	if (how != PANICKED && u.ulevel >= 15) {
+		if (!u.uconduct.food) award_achievement(AID_CONDUCT_FOODLESS);
+		if (!u.uconduct.unvegetarian) award_achievement(AID_CONDUCT_VEGETARIAN);
+		if (!u.uconduct.gnostic) award_achievement(AID_CONDUCT_ATHEIST);
+		if (!u.uconduct.killer) award_achievement(AID_CONDUCT_PACIFIST);
+		if (!u.uconduct.weaphit) award_achievement(AID_CONDUCT_WEAPONLESS);
+		if (!u.uconduct.literate) award_achievement(AID_CONDUCT_ILLITERATE);
+		if (!u.uconduct.polypiles && !u.uconduct.polyselfs)
+			award_achievement(AID_CONDUCT_NOPOLYMORPH);
+		if (num_genocides() == 0) award_achievement(AID_CONDUCT_GENOCIDELESS);
+		if (!u.uconduct.wishes) award_achievement(AID_CONDUCT_WISHLESS);
+	}
+	
 	/* finish_paybill should be called after disclosure but before bones */
 	if (bones_ok && taken) finish_paybill();
 #ifdef DEATH_EXPLORE
@@ -1246,7 +1279,6 @@ die:
 	if (dump_fp) dump_exit();
 #endif
 
-	// Could panic under out-of-memory conditions, so do it last
 	reset_single_game_achievements();
 
 	if(done_stopprint) { raw_print(""); raw_print(""); }

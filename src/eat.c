@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include "hack.h"
+#include "achieve.h"
 /* #define DEBUG */	/* uncomment to enable new eat code debugging */
 
 #ifdef DEBUG
@@ -436,6 +437,9 @@ boolean message;
 		cpostfx(victual.piece->corpsenm);
 	else
 		fpostfx(victual.piece);
+	
+	if (victual.piece->otyp == HUGE_CHUNK_OF_MEAT)
+		award_achievement(AID_EAT_HUGE_CHUNK_OF_MEAT);
 
 	if (carried(victual.piece)) useup(victual.piece);
 	else useupf(victual.piece, 1L);
@@ -454,6 +458,7 @@ boolean allowmsg;
 				You("have a bad feeling deep inside.");
 			You("cannibal!  You will regret this!");
 		}
+		award_achievement(AID_CANNIBALISM);
 		HAggravate_monster |= FROMOUTSIDE;
 		change_luck(-rn1(4,2));		/* -5..-2 */
 		return TRUE;
@@ -1416,8 +1421,10 @@ struct obj *otmp;
 			  "Mmm, tripe... not bad!");
 		else {
 		    pline("Yak - dog food!");
+		    int oldlevel = u.ulevel;
 		    more_experienced(1,0);
 		    newexplevel();
+		    if (u.ulevel > oldlevel) award_achievement(AID_TRIVIAL_LEVEL_UP);
 		    /* not cannibalism, but we use similar criteria
 		       for deciding whether to be sickened by this meal */
 		    if (rn2(2) && !CANNIBAL_ALLOWED())
@@ -1914,6 +1921,28 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 		}
 	}
 
+	/* Can't eat trapped food - Chris Becker (topher@csh.rit.edu) */
+	{
+		struct trap* ttmp = t_at(u.ux,u.uy);
+		if (ttmp) {
+			switch(ttmp->ttyp) {
+			case PIT:
+			case SPIKED_PIT:
+				if (!(u.utraptype == TT_PIT && u.utrap)) {
+					You("can't reach %s, it's at the bottom of the %s!", the(xname(otmp)), 
+						ttmp->ttyp == PIT ? "pit" :	"spiked pit" );
+					return 0;
+				}
+				break;
+			case WEB:
+				You("can't eat %s, it's caught in the spider web%s!", the(xname(otmp)),
+					u.utraptype == TT_WEB && u.utrap ? " with you" : "" );
+				return 0;
+			default:
+				break;
+			}
+		}
+	}
 	/* We have to make non-foods take 1 move to eat, unless we want to
 	 * do ridiculous amounts of coding to deal with partly eaten plate
 	 * mails, players who polymorph back to human in the middle of their

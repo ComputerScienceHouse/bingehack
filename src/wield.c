@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include "hack.h"
+#include "achieve.h"
 
 /* KMH -- Differences between the three weapon slots.
  *
@@ -751,6 +752,9 @@ register int amount;
 	}
 	uwep->spe += amount;
 	if(amount > 0) uwep->cursed = 0;
+	
+	/* Armor condition located in read.c */
+	if (uwep->spe >= 7) award_achievement(AID_ENCHANT_HIGH);
 
 	/*
 	 * Enchantment, which normally improves a weapon, has an
