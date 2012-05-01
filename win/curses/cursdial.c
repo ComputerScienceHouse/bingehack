@@ -1189,7 +1189,7 @@ static int menu_get_selections(WINDOW *win, nhmenu *menu, int how)
     {
         curletter = getch();
         
-        if (curletter == '\033' || curletter == '\n' || curletter == 0x157 || curletter == 0x5A)
+        if (curletter == '\033' || curletter == '\n' || curletter == 0x157)
         {
             curletter = curses_convert_keys(curletter);
         }
