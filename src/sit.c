@@ -65,9 +65,49 @@ dosit()
 	    register struct obj *obj;
 
 	    obj = level.objects[u.ux][u.uy];
-	    You("sit on %s.", the(xname(obj)));
-	    if (!(Is_box(obj) || objects[obj->otyp].oc_material == CLOTH))
-		pline("It's not very comfortable...");
+	    
+	    /* Corpse effects when sitting - Chris Becker (topher@csh.rit.edu)
+	     */
+	    if (obj->otyp == CORPSE ) {
+	    	/* so we get the monster's name */
+	    	You("sit on %s.", singular(obj, doname));
+	    	if (touch_petrifies(&mons[obj->corpsenm]) && !uarm 
+	    		&& !Stone_resistance ) {
+		    	char kbuf[BUFSZ];
+		    		pline("Sitting on %s corpse without armor is a fatal mistake...",
+				an(mons[obj->corpsenm].mname));
+				Sprintf(kbuf, "sitting on %s corpse without armor",
+					an(mons[obj->corpsenm].mname));
+				instapetrify(kbuf);	
+	    	} else if (acidic(&mons[obj->corpsenm])) {
+	    		if (!Acid_resistance) {
+		    		pline( "Ouch! That burns!" );
+		    		losehp(d(1,6), "sitting on an acidic corpse", KILLED_BY);
+	    		}
+	    		if (uarm && !rn2(3)) /* corrode armor */
+		    			(void)rust_dmg(uarm, xname(uarm), 3, TRUE, &youmonst);
+	    		if (obj->corpsenm == PM_GREEN_SLIME) {
+	    		if (!uarm && !rn2(4)) { /* you touched it */
+	    			if (flaming(youmonst.data) || Unchanging ||
+							youmonst.data == &mons[PM_GREEN_SLIME]) {
+					    pline_The("Yuck!");
+					} else if (!Slimed) {
+					    You("don't feel very well.");
+					    Slimed = 10L;
+					    flags.botl = 1;
+					    killer_format = KILLED_BY_AN;
+					    delayed_killer = (&mons[obj->corpsenm])->mname;
+					}
+	    		}
+	    	} else {
+	    			pline("It's not very comfortable...");
+	    		}
+	    	}
+	    } else {
+	    	You("sit on %s.", the(xname(obj)));
+		    if (!(Is_box(obj) || objects[obj->otyp].oc_material == CLOTH))
+			pline("It's not very comfortable...");
+	    }
 
 	} else if ((trap = t_at(u.ux, u.uy)) != 0 ||
 		   (u.utrap && (u.utraptype >= TT_LAVA))) {

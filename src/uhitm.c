@@ -618,6 +618,12 @@ int thrown;
 			if (mdat != &mons[PM_SHADE])
 			    tmp++;
 		    }
+			/* silver arrows do silver damage - Chris Becker (topher@csh.rit.edu) */
+			if (objects[obj->otyp].oc_material == SILVER
+				&& hates_silver(mdat)) {
+			silvermsg = TRUE; silverobj = TRUE;
+			tmp += rnd(20);
+		    }
 		} else {
 		    tmp = dmgval(obj, mon);
 		    /* a minimal hit doesn't exercise proficiency */

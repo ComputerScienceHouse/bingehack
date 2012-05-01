@@ -420,7 +420,8 @@ struct obj *obj;			/* only scatter this obj        */
 	struct scatter_chain *stmp, *stmp2 = 0;
 	struct scatter_chain *schain = (struct scatter_chain *)0;
 	long total = 0L;
-
+	char objroom = *in_rooms(sx, sy, SHOPBASE);
+	
 	while ((otmp = individual_object ? obj : level.objects[sx][sy]) != 0) {
 	    if (otmp->quan > 1L) {
 		qtmp = otmp->quan - 1;
@@ -461,9 +462,10 @@ struct obj *obj;			/* only scatter this obj        */
 	    } else if ((scflags & MAY_DESTROY) && (!rn2(10)
 			|| (objects[otmp->otyp].oc_material == GLASS
 			|| otmp->otyp == EGG))) {
-		if (breaks(otmp, (xchar)sx, (xchar)sy)) used_up = TRUE;
+		/* pay for things you break - Chris Becker (topher@csh.rit.edu) */
+		if (hero_breaks(otmp, (xchar)sx, (xchar)sy, FALSE)) used_up = TRUE;
 	    }
-
+		
 	    if (!used_up) {
 		stmp = (struct scatter_chain *)
 					alloc(sizeof(struct scatter_chain));
@@ -509,6 +511,15 @@ struct obj *obj;			/* only scatter this obj        */
 					stmp->obj = (struct obj *)0;
 					stmp->stopped = TRUE;
 				    }
+				    /* shk is not happy */
+					if (mtmp == shop_keeper(objroom) && mtmp->mpeaceful 
+						&& inhishop(mtmp)) {
+						if (objroom == *u.ushops) {
+							pline("%s gets angry!", Monnam(mtmp));
+						    hot_pursuit(mtmp);
+		    				(void) angry_guards(FALSE);
+						}
+					}
 				}
 			} else if (bhitpos.x==u.ux && bhitpos.y==u.uy) {
 				if (scflags & MAY_HITYOU) {
@@ -533,6 +544,18 @@ struct obj *obj;			/* only scatter this obj        */
 			}
 			stmp->ox = bhitpos.x;
 			stmp->oy = bhitpos.y;
+			
+			/* pay for things that got pushed out of the shop */
+			if (stmp->stopped && stmp->obj && !stmp->obj->no_charge 
+				&& costly_spot(sx, sy) 
+				&& (!costly_spot(stmp->ox,stmp->oy) ||
+				 *in_rooms(stmp->ox, stmp->oy, SHOPBASE) != *u.ushops) ) {
+				mtmp = shop_keeper(objroom);
+				if (mtmp && inhishop(mtmp)) {
+					(void)stolen_value(stmp->obj, sx, sy,
+					       (boolean)mtmp->mpeaceful, FALSE);
+				}
+			}
 		   }
 		}
 	}

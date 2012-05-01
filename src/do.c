@@ -796,7 +796,8 @@ dodown()
 	}
 	if (!stairs_down && !ladder_down) {
 		if (!(trap = t_at(u.ux,u.uy)) ||
-			(trap->ttyp != TRAPDOOR && trap->ttyp != HOLE)
+			(trap->ttyp != TRAPDOOR && trap->ttyp != HOLE &&
+			 trap->ttyp != PIT && trap->ttyp != SPIKED_PIT)
 			|| !Can_fall_thru(&u.uz) || !trap->tseen) {
 
 			if (flags.autodig && !flags.nopick &&
@@ -828,6 +829,14 @@ dodown()
 		return(0);
 	}
 
+	/* Move into the pit */
+	if (trap && (trap->ttyp == PIT || trap->ttyp == SPIKED_PIT)) {
+		You("carefully slide down into the %spit", 
+			trap->ttyp == SPIKED_PIT ? "spiked " : "");
+		u.utraptype = TT_PIT;
+		u.utrap = rn1(6,2);
+		return(0);
+	} else {
 	if (trap)
 	    You("%s %s.", locomotion(youmonst.data, "jump"),
 		trap->ttyp == HOLE ? "down the hole" : "through the trap door");
@@ -838,6 +847,7 @@ dodown()
 		at_ladder = (boolean) (levl[u.ux][u.uy].typ == LADDER);
 		next_level(!trap);
 		at_ladder = FALSE;
+	}
 	}
 	return(1);
 }
@@ -1371,6 +1381,23 @@ boolean at_stairs, falling, portal;
 	    final_level();
 	else
 	    onquest();
+
+	/* Guilt for carrying boulders into Sokoban 
+	 *	- Chris Becker (topher@csh.rit.edu) 
+	 */
+	if (In_sokoban(&u.uz) && !In_sokoban(&u.uz0) && is_giant(youmonst.data)) {
+		struct obj *obj;
+
+		for(obj = invent; obj; obj = obj->nobj) {
+			if (obj->otyp == BOULDER) {
+				change_luck(-1); /* Sokoban guilt */
+				break;			 /* only penalizing once is consistent with
+                                    scroll of earth only penalizing once per
+                                    boulder created */
+			}
+		}
+	}
+
 	assign_level(&u.uz0, &u.uz); /* reset u.uz0 */
 
 #ifdef INSURANCE

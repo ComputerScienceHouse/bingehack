@@ -296,6 +296,8 @@ Helmet_on()
 {
     switch(uarmh->otyp) {
 	case FEDORA:
+		set_moreluck();
+		break;
 	case HELMET:
 	case DENTED_POT:
 	case ELVEN_LEATHER_HELM:
@@ -355,6 +357,10 @@ Helmet_off()
 
     switch(uarmh->otyp) {
 	case FEDORA:
+	    setworn((struct obj *)0, W_ARMH);
+	    set_moreluck();
+	    cancelled_don = FALSE;	    
+	    return 0;
 	case HELMET:
 	case DENTED_POT:
 	case ELVEN_LEATHER_HELM:

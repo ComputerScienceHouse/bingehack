@@ -3908,7 +3908,13 @@ register struct obj *obj;		   /* no texts here! */
 	    change_luck(-1);
 	    award_achievement(AID_SOKOBAN_DESTROY_BOULDER);
 	}
-
+	
+	/* so hero gets charged for breaking statues/boulders
+	 * - Chris Becker (topher@csh.rit.edu)
+	 */
+	if (!flags.mon_moving) hero_breaks(obj,obj->ox,obj->oy,
+		obj->where == OBJ_INVENT);
+	
 	obj->otyp = ROCK;
 	obj->quan = (long) rn1(60, 7);
 	obj->owt = weight(obj);
@@ -4272,6 +4278,13 @@ retry:
 	       to retain wishless conduct */
 	    return;
 	}
+
+	/* Guilt for wishing for a boulder in Sokoban
+	 *	- Chris Becker (topher@csh.rit.edu) 
+	 */
+	if (In_sokoban(&u.uz) && otmp->otyp == BOULDER) 
+		change_luck(-1);
+
 
 	/* KMH, conduct */
 	u.uconduct.wishes++;
