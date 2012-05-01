@@ -396,7 +396,8 @@ getbones()
 #ifdef WIZARD
 	    if (!wizard)
 #endif
-		pline("Discarding unuseable bones; no need to panic...");
+		pline("Discarding unuseable bones; apparently a bones/save-breaking change was committed.");
+		pline("If this happened on the CSH server, you should open up a support ticket on GitHub.");
 	} else {
 #ifdef WIZARD
 		if(wizard)  {
