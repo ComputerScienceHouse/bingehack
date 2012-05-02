@@ -15,6 +15,7 @@
 #include <assert.h>
 #include <locale.h>
 
+#include <glib.h>
 #include <mysql.h>
 #include <libconfig.h>
 
@@ -110,7 +111,18 @@ char *argv[];
 	}
 #endif
 
-	setlocale(LC_ALL, "C.UTF8");
+	if( setlocale(LC_ALL, "C.UTF8") == NULL ) {
+		const char *locale = setlocale(LC_ALL, "");
+		if( locale == NULL ) {
+			fprintf(stderr, "Unable to set locale to native\n");
+			exit(EXIT_FAILURE);
+		}
+		// This will also match utf >= 16, but I'm not sure that's a problem.
+		if( g_strstr_len(locale, -1, "UTF") == NULL ) {
+			fprintf(stderr, "Your locale does not support UTF characters\n");
+			exit(EXIT_FAILURE);
+		}
+	}
 
 #ifdef SIMPLE_MAIL
 	/* figure this out early */
