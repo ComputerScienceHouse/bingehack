@@ -68,6 +68,11 @@ static void segv_award( int sig ) {
 	}
 }
 
+static void segv_handler( int sig ) {
+	fflush(stdout);
+	segv_award(sig);
+}
+
 int
 main(argc,argv)
 int argc;
@@ -274,7 +279,7 @@ char *argv[];
 
 	display_gamewindows();
 
-	if( signal(SIGSEGV, segv_award) == SIG_ERR ) pline("Unable to register signal handler: %s", strerror(errno));
+	if( signal(SIGSEGV, segv_handler) == SIG_ERR ) pline("Unable to register signal handler: %s", strerror(errno));
 
 	configfile_init();
 	mysql_library_startup();
