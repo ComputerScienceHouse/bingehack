@@ -53,6 +53,7 @@ Compilation requires at least the following:
 - libconfig
 - NCurses (with wide character support)
 - MYSQL Client (libmysqlclient)
+- GLib >= 2.0
 
 # Building
 Once this has all been satisfied, simply type `make`.

@@ -7,6 +7,13 @@
 #include <libconfig.h>
 #endif
 
+typedef enum {
+	NETHACK_CONFIGFILE_ERROR_VARIABLE_UNSET,
+	NETHACK_CONFIGFILE_ERROR_LIBC,
+	NETHACK_CONFIGFILE_ERROR_LIBC_ENOENT,
+	NETHACK_CONFIGFILE_ERROR_LIBCONFIG,
+} NethackConfigfileError;
+
 #define config _get_config()
 config_t *_get_config();
 
