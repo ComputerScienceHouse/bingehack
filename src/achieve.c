@@ -32,7 +32,10 @@ bool achievement_system_startup() {
 	if( !configfile_get_string("achievements.mysql.username", &db_user) ||
 	    !configfile_get_string("achievements.mysql.password", &db_pass) ||
 	    !configfile_get_string("achievements.mysql.database", &db_db) ||
-	    !configfile_get_string("achievements.mysql.server",   &db_server) ) return false;
+	    !configfile_get_string("achievements.mysql.server",   &db_server) ) {
+		disable_achievements();
+		return false;
+	}
 
 	mysql.init(&db);
 
@@ -213,6 +216,7 @@ int get_achievement_awarded(int achievement_id){
 // It is the caller's responsibility to free() the return value of this function.
 char *get_achievement_name( int achievement_id ){
 	if (!check_db_connection()) disable_achievements();
+	if (achievement_system_disabled) return 0;
 	
 	MYSQL_RES *res = NULL;
 	MYSQL_ROW row;
