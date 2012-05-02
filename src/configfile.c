@@ -93,7 +93,7 @@ bool configfile_init() {
 			ret = true;
 		} else {
 			g_assert(err != NULL);
-			errors =g_slist_append(errors, err);
+			errors = g_slist_append(errors, err);
 			err = NULL;
 
 		}
