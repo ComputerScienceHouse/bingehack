@@ -12,6 +12,7 @@
 #ifndef O_RDONLY
 #include <fcntl.h>
 #endif
+#include <assert.h>
 
 #include <mysql.h>
 #include <libconfig.h>
@@ -56,21 +57,14 @@ static void NDECL(wd_message);
 static boolean wiz_error_flag = FALSE;
 #endif
 
-static void segv_award( int sig ) {
-    if( signal(SIGSEGV, SIG_DFL) == SIG_ERR ) {
-	    perror("signal");
-		exit(EXIT_FAILURE);
-	}
+static void segv_handler( int sig ) {
+	fflush(stdout);
 	award_achievement(AID_CRASH);
 	if( kill(getpid(), SIGSEGV) == -1 ) {
 		perror("kill");
 		exit(EXIT_FAILURE);
 	}
-}
-
-static void segv_handler( int sig ) {
-	fflush(stdout);
-	segv_award(sig);
+	assert(false);
 }
 
 int
@@ -279,7 +273,11 @@ char *argv[];
 
 	display_gamewindows();
 
-	if( signal(SIGSEGV, segv_handler) == SIG_ERR ) pline("Unable to register signal handler: %s", strerror(errno));
+	struct sigaction action;
+	action.sa_handler = segv_handler;
+	action.sa_flags = SA_RESETHAND | SA_NODEFER;
+	if( sigemptyset(&action.sa_mask) == -1 ) pline("Unable to register signal handler: %s", strerror(errno));
+	if( sigaction(SIGSEGV, &action, NULL) == -1 ) pline("Unable to register signal handler: %s", strerror(errno));
 
 	configfile_init();
 	mysql_library_startup();
