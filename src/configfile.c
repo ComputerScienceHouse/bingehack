@@ -33,7 +33,7 @@ static bool configfile_read_file( const char *filename ) {
 
 	FILE *stream;
 	if( (stream = fopen(filename, "r")) == NULL ) {
-		if( errno != ENOENT ) pline("Unable to read nethack configuration file %s: %s", filename, strerror(errno));
+		pline("Unable to read nethack configuration file %s: %s", filename, strerror(errno));
 		return false;
 	}
 	if( config_read(&_config, stream) == CONFIG_FALSE ) {
