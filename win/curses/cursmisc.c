@@ -6,7 +6,6 @@
 #include "dlb.h"
 
 #include <ctype.h>
-#include <locale.h>
 
 /* Misc. curses interface functions */
 
@@ -571,14 +570,10 @@ void curses_move_cursor(winid wid, int x, int y)
 
 void curses_prehousekeeping()
 {
-    if(iflags.IBMgraphics)
-    {
-        setlocale(LC_CTYPE,"C-UTF-8");
-    }
 #ifndef PDCURSES
     WINDOW *win = curses_get_nhwin(MAP_WIN);
 #endif  /* PDCURSES */
-    
+
     if ((curs_x > -1) && (curs_y > -1))
     {
         curs_set(1);

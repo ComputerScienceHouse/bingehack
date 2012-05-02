@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #endif
 #include <assert.h>
+#include <locale.h>
 
 #include <mysql.h>
 #include <libconfig.h>
@@ -108,6 +109,8 @@ char *argv[];
 	    }
 	}
 #endif
+
+	setlocale(LC_ALL, "C.UTF8");
 
 #ifdef SIMPLE_MAIL
 	/* figure this out early */
