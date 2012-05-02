@@ -110,7 +110,7 @@ char *argv[];
 	}
 #endif
 
-	setlocale(LC_ALL, "C.UTF8");
+	setlocale(LC_ALL, "");
 
 #ifdef SIMPLE_MAIL
 	/* figure this out early */
