@@ -1,6 +1,6 @@
 .PHONY: util/depclean util/all util/clean
 
-util/all: $(MAKEDEFS) $(RECOVER) $(DGN_COMP) $(LEV_COMP) $(RX) $(BOARD)
+util/all: $(MAKEDEFS) $(RECOVER) $(DGN_COMP) $(LEV_COMP) $(RX) 
 
 util/depclean:
 	$(RM) $(MAKEDEFS_DEPS) $(RECOVER_DEPS) $(ALLOC_DEPS) $(DGN_COMP_DEPS) $(DGN_YACC_DEPS) $(DGN_LEX_DEPS) $(LEV_COMP_DEPS) $(LEV_YACC_DEPS) $(LEV_LEX_DEPS) $(RX_DEPS) $(BOARD_DEPS) $(INCDIR)/lev_comp.h $(INCDIR)/dgl_comp.h
