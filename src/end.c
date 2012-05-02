@@ -1522,8 +1522,10 @@ boolean want_dump;
 		    if (want_dump)  dump("  ", buf);
 #endif
 		}
-	    if (Hallucination && (ntypes>10))
+	    if (Hallucination && (ntypes>10) && c == 'y'){
+	        fflush(stdout);
 	        putstr(klwin, 0, "and a partridge in a pear tree");
+	    }
 	    if (ntypes > 1) {
 		if (c == 'y') putstr(klwin, 0, "");
 		Sprintf(buf, "%ld creatures vanquished.", total_killed);
