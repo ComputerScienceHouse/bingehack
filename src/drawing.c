@@ -3,6 +3,7 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include <stdbool.h>
+#include <locale.h>
 #include "hack.h"
 #include "tcap.h"
 /* Relevent header information in rm.h and objclass.h. */
@@ -737,6 +738,7 @@ int gr_set_flag;
 #endif
 #ifdef CURSES_GRAPHICS
     case CURS_GRAPHICS:
+            setlocale(LC_CTYPE,"C-UTF-8");
 	    assign_graphics((uchar *)0, 0, MAXPCHARS, 0);
         iflags.cursesgraphics = TRUE;
 	    iflags.IBMgraphics = FALSE;
