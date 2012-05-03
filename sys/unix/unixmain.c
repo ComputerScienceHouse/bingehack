@@ -61,7 +61,7 @@ static boolean wiz_error_flag = FALSE;
 
 static void segv_handler( int sig ) {
 	fflush(stdout);
-	award_achievement(AID_CRASH);
+	if( !wizard || getenv("NETHACK_SEGV_ACHIEVE") == NULL ) award_achievement(AID_CRASH);
 	if( kill(getpid(), SIGSEGV) == -1 ) {
 		perror("kill");
 		exit(EXIT_FAILURE);
