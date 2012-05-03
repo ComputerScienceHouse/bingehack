@@ -15,6 +15,7 @@
 #include <assert.h>
 #include <locale.h>
 
+#include <glib.h>
 #include <mysql.h>
 #include <libconfig.h>
 
@@ -60,7 +61,7 @@ static boolean wiz_error_flag = FALSE;
 
 static void segv_handler( int sig ) {
 	fflush(stdout);
-	award_achievement(AID_CRASH);
+	if( !wizard || getenv("NETHACK_SEGV_ACHIEVE") == NULL ) award_achievement(AID_CRASH);
 	if( kill(getpid(), SIGSEGV) == -1 ) {
 		perror("kill");
 		exit(EXIT_FAILURE);
@@ -110,7 +111,29 @@ char *argv[];
 	}
 #endif
 
-	setlocale(LC_ALL, "");
+	if( setlocale(LC_ALL, "C.UTF8") == NULL ) {
+		const char *locale = setlocale(LC_ALL, "");
+		if( locale == NULL ) {
+			fprintf(stderr, "Unable to set locale to native\n");
+			exit(EXIT_FAILURE);
+		}
+		// This will also match utf >= 16, but I'm not sure that's a problem.
+		if( g_strstr_len(locale, -1, "UTF") == NULL ) {
+			fprintf(stderr, "Your locale does not support UTF characters\n");
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	/*
+	 * This is a fix for terminals like PuTTY which ignore VT100 line drawing
+	 * characters when in UTF-8 mode. See ncurses(3X) for documentation on the
+	 * option. There is a wishlist item to implement support for this in PuTTY
+	 * (http://www.chiark.greenend.org.uk/~sgtatham/putty/wishlist/utf8-plus-vt100.html)
+	 */
+	if( setenv("NCURSES_NO_UTF8_ACS", "1", 0) == -1 ) {
+		perror("setenv");
+		exit(EXIT_FAILURE);
+	}
 
 #ifdef SIMPLE_MAIL
 	/* figure this out early */
