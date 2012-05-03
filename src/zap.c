@@ -3,6 +3,9 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include <stdbool.h>
+
+#include <glib.h>
+
 #include "hack.h"
 #include "achieve.h"
 
@@ -4260,6 +4263,14 @@ makewish()
 retry:
 	getlin("For what do you wish?", buf);
 	if(buf[0] == '\033') buf[0] = 0;
+
+	char *case_insens = g_utf8_casefold(g_strchug(g_strchomp(buf)), -1);
+	if( g_utf8_collate(case_insens, "more wishes") == 0 ) {
+		const char *wand_of_wishing = "wand of wishing";
+		strncpy(buf, wand_of_wishing, MIN(strlen(wand_of_wishing), BUFSZ));
+	}
+	g_free(case_insens);
+
 	/*
 	 *  Note: if they wished for and got a non-object successfully,
 	 *  otmp == &zeroobj.  That includes gold, or an artifact that
