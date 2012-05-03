@@ -115,7 +115,25 @@ bool configfile_init() {
 		errors = tmp;
 	}
 
-	_configptr = &_config;
+	if( ret == false ) {
+		GString *message = g_string_new("Unable to load any configuration files. Looked in");
+		bool comma = false;
+		for( const char * const *location = locations; *location != NULL; location++ ) {
+			const char *fmt;
+			if( comma ) {
+				fmt = ", %s";
+			} else {
+				fmt = " %s";
+				comma = true;
+			}
+			g_string_append_printf(message, fmt, *location);
+		}
+		pline("%s", message->str);
+		g_string_free(message, true);
+	} else {
+		_configptr = &_config;
+	}
+
 	return ret;
 }
 
