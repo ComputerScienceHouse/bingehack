@@ -119,7 +119,7 @@ char *argv[];
 		}
 		// This will also match utf >= 16, but I'm not sure that's a problem.
 		if( g_strstr_len(locale, -1, "UTF") == NULL ) {
-			fprintf(stderr, "Your locale does not support UTF characters\n");
+			fprintf(stderr, "Your locale (%s) does not support UTF characters\n", locale);
 			exit(EXIT_FAILURE);
 		}
 	}
