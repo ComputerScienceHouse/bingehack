@@ -13,6 +13,6 @@ You'll need mysql and ncurses libraries and headers.
 
 Debug libraries (the odd ones are used as parts of libraries we do use; if you want you don't necessarily have to install them; I doubt mysql will be crashing on kerberos oddities in our setup):
 
-    sudo debuginfo-install glibc libconfig ncurses-libs keyutils-libs krb5-libs libcom_err libselinux mysql-devel openssl zlib
+    sudo debuginfo-install glibc libconfig ncurses-libs keyutils-libs krb5-libs libcom_err libselinux mysql-devel openssl zlib glib2
 
 
