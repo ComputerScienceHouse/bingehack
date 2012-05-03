@@ -175,7 +175,6 @@ getlock()
 			}
 		else {
 			unlock_file(HLOCK);
-			error("%s", "");
 		}
 	}
 
