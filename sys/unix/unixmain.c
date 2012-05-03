@@ -124,6 +124,17 @@ char *argv[];
 		}
 	}
 
+	/*
+	 * This is a fix for terminals like PuTTY which ignore VT100 line drawing
+	 * characters when in UTF-8 mode. See ncurses(3X) for documentation on the
+	 * option. There is a wishlist item to implement support for this in PuTTY
+	 * (http://www.chiark.greenend.org.uk/~sgtatham/putty/wishlist/utf8-plus-vt100.html)
+	 */
+	if( setenv("NCURSES_NO_UTF8_ACS", "1", 0) == -1 ) {
+		perror("setenv");
+		exit(EXIT_FAILURE);
+	}
+
 #ifdef SIMPLE_MAIL
 	/* figure this out early */
 	e_simple = nh_getenv("SIMPLEMAIL");
