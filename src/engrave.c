@@ -1250,7 +1250,11 @@ static const char *csh_epitaphs[] = {
 	"Here lies Ryan Phillips - Plate Connoisseur",
 	"Here lies Ryan Phillips - Our Best Friend at RIT",
 	"Here lies Kyle Donaldson - Fixed Everyone's Computer But His Own",
-	"Here lies Kyle Donaldson - Quiet Fellow and Beloved Computer Sledgehammerer"
+	"Here lies Kyle Donaldson - Quiet Fellow and Beloved Computer Sledgehammerer",
+	"Here lies KDE - Killed by a Gnome",
+	"Tomb of the Unknown Soldier Ant",
+	"Here lies Guybrush Threepwood, Might Pirate",
+	"Stan's Previously-Owned Coffins - Also selling these fine leather jackets."
 };
 
 /* Epitaphs for random headstones */
