@@ -15,7 +15,7 @@ static bool mysql_library_disabled = false;
 
 static const char *nh_dlerror() {
 	const char *err = dlerror();
-	return err == NULL ? "dylib routine failed and no error message" : err;
+	return err == NULL ? "dylib routine failed with no error message" : err;
 }
 
 static void *mysql_function( const char *name ) {
