@@ -1233,18 +1233,18 @@ struct engr *ep;
 static const char *csh_epitaphs[] = {
 	// Be careful not to exceed 80 characters.
 	"Here lies Tom Philbrick - Expert-level Conga Line Dancer",
-	"Here lies Tomp - On his grave, do not stomp.",
-	"Here lies Tomp - He knows perl, and your variables he will chomp().",
-	"Here lies a man who ate many a plate; it worked wonders for his heart rate.",
-	"Here lies Heroine, died of neglect, and nary a drink did she ever collect.",
-	"Here lies Big Drink, dead but not gone. We'd throw it out, if not for Sean.",
-	"Here lies Big Infosys, of days long past. Little Infosys did it outlast.",
-	"Here lies Multitouch, a project misled. It had many problems besides infrared.",
-	"Here lies the ARG Committee. 1985 - 1997.",
+	"Here lies Tomp - On his grave, do not stomp",
+	"Here lies Tomp - He knows perl, and your variables he will chomp()",
+	"Here lies a man who ate many a plate; it worked wonders for his heart rate",
+	"Here lies Heroine, died of neglect, and nary a drink did she ever collect",
+	"Here lies Big Drink, dead but not gone. We'd throw it out, if not for Sean",
+	"Here lies Big Infosys, of days long past. Little Infosys did it outlast",
+	"Here lies Multitouch, a project misled. It had many problems besides infrared",
+	"Here lies the ARG Committee. 1985 - 1997",
 	"Here lies Whitefox, a brave old box. Don't plug serial cables into its docks!",
-	"Here lies your heart, garbage-plate'd apart. Next time read the calorie chart.",
-	"Here lies the Flying Ostrich - a lean, mean, pterodactyl-fighting machine.",
-	"Here lies Tron - He died for the users.",
+	"Here lies your heart, garbage-plate'd apart. Next time read the calorie chart",
+	"Here lies the Flying Ostrich - a lean, mean, pterodactyl-fighting machine",
+	"Here lies Tron - He died for the users",
 	"Here lies Lisa Tufo Nault - Beloved house member",
 	"Here lies Ryan Phillips - Mark's Best Customer",
 	"Here lies Ryan Phillips - Plate Connoisseur",
@@ -1254,7 +1254,7 @@ static const char *csh_epitaphs[] = {
 	"Here lies KDE - Killed by a Gnome",
 	"Tomb of the Unknown Soldier Ant",
 	"Here lies Guybrush Threepwood, Might Pirate",
-	"Stan's Previously-Owned Coffins - Also selling these fine leather jackets."
+	"Stan's Previously-Owned Coffins - Also selling these fine leather jackets"
 };
 
 /* Epitaphs for random headstones */
