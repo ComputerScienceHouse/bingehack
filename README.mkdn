@@ -23,6 +23,9 @@ full of inside jokes. Keep that in mind if you don't understand why we made a
 change.
 
 # Platforms
+
+## Development Platforms
+
 BingeHack has dropped support for classic and non UNIX platforms. Currently,
 the only platforms supported, in order of those most tested, are:
 
@@ -31,11 +34,29 @@ the only platforms supported, in order of those most tested, are:
 - FreeBSD
 - OpenBSD
 
+
 Windows support should be possible via any one of the many POSIX bindings
 available for the platform, but this possibility has not been explored.
 
 Keep in mind that if you want to request for a platform to be supported, it has
 to be modern, under active development and commonly used as a server platform.
+
+
+## Client Platforms
+
+We try to be fairly standards compliant, so it should work anywhere, but we test
+and absolutely require functionality for:
+
+- Windows + PuTTY (with provided config file in docs/ folder)
+- Linux + Gnome Terminal
+- Mac OS 10.6+ Terminal.app
+
+All of these support the full 256-color pallete, IBM Graphics, Curses Mode,
+and normal mode. DEC graphics milage may vary; you are welcome to contribute
+patches for this purpose, especially one's that remap VT100 graphics to UTF-8.
+If you're interested in this, you could also look at:
+http://www.chiark.greenend.org.uk/~sgtatham/putty/wishlist/utf8-plus-vt100.html
+
 
 # Modernization
 The BingeHack source base is slowly being modernized. The current language level
