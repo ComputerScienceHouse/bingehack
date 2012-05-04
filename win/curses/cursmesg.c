@@ -68,7 +68,7 @@ void curses_message_win_puts(const char *message, boolean recursed)
         }
     }
     
-    linespace = ((width + border_space) - 3) - mx;
+    linespace = ((width + border_space) - 1) - mx;
     
     if (strcmp(message, "#") == 0)  /* Extended command or Count: */
     {
@@ -125,12 +125,12 @@ void curses_message_win_puts(const char *message, boolean recursed)
         curses_toggle_color_attr(win, NONE, A_BOLD, ON);
     }
     
-    if ((mx == border_space) && ((message_length + 2) > width))
+    if ((mx == border_space) && (message_length > width))
     {
-        tmpstr = curses_break_str(message, (width - 2), 1);
+        tmpstr = curses_break_str(message, width, 1);
         mvwprintw(win, my, mx, "%s", tmpstr);
         mx += strlen(tmpstr);
-        if (strlen(tmpstr) < (width - 2))
+        if (strlen(tmpstr) < width)
         {
             mx++;
         }
@@ -140,7 +140,7 @@ void curses_message_win_puts(const char *message, boolean recursed)
             curses_toggle_color_attr(win, NONE, A_BOLD, OFF);
         }
         wrefresh(win);
-        curses_message_win_puts(curses_str_remainder(message, (width - 2), 1),
+        curses_message_win_puts(curses_str_remainder(message, width, 1),
          TRUE);
     }
     else
