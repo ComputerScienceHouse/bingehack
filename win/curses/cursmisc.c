@@ -368,59 +368,23 @@ char *curses_break_str(const char *str, int width, int line_num)
 
 char *curses_str_remainder(const char *str, int width, int line_num)
 {
-    int last_space, count;
-    char *retstr;
-    int curline = 0;
-    int strsize = strlen(str);
-    char substr[strsize];
-    char tmpstr[strsize];
-    
-    strcpy(substr, str);
-    
-    while (curline < line_num)
-    {
-        if (strlen(substr) == 0 )
-        {
-            break;
-        }
-        curline++;
-        last_space = 0;       
-        for (count = 0; count <= width; count++)
-        {
-            if (substr[count] == ' ')
-            {
-                last_space = count;
-            }
-            else if (substr[count] == '\0')           
-            {
-                last_space = count;
+    for( int i = 0; i < line_num; i++ ) {
+        size_t len = strnlen(str, width);
+        if( len == 0 ) break;
+        ssize_t last_space = width;
+        for( size_t i = len + 1; i > 0; i-- ) {
+            if( str[i - 1] == ' ' ) {
+                last_space = i - 1;
                 break;
             }
         }
-        if (last_space == 0)    /* No spaces found */
-        {
-            last_space = count - 1;
+        // Trim off the space if present.
+        if( str[last_space] == ' ' ) {
+            last_space++;
         }
-        if (substr[count] == '\0')
-        {
-            break;
-        }
-        for (count = (last_space + 1); count < strlen(substr); count++)
-        {
-            tmpstr[count - (last_space + 1)] = substr[count];
-        }
-        tmpstr[count - (last_space + 1)] = '\0';
-        strcpy(substr, tmpstr);
+        str = str + last_space;
     }
-    
-    if (curline < line_num)
-    {
-        return NULL;
-    }
-    
-    retstr = curses_copy_of(substr);
-    
-    return retstr;
+    return curses_copy_of(str);
 }
 
 
