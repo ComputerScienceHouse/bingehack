@@ -30,31 +30,15 @@ static int max_messages;
 static int num_messages = 0;
 
 
-static void strip_characters( char *message, const char *illegal ) {
-    size_t message_len = strlen(message), illegal_len = strlen(illegal);
-    // First, find the illegal characters and map them to \0
+static void replace_characters( char *message, const char *from, char to ) {
+    size_t message_len = strlen(message), from_len = strlen(from);
     for( size_t i = 0; i < message_len; i++ ) {
-        for( size_t j = 0; j < illegal_len; j++ ) {
-            if( message[i] == illegal[j] ) {
-                message[i] = '\0';
+        for( size_t j = 0; j < from_len; j++ ) {
+            if( message[i] == from[j] ) {
+                message[i] = to;
                 break;
             }
         }
-    }
-    // Now, remove the illegal characters by shifting left
-    size_t strptr = 0;
-    for( size_t i = 0; i < message_len; i++ ) {
-        size_t next_legal = i;
-        for( size_t j = i; j < message_len; j++ ) {
-            if( message[j] == '\0' ) {
-                strptr++;
-            } else {
-                next_legal = j;
-                break;
-            }
-        }
-        if( i != next_legal ) message[i] = message[next_legal];
-        strptr++;
     }
 }
 
@@ -72,7 +56,7 @@ void curses_message_win_puts(const char *message, boolean recursed)
     static long suppress_turn = -1;
 
     // This could be done better (without the cast).
-    strip_characters((char *) message, "\n\t");
+    replace_characters((char *) message, "\n\t", ' ');
 
     if (strncmp("Count:", message, 6) == 0)
     {
