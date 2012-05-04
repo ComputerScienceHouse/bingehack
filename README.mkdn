@@ -9,6 +9,15 @@ Additionally, BingeHack includes a great deal of patches from the NetHack Patch
 Database, too many to mention here. See the earliest commits by Russell Harmon
 for details.
 
+# Playing the game
+If you do not wish to compile (see the BUILDING.mkdn documentation), or wish to
+take full advantage of the many multiplayer-esque features of BingeHack, you may
+play on our public server:
+
+     telnet nethack.csh.rit.edu
+
+
+
 # Features
 Currently, the feature set of BingeHack (when compared to nethack) is too large
 and in flux to list here and be valid for any reasonable amount of time. See the
@@ -53,7 +62,7 @@ and absolutely require functionality for:
 
 All of these support the full 256-color pallete, IBM Graphics, Curses Mode,
 and normal mode. DEC graphics milage may vary; you are welcome to contribute
-patches for this purpose, especially one's that remap VT100 graphics to UTF-8.
+patches for this purpose, especially ones that remap VT100 graphics to UTF-8.
 If you're interested in this, you could also look at:
 http://www.chiark.greenend.org.uk/~sgtatham/putty/wishlist/utf8-plus-vt100.html
 
