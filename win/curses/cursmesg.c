@@ -30,6 +30,18 @@ static int max_messages;
 static int num_messages = 0;
 
 
+static void replace_characters( char *message, const char *from, char to ) {
+    size_t message_len = strlen(message), from_len = strlen(from);
+    for( size_t i = 0; i < message_len; i++ ) {
+        for( size_t j = 0; j < from_len; j++ ) {
+            if( message[i] == from[j] ) {
+                message[i] = to;
+                break;
+            }
+        }
+    }
+}
+
 
 /* Write a string to the message window.  Attributes set by calling function. */
 
@@ -42,6 +54,9 @@ void curses_message_win_puts(const char *message, boolean recursed)
     int message_length = strlen(message);
     int border_space = 0;
     static long suppress_turn = -1;
+
+    // This could be done better (without the cast).
+    replace_characters((char *) message, "\n\t", ' ');
 
     if (strncmp("Count:", message, 6) == 0)
     {

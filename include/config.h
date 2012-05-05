@@ -433,7 +433,7 @@ typedef unsigned char	uchar;
 // As a special case, if the string starts with an $, the value (minus the $)
 // will be used as the name of an environment variable to retrieve the filename
 // from.
-#define CONFIGFILE_LOCATIONS { "/etc/nethack.conf", HACKDIR "/nethack.conf", "$NETHACKCONF" }
+#define CONFIGFILE_LOCATIONS { "/etc/nethack.conf", HACKDIR "/nethack.conf", "$NETHACKCONF", NULL }
 #endif
 
 /* End of Section 5 */
