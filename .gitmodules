@@ -1,0 +1,3 @@
+[submodule "extra-game/chroot"]
+	path = extra-game/chroot
+	url = git@github.com:ComputerScienceHouse/bingehack-chroot.git
