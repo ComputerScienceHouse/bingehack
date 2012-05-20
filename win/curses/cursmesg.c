@@ -30,43 +30,44 @@ static int max_messages;
 static int num_messages = 0;
 
 
-static void replace_characters( char *message, const char *from, char to ) {
+static char *replace_characters( const char *message, const char *from, char to ) {
     size_t message_len = strlen(message), from_len = strlen(from);
+    char *nmesg = strndup(message, message_len);
     for( size_t i = 0; i < message_len; i++ ) {
         for( size_t j = 0; j < from_len; j++ ) {
-            if( message[i] == from[j] ) {
-                message[i] = to;
+            if( nmesg[i] == from[j] ) {
+                nmesg[i] = to;
                 break;
             }
         }
     }
+    return nmesg;
 }
 
 
 /* Write a string to the message window.  Attributes set by calling function. */
 
-void curses_message_win_puts(const char *message, boolean recursed)
+void curses_message_win_puts(const char *msg, boolean recursed)
 {
     int height, width, linespace;
     char *tmpstr;
     WINDOW *win = curses_get_nhwin(MESSAGE_WIN);
     boolean border = curses_window_has_border(MESSAGE_WIN);
-    int message_length = strlen(message);
+    int message_length = strlen(msg);
     int border_space = 0;
     static long suppress_turn = -1;
 
-    // This could be done better (without the cast).
-    replace_characters((char *) message, "\n\t", ' ');
+    char *message = replace_characters(msg, "\n\t", ' ');
 
     if (strncmp("Count:", message, 6) == 0)
     {
         curses_count_window(message);
-        return;
+        goto out;
     }
     
     if (suppress_turn == moves)
     {
-        return;
+        goto out;
     }
     
     curses_get_window_size(MESSAGE_WIN, &height, &width);
@@ -96,7 +97,7 @@ void curses_message_win_puts(const char *message, boolean recursed)
             strcpy(toplines, message);
         }
         
-        return;
+        goto out;
     }
 
     if (!recursed)
@@ -116,7 +117,7 @@ void curses_message_win_puts(const char *message, boolean recursed)
                 if (curses_more() == '\033')
                 {
                     suppress_turn = moves;
-                    return;
+                    goto out;
                 }
             }
             else
@@ -165,6 +166,9 @@ void curses_message_win_puts(const char *message, boolean recursed)
         mx += message_length + 1;
     }
     wrefresh(win);
+
+out:
+    free(message);
 }
 
 
