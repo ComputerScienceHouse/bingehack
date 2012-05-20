@@ -1253,7 +1253,7 @@ static const char *csh_epitaphs[] = {
 	"Here lies Kyle Donaldson - Quiet Fellow and Beloved Computer Sledgehammerer",
 	"Here lies KDE - Killed by a Gnome",
 	"Tomb of the Unknown Soldier Ant",
-	"Here lies Guybrush Threepwood, Might Pirate",
+	"Here lies Guybrush Threepwood, Mighty Pirate",
 	"Stan's Previously-Owned Coffins - Also selling these fine leather jackets"
 };
 
