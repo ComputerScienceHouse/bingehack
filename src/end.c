@@ -1026,8 +1026,6 @@ die:
 #endif
 #ifdef DEATH_EXPLORE
 	    if (goexplore) {
-	      discover = FALSE; /* a kludge to fool the topten function.. */
-	      topten(how);
 	      /* undo some things that were done for score calculation */
 	      /* this branch is not entered when you ascend, escape or quit */
 	      discover = TRUE;
