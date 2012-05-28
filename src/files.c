@@ -1389,7 +1389,7 @@ int retryct;
 	filename = fqname(filename, whichprefix, 0);
 
 #ifdef USE_FCNTL
-	lockfd = open(filename,O_RDWR|O_CREAT);
+	lockfd = open(filename,O_RDWR|O_CREAT,S_IRUSR|S_IWUSR);
 	if (lockfd == -1) {
 		HUP raw_printf("Cannot open file %s. This is a program bug.",
 			filename);
