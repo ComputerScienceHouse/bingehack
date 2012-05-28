@@ -26,7 +26,7 @@ INCDIR := $(TOPDIR)/include
 SRCDIR := $(TOPDIR)/src
 
 CPPFLAGS := $(CPPFLAGS) -I$(INCDIR) -D_GNU_SOURCE
-CFLAGS := $(CFLAGS) -fPIC -Werror -Wall -Wno-format -Wnonnull -std=gnu99
+CFLAGS := $(CFLAGS) -fPIC -Wall -Wno-format -Wnonnull -std=gnu99 -O2
 
 UNAME := $(shell uname -s)
 ifeq ($(UNAME), OpenBSD)
