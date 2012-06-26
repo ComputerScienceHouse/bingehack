@@ -56,7 +56,7 @@ to be modern, under active development and commonly used as a server platform.
 We try to be fairly standards compliant, so it should work anywhere, but we test
 and absolutely require functionality for:
 
-- Windows + PuTTY (with provided config file in docs/ folder)
+- Windows + PuTTY (with provided config file in extra-game/ folder)
 - Linux + Gnome Terminal
 - Mac OS 10.6+ Terminal.app
 
