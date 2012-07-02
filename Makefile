@@ -14,6 +14,7 @@ PKG_CONFIG ?= pkg-config
 
 PREFIX ?= /usr/local
 GAMEDIR ?= $(PREFIX)/nethack
+VARDIR ?= $(GAMEDIR)/var
 
 -include config.mk
 
@@ -101,10 +102,10 @@ update: all
 	$(MV) $(GAMEDIR)/nethack $(GAMEDIR)/nethack.old
 	$(MV) $(GAMEDIR)/quest.dat $(GAMEDIR)/quest.dat.old
 	$(MAKE) install
-	$(TOUCH) -c $(GAMEDIR)/var/{bones*,?lock*,wizard*,save/*}
+	$(TOUCH) -c $(VARDIR)/{bones*,?lock*,wizard*,save/*}
 
 install: all
-	$(INSTALL) -d $(GAMEDIR) $(GAMEDIR)/var/save
+	$(INSTALL) -d $(GAMEDIR) $(VARDIR)/save
 	$(INSTALL) -m 0644 $(DAT_INSTALL_OBJECTS) $(GAMEDIR)
 	$(INSTALL) -m 2755 $(SRCDIR)/nethack $(GAMEDIR)
 ifneq ($(UNAME), OpenBSD)
@@ -112,7 +113,7 @@ ifneq ($(UNAME), OpenBSD)
 else
 	$(INSTALL) $(RECOVER) $(GAMEDIR)/recover
 endif
-	$(TOUCH) $(GAMEDIR)/var/perm $(GAMEDIR)/var/record $(GAMEDIR)/var/logfile $(GAMEDIR)/var/xlogfile
+	$(TOUCH) $(VARDIR)/perm $(VARDIR)/record $(VARDIR)/logfile $(VARDIR)/xlogfile
 
 %.exe:
 	$(CC) $(EXE_LIBRARIES) $(LDFLAGS) -o $@ $(EXE_OBJECTS)
