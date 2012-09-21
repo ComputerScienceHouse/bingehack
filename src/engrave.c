@@ -1254,7 +1254,8 @@ static const char *csh_epitaphs[] = {
 	"Here lies KDE - Killed by a Gnome",
 	"Tomb of the Unknown Soldier Ant",
 	"Here lies Guybrush Threepwood, Mighty Pirate",
-	"Stan's Previously-Owned Coffins - Also selling these fine leather jackets"
+	"Stan's Previously-Owned Coffins - Also selling these fine leather jackets",
+	"I used to be an adventurer before I took an arrow to the knee"
 };
 
 /* Epitaphs for random headstones */
