@@ -83,8 +83,6 @@ register struct obj *otmp;
 	if((i = otmp->invlet) && flags.invlet_constant == FIXINV_NEXT &&
 	    (('a' <= i && i <= 'z') || ('A' <= i && i <= 'Z')))
 		return;
-	ilet = (inuse[i] ? NOINVSYM :
-		(i < 26) ? ('a'+i) : ('A'+i-26));
 	if (flags.invlet_constant == FIXINV_NEXT) {
 	    for(i = lastinvnr+1; i != lastinvnr; i++) {
 		if(i == 52) { i = -1; continue; }
@@ -94,6 +92,8 @@ register struct obj *otmp;
 	    for(i = 0; i <52; i++)
 		if(!inuse[i]) break;
 	}
+	ilet = (inuse[i] ? NOINVSYM :
+		(i < 26) ? ('a'+i) : ('A'+i-26));
 	if (flags.invlet_constant == FIXINV_NEXT) {
 	    otmp->invlet = ilet;
 	} else {
