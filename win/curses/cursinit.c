@@ -546,12 +546,8 @@ void curses_init_nhcolors()
         init_pair(7, COLOR_CYAN, -1);
         init_pair(8, -1, -1);
 
-        if (COLORS >= 16)
+        if (COLOR_PAIRS >= 16)
         {
-            // On OSX, CURSES_DARK_GRAY must be initialized before COLOR_WHITE
-            // because the later init_color(CURSES_DARK_GRAY, ...) is ignored.
-            if (COLORS > 16 && CURSES_DARK_GRAY < COLOR_PAIRS)
-                init_pair(CURSES_DARK_GRAY, 16, -1);
             init_pair(9, COLOR_WHITE, -1);
             init_pair(10, COLOR_RED + 8, -1);
             init_pair(11, COLOR_GREEN + 8, -1);
@@ -560,6 +556,8 @@ void curses_init_nhcolors()
             init_pair(14, COLOR_MAGENTA + 8, -1);
             init_pair(15, COLOR_CYAN + 8, -1);
             init_pair(16, COLOR_WHITE + 8, -1);
+            if (COLORS > 16 && CURSES_DARK_GRAY < COLOR_PAIRS)
+                init_pair(CURSES_DARK_GRAY, 16, -1);
         }
 
         // Do note that OSX's terminal app _seems_
