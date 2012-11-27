@@ -116,7 +116,7 @@ endif
 	$(TOUCH) $(VARDIR)/perm $(VARDIR)/record $(VARDIR)/logfile $(VARDIR)/xlogfile
 
 %.exe:
-	$(CC) $(EXE_LIBRARIES) $(LDFLAGS) -o $@ $(EXE_OBJECTS)
+	$(CC) $(LDFLAGS) -o $@ $(EXE_OBJECTS) $(EXE_LIBRARIES)
 
 %.d: %.c
 	$(DEPGEN) -MM $(CPPFLAGS) -MQ $(@:.d=.o) -MQ $@ -MF $*.d $<
