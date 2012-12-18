@@ -636,7 +636,8 @@ int curses_display_nhmenu(winid wid, int how, MENU_ITEM_P **_selected)
     
     if (menu_item_ptr == NULL)
     {
-        panic("curses_display_nhmenu: attempt to display empty menu");
+        pline("Your inventory is empty");
+        return 0;
     }
     
     /* Reset items to unselected to clear out selections from previous
