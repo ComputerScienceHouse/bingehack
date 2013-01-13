@@ -6,9 +6,6 @@
 #include "dlb.h"
 
 #include <ctype.h>
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 /* Misc. curses interface functions */
 
@@ -182,20 +179,6 @@ void curses_bail(const char *mesg)
     terminate(EXIT_SUCCESS);
 }
 
-int curses_getch()
-{
-    errno = 0;
-    int ret = wgetch(stdscr);
-    if (ret == ERR) {
-        if (errno != 0) {
-            pline(strerror(errno));
-        } else {
-            pline("Unspecified error");
-        }
-        exit(EXIT_FAILURE);
-    }
-    return ret;
-}
 
 /* Return a winid for a new window of the given type */
 

@@ -45,6 +45,4 @@ int curses_convert_keys(int key);
 
 int curses_get_mouse(int *mousex, int *mousey, int *mod);
 
-int curses_wgetch();
-
 #endif  /* CURSMISC_H */
