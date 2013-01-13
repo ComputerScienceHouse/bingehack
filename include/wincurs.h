@@ -224,6 +224,12 @@ extern int curses_convert_keys(int key);
 
 extern int curses_get_mouse(int *mousex, int *mousey, int *mod);
 
+extern int curses_getch();
+#ifdef getch
+#undef getch
+#endif
+#define getch curses_getch
+
 /* cursdial.c */
 
 extern void curses_line_input_dialog(const char *prompt, char *answer, int buffer);
