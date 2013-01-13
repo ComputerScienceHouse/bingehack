@@ -9,6 +9,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <fcntl.h>
 
 /* Misc. curses interface functions */
 
@@ -187,12 +188,16 @@ int curses_getch()
     errno = 0;
     int ret = wgetch(stdscr);
     if (ret == ERR) {
-        if (errno != 0) {
-            pline(strerror(errno));
-        } else {
-            pline("Unspecified error");
+        int saved_errno = errno;
+        errno = 0;
+        if (fcntl(STDIN_FILENO, F_GETFD) == -1 && errno == EBADF) {
+            errno = saved_errno;
+            if (errno != 0) {
+                panic(strerror(errno));
+            } else {
+                panic("Unspecified error reading character");
+            }
         }
-        exit(EXIT_FAILURE);
     }
     return ret;
 }
