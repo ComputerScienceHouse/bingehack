@@ -10,13 +10,10 @@ Database, too many to mention here. See the earliest commits by Russell Harmon
 for details.
 
 # Playing the game
-If you do not wish to compile (see the BUILDING.mkdn documentation), or wish to
-take full advantage of the many multiplayer-esque features of BingeHack, you may
-play on our public server:
-
-     telnet nethack.csh.rit.edu
-
-
+**Note:** CSH no longer hosts a bingehack server. In place we have started to
+host a [BingeHack4](https://github.com/ComputerScienceHouse/bingehack4) server.
+Details on how to connect can be found on the GitHub repository for BingeHack4
+that is listed above.
 
 # Features
 Currently, the feature set of BingeHack (when compared to nethack) is too large
